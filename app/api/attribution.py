@@ -13,10 +13,10 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, require_admin
+from app.api.deps import get_current_user, is_admin
 from app.core.rate_limiting import enforce_rate_limit
 from app.db.base import get_db
 from app.db.models import User
@@ -58,15 +58,6 @@ def attribution_summary(
     return attribution.summary(db, current_user.id, strategy_id=strategy_id)
 
 
-def _is_admin(request: Request, current_user: User) -> bool:
-    """The same test the admin routes apply, as a yes/no."""
-    try:
-        require_admin(request, current_user)
-    except HTTPException:
-        return False
-    return True
-
-
 @router.post("/attribution/recompute")
 def recompute_attribution(
     request: Request,
@@ -84,7 +75,7 @@ def recompute_attribution(
     trigger it, writing other accounts' ledgers and reading their volume back
     in the counts."""
     enforce_rate_limit(str(current_user.id), "attribution_recompute", "RATE_LIMIT_AI_ACTION")
-    if _is_admin(request, current_user):
+    if is_admin(request, current_user):
         return attribution.run_sweep(db, limit=limit)
     return attribution.run_sweep(db, limit=limit, user_id=current_user.id)
 
