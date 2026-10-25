@@ -7,6 +7,48 @@ UNVERIFIED.
 
 Branches audited: `master` @ `1ad2cab`, `feature/8-new-features` @ `5705e81`.
 
+## Status as of 2026-10-25 (checked against `master` @ `ec2952e`)
+
+This table supersedes the per-finding text below and the 2026-10-10/11 snapshot in
+`docs/program/BASELINE.md` §3.2. Each row was re-read in code on 2026-10-25. Where the
+evidence is a test file, the file was confirmed present.
+
+| ID | Status | Evidence on master |
+|---|---|---|
+| F-SEC-01 | FIXED | `app/services/auth.py` suspension check at the chokepoint (`get_current_user`) |
+| F-SEC-02 | FIXED, residual | `app/api/webhooks_whatsapp.py` `_lead_for_inbound`; `tests/test_whatsapp_inbound_tenant_match.py`. Residual: two tenants who both messaged a number → the most recent sender wins (RF-5) |
+| F-SEC-03 | FIXED | `app/api/onboarding.py` (a foreign `user_id` needs admin); `tests/test_onboarding_complete_step_authz.py` |
+| F-SEC-04 | FIXED | `app/api/ui_support.py` suppression handlers `Depends(require_admin)`; `tests/test_suppression_endpoints_admin_only.py` |
+| F-SEC-05 | FIXED | website builder #137, WhatsApp templates #139 (see the status lines under F-SEC-05) |
+| F-SEC-06 | FIXED | `DEBUG_ROUTE_ENVS` allowlist, `app/api/debug.py`; `tests/test_debug_router_environment.py` |
+| F-AI-01 | FIXED | per-strategy caps and per-account spend guard: `app/services/spend_guard.py` (`check_model_call`), called from `app/services/usage_meter.py` |
+| F-AI-02 | FIXED | `app/services/prompt_safety.py` delimits untrusted text across the services; `tests/test_prompt_injection_containment.py` |
+| F-AI-03 | FIXED | `JUDGE_TEMPERATURE` in `app/services/anthropic_client.py`; models that refuse a temperature are handled (`TEMPERATURE_FREE_MODELS`, #130) |
+| F-AI-04 | **OPEN** | default `claude-sonnet-4-6` in `app/config.py` and `app/core/config.py`. The health probe (`app/services/health_checks.py`) checks the key and reachability; by its own comment it does not see a wrong model name. Needs the live key |
+| F-AI-05 | **OPEN** (LOW) | `app/services/message_personalization.py` `_applied_mutation` puts an applied mutation's `messaging_angle.proposed` and `revised_messaging` in front of the research, marked "takes precedence", without `prompt_safety`. That text is model-written (`app/services/strategy_mutation.py`). Only a person applying the version stands between the model and the precedence block |
+| F-AI-06 | FIXED | `app/verification/loop.py` `_support_block` wraps research outputs, patterns and the GTM plan in `prompt_safety.block` |
+| F-OPS-01 | FIXED in manifest | `pyproject.toml`; `tests/test_firebase_dependency_declared.py`. The image itself was not rebuilt in this check |
+| F-OPS-02 | FIXED | `app/integrations/calendly.py` timestamp tolerance; `tests/test_calendly_webhook_freshness.py` |
+| F-OPS-03 | **OPEN** | both `app/config.py` and `app/core/config.py` exist; 97 modules import the first, 12 the second |
+| F-OPS-04 | FIXED | `app/services/notifications.py` accepts both names; `tests/test_firebase_credentials_env.py` |
+| F-OPS-05 | FIXED | `app/core/config.py` warning text |
+| F-OPS-06 | FIXED | `requirements.lock`, `frontend/package-lock.json` |
+| F-OPS-07 | FIXED (removal); scan REPORT-ONLY | vestigial deps removed. `.github/workflows/verify.yml` runs `pip-audit` and `npm audit --omit=dev --audit-level=high` as report-only steps: findings are summarised, never block |
+| F-REL-01 | FIXED | `app/workers/send_tasks.py` deleted |
+| F-REL-02 | FIXED | `app/workers/monitoring.py`; `tests/test_monitoring_task_names.py` |
+| F-DB-01 | FIXED | migration `0093_playbook_scores_owner`, per-account `UniqueConstraint("user_id", "pattern_key", "variant", ...)` in `app/db/models.py`; `tests/test_playbook_owner_migration.py`, `tests/integration/test_migration_0093_playbook_owner_pg.py` |
+| F-DB-02 | FIXED | see P0-6 in `docs/program/BASELINE.md` |
+| F-DB-03 | FIXED | `alembic/versions/0065_messages_dispatch_index.py` |
+| F-DB-04 | **OPEN** (LOW) | `app/workers/learning_tasks.py` binds `:reply_rate` into both `score` and `reply_rate` |
+| F-QA-01 | FIXED | `pyproject.toml` `norecursedirs` excludes `tests/integration` |
+| F-QA-02 | **OPEN** | 121 `TODO: verify` markers in `app/`, `frontend/src` and `sdk`; no live vendor contract confirmed |
+
+Also fixed since the audit, per `docs/program/BASELINE.md` §3.2: GDPR account export (#57) and
+deletion (`app/api/account_data.py`, `app/services/account_erasure.py`,
+`tests/test_account_erasure.py`, sealed); plan enforcement of `max_leads_per_strategy`
+(`app/api/leads.py`), `max_sequence_steps` and channels (`app/services/plan_holds.py`,
+`app/services/autopilot.py`, `check_send_channel` on the send paths).
+
 ---
 
 ## F-SEC-01 — Suspended users retain full API access (master)

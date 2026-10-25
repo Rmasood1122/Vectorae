@@ -104,6 +104,8 @@ either squash-merged under another SHA or abandoned — UNVERIFIED which.
 
 ### 3.2 `docs/FINDINGS_REGISTER.md` (audit 2026-10-01)
 
+> **Superseded 2026-10-25:** current statuses are in `docs/FINDINGS_REGISTER.md`, "Status as of 2026-10-25". This table is the Phase 0 snapshot, with its later updates.
+
 | ID | Severity | Status | Evidence | How verified |
 |---|---|---|---|---|
 | F-SEC-01 suspended users keep access | CRITICAL | FIXED | `app/services/auth.py:207`; `6e11abe` | same as P0-3 |
