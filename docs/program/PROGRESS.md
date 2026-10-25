@@ -2,6 +2,12 @@
 
 Resume from this file, `status.json`, `DECISIONS.md` and `git log`.
 
+- 2026-10-25 — **Offline fixes after F-SEC-05** (founder-approved in session):
+  - Findings register: statuses as of 2026-10-25, each re-read on master `ec2952e` (#140).
+  - F-AI-05: an applied mutation's model-written angle and messaging lose any value with a link or instruction before they go in front of the research as "takes precedence".
+  - F-DB-04, step 1 of 3: migration 0095 makes `playbook_scores.score` nullable, and the trend reads `reply_rate`. Steps 2 (stop writing `score`) and 3 (drop it) each wait for the previous deploy on API and worker.
+  - docker-compose: PostgreSQL runs from `pgvector/pgvector:0.8.1-pg16`, as in CI. DEPLOY.md has the one-time dump-and-restore move for existing volumes; it was not rehearsed here (no Docker daemon in this environment).
+  - Next: F-OPS-03, merging `app/core/config.py` into `app/config.py`.
 - 2026-10-25 — **F-SEC-05, WhatsApp templates half: admins manage templates** (founder choice in session: "Admins manage"). Gate PR #138 first: the sealed opt-out API test now creates its template as an admin, with the same assertions.
   - Before, on master: any signed-in user could create, edit, submit to Meta, sync and generate the install's templates. Generated drafts, written from one account's private research, were readable by every user.
   - Now: those five routes require an admin; generate still checks that the strategy is the caller's. A non-admin lists and reads APPROVED templates only. The Campaigns template panel is its own component, and its controls appear for admins only. `is_admin` is shared from `app/api/deps.py`; attribution and website builder used their own copies. Help article 10 updated.
@@ -65,7 +71,7 @@ Resume from this file, `status.json`, `DECISIONS.md` and `git log`.
 
   **Not verified:** real Voyage calls and quality (no key in this environment); Neon's pgvector version (founder query pending).
 
-  **Reported, not fixed:** `docker-compose.yml` and `docker-compose.prod.yml` still use `postgres:16-alpine` (no pgvector). Switching an existing alpine data volume to the Debian-based pgvector image risks collation changes, so that is its own change.
+  **Reported, not fixed:** `docker-compose.yml` and `docker-compose.prod.yml` still use `postgres:16-alpine` (no pgvector). Switching an existing alpine data volume to the Debian-based pgvector image risks collation changes, so that is its own change. (Done 2026-10-25, with the dump-and-restore steps in DEPLOY.md.)
 - 2026-10-21 — **Victorae Phase 3 item 2 (output contracts)**, local commits on top of PR #122 (item 1, open). Phase 2 (#121) was merged 18:11Z from the web UI with no review recorded, not via `safe_merge.sh` (MERGE-B bypass, reported).
 
   **Done**

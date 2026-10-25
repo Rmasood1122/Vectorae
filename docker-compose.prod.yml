@@ -44,7 +44,12 @@ services:
   # PostgreSQL 16
   # ---------------------------------------------------------------------------
   postgres:
-    image: postgres:16-alpine
+    # pgvector (help-center search, migration 0094), the same image CI uses.
+    # Debian-based, so text sorts with glibc, not Alpine's musl: an EXISTING
+    # data volume made by postgres:16-alpine must be dumped and restored into
+    # a fresh volume, never reused. Steps: DEPLOY.md, "Moving to the pgvector
+    # image".
+    image: pgvector/pgvector:0.8.1-pg16
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file: .env.production
