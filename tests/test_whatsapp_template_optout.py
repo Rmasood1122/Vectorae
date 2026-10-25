@@ -103,7 +103,12 @@ class TestOptOutInstructionRequired:
         assert _Adapter.submitted is False
         assert row.status is m.WhatsAppTemplateStatus.DRAFT
 
-    def test_api_returns_422_with_the_reason(self, client):
+    def test_api_returns_422_with_the_reason(self, client, db_session, test_user):
+        # Templates are deployment-wide, so managing them is an admin task
+        # (F-SEC-05); the caller here is an admin so the opt-out rule is what
+        # answers.
+        test_user.is_admin = True
+        db_session.commit()
         r = client.post("/whatsapp/templates", json={
             "name": "api_t", "language": "en_US", "category": "marketing",
             "body": "Hi {{1}}, Sam from LeadPilot.",
