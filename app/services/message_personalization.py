@@ -207,11 +207,28 @@ def _applied_mutation(session: Session, strategy: Strategy) -> str | None:
     if version is None:
         return None
     changes = version.changes_json or {}
-    angle = (changes.get("messaging_angle") or {}).get("proposed") or ""
-    revised = changes.get("revised_messaging") or ""
+    angle = _mutation_guidance((changes.get("messaging_angle") or {}).get("proposed"))
+    revised = _mutation_guidance(changes.get("revised_messaging"))
+    if not (angle or revised):
+        return None
     return (f"[APPLIED STRATEGY MUTATION v{version.version_no} — takes precedence "
             f"over the research below where they conflict]\n"
             f"Messaging angle: {angle}\n{revised}").strip()
+
+
+def _mutation_guidance(value) -> str:
+    """F-AI-05: a mutation's angle and messaging are written by a model that
+    read replies and research, then placed in front of the research as
+    taking precedence. Guidance cannot be wrapped as untrusted data (that
+    would tell the model to ignore it), so a value carrying a link or
+    wording that addresses the model is dropped instead, as for the style
+    and voice profiles."""
+    text = value.strip() if isinstance(value, str) else ""
+    problem = prompt_safety.guidance_problem(text)
+    if problem:
+        logger.warning("applied mutation: dropped a value that %s", problem)
+        return ""
+    return text
 
 
 def render_message(
