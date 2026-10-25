@@ -10,7 +10,6 @@ sources:
   - app/workers/tasks.py
   - app/db/models.py
   - app/config.py
-  - app/core/config.py
   - app/core/rate_limiting.py
   - app/core/plans.py
   - app/services/usage_meter.py

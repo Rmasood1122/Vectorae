@@ -16,7 +16,6 @@ sources:
   - app/api/strategies.py
   - app/api/schemas.py
   - app/core/plans.py
-  - app/core/config.py
   - app/core/billing_catalog.py
   - app/core/rate_limiting.py
   - app/services/billing.py

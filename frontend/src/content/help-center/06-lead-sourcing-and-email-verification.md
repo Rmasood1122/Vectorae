@@ -24,7 +24,6 @@ sources:
   - app/workers/outreach_tasks.py
   - app/db/models.py
   - app/core/plans.py
-  - app/core/config.py
   - app/config.py
   - frontend/src/components/strategy/OutreachPanel.tsx
   - frontend/src/lib/leadOutreach.ts

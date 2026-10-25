@@ -18,7 +18,6 @@ sources:
   - app/api/audit.py
   - app/services/security_audit.py
   - app/services/account_export.py
-  - app/core/config.py
   - render.yaml
   - docs/program/DECISIONS.md
   - frontend/src/app/(app)/settings/page.tsx

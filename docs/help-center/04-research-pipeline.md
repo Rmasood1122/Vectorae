@@ -16,7 +16,6 @@ sources:
   - app/services/market_intel.py
   - app/verification/loop.py
   - app/core/plans.py
-  - app/core/config.py
   - app/config.py
   - app/services/notifications.py
   - frontend/src/app/(app)/strategies/new/page.tsx
