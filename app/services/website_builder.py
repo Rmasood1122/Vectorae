@@ -555,9 +555,10 @@ ROBOTS_TXT = ("User-agent: *\n"
 
 
 def export_static_site(db: Session, output_dir: str) -> dict:
-    """Write every published page out as deployable static files.
+    """Write our marketing site's published pages out as static files.
 
-    WHAT IT DOES. For each published SitePage, writes html_content to
+    WHAT IT DOES. For each published SitePage with no workspace (ours; a
+    customer's page is not part of our site), writes html_content to
     {output_dir}/{slug}/index.html (or {output_dir}/index.html for the
     homepage, whose slug is the empty string), then writes sitemap.xml and
     robots.txt beside them.
@@ -579,7 +580,8 @@ def export_static_site(db: Session, output_dir: str) -> dict:
     try:
         pages = db.execute(
             select(SitePage)
-            .where(SitePage.status == PageStatus.PUBLISHED)
+            .where(SitePage.status == PageStatus.PUBLISHED,
+                   SitePage.workspace_id.is_(None))
             .order_by(SitePage.slug)
         ).scalars().all()
     except Exception:  # noqa: BLE001 -- see the docstring

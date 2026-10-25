@@ -7,7 +7,7 @@
   PATCH  /site/pages/{id}/publish         make it live + re-export
   PATCH  /site/pages/{id}/unpublish       archive it
   GET    /site/pages/{id}/seo             score it, persist the score
-  POST   /site/export                     write every published page to disk
+  POST   /site/export                     ADMIN: write our marketing pages to disk
   GET    /site/pages/{id}/download        the HTML as a file
   POST   /site/pages/bulk                 up to 10 at once, all-or-nothing
   GET    /site/sitemap.xml                PUBLIC
@@ -19,9 +19,14 @@ an anonymous visitor could not get by crawling the site itself — published
 slugs and their dates. Draft and archived pages appear in neither.
 
 OWNERSHIP. Pages are scoped by `workspace_id`, and workspace_id NULL means a
-global/admin page (the leadpilot.io marketing site, which belongs to no
-customer). A user reaches their own workspace's pages plus the global ones;
-anything else is 404, never 403, matching every other router here.
+global page: our own marketing site, which belongs to no customer. A user
+reaches their own workspace's pages; only an admin also reaches the global
+ones. Anything else is 404, never 403, matching every other router here. A
+non-admin with no workspace has nowhere to put a page, so creating one is
+refused (409 workspace_required) instead of landing in the global bucket,
+where every other workspaceless user and the marketing site would share it.
+The export, the public sitemap and robots.txt cover the global pages only:
+they describe the marketing site, and a customer's page is not on it.
 
 GENERATION IS ALWAYS ASYNC. Writing a page is the largest model call in this
 system. It never happens on the request thread -- create and regenerate both
@@ -36,12 +41,12 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from sqlalchemy import func, or_, select
+from sqlalchemy import false, func, or_, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, require_admin
 from app.api.metering import refuse_if_daily_limit_reached
 from app.core.plans import PlanLimitExceeded, check_feature, check_plan_limit, plan_limit_response
 from app.core.rate_limiting import enforce_rate_limit
@@ -181,31 +186,57 @@ def _detail_out(page: SitePage) -> PageDetailOut:
 
 
 def _workspace_id_for(db: Session, current_user: User):
-    """The workspace this user's pages belong to, or None when they own none.
-
-    A user without a workspace still gets a working feature: their pages are
-    created global (workspace_id NULL), which is how the leadpilot.io
-    marketing site itself is stored.
-    """
+    """The workspace this user's pages belong to, or None when they own none."""
     return db.execute(
         select(Workspace.id).where(Workspace.owner_user_id == current_user.id)
     ).scalars().first()
 
 
-def _visible_pages_filter(workspace_id):
-    """Pages this user may see: their workspace's, plus the global ones."""
-    if workspace_id is None:
-        return SitePage.workspace_id.is_(None)
-    return or_(SitePage.workspace_id == workspace_id,
-               SitePage.workspace_id.is_(None))
+def _is_admin(request: Request, current_user: User) -> bool:
+    """Whether the person signed in may manage our own marketing pages.
+
+    The same test as every admin route (require_admin): the signed-in actor,
+    not the workspace owner they act for, and never through a personal API key.
+    """
+    try:
+        require_admin(request, current_user)
+    except HTTPException:
+        return False
+    return True
 
 
-def _owned_page(db: Session, page_id: uuid.UUID, current_user: User) -> SitePage:
+def _visible_pages_filter(workspace_id, admin: bool):
+    """Pages this user may see: their workspace's, plus the global ones for an
+    admin. A non-admin with no workspace sees none."""
+    clauses = []
+    if workspace_id is not None:
+        clauses.append(SitePage.workspace_id == workspace_id)
+    if admin:
+        clauses.append(SitePage.workspace_id.is_(None))
+    return or_(*clauses) if clauses else false()
+
+
+def _target_workspace_id(db: Session, request: Request, current_user: User):
+    """Where this user's new pages go: their workspace, or the global bucket
+    for an admin with none. Anyone else is refused before anything is written."""
+    workspace_id = _workspace_id_for(db, current_user)
+    if workspace_id is None and not _is_admin(request, current_user):
+        raise HTTPException(
+            status_code=409,
+            detail={"error": "workspace_required",
+                    "message": "Create a workspace first. Website pages belong "
+                               "to a workspace."})
+    return workspace_id
+
+
+def _owned_page(db: Session, page_id: uuid.UUID, current_user: User,
+                request: Request) -> SitePage:
     """A page this user may act on, else 404 (never 403)."""
     workspace_id = _workspace_id_for(db, current_user)
     page = db.execute(
-        select(SitePage).where(SitePage.id == page_id,
-                               _visible_pages_filter(workspace_id))
+        select(SitePage).where(
+            SitePage.id == page_id,
+            _visible_pages_filter(workspace_id, _is_admin(request, current_user)))
     ).scalars().first()
     if page is None:
         raise HTTPException(status_code=404, detail="page not found")
@@ -220,8 +251,11 @@ def _gate(current_user: User) -> None:
 
 
 def _gate_count(db: Session, current_user: User, workspace_id, adding: int = 1) -> None:
+    """The plan's page limit, counted over the bucket the new pages go into."""
+    bucket = (SitePage.workspace_id.is_(None) if workspace_id is None
+              else SitePage.workspace_id == workspace_id)
     current = db.execute(
-        select(func.count(SitePage.id)).where(_visible_pages_filter(workspace_id))
+        select(func.count(SitePage.id)).where(bucket)
     ).scalar_one() or 0
     try:
         # `adding - 1` so a bulk request for 3 pages against a 10-page plan
@@ -262,7 +296,7 @@ def _new_page(body: PageCreateIn, workspace_id) -> SitePage:
 
 
 @router.post("/pages", response_model=PageOut, status_code=201)
-def create_page(body: PageCreateIn, db: Session = Depends(get_db),
+def create_page(body: PageCreateIn, request: Request, db: Session = Depends(get_db),
                 current_user: User = Depends(get_current_user)) -> PageOut:
     """Create a page and queue its generation.
 
@@ -273,7 +307,7 @@ def create_page(body: PageCreateIn, db: Session = Depends(get_db),
     """
     enforce_rate_limit(str(current_user.id), "ai_action", _AI_LIMIT)
     _gate(current_user)
-    workspace_id = _workspace_id_for(db, current_user)
+    workspace_id = _target_workspace_id(db, request, current_user)
     _gate_count(db, current_user, workspace_id)
 
     if _taken_slugs(db, [body.slug]):
@@ -298,14 +332,16 @@ def create_page(body: PageCreateIn, db: Session = Depends(get_db),
 
 
 @router.get("/pages", response_model=list[PageOut])
-def list_pages(page_type: PageType | None = None,
+def list_pages(request: Request,
+               page_type: PageType | None = None,
                status: PageStatus | None = None,
                limit: int = Query(default=20, ge=1, le=100),
                offset: int = Query(default=0, ge=0),
                db: Session = Depends(get_db),
                current_user: User = Depends(get_current_user)) -> list[PageOut]:
     """This user's pages, newest first."""
-    where = [_visible_pages_filter(_workspace_id_for(db, current_user))]
+    where = [_visible_pages_filter(_workspace_id_for(db, current_user),
+                                   _is_admin(request, current_user))]
     if page_type is not None:
         where.append(SitePage.page_type == page_type)
     if status is not None:
@@ -323,10 +359,11 @@ def list_pages(page_type: PageType | None = None,
 
 
 @router.get("/pages/{page_id}", response_model=PageDetailOut)
-def get_page(page_id: uuid.UUID, db: Session = Depends(get_db),
+def get_page(page_id: uuid.UUID, request: Request,
+             db: Session = Depends(get_db),
              current_user: User = Depends(get_current_user)) -> PageDetailOut:
     """The whole record, html_content included."""
-    return _detail_out(_owned_page(db, page_id, current_user))
+    return _detail_out(_owned_page(db, page_id, current_user, request))
 
 
 # ---------------------------------------------------------------------------
@@ -335,7 +372,8 @@ def get_page(page_id: uuid.UUID, db: Session = Depends(get_db),
 
 
 @router.post("/pages/{page_id}/regenerate")
-def regenerate_page(page_id: uuid.UUID, db: Session = Depends(get_db),
+def regenerate_page(page_id: uuid.UUID, request: Request,
+                    db: Session = Depends(get_db),
                     current_user: User = Depends(get_current_user)) -> dict:
     """Rewrite the page from its stored brief.
 
@@ -346,7 +384,7 @@ def regenerate_page(page_id: uuid.UUID, db: Session = Depends(get_db),
     """
     enforce_rate_limit(str(current_user.id), "ai_action", _AI_LIMIT)
     _gate(current_user)
-    page = _owned_page(db, page_id, current_user)
+    page = _owned_page(db, page_id, current_user, request)
     refuse_if_daily_limit_reached(db, current_user.id)  # P0-5b
 
     page.generation_version = (page.generation_version or 1) + 1
@@ -364,15 +402,16 @@ def regenerate_page(page_id: uuid.UUID, db: Session = Depends(get_db),
 
 
 @router.patch("/pages/{page_id}/publish", response_model=PageOut)
-def publish_page(page_id: uuid.UUID, db: Session = Depends(get_db),
+def publish_page(page_id: uuid.UUID, request: Request,
+                 db: Session = Depends(get_db),
                  current_user: User = Depends(get_current_user)) -> PageOut:
-    """Make the page live and re-export the static site.
+    """Make the page live, and re-export the static site if it is one of ours.
 
     A page with no html_content is refused: publishing an empty document
     would put a blank page on a public URL and into the sitemap, and the
     generation that fills it may simply not have run yet.
     """
-    page = _owned_page(db, page_id, current_user)
+    page = _owned_page(db, page_id, current_user, request)
     if not (page.html_content or "").strip():
         raise HTTPException(
             status_code=409,
@@ -382,17 +421,19 @@ def publish_page(page_id: uuid.UUID, db: Session = Depends(get_db),
     page.published_at = page.published_at or datetime.now(timezone.utc)
     db.commit()
 
-    from app.workers import site_tasks  # noqa: PLC0415
+    if page.workspace_id is None:  # only our own pages are in the export
+        from app.workers import site_tasks  # noqa: PLC0415
 
-    site_tasks.enqueue_export()
+        site_tasks.enqueue_export()
     return _out(page)
 
 
 @router.patch("/pages/{page_id}/unpublish", response_model=PageOut)
-def unpublish_page(page_id: uuid.UUID, db: Session = Depends(get_db),
+def unpublish_page(page_id: uuid.UUID, request: Request,
+                   db: Session = Depends(get_db),
                    current_user: User = Depends(get_current_user)) -> PageOut:
     """Archive the page. It leaves the sitemap and the next static export."""
-    page = _owned_page(db, page_id, current_user)
+    page = _owned_page(db, page_id, current_user, request)
     page.status = PageStatus.ARCHIVED
     db.commit()
     return _out(page)
@@ -404,7 +445,8 @@ def unpublish_page(page_id: uuid.UUID, db: Session = Depends(get_db),
 
 
 @router.get("/pages/{page_id}/seo", response_model=SeoScoreOut)
-def get_page_seo(page_id: uuid.UUID, db: Session = Depends(get_db),
+def get_page_seo(page_id: uuid.UUID, request: Request,
+                 db: Session = Depends(get_db),
                  current_user: User = Depends(get_current_user)) -> SeoScoreOut:
     """Score the page's HTML and persist the result.
 
@@ -412,7 +454,7 @@ def get_page_seo(page_id: uuid.UUID, db: Session = Depends(get_db),
     scorer is pure Python over a string, it costs nothing, and a score that
     silently describes an older version of the page is worse than no score.
     """
-    page = _owned_page(db, page_id, current_user)
+    page = _owned_page(db, page_id, current_user, request)
     result = website_builder.score_page_seo(page.html_content or "",
                                             page.target_keyword)
     page.seo_score = result["score"]
@@ -429,8 +471,8 @@ def get_page_seo(page_id: uuid.UUID, db: Session = Depends(get_db),
 
 
 @router.post("/export")
-def export_site(current_user: User = Depends(get_current_user)) -> dict:
-    """Queue a static export of every published page."""
+def export_site(current_user: User = Depends(require_admin)) -> dict:
+    """Queue a static export of our marketing site (admins only)."""
     _gate(current_user)
     from app.workers import site_tasks  # noqa: PLC0415
 
@@ -446,10 +488,11 @@ def export_site(current_user: User = Depends(get_current_user)) -> dict:
 @router.get("/pages/{page_id}/download", response_class=Response,
             responses={200: {"content": {"text/html": {}},
                              "description": "The page as an HTML file."}})
-def download_page(page_id: uuid.UUID, db: Session = Depends(get_db),
+def download_page(page_id: uuid.UUID, request: Request,
+                  db: Session = Depends(get_db),
                   current_user: User = Depends(get_current_user)) -> Response:
     """The page's HTML as a file download."""
-    page = _owned_page(db, page_id, current_user)
+    page = _owned_page(db, page_id, current_user, request)
     # The slug is a path ("blog/x") and the homepage's is empty; neither is a
     # filename. Flatten and fall back so Content-Disposition is always valid.
     filename = (page.slug or "index").strip("/").replace("/", "-") or "index"
@@ -466,7 +509,8 @@ def download_page(page_id: uuid.UUID, db: Session = Depends(get_db),
 
 
 @router.post("/pages/bulk", response_model=list[PageOut], status_code=201)
-def bulk_create_pages(body: BulkPageCreateIn, db: Session = Depends(get_db),
+def bulk_create_pages(body: BulkPageCreateIn, request: Request,
+                      db: Session = Depends(get_db),
                       current_user: User = Depends(get_current_user)) -> list[PageOut]:
     """Create up to 10 pages at once. All or nothing.
 
@@ -477,7 +521,7 @@ def bulk_create_pages(body: BulkPageCreateIn, db: Session = Depends(get_db),
     """
     enforce_rate_limit(str(current_user.id), "ai_action", _AI_LIMIT)
     _gate(current_user)
-    workspace_id = _workspace_id_for(db, current_user)
+    workspace_id = _target_workspace_id(db, request, current_user)
     _gate_count(db, current_user, workspace_id, adding=len(body.pages))
 
     slugs = [page.slug for page in body.pages]
@@ -517,7 +561,7 @@ def bulk_create_pages(body: BulkPageCreateIn, db: Session = Depends(get_db),
             responses={200: {"content": {"application/xml": {}},
                              "description": "sitemaps.org XML."}})
 def sitemap_xml(db: Session = Depends(get_db)) -> Response:
-    """The sitemap for every published page, plus the three static URLs."""
+    """The sitemap for our published pages, plus the three static URLs."""
     return Response(content=sitemap_service.generate_sitemap_xml(db),
                     media_type="application/xml")
 

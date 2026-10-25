@@ -75,11 +75,16 @@ def generate_page_impl(session: Session, page_id, user_id=None) -> dict:
         logger.warning("website builder: page %s not found", page_id)
         return {"status": "not_found", "page_id": str(page_id), "seo_score": None}
 
-    # The internal-linking menu: every OTHER published page. A page cannot
-    # link to itself, and linking to an unpublished page would ship a 404.
+    # The internal-linking menu: every OTHER published page of the same site
+    # (the same workspace, or ours when it has none). A page cannot link to
+    # itself, linking to an unpublished page would ship a 404, and another
+    # workspace's pages are neither on this site nor this account's to read.
+    same_site = (SitePage.workspace_id.is_(None) if page.workspace_id is None
+                 else SitePage.workspace_id == page.workspace_id)
     existing = session.execute(
         select(SitePage.slug, SitePage.title, SitePage.target_keyword)
-        .where(SitePage.status == PageStatus.PUBLISHED, SitePage.id != page.id)
+        .where(SitePage.status == PageStatus.PUBLISHED, SitePage.id != page.id,
+               same_site)
         .order_by(SitePage.slug)
     ).all()
     existing_pages = [{"slug": slug, "title": title, "target_keyword": keyword}
@@ -149,7 +154,7 @@ def _workspace_owner(session: Session, workspace_id):
 
 
 def export_site_impl(session: Session, output_dir: str) -> dict:
-    """Export every published page. Never raises — see export_static_site."""
+    """Export our published pages. Never raises — see export_static_site."""
     from app.services import website_builder  # noqa: PLC0415
 
     result = website_builder.export_static_site(session, output_dir)
