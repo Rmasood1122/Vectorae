@@ -220,7 +220,7 @@ cases:
     slice: invented
     synthetic: true
     input: {persona: *persona, messaging: *msg}
-    expect: {numbers_from: [persona, messaging], numbers_ok: ["1"], text_field: by_name}
+    expect: {none: true, numbers_from: [persona, messaging], numbers_ok: ["1"], text_field: by_name}
     recorded:
       templates:
         - {name: stat_claim, language: en_US, category: marketing, body: "Hi {{1}}, this is Sam from Brightline Bookkeeping. We cut month-end by 73% for 200+ agencies. Reply STOP to opt out.", variable_descriptions: {"1": "first name"}}
@@ -229,7 +229,7 @@ cases:
     slice: invented
     synthetic: true
     input: {persona: *persona, messaging: *msg}
-    expect: {forbidden: ["guarantee", "today only"], text_field: by_name}
+    expect: {none: true, forbidden: ["guarantee", "today only"], text_field: by_name}
     recorded:
       templates:
         - {name: guarantee_claim, language: en_US, category: marketing, body: "Hi {{1}}, this is Sam from Brightline Bookkeeping. Books closed in 5 working days, guaranteed - today only. Reply STOP to opt out.", variable_descriptions: {"1": "first name"}}

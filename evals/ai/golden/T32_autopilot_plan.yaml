@@ -258,7 +258,7 @@ cases:
     slice: edge
     synthetic: true
     input: {call: briefs, channel: email, research: *RESEARCH}
-    expect: {calls: 1, max_chars: 800, text_field: briefs}
+    expect: {include: ["Repeat the ask in the final line in one short sentence so it is easy to answer from"], calls: 1, max_chars: 800, text_field: briefs}
     recorded:
       steps:
         - brief: "Opening email. Name the month-end close problem that agency founders own, explain in plain words how late invoices and hand-built payroll spreadsheets eat their evenings, give one proof point from the playbook, keep the tone warm and specific, avoid any hype, avoid any claims about the prospect that are not in the lead's data, mention that the reader can reply with a simple yes for a 15-minute call, keep the email under 120 words, keep the subject line short and honest, use the person's first name once, use the agency's name once, do not use exclamation marks, do not use all-caps words, do not attach anything, do not add links other than the booking link, and sign off with the founder's first name and role. Repeat the ask in the final line in one short sentence so it is easy to answer from a phone, and make sure the reader knows the next step."

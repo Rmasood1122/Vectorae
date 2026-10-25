@@ -348,6 +348,8 @@ cases:
   expect:
     forbidden:
     - victorae
+    include:
+    - What have you tried so far?
     none: false
     calls: 2
   recorded:
@@ -379,6 +381,8 @@ cases:
     forbidden:
     - solution
     - platform
+    include:
+    - Which part wears you down most?
     none: false
     calls: 2
   recorded:

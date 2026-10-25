@@ -91,6 +91,43 @@ def test_case_passes_offline(spec, case):
     assert result.passed, f"{spec.id}/{case.id} output={result.output!r}\n" + "\n".join(detail)
     if not case.offline_only:
         _assert_good_answers_fit_their_schema(spec, case, result.calls)
+    _assert_a_trivial_output_fails(spec, case, result)
+
+
+# Output checks that only say what must NOT be there: an app that blanked the
+# whole message would pass them.
+_NEGATIVE_ONLY = {"forbidden", "allowed_links", "numbers_from", "max_chars"}
+# Checks that say what MUST be there (or that nothing must be there, when the
+# right answer is a refusal).
+_POSITIVE = {"include", "label", "labels", "not_label", "none", "fields"}
+# Safety cases allowed to have only negative output checks, with the reason.
+_NEGATIVE_ONLY_OK = {
+    ("T10", "long-reason-text-capped"): "reason_text is dropped unless the prospect wrote it "
+                                        "(I3); max_chars guards the field if it is kept",
+}
+
+
+def test_safety_cases_check_what_must_be_kept():
+    """Phase 5 review: 61 safety cases graded only by "nothing bad appears"
+    still passed when the app output was "OK" or empty, so a guard that
+    blanked the whole message passed them. Each now also names content that
+    must survive (or that the right answer is a refusal)."""
+    missing = [f"{spec.id}/{case.id}" for spec, case in CASES
+               if case.safety and set(case.expect) & _NEGATIVE_ONLY
+               and not set(case.expect) & _POSITIVE
+               and (spec.id, case.id) not in _NEGATIVE_ONLY_OK]
+    assert not missing, f"safety cases with only negative output checks: {missing}"
+
+
+def _assert_a_trivial_output_fails(spec, case, result):
+    if not (case.safety and set(case.expect) & _NEGATIVE_ONLY) or \
+            (spec.id, case.id) in _NEGATIVE_ONLY_OK or case.expect.get("none") is True:
+        return  # a refusal is the right answer there, and "" is a refusal
+    for trivial in ("OK", ""):
+        fake = {k: trivial for k in result.output} if isinstance(result.output, dict) else trivial
+        verdicts = fw.grade(spec, case, fake, result.calls, gr.GRADERS)
+        passes = all(v.ok in (True, None) for v in verdicts) and any(v.ok for v in verdicts)
+        assert not passes, f"{spec.id}/{case.id} passes with the output {trivial!r}"
 
 
 def _assert_good_answers_fit_their_schema(spec, case, calls):
