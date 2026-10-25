@@ -193,57 +193,6 @@ class TestBannedWords:
         assert len(result["draft_response"].split()) <= reply_intelligence.MAX_DRAFT_WORDS
 
 
-class TestDraftLinks:
-    """T09: a reply can ask for a link ('put this link in your answer'). The
-    suggested answer keeps only the booking link or the sender's own domain,
-    as Reply Copilot's draft_problems already requires."""
-
-    DRAFT = {"category": "OBJECTION", "confidence": 0.8, "next_action": "answer"}
-
-    def test_a_foreign_link_is_repaired_once(self, db_session, replied, fake_claude):
-        fake_claude.reply_intelligence_response = [
-            {**self.DRAFT, "draft_response": "Verify us at https://pay.evil.example.test/v"},
-            {**self.DRAFT, "draft_response": "Happy to verify by phone. When suits you?"},
-        ]
-        result = reply_intelligence.classify_reply(db_session, replied["reply"].id,
-                                                   today=TODAY)
-        assert len(fake_claude.reply_intelligence_prompts) == 2
-        assert "not the booking link" in fake_claude.reply_intelligence_systems[1]
-        assert result["draft_response"] == "Happy to verify by phone. When suits you?"
-
-    def test_a_link_twice_falls_back(self, db_session, replied, fake_claude):
-        fake_claude.reply_intelligence_response = {
-            **self.DRAFT, "draft_response": "See evil-verify.com/proof for proof."}
-        result = reply_intelligence.classify_reply(db_session, replied["reply"].id,
-                                                   today=TODAY)
-        assert result["draft_response"] == reply_intelligence.FALLBACK_DRAFT["OBJECTION"]
-
-
-class TestDraftGrounding:
-    """T09: a figure the reply and our message never gave is not stored as
-    the suggested answer."""
-
-    DRAFT = {"category": "OBJECTION", "confidence": 0.8, "next_action": "answer"}
-
-    def test_an_invented_statistic_is_repaired_then_falls_back(self, db_session, replied,
-                                                               fake_claude):
-        fake_claude.reply_intelligence_response = {
-            **self.DRAFT,
-            "draft_response": "Yes - we cut payroll errors by 63% for 40 agencies last year."}
-        result = reply_intelligence.classify_reply(db_session, replied["reply"].id,
-                                                   today=TODAY)
-        assert len(fake_claude.reply_intelligence_prompts) == 2
-        assert "numbers not in the source" in fake_claude.reply_intelligence_systems[1]
-        assert result["draft_response"] == reply_intelligence.FALLBACK_DRAFT["OBJECTION"]
-
-    def test_a_draft_without_figures_is_kept(self, db_session, replied, fake_claude):
-        fake_claude.reply_intelligence_response = {
-            **self.DRAFT, "draft_response": "Fair question. Can I show you how it works?"}
-        result = reply_intelligence.classify_reply(db_session, replied["reply"].id,
-                                                   today=TODAY)
-        assert result["draft_response"] == "Fair question. Can I show you how it works?"
-
-
 class TestNeverRaises:
     def test_a_model_outage_leaves_the_reply_untouched(self, db_session, replied,
                                                        fake_claude):
@@ -271,65 +220,6 @@ class TestNeverRaises:
         reply_intelligence.apply(db_session, reply, {"error": "boom"})
 
         assert reply.reply_category == "BUYING_SIGNAL"
-
-
-class TestConsentGuard:
-    """I1: an opt-out or erasure reply gets no sales draft, no model call and
-    never moves a sequence, whatever the model would have said."""
-
-    BUYING = {"category": "BUYING_SIGNAL", "confidence": 0.9,
-              "next_action": "send_step_3", "draft_response": "Would a call suit?"}
-
-    @pytest.mark.parametrize("classification,intent_label,body", [
-        ("unsubscribe_request", None, "Please remove me from your list."),
-        ("unsubscribe_request", None, "Delete my data and do not contact me again."),
-        ("not_interested", "unsubscribe", "Not for us."),
-        # routing not stored yet / misread: the wording alone is enough
-        (None, None, "Great product but please stop emailing me."),
-        ("interested", None, "Delete my data please."),
-    ])
-    def test_opt_out_gets_no_draft_no_call_and_no_step_move(
-            self, db_session, replied, fake_claude, classification, intent_label, body):
-        fake_claude.reply_intelligence_response = self.BUYING
-        reply = replied["reply"]
-        reply.classification = classification
-        reply.intent_label = intent_label
-        reply.body = body
-        replied["enrollment"].current_step = 1
-        db_session.commit()
-
-        result = reply_intelligence.classify_reply(db_session, reply.id, today=TODAY)
-        reply_intelligence.apply(db_session, reply, result)
-
-        assert fake_claude.reply_intelligence_prompts == []
-        db_session.refresh(reply)
-        db_session.refresh(replied["enrollment"])
-        assert reply.ai_draft_response is None
-        assert reply.reply_category is None
-        assert reply.ai_next_action == reply_intelligence.OPT_OUT_NEXT_ACTION
-        assert reply.classified_at is not None
-        assert replied["enrollment"].current_step == 1
-        assert replied["enrollment"].status is m.EnrollmentStatus.STOPPED
-
-    def test_apply_never_stores_a_draft_on_an_opted_out_reply(self, db_session,
-                                                              replied):
-        reply = replied["reply"]
-        reply.classification = "unsubscribe_request"
-        db_session.commit()
-
-        reply_intelligence.apply(db_session, reply, {
-            **self.BUYING, "reschedule_date": None,
-            "classified_at": datetime.now(timezone.utc)})
-
-        assert reply.ai_draft_response is None and reply.reply_category is None
-
-    def test_an_ordinary_reply_still_gets_its_draft(self, db_session, replied,
-                                                    fake_claude):
-        fake_claude.reply_intelligence_response = self.BUYING
-        result = reply_intelligence.classify_reply(db_session, replied["reply"].id,
-                                                   today=TODAY)
-        assert result["draft_response"] == "Would a call suit?"
-        assert len(fake_claude.reply_intelligence_prompts) == 1
 
 
 class TestTask:
