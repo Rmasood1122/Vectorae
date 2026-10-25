@@ -25,7 +25,7 @@ from alembic.operations import Operations
 from alembic.script import ScriptDirectory
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MIGRATION = "0095_playbook_scores_score_nullable.py"
+MIGRATION = "0095_playbook_score_nullable.py"
 TABLE = "playbook_scores"
 
 
@@ -35,6 +35,12 @@ def _load():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _config():
+    config = Config(os.path.join(ROOT, "alembic.ini"))
+    config.set_main_option("script_location", os.path.join(ROOT, "alembic"))
+    return config
 
 
 def _run(engine, step):
@@ -74,10 +80,8 @@ def test_it_chains_after_0094_and_is_the_activation_target():
 
     module = _load()
     assert (module.revision, module.down_revision) == (
-        "0095_playbook_scores_score_nullable", "0094_help_chunks")
-    config = Config(os.path.join(ROOT, "alembic.ini"))
-    config.set_main_option("script_location", os.path.join(ROOT, "alembic"))
-    assert ScriptDirectory.from_config(config).get_heads() == [act.TARGET_REVISION]
+        "0095_playbook_score_nullable", "0094_help_chunks")
+    assert ScriptDirectory.from_config(_config()).get_heads() == [act.TARGET_REVISION]
     assert act.TARGET_REVISION == module.revision
 
 
@@ -122,3 +126,13 @@ def test_the_nightly_trend_compares_reply_rate_not_score():
     assert "playbook_scores.score" not in trend and "EXCLUDED.score" not in trend
     assert "playbook_scores.reply_rate IS NULL THEN 'new'" in trend
     assert "EXCLUDED.reply_rate > playbook_scores.reply_rate + 0.005" in trend
+
+
+def test_every_revision_id_fits_the_version_column():
+    """alembic_version.version_num is VARCHAR(32) on PostgreSQL; a longer id
+    makes the upgrade fail while stamping the new head. SQLite does not
+    enforce the length, so only this test catches it offline."""
+    script = ScriptDirectory.from_config(_config())
+    too_long = sorted(rev.revision for rev in script.walk_revisions()
+                      if len(rev.revision) > 32)
+    assert too_long == []

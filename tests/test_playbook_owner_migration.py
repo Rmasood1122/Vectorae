@@ -130,7 +130,7 @@ def test_upgrade_matches_the_model_and_keeps_existing_rows(tmp_path):
     _insert_pooled_row(engine, "pk-pooled")
     _run(engine, _load().upgrade)
     # The model is at the head: 0095 (F-DB-04) later made `score` nullable.
-    _run(engine, _load_revision("0095_playbook_scores_score_nullable.py").upgrade)
+    _run(engine, _load_revision("0095_playbook_score_nullable.py").upgrade)
 
     reference = sa.create_engine(f"sqlite:///{tmp_path / 'model.db'}")
     Base.metadata.create_all(reference)

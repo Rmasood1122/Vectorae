@@ -39,7 +39,7 @@ evidence is a test file, the file was confirmed present.
 | F-DB-01 | FIXED | migration `0093_playbook_scores_owner`, per-account `UniqueConstraint("user_id", "pattern_key", "variant", ...)` in `app/db/models.py`; `tests/test_playbook_owner_migration.py`, `tests/integration/test_migration_0093_playbook_owner_pg.py` |
 | F-DB-02 | FIXED | see P0-6 in `docs/program/BASELINE.md` |
 | F-DB-03 | FIXED | `alembic/versions/0065_messages_dispatch_index.py` |
-| F-DB-04 | **IN PROGRESS** (step 1 of 3) | founder approved dropping `score` (2026-10-25). Step 1, migration `0095_playbook_scores_score_nullable`: `score` nullable, the nightly trend compares `reply_rate`, the code still writes `score`. Step 2 stops writing it and step 3 drops the column, each once the previous one is deployed on API and worker (they deploy separately). `tests/test_playbook_score_nullable_migration.py` |
+| F-DB-04 | **IN PROGRESS** (step 1 of 3) | founder approved dropping `score` (2026-10-25). Step 1, migration `0095_playbook_score_nullable`: `score` nullable, the nightly trend compares `reply_rate`, the code still writes `score`. Step 2 stops writing it and step 3 drops the column, each once the previous one is deployed on API and worker (they deploy separately). `tests/test_playbook_score_nullable_migration.py` |
 | F-QA-01 | FIXED | `pyproject.toml` `norecursedirs` excludes `tests/integration` |
 | F-QA-02 | **OPEN** | 121 `TODO: verify` markers in `app/`, `frontend/src` and `sdk`; no live vendor contract confirmed |
 

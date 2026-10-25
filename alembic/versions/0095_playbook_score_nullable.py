@@ -21,14 +21,14 @@ DOWNGRADE
   Fills any NULL `score` from reply_rate (0.0 where that is NULL too), then
   restores NOT NULL, so the pre-0095 code's upsert keeps working.
 
-Revision ID: 0095_playbook_scores_score_nullable
+Revision ID: 0095_playbook_score_nullable
 Revises: 0094_help_chunks
 """
 
 import sqlalchemy as sa
 from alembic import op
 
-revision = "0095_playbook_scores_score_nullable"
+revision = "0095_playbook_score_nullable"
 down_revision = "0094_help_chunks"
 branch_labels = None
 depends_on = None
