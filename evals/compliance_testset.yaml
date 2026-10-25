@@ -77,3 +77,32 @@ files:
   # suppression/F05/erasure respected, tenancy, sends only via the chokepoint with the
   # compliant footer, strictest regime for unknown region, CASL at send
   - tests/test_email_network_guards.py
+  # Extended 2026-10-25 (gate PR, justification in
+  # docs/program/plans/phase5-seal-ai-and-tenancy-guards.md).
+  # AI calls: complete_json returns an object or raises; untrusted and analysed text
+  # is delimited (incl. second-order injection); cached calls are metered at full price
+  - tests/test_complete_json_contract.py
+  - tests/test_prompt_injection_containment.py
+  - tests/test_prompt_caching.py
+  # AI output guards, moved unchanged out of feature files: opt-out replies get no
+  # model call or draft; a rewrite cannot drop what the legal pass approved or add
+  # unsourced facts; links, length, slots, human claims, claims about us and
+  # invented figures are removed or refused; spoken stops recorded without the model
+  - tests/test_reply_intelligence_guards.py
+  - tests/test_verification_oscillation_guards.py
+  - tests/test_personalization_guards.py
+  - tests/test_linkedin_channel_guards.py
+  - tests/test_voice_profile_guards.py
+  - tests/test_voice_twin_claim_guards.py
+  - tests/test_reply_copilot_strictness_guards.py
+  - tests/test_meeting_recording_guards.py
+  - tests/test_phone_calls_guards.py
+  - tests/test_followup_guards.py
+  - tests/test_reengagement_memory_guards.py
+  - tests/test_meeting_prep_guards.py
+  - tests/test_network_messages_guards.py
+  # Tenancy (F-SEC-05): our marketing pages are admin-only and never mixed with a
+  # customer's; WhatsApp templates are managed by admins, others see approved only;
+  # drafted templates carry no links, guarantees or invented figures
+  - tests/test_website_builder_guards.py
+  - tests/test_whatsapp_template_guards.py
