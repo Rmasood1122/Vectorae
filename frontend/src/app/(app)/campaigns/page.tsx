@@ -4,23 +4,22 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listStrategies } from "@/lib/api/strategies";
-import { useCampaign, useSequences, useTemplates } from "@/lib/api/hooks";
-import { pauseCampaign, resumeCampaign, generateTemplates,
-         submitTemplate, syncTemplate,
+import { useCampaign, useSequences } from "@/lib/api/hooks";
+import { pauseCampaign, resumeCampaign,
          updateFollowupSettings } from "@/lib/api/campaigns";
-import type { SequenceOut, SequenceStepOut, StrategyOut, TemplateOut } from "@/lib/api/types";
+import type { SequenceOut, SequenceStepOut, StrategyOut } from "@/lib/api/types";
 import { AsyncState } from "@/components/ui/skeleton";
 import { Badge, statusTone } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label, Textarea } from "@/components/ui/input";
-import { Modal } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { StrategyCalls } from "@/components/calls/CallHistory";
 import { FunnelHeatmap } from "@/components/campaigns/FunnelHeatmap";
 import { ReengagementPanel } from "@/components/campaigns/ReengagementPanel";
 import { SendTimePanel } from "@/components/campaigns/SendTimePanel";
-import { TemplateEditor } from "@/components/campaigns/TemplateEditor";
+import { TemplatesPanel } from "@/components/campaigns/TemplatesPanel";
+import { useAuthStore } from "@/lib/stores/authStore";
 import { SentimentTrend } from "@/components/campaigns/SentimentTrend";
 import { SequenceReviewPanel } from "@/components/campaigns/SequenceReviewPanel";
 import { ReviewQueuePanel } from "@/components/campaigns/ReviewQueuePanel";
@@ -81,135 +80,6 @@ function ChannelCard({ label, stats }: {
         )}
       </CardContent>
     </Card>
-  );
-}
-
-// --------------------------------------------------------------------------
-// WhatsApp template manager
-// --------------------------------------------------------------------------
-function TemplatesPanel({ strategyId }: { strategyId: string }) {
-  const toast = useToast();
-  const qc = useQueryClient();
-  const { data, isLoading, error } = useTemplates();
-  const templates = data?.templates ?? [];
-  const [editing, setEditing] = useState<TemplateOut | null | "new">(null);
-  const [generating, setGenerating] = useState(false);
-  const [aiDrafts, setAiDrafts] = useState<TemplateOut[]>([]);
-
-  async function generate() {
-    setGenerating(true);
-    try {
-      const r = await generateTemplates(strategyId);
-      setAiDrafts(r.templates);
-      toast(`${r.templates.length} draft(s) generated — pick one to use`, "success");
-    } catch (err) {
-      toast((err as Error).message, "error");
-    } finally {
-      setGenerating(false);
-    }
-  }
-
-  async function submit(id: string) {
-    try {
-      await submitTemplate(id);
-      qc.invalidateQueries({ queryKey: ["wa-templates"] });
-      toast("Submitted to Meta. Approval takes minutes to days.", "info");
-    } catch (err) {
-      toast((err as Error).message, "error");
-    }
-  }
-
-  async function sync(id: string) {
-    try {
-      const t = await syncTemplate(id);
-      qc.invalidateQueries({ queryKey: ["wa-templates"] });
-      toast(`Status: ${t.status}`, "info");
-    } catch (err) {
-      toast((err as Error).message, "error");
-    }
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" onClick={() => setEditing("new")}>+ New draft</Button>
-        <Button size="sm" variant="outline" onClick={generate} disabled={generating}>
-          {generating ? "Generating…" : "Generate with AI"}
-        </Button>
-      </div>
-
-      {aiDrafts.length > 0 && (
-        <Card>
-          <CardHeader><CardTitle className="text-sm">AI-generated drafts — pick one to use</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            {aiDrafts.map((t, i) => (
-              <details key={i} className="rounded border border-border p-2 text-sm">
-                <summary className="cursor-pointer font-medium">{t.name}</summary>
-                <pre className="mt-2 whitespace-pre-wrap text-xs">{t.body}</pre>
-                <Button size="sm" className="mt-2"
-                        onClick={() => { setEditing(t); setAiDrafts([]); }}>
-                  Edit & save this draft
-                </Button>
-              </details>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      <AsyncState isLoading={isLoading} error={error}
-                  empty={!templates.length} emptyLabel="No templates yet.">
-        <div className="space-y-2">
-          {templates.map(t => (
-            <Card key={t.id}>
-              <CardContent className="flex flex-wrap items-center justify-between gap-2 p-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium text-sm">{t.name}</span>
-                    <Badge tone={statusTone(t.status)}>{t.status}</Badge>
-                    {t.version && t.version > 1 && (
-                      <span className="text-xs text-muted-foreground">v{t.version}</span>
-                    )}
-                  </div>
-                  {t.rejection_reason && (
-                    <p className="mt-1 text-xs text-destructive">
-                      Rejected: {t.rejection_reason}
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-1">
-                  {(t.status === "draft" || t.status === "rejected") && (
-                    <>
-                      <Button size="sm" variant="outline"
-                              onClick={() => setEditing(t)}>Edit</Button>
-                      <Button size="sm"
-                              onClick={() => submit(t.id)}>Submit</Button>
-                    </>
-                  )}
-                  {t.status === "submitted" && (
-                    <Button size="sm" variant="outline"
-                            onClick={() => sync(t.id)}>Sync status</Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </AsyncState>
-
-      <Modal open={!!editing} onClose={() => setEditing(null)}
-             title={editing === "new" ? "New template" : "Edit draft"}>
-        {editing && (
-          <TemplateEditor
-            initial={editing === "new" ? null : editing}
-            onSave={() => {
-              qc.invalidateQueries({ queryKey: ["wa-templates"] });
-              setEditing(null);
-            }}
-            onClose={() => setEditing(null)}
-          />
-        )}
-      </Modal>
-    </div>
   );
 }
 
@@ -373,6 +243,7 @@ type Tab = (typeof TABS)[number];
 export default function CampaignsPage() {
   const toast = useToast();
   const qc = useQueryClient();
+  const { user } = useAuthStore();
   // Feature Group 3: alerts deep-link here as /campaigns?strategy=<id>&tab=<tab>
   // (the static export cannot serve /campaigns/<id>).
   const params = useSearchParams();
@@ -509,7 +380,8 @@ export default function CampaignsPage() {
         <SequencesPanel strategyId={effectiveStratId} />
       )}
       {tab === "templates" && effectiveStratId && (
-        <TemplatesPanel strategyId={effectiveStratId} />
+        <TemplatesPanel strategyId={effectiveStratId}
+                        canManage={!!user?.is_admin} />
       )}
       {/* Part 1 Feature 5: the human review queue. Not scoped to a strategy —
           it is everything waiting on THIS user. */}
