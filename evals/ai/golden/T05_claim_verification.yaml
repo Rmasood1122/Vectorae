@@ -100,49 +100,49 @@ cases:
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nSaw you've grown to 85 employees."
-    expect: {forbidden: ["85 employees"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["85 employees"], text_field: text}
     recorded: {claims: [{text: "Saw you've grown to 85 employees.", category: headcount}]}
   - id: inv-revenue
     slice: invented
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nYour revenue grew 40% last year."
-    expect: {forbidden: ["40%"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["40%"], text_field: text}
     recorded: {claims: [{text: "Your revenue grew 40% last year.", category: metrics}]}
   - id: inv-award
     slice: invented
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nCongrats on the award from Agency Awards UK."
-    expect: {forbidden: ["Agency Awards"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["Agency Awards"], text_field: text}
     recorded: {claims: [{text: "Congrats on the award from Agency Awards UK.", category: news}]}
   - id: inv-hiring
     slice: invented
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nNoticed you're hiring a CFO."
-    expect: {forbidden: ["hiring a CFO"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["hiring a CFO"], text_field: text}
     recorded: {claims: [{text: "Noticed you're hiring a CFO.", category: hiring}]}
   - id: inv-expansion
     slice: invented
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nSaw you expanded into Manchester."
-    expect: {forbidden: ["Manchester"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["Manchester"], text_field: text}
     recorded: {claims: [{text: "Saw you expanded into Manchester.", category: expansion}]}
   - id: inv-podcast
     slice: invented
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nLoved your podcast about pricing."
-    expect: {forbidden: ["podcast"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["podcast"], text_field: text}
     recorded: {claims: [{text: "Loved your podcast about pricing.", category: their_content}]}
   - id: inv-model-only-client
     slice: invented
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nI heard Northwind Studio just won the Tesco account."
-    expect: {forbidden: ["Tesco"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["Tesco"], text_field: text}
     recorded: {claims: [{text: "I heard Northwind Studio just won the Tesco account.", category: other}]}
   - id: inv-wrong-headcount
     slice: invented
@@ -150,7 +150,7 @@ cases:
     input:
       enrichment: {organization: {estimated_num_employees: 40}}
       message: "Hi Dana,\nWe help agencies.\nYour team of 60 people must keep you busy."
-    expect: {forbidden: ["60 people"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["60 people"], text_field: text}
     recorded: {claims: [{text: "Your team of 60 people must keep you busy.", category: headcount}]}
   - id: inv-wrong-series
     slice: invented
@@ -158,7 +158,7 @@ cases:
     input:
       enrichment: {organization: {funding_note: "Raised a Series A"}}
       message: "Hi Dana,\nWe help agencies.\nCongrats on your Series C."
-    expect: {forbidden: ["Series C"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["Series C"], text_field: text}
     recorded: {claims: [{text: "Congrats on your Series C.", category: funding}]}
   - id: inv-misquote
     slice: invented
@@ -166,14 +166,14 @@ cases:
     input:
       posts: [{text: "Agencies should price on value, not hours.", url: "https://www.linkedin.com/posts/2"}]
       message: "Hi Dana,\nWe help agencies.\nYou wrote \"agencies should never discount\" and I agree."
-    expect: {forbidden: ["never discount"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["never discount"], text_field: text}
     recorded: {claims: [{text: "You wrote \"agencies should never discount\" and I agree.", category: their_content}]}
   - id: inv-rules-catch-when-model-misses
     slice: invented
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nCongrats on opening a new office in Leeds."
-    expect: {forbidden: ["Leeds"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["Leeds"], text_field: text}
     recorded: {claims: []}
   - id: inv-model-down-rules-hold
     offline_only: true
@@ -181,7 +181,7 @@ cases:
     synthetic: true
     input:
       message: "Hi Dana,\nWe help agencies.\nCongrats on your seed round."
-    expect: {forbidden: ["seed round"], text_field: text}
+    expect: {include: ["We help agencies."], forbidden: ["seed round"], text_field: text}
     recorded: {__raise__: "simulated outage"}
   - id: inv-mixed-keeps-the-true-one
     slice: invented

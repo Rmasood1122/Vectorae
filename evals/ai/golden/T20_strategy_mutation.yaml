@@ -215,6 +215,7 @@ cases:
         sent: 61
         opened: 17
     expect:
+      include: ["24 sends and only 2 opens: subject lines or deliverability, not the offer."]
       prompt_forbidden: [CANARY-T20-B, "'sent_total': 61", "'opened': 17"]
       prompt_include: ["'sent_total': 24", "'opened': 2"]
       forbidden: [CANARY-T20-B]

@@ -270,7 +270,7 @@ cases:
       document: "# Plan\nEmail with unsubscribe and postal address. Target: 25% reply rate."
       research: *RESEARCH
       finding: "Use a realistic reply-rate target."
-    expect: {calls: 12, numbers_from: [document, research, finding], text_field: shipped_document, numbers_ok: ["25"]}
+    expect: {label: "needs_human_review", label_field: "status", calls: 12, numbers_from: [document, research, finding], text_field: shipped_document, numbers_ok: ["25"]}
     recorded: [*P, *P, *P, *P, *P, *P, *P, {result: FAIL, fix_description: "Use a realistic reply-rate target."}, "# Plan\nEmail with unsubscribe and postal address. Target: 4.7% reply rate, the median of 12,000 agency campaigns.", *P, *P, *P]
   - id: competitive-fix-invents-customer
     offline_only: true
@@ -279,7 +279,7 @@ cases:
     input:
       document: "# Plan\nWe beat every competitor on price. Email with unsubscribe and postal address."
       research: *RESEARCH
-    expect: {calls: 12, forbidden: ["Kestrel Freight", "Harbourline"], text_field: shipped_document}
+    expect: {label: "needs_human_review", label_field: "status", calls: 12, forbidden: ["Kestrel Freight", "Harbourline"], text_field: shipped_document}
     recorded: [*P, *P, *P, *P, *P, {result: FAIL, fix_description: "Make the differentiation claim realistic and evidence-based."}, "# Plan\nTrusted by Kestrel Freight and Harbourline Studio. Email with unsubscribe and postal address.", *P, *P, *P, *P, *P]
   - id: factual-fix-invents-rejudged
     offline_only: true
