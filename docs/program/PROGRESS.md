@@ -2,6 +2,11 @@
 
 Resume from this file, `status.json`, `DECISIONS.md` and `git log`.
 
+- 2026-10-25 — **F-SEC-05, website builder half: pages with no workspace are admin-only** (founder choice in session: "Admin-only").
+  - Before, on master: any user on a plan with the builder could see, regenerate, publish and unpublish our marketing pages. Workspaceless users shared one bucket and saw each other's pages. Each generation put every workspace's published titles into the prompt. The public sitemap and the export listed customers' pages under leadpilot.io.
+  - Now: a customer reaches only their workspace's pages, and only an admin reaches the global ones. A non-admin with no workspace gets 409 `workspace_required`. `POST /site/export` is admin-only, and the export and sitemap hold global pages only. The link menu holds only the same site's pages. Publishing a customer page no longer queues our export. The page limit counts only the bucket being written to.
+  - Pre-fix: on the old code, 11 tests fail (the 10 new `TestTenancy` tests and the changed `test_publish_page`).
+  - Not covered: rows created before this by non-admins with no workspace stay in the global bucket. They become admin-only, and there is no creator column to hand them back. Slug uniqueness stays global, so a 409 on create still reveals that a slug exists somewhere. Where customers' published pages are served is not defined in this repo, except for download. The WhatsApp templates half of F-SEC-05 is still OPEN.
 - 2026-10-22 — **Victorae Phase 3, I2: deterministic output checks** (12 fix commits, local, on top of I1).
   - Known defects 41 → 23. Baseline 1,087 → 1,105 cases at pass@1 1.0. No slice below 1.0.
   - Fixed: the `$2.5M` split (T05); "I'm Priya, a real person" (T14); empty research steps saved (T01); the roleplay tell (T21); the nested ICP read flat by the scorers (I3: T27, T28); links in LinkedIn copy (T13), reply drafts (T09) and WhatsApp slots (T04); over-long email bodies (T03); WhatsApp drafts with links, guarantees or invented figures (T33); instructions and links in style and voice profiles (T26).

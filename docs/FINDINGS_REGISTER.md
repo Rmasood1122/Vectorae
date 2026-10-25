@@ -53,6 +53,7 @@ Branches audited: `master` @ `1ad2cab`, `feature/8-new-features` @ `5705e81`.
 - **Evidence:** workspace-less users share a `workspace_id IS NULL` page pool (read/regenerate/publish each other's and the marketing site's pages); WhatsApp templates are deployment-global and editable by any tenant, while `POST /generate` writes drafts derived from private strategy research into the shared table.
 - **Impact:** content leakage/tampering on a multi-tenant SaaS; defensible single-tenant.
 - **Remediation:** dedicated marketing-workspace id; tenant-scope or role-gate template management.
+- **Status (2026-10-25), website builder half:** fixed on branch `claude/bold-heisenberg-58xvzj`. The founder chose admin-only global pages over a dedicated marketing workspace. Only an admin reaches a `workspace_id IS NULL` page. A non-admin with no workspace cannot create pages (409 `workspace_required`). The export (now admin-only), the public sitemap and the generation prompt's link menu never mix workspaces. Tests: `TestTenancy` in `tests/test_website_builder.py`. **The WhatsApp templates half is still OPEN.**
 
 ## F-SEC-06 — debug router guard allows `staging` env (both)
 - **Category:** Config / exposure · **Severity:** LOW · **Confidence:** CONFIRMED

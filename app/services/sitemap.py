@@ -66,7 +66,8 @@ def generate_sitemap_xml(db: Session) -> str:
     try:
         pages = db.execute(
             select(SitePage)
-            .where(SitePage.status == PageStatus.PUBLISHED)
+            .where(SitePage.status == PageStatus.PUBLISHED,
+                   SitePage.workspace_id.is_(None))  # our pages, not customers'
             .order_by(SitePage.slug)
         ).scalars().all()
     except Exception:  # noqa: BLE001 -- see the docstring
