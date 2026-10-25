@@ -54,6 +54,7 @@ Branches audited: `master` @ `1ad2cab`, `feature/8-new-features` @ `5705e81`.
 - **Impact:** content leakage/tampering on a multi-tenant SaaS; defensible single-tenant.
 - **Remediation:** dedicated marketing-workspace id; tenant-scope or role-gate template management.
 - **Status (2026-10-25), website builder half:** fixed on branch `claude/bold-heisenberg-58xvzj`. The founder chose admin-only global pages over a dedicated marketing workspace. Only an admin reaches a `workspace_id IS NULL` page. A non-admin with no workspace cannot create pages (409 `workspace_required`). The export (now admin-only), the public sitemap and the generation prompt's link menu never mix workspaces. Tests: `TestTenancy` in `tests/test_website_builder.py`. **The WhatsApp templates half is still OPEN.**
+- **Status (2026-10-25), WhatsApp templates half:** fixed on branch `claude/bold-heisenberg-58xvzj` (founder choice: "Admins manage"). Create, edit, submit, sync and generate require an admin. A non-admin lists and reads approved templates only. The Campaigns page shows template controls to admins only. Tests: `TestWhoManagesTemplates` in `tests/test_whatsapp_template_lifecycle.py`, `frontend/src/tests/templatesPanel.test.tsx`. With the website builder half merged (#137), **F-SEC-05 is closed once this merges.**
 
 ## F-SEC-06 — debug router guard allows `staging` env (both)
 - **Category:** Config / exposure · **Severity:** LOW · **Confidence:** CONFIRMED
