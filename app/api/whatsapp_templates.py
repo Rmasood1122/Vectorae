@@ -16,17 +16,24 @@ POST   /whatsapp/templates/generate       — Claude-drafted candidates from
 Lifecycle: draft -> submitted -> approved | rejected(-> edit -> draft).
 Only APPROVED templates are sendable — enforced in the adapter's send()
 guard, not just here.
+
+Who: templates belong to the whole install (one Meta WhatsApp Business
+Account), so managing them is an admin task (F-SEC-05). Create, edit,
+submit, sync and generate require an admin. Anyone signed in can list and
+read the APPROVED templates, which is all a sender needs; drafts, submitted
+and rejected ones stay with the admins, because a generated draft is written
+from one account's private strategy research.
 """
 
 import logging
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, is_admin, require_admin
 from app.api.metering import metered
 from app.db.base import get_db
 from app.db.models import (
@@ -35,6 +42,7 @@ from app.db.models import (
     User,
     WhatsAppTemplate,
     WhatsAppTemplateCategory,
+    WhatsAppTemplateStatus,
 )
 from app.integrations.whatsapp import (
     WhatsAppChannel,
@@ -86,6 +94,14 @@ def _get_or_404(template_id: uuid.UUID, db: Session) -> WhatsAppTemplate:
     return row
 
 
+def _readable_or_404(template_id: uuid.UUID, db: Session, admin: bool) -> WhatsAppTemplate:
+    """An admin reads any template; anyone else only an approved one."""
+    row = _get_or_404(template_id, db)
+    if not admin and row.status is not WhatsAppTemplateStatus.APPROVED:
+        raise HTTPException(status_code=404, detail="template not found")
+    return row
+
+
 def _adapter(db: Session) -> WhatsAppChannel:
     try:
         return WhatsAppChannel(session=db)
@@ -99,11 +115,10 @@ def _adapter(db: Session) -> WhatsAppChannel:
 # NOTE on auth model here: WhatsAppTemplate has no user_id/strategy_id
 # column — it is a genuinely deployment-wide resource (one Meta WhatsApp
 # Business Account per self-hosted install, shared by every account on
-# it), so these routes require LOGIN (get_current_user) but are
-# deliberately NOT owner-scoped to a single user, unlike products/
-# strategies/leads/sequences/analytics. The one exception is
-# generate_templates, which reads a specific strategy's private Phase 2/6
-# research to draft candidates — that strategy_id IS ownership-checked.
+# it), so it is not owner-scoped like products/strategies/leads. Writes are
+# admin-only (require_admin); reads show non-admins the approved templates
+# only. generate_templates also reads a specific strategy's private Phase
+# 2/6 research, so that strategy_id is ownership-checked as well.
 # --------------------------------------------------------------------------
 
 
@@ -112,6 +127,7 @@ def create_template(
     body: TemplateCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    _admin: User = Depends(require_admin),
 ) -> dict:
     try:
         row = svc.create_draft(
@@ -129,22 +145,26 @@ def create_template(
 
 @router.get("")
 def list_templates(
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> dict:
-    rows = db.execute(
-        select(WhatsAppTemplate).order_by(WhatsAppTemplate.created_at.desc())
-    ).scalars().all()
+    query = select(WhatsAppTemplate).order_by(WhatsAppTemplate.created_at.desc())
+    if not is_admin(request, current_user):
+        query = query.where(WhatsAppTemplate.status == WhatsAppTemplateStatus.APPROVED)
+    rows = db.execute(query).scalars().all()
     return {"templates": [svc.serialize(r) for r in rows]}
 
 
 @router.get("/{template_id}")
 def get_template(
     template_id: uuid.UUID,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> dict:
-    return svc.serialize(_get_or_404(template_id, db))
+    return svc.serialize(
+        _readable_or_404(template_id, db, is_admin(request, current_user)))
 
 
 @router.put("/{template_id}")
@@ -153,6 +173,7 @@ def update_template(
     body: TemplateUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    _admin: User = Depends(require_admin),
 ) -> dict:
     row = _get_or_404(template_id, db)
     try:
@@ -178,6 +199,7 @@ def submit_template(
     template_id: uuid.UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    _admin: User = Depends(require_admin),
 ) -> dict:
     row = _get_or_404(template_id, db)
     try:
@@ -192,6 +214,7 @@ def sync_template(
     template_id: uuid.UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    _admin: User = Depends(require_admin),
 ) -> dict:
     row = _get_or_404(template_id, db)
     try:
@@ -206,6 +229,7 @@ def generate_templates(
     body: GenerateRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    _admin: User = Depends(require_admin),
 ) -> dict:
     # Unlike the other routes in this file, this one DOES need an
     # ownership check — it reads a specific strategy's private Phase 2/6
