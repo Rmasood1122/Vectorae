@@ -64,12 +64,12 @@ Each Victorae deal becomes an **Opportunity** with `Name` (up to 120 characters)
 
 ## Which leads are sent, and how often?
 
-The 15-minute sweep sends leads that replied or went further: replied, meeting booked, opportunity, closed won, closed lost and disqualified. The checkbox "Also push every verified lead (by default only leads that replied or further)" on the CRM card adds verified and contacted leads. The proposal-sent stage has no status mapping and is not in either list. A lead without an email is never sent. Every deal is sent.
+The 30-minute sweep sends leads that replied or went further: replied, meeting booked, opportunity, closed won, closed lost and disqualified. The checkbox "Also push every verified lead (by default only leads that replied or further)" on the CRM card adds verified and contacted leads. The proposal-sent stage has no status mapping and is not in either list. A lead without an email is never sent. Every deal is sent.
 
 There are two triggers:
 
 - **Straight away**, when a meeting is booked, a reply arrives, a reply is interested, a call completes, a deal is won, you move a lead on the **Pipeline** board, or you create or edit a deal. These pushes send the lead whatever its status, even one the sweep would skip. Edits you make in the CRM table, inline or in bulk, are not pushed straight away; the sweep picks them up.
-- **Every 15 minutes**, a sweep sends what changed since the previous sweep, up to 500 leads and 500 deals per run.
+- **Every 30 minutes**, a sweep sends what changed since the previous sweep, up to 500 leads and 500 deals per run.
 
 **Sync now** on the CRM card sends every eligible record, not only changed ones, up to the same 500 leads and 500 deals, then reads linked records back. It is rate limited: by default 60 times per hour for each CRM.
 
@@ -90,7 +90,7 @@ What Victorae reads back:
 
 Name, email, company, title and phone are never read back.
 
-Changes arrive by **polling** without any setup: the same 15-minute sweep reads every linked record back. **Webhooks** make it immediate. HubSpot sends its own signed webhooks once your admin subscribes the app to them. Salesforce has no built-in equivalent, so your Salesforce admin must build a Flow or Apex callout that posts changes to Victorae with a signature. The exact setup is in `docs/features/crm-ecosystem.md`.
+Changes arrive by **polling** without any setup: the same 30-minute sweep reads every linked record back. **Webhooks** make it immediate. HubSpot sends its own signed webhooks once your admin subscribes the app to them. Salesforce has no built-in equivalent, so your Salesforce admin must build a Flow or Apex callout that posts changes to Victorae with a signature. The exact setup is in `docs/features/crm-ecosystem.md`.
 
 Separately, if your administrator has turned on guardrails, a daily job reads customer and open-deal companies from your CRM into your exclusion lists, which are checked before a message is sent.
 
@@ -100,7 +100,7 @@ Victorae uses fixed rules, not timestamps:
 
 - **Contact details** (name, email, company, title, phone) belong to Victorae. Each push overwrites the CRM value with Victorae's, so an edit made only in the CRM is replaced the next time that lead is pushed. CRM edits to these fields never reach Victorae.
 - **Lead status** only moves forward. A CRM change that would move a lead backwards is ignored, and a closed lead (won, lost or disqualified) is never reopened. Victorae keeps sending its own status on later pushes. This is also what stops the two systems overwriting each other in a loop.
-- **Deals:** during the 15-minute sweep Victorae pushes its changes before it reads the CRM back, so a deal edited in both places since the last sweep ends up with Victorae's values. A change that arrives by CRM webhook is applied when it arrives. A deal reopened in the CRM after being won or lost is not reopened in Victorae by default.
+- **Deals:** during the 30-minute sweep Victorae pushes its changes before it reads the CRM back, so a deal edited in both places since the last sweep ends up with Victorae's values. A change that arrives by CRM webhook is applied when it arrives. A deal reopened in the CRM after being won or lost is not reopened in Victorae by default.
 - **Deleted in the CRM:** Victorae creates the record again on its next push.
 
 When the CRM closes a lead, its sequences stop.

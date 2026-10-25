@@ -22,9 +22,11 @@ logger = logging.getLogger(__name__)
 # the sender's / this app's own domain. Anything else (a model-written
 # "unsubscribe" link to a third party, a link copied from injected lead text)
 # is removed before the body is persisted or sent. The real one-click
-# unsubscribe is added by sequence_engine.build_compliant_email. Same URL
-# shape as evals/ai/graders.py URL_RE.
-_URL_RE = re.compile(r"https?://[^\s\"'<>)\]]+", re.IGNORECASE)
+# unsubscribe is added by sequence_engine.build_compliant_email.
+#
+# Links are found with reply_copilot.urls_in, which also catches links with no
+# scheme ("www.evil.com", "bit.ly/x9", "optout-now.io/remove"): mail and
+# messaging clients turn those into clickable links too.
 _OPT_OUT_WORDS = re.compile(r"(?i)\b(?:unsubscribe|opt[ -]?out|remove (?:me|you)|stop (?:receiving|these))\b")
 
 
@@ -57,14 +59,34 @@ def _own_domains(session: Session, strategy: Strategy) -> set[str]:
     return {h for h in hosts if h}
 
 
+def links_in(text: str | None) -> list[str]:
+    """Every link in `text`, with or without a scheme."""
+    from app.services.reply_copilot import urls_in  # noqa: PLC0415
+
+    return urls_in(text)
+
+
+def _host_and_path(link: str) -> tuple[str, str]:
+    """(host, path) as a browser reads `link`, with or without a scheme.
+
+    Not urlparse: it takes "https://evil.com\\@acme.com/x" to be on acme.com,
+    while browsers treat the backslash as a path separator and open
+    evil.com. The authority ends at the first / \\ ? or #, and the host is
+    what follows its last "@"."""
+    bare = re.sub(r"^https?:", "", (link or "").strip(), flags=re.I).lstrip("/\\")
+    authority = re.split(r"[/\\?#]", bare, maxsplit=1)[0]
+    host = authority.rsplit("@", 1)[-1].split(":", 1)[0].lower().rstrip(".")
+    path = re.split(r"[?#]", bare[len(authority):], maxsplit=1)[0].replace("\\", "/")
+    return host, path
+
+
 def _link_allowed(url: str, booking_url: str | None, own: set[str]) -> bool:
-    host = _host(url)
+    host, path = _host_and_path(url)
     if not host:
         return False
     if booking_url:
-        b = urlparse(booking_url)
-        if host == _host(booking_url) and urlparse(url).path.rstrip("/").startswith(
-                b.path.rstrip("/")):
+        b_host, b_path = _host_and_path(booking_url)
+        if host == b_host and path.rstrip("/").startswith(b_path.rstrip("/")):
             return True
     # Exact host, or its www. form. Other subdomains are not trusted: a
     # shared parent domain would otherwise admit any host under it.
@@ -78,8 +100,7 @@ def strip_foreign_links(body: str, booking_url: str | None, own_domains: set[str
     out: list[str] = []
     removed: list[str] = []
     for line in body.split("\n"):
-        bad = [u.rstrip(".,;:!?") for u in _URL_RE.findall(line)
-               if not _link_allowed(u.rstrip(".,;:!?"), booking_url, own_domains)]
+        bad = [u for u in links_in(line) if not _link_allowed(u, booking_url, own_domains)]
         if not bad:
             out.append(line)
             continue
@@ -409,7 +430,7 @@ def render_whatsapp_variables(
             # The prompt's "a few words each" and the claim check are not link
             # or length controls. A slot is a short phrase in a template Meta
             # approved: a URL (an injected one, say) or a paragraph is refused.
-            if _URL_RE.search(value) or re.search(r"\bwww\.", value, re.I):
+            if links_in(value):
                 raise ValueError(f"template variable {{{{{n}}}}} contains a link")
             if len(value) > MAX_WA_VARIABLE_CHARS:
                 raise ValueError(f"template variable {{{{{n}}}}} is {len(value)} characters "
@@ -519,7 +540,7 @@ def _grounded_brief(brief: str, lead: Lead, *sources: str) -> str:
     if not brief:
         return ""
     found = grounding.problems(brief, *sources)
-    if _URL_RE.search(brief) or re.search(r"\bwww\.", brief, re.I):
+    if links_in(brief):
         found.append("a link")
     if found:
         logger.warning("brief for lead %s replaced by the fallback: %s",

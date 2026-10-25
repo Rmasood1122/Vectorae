@@ -84,7 +84,7 @@ Nothing you built is deleted or cancelled. The lower plan's limits apply from th
 - **Leads:** leads you already have stay. Sourcing more for a strategy that is at or over the new limit is refused.
 - **Sequences:** a sequence is not stopped, but one that has more steps or uses a channel the new plan does not include cannot be launched again.
 - **Scheduled messages:** each one is checked again when it comes due. A message on a channel your plan no longer includes, or a step past your plan's step limit, is held, not sent and not deleted. Its reason starts with "plan_limit:". Steps your plan still covers keep sending.
-- **After an upgrade:** a background check runs every 15 minutes and releases held messages the plan covers again. They then go through all the usual checks before sending.
+- **After an upgrade:** a background check runs every 30 minutes and releases held messages the plan covers again. They then go through all the usual checks before sending.
 
 Messages in sequences enrolled before 12 October 2026 are not held this way. Your daily AI limit also changes to the new plan's. Details are in [Plans, limits and billing](22-plans-limits-billing.md) and [Sequences and follow-ups](08-sequences-and-follow-ups.md).
 

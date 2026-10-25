@@ -146,11 +146,11 @@ tests/integration/conftest.py | leadpilot role | B: local test database role nam
 tests/test_connector_skill.py | leadpilot | B: plugin, skill and MCP server names the test checks against the shipped manifests
 
 # --- Legal, consent and compliance text (C: founders + counsel, VIC-KEEP) ----
-frontend/src/app/terms/page.tsx | .* | C: Terms of Service; legal text names the product and operator; changes need counsel
-frontend/src/app/privacy/page.tsx | .* | C: Privacy Policy; legal text; changes need counsel
+frontend/src/app/terms/page.tsx | ^(?!\s*title:)(?!\s*Vectorae\s*$).* | C: Terms of Service body; legal text names the product and operator; changes need counsel. Not the page title or the site header (VIC-NAME: those are Victorae)
+frontend/src/app/privacy/page.tsx | ^(?!\s*title:)(?!\s*Vectorae\s*$).* | C: Privacy Policy body; legal text; changes need counsel. Not the page title or the site header (VIC-NAME: those are Victorae)
 docs/PRIVACY_POLICY.md | .* | C: privacy policy source; legal text; changes need counsel
 frontend/src/app/oauth/consent/page.tsx | Vectorae | C: OAuth connector consent screen text shown before a grant
-app/services/voice_twin.py | this Vectorae|consent for Vectorae|Vectorae does not keep my recordings | C: versioned voice-clone written consent (CONSENT_VERSION must bump and owners re-consent if it changes)
+app/services/voice_twin.py | owner of this Vectorae|consent for Vectorae|Vectorae does not keep my recordings | C: versioned voice-clone written consent (CONSENT_VERSION must bump and owners re-consent if it changes)
 app/services/voice_twin.py | name=f"Vectorae - |\(Vectorae voice twin\) | C: voice name/description created at ElevenLabs; existing voices keep the old name
 frontend/src/components/settings/VoiceTwinCard.tsx | not kept by Vectorae|Vectorae does not keep them|Vectorae keeps retrying | C: voice-twin data-handling statements in the consent flow
 app/services/daily_send_approval.py | Vectorae's automatic LinkedIn sending | C: versioned LinkedIn risk disclosure (LINKEDIN_WARNING_VERSION must bump if it changes)

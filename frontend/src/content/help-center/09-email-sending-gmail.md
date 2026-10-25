@@ -81,7 +81,7 @@ Only inside the send window, in each **lead's own time zone**:
 - weekends skipped by default;
 - leads with no known time zone use the deployment's fallback zone, UTC by default.
 
-An administrator can change the window for a workspace, a recipient region or a channel, but only within 07:00 to 20:00 local time. Victorae checks for due messages every 60 seconds and re-checks every rule at the moment of sending.
+An administrator can change the window for a workspace, a recipient region or a channel, but only within 07:00 to 20:00 local time. Victorae checks for due messages every 30 minutes by default and re-checks every rule at the moment of sending.
 
 ## What does Victorae add to every email?
 
@@ -94,7 +94,7 @@ Clicking the unsubscribe link, or replying with a request to stop, suppresses th
 
 ## What happens when an email bounces?
 
-Victorae checks each connected inbox for replies every 5 minutes by default. A delivery-failure notice that it can match to a sent message is treated as a bounce: the lead is dropped and all of their sequences stop.
+Victorae checks each connected inbox for replies every 30 minutes by default. A delivery-failure notice that it can match to a sent message is treated as a bounce: the lead is dropped and all of their sequences stop.
 
 After each bounce, Victorae checks the campaign's bounce rate (bounces divided by messages sent across the strategy). Once at least 10 messages have been sent, a bounce rate above **3%** pauses the whole campaign automatically. Your workspace's compliance rules may set a lower threshold, never a higher one. You get a notification, and nothing more is sent until a person resumes the campaign.
 

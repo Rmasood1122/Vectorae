@@ -502,3 +502,43 @@ class TestEndpoints:
         db_session.commit()
 
         assert client.get(f"/crm/replies/{reply.id}/intelligence").status_code == 404
+
+
+class TestClassifierOptOutBackstop:
+    """Phase 5 review: the inbound classifier returned the model's label as
+    is, and the lead is suppressed only on "unsubscribe_request". A plain
+    opt-out the model mislabelled left the lead unsuppressed and the sequence
+    running. The written-reply opt-out detector now overrides the label."""
+
+    @pytest.mark.parametrize("body", [
+        "Stop emailing me.", "Please remove me from your list.",
+        "Unsubscribe", "Do not contact me again.", "Delete my data please."])
+    def test_a_plain_opt_out_is_an_unsubscribe_whatever_the_model_said(self, fake_claude,
+                                                                        body):
+        from app.services.reply_classification import classify_reply
+
+        fake_claude.default_reply_class = "question"
+        assert classify_reply("m.okafor@example.test", "Re: hi", body) == "unsubscribe_request"
+
+    def test_a_newsletter_footer_in_the_signature_is_not_an_opt_out(self, fake_claude):
+        from app.services.reply_classification import classify_reply
+
+        fake_claude.default_reply_class = "interested"
+        body = "Yes, let's talk next week.\n\n--\nTo unsubscribe from our newsletter, click here."
+        assert classify_reply("m.okafor@example.test", "Re: hi", body) == "interested"
+
+    def test_a_bounce_that_quotes_our_footer_stays_a_bounce(self, fake_claude):
+        from app.services.reply_classification import classify_reply
+
+        fake_claude.default_reply_class = "bounce"
+        body = ("Delivery has failed to these recipients.\n\nOriginal message:\n"
+                "Hi Sara, worth a chat?\nUnsubscribe: https://app.example.test/u/abc")
+        assert classify_reply("Mail Delivery System <MAILER-DAEMON@mx.example.test>",
+                              "Undeliverable", body) == "bounce"
+
+    def test_an_ordinary_reply_keeps_the_model_label(self, fake_claude):
+        from app.services.reply_classification import classify_reply
+
+        fake_claude.default_reply_class = "interested"
+        assert classify_reply("m.okafor@example.test", "Re: hi",
+                              "Sounds good, Tuesday works.") == "interested"

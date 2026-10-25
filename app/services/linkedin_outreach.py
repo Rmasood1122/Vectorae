@@ -152,10 +152,10 @@ def render(session: Session, strategy: Strategy, lead: Lead, step, action: str) 
     """{"text", "subject"?} for one LinkedIn touch."""
     from app.services import personalization_context, style_profile  # noqa: PLC0415
     from app.services.message_personalization import (  # noqa: PLC0415
-        _URL_RE,
-        _host,
+        _host_and_path,
         _own_domains,
         _playbook,
+        links_in,
         strip_foreign_links,
     )
 
@@ -188,7 +188,7 @@ def render(session: Session, strategy: Strategy, lead: Lead, step, action: str) 
     # sender's own domains or ones the step brief (ours) names; a link an
     # injected profile or post asked for is removed, as in email bodies.
     allowed = _own_domains(session, strategy) | {
-        _host(u.rstrip(".,;:!?")) for u in _URL_RE.findall(step.template or "")}
+        _host_and_path(u)[0] for u in links_in(step.template or "")}
     text = strip_foreign_links(text, None, {h for h in allowed if h})
     if not text:
         raise ValueError("LinkedIn writer returned an empty message")

@@ -49,7 +49,7 @@ You can copy the brief as Markdown. Your Victorae administrator can turn automat
 
 ## Will I get reminders before the call?
 
-Yes, by default. Victorae sends a day-before reminder once the call is within 24 hours, and a 1-hour reminder whose text is your opening script. Each is sent at most once. Cancelling the booking stops both, and a reschedule sets them up again. Your administrator can switch either reminder off.
+Yes, by default. Victorae sends a day-before reminder once the call is within 24 hours, and a 1-hour reminder whose text is your opening script. Reminders go out at the first check after that point, and checks run every 30 minutes by default, so the 1-hour reminder can arrive up to half an hour later than the hour mark. Each is sent at most once. Cancelling the booking stops both, and a reschedule sets them up again. Your administrator can switch either reminder off.
 
 ## What are the call script, checklist and practice calls?
 

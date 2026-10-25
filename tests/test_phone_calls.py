@@ -367,6 +367,32 @@ class TestAnalysis:
         assert db_session.query(m.ConsentEvent).filter_by(
             lead_id=placed_call.lead_id, kind="withdrawn").count() == 1
 
+    @pytest.mark.parametrize("said", [
+        "Do not contact me again.", "Stop contacting me.", "Never call here again.",
+        "I want to opt out.", "Not interested, don't call back.", "Delete my data.",
+        "Leave me alone.", "Please don't phone me.", "Don’t ring me again."])
+    def test_common_stop_wordings_are_recorded_when_the_model_is_down(
+            self, db_session, placed_call, fake_claude, said):
+        """The pre-model check is the only stop handling when analysis fails.
+        It used to know only "stop calling" / "don't call me" style phrases,
+        so "Do not contact me again" left the number callable."""
+        from app.services import voice_twin
+        from app.workers.lead_tasks import is_suppressed
+
+        fake_claude.call_analysis_response = RuntimeError("simulated gateway outage")
+        placed_call.transcript = f"AI: Hi Sara, this is an AI assistant.\nUser: {said}"
+        db_session.commit()
+        assert voice_twin.post_call_check(db_session, placed_call)["stop"] is True
+        assert is_suppressed(db_session, phone="+1 (555) 010-2000")
+
+    @pytest.mark.parametrize("said", [
+        "Sounds good, call me Tuesday.", "I can't stop thinking about month-end.",
+        "Don't worry, call me later this week."])
+    def test_ordinary_replies_are_not_a_stop(self, said):
+        from app.services import voice_twin
+
+        assert voice_twin.caller_asked_to_stop([said]) is False
+
     def test_outbound_stop_the_model_missed_is_still_recorded(self, db_session, placed_call,
                                                               fake_claude):
         from app.workers.lead_tasks import is_suppressed

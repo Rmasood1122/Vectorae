@@ -286,12 +286,15 @@ celery_app.conf.beat_schedule = {
         "task": "leadpilot.network.email_weekly_refresh",
         "schedule": crontab(day_of_week="monday", hour=4, minute=25),
     },
-    # Replies are polled first in each burst and due messages dispatched a
-    # minute later, so a reply that arrived since the last burst is on record
-    # before the next step is sent.
+    # Replies are polled first in each burst and due messages dispatched at
+    # its end, so a reply that arrived since the last burst ("stop" included)
+    # is on record before the next step is sent. The poll gets four minutes:
+    # it walks every mailbox and classifies each reply with a model call
+    # (with retries), and the outreach worker runs tasks concurrently, so a
+    # one-minute gap let dispatch overtake a slow poll.
     "dispatch-due-messages": {
         "task": "leadpilot.outreach.dispatch",
-        "schedule": _sweep(1),
+        "schedule": _sweep(4),
     },
     "poll-gmail-replies": {
         "task": "leadpilot.outreach.poll_replies",

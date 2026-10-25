@@ -13,6 +13,7 @@ Victorae does NOT auto-reply to humans in M3.
 """
 
 import logging
+import re
 
 from app.services import prompt_safety
 from app.services.anthropic_client import JUDGE_TEMPERATURE, get_client
@@ -74,15 +75,47 @@ def classify_reply(from_address: str, subject: str | None, body: str,
     Feature Group 9: an engaged class then gets the automated-reply second
     pass (reply_fraud.second_pass), unless the admin turned
     `reply_fraud_detection_enabled` off."""
-    from app.services import reply_fraud  # noqa: PLC0415
+    from app.services import reply_copilot, reply_fraud  # noqa: PLC0415
+
+    label = _classify(from_address, subject, body)
+    # A plain opt-out ("stop emailing me", "unsubscribe", "remove me", "delete
+    # my data") is an unsubscribe_request whatever the model said: a mislabel
+    # would leave the lead unsuppressed and the sequence running. Same
+    # detector as Reply Copilot and reply intelligence; quoted text (our own
+    # footer) and the sender's signature are ignored. Mail from a mailer
+    # daemon keeps the model's label, so a bounce that quotes our footer is
+    # still a bounce.
+    if (label != "unsubscribe_request" and not _is_mailer_daemon(from_address)
+            and reply_copilot.opt_out_language(_without_signature(body))):
+        logger.warning("reply classified %r but asks to opt out; recorded as "
+                       "unsubscribe_request", label)
+        return "unsubscribe_request"
 
     enabled = True
     if session is not None:
         from app.services import system_settings  # noqa: PLC0415
 
         enabled = bool(system_settings.get(session, "reply_fraud_detection_enabled"))
-    return reply_fraud.second_pass(_classify(from_address, subject, body),
-                                   from_address, subject, body, enabled=enabled)
+    return reply_fraud.second_pass(label, from_address, subject, body, enabled=enabled)
+
+
+_MAILER_DAEMON = re.compile(r"^(?:mailer-daemon|postmaster|mail-daemon)@", re.I)
+
+
+# A signature starts at a line that is "--" (the "-- " delimiter, often
+# without its trailing space). A newsletter footer in it is not an opt-out.
+_SIGNATURE = re.compile(r"^--[ \t]*$", re.M)
+
+
+def _without_signature(body: str | None) -> str:
+    return _SIGNATURE.split(body or "", maxsplit=1)[0]
+
+
+def _is_mailer_daemon(from_address: str | None) -> bool:
+    address = (from_address or "").strip()
+    if "<" in address:
+        address = address.rsplit("<", 1)[1].rstrip(">")
+    return bool(_MAILER_DAEMON.match(address.strip()))
 
 
 def _classify(from_address: str, subject: str | None, body: str) -> str:

@@ -288,3 +288,15 @@ def test_a_sweep_interval_that_fits_the_hour_is_accepted(minutes):
     from app.config import Settings
 
     assert Settings(beat_sweep_minutes=minutes).beat_sweep_minutes == minutes
+
+
+def test_replies_are_polled_well_before_due_messages_are_dispatched():
+    """A "stop" reply must be on record before the next step goes out. The
+    poll walks every mailbox and classifies each reply with a model call, and
+    the outreach worker runs tasks concurrently, so dispatch waits until the
+    end of the burst (4 minutes) rather than one minute."""
+    sched = celery_app.conf.beat_schedule
+    polls = sorted(sched["poll-gmail-replies"]["schedule"].minute)
+    dispatches = sorted(sched["dispatch-due-messages"]["schedule"].minute)
+    assert len(polls) == len(dispatches)
+    assert all(d - p >= 4 for p, d in zip(polls, dispatches))

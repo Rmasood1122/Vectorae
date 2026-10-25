@@ -522,6 +522,40 @@ class TestForeignLinksStripped:
             self._render(monkeypatch, db_session, verified_strategy, lead,
                          email_sequence.steps[0], "https://evil.example.test/x")
 
+    @pytest.mark.parametrize("link", ["www.bait.example.com", "bait.example.com/claim",
+                                      "bit.ly/x9q", "https://bait.example.com\\@brightline.example/x"])
+    def test_a_link_without_a_scheme_or_with_a_backslash_trick_is_removed(
+            self, monkeypatch, db_session, lead, test_user, verified_strategy,
+            email_sequence, fake_claude, link):
+        """Mail clients make "www.x.com" and "x.com/path" clickable, and a
+        browser opens bait.example.com for "https://bait.example.com\\@own/x".
+        Only https?:// links used to be checked, so these went out."""
+        test_user.email = "owner@brightline.example"
+        db_session.commit()
+        body = self._render(
+            monkeypatch, db_session, verified_strategy, lead, email_sequence.steps[0],
+            f"Hi Sara, worth a chat about month-end? Details: {link}")
+        assert "bait" not in body and "bit.ly" not in body
+        assert body.startswith("Hi Sara, worth a chat about month-end?")
+
+    def test_a_scheme_less_opt_out_line_is_dropped(self, monkeypatch, db_session, lead,
+                                                   verified_strategy, email_sequence,
+                                                   fake_claude):
+        body = self._render(
+            monkeypatch, db_session, verified_strategy, lead, email_sequence.steps[0],
+            "Hi Sara,\nWorth a chat?\nTo unsubscribe go to optout-now.io/remove")
+        assert body == "Hi Sara,\nWorth a chat?"
+
+    def test_own_domain_without_a_scheme_is_kept(self, monkeypatch, db_session, lead,
+                                                  test_user, verified_strategy,
+                                                  email_sequence, fake_claude):
+        test_user.email = "owner@brightline.com"
+        db_session.commit()
+        body = self._render(
+            monkeypatch, db_session, verified_strategy, lead, email_sequence.steps[0],
+            "Hi Sara, pricing is on brightline.com/pricing and www.brightline.com.")
+        assert body == "Hi Sara, pricing is on brightline.com/pricing and www.brightline.com."
+
 
 class TestBodyLengthCeiling:
     """T03: the prompt's 'under 140 words' is not a control. A runaway body is
@@ -573,7 +607,9 @@ class TestWhatsAppSlotChecks:
             variable_descriptions={"1": "their pain"}, variable_mapping={})
 
     @pytest.mark.parametrize("value", ["month-end at https://evil.example.test/x",
-                                       "month-end, see www.evil.example.test"])
+                                       "month-end, see www.evil.example.test",
+                                       "month-end, see bait.example.com/claim",
+                                       "month-end via bit.ly/x9q"])
     def test_a_link_in_a_slot_is_refused(self, monkeypatch, db_session,
                                          verified_strategy, lead, value):
         with pytest.raises(ValueError, match="link"):

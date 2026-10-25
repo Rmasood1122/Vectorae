@@ -116,7 +116,7 @@ Open the strategy and look at the **Why isn't this sending?** panel. It lists, f
 5. **Is a message waiting for review?** Held messages wait in the send-review queue until approved.
    **Has today's automatic sending been approved?** Automatic messages wait until the account owner or a manager approves today's sending for that channel (the banner at the top of each page links to the approval page). Approving only email leaves LinkedIn waiting.
 6. **Is the channel in your plan, and is WhatsApp allowed?** WhatsApp needs a recorded opt-in and an approved template or an open 24-hour window.
-7. **Is the background worker running?** All sending is done by a background worker on the server, which checks for due messages every minute by default. If it is not running, nothing is sent and strategies do not progress, but nothing is lost. On a deployment you run yourself, the server's `/health` address reports "degraded" when the worker has not checked in for more than 2 minutes. Otherwise, contact support.
+7. **Is the background worker running?** All sending is done by a background worker on the server, which checks for due messages every 30 minutes by default. If it is not running, nothing is sent and strategies do not progress, but nothing is lost. On a deployment you run yourself, the server's `/health` address reports "degraded" when the worker has not checked in for more than 2 minutes. Otherwise, contact support.
 
 ## My emails are bouncing. What happens?
 

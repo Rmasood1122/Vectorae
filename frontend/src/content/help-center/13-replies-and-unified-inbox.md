@@ -35,7 +35,7 @@ When a prospect replies by email, WhatsApp or LinkedIn, Victorae stores the repl
 
 ## How does Victorae pick up replies?
 
-- **Email:** Victorae checks your connected Gmail accounts for new replies on a schedule. The default is every 300 seconds (5 minutes); your deployment can change this.
+- **Email:** Victorae checks your connected Gmail accounts for new replies on a schedule. The default is every 30 minutes; your deployment can change this.
 - **WhatsApp and LinkedIn:** replies arrive through the providers' webhooks.
 
 An email reply is matched to a prospect first by the email thread, then by the sender's address. Matching only looks at prospects that belong to the account whose Gmail received the reply, so another customer's reply can never change your leads.

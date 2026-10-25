@@ -68,7 +68,7 @@ Every booked meeting, won deal and **interested** reply is credited to a message
 - **Last touch:** nothing is linked, so the most recent message sent **before** the outcome gets the credit. This is a guess, and its confidence drops with time: 0.7 within a day, 0.55 within 3 days, 0.4 within a week, 0.25 within a month, 0.1 after that.
 - **None:** nothing was sent before the outcome, so nothing is credited.
 
-The panel groups results by step and by channel, and each group shows how many entries are confirmed. When fewer than half are confirmed, a caveat appears above the totals. Attribution is updated every 15 minutes, and **Recompute** runs it now. A message sent after the outcome is never credited.
+The panel groups results by step and by channel, and each group shows how many entries are confirmed. When fewer than half are confirmed, a caveat appears above the totals. Attribution is updated every 30 minutes, and **Recompute** runs it now. A message sent after the outcome is never credited.
 
 ## How are benchmarks calculated, and what are they not?
 

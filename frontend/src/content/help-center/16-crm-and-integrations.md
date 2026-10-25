@@ -58,7 +58,7 @@ Go to **Settings**, open the **Integrations** tab, and click **Connect** on the 
 - Tick "Also push every verified lead (by default only leads that replied or further)" to send verified and contacted leads as well (see [HubSpot and Salesforce sync in detail](36-crm-sync-field-mapping.md)).
 - Deals become HubSpot **deals** (linked to the contact) or Salesforce **opportunities**.
 
-Changes are pushed straight away on key events (meeting booked, reply, call, deal won, a kanban move, a deal edit) and also in a sweep every 15 minutes.
+Changes are pushed straight away on key events (meeting booked, reply, call, deal won, a kanban move, a deal edit) and also in a sweep every 30 minutes.
 
 **From your CRM to Victorae**, only for records Victorae linked, and only forward:
 
@@ -67,7 +67,7 @@ Changes are pushed straight away on key events (meeting booked, reply, call, dea
 - A converted Salesforce lead becomes an opportunity; "Closed - Not Converted" becomes disqualified.
 - A HubSpot deal created on a linked contact is imported as a Victorae deal.
 
-A CRM change never moves a lead backwards and never reopens a closed lead. Closing a lead in this way stops its sequences. The 15-minute sweep reads linked records back without any setup in your CRM; your CRM admin can also add webhooks to make changes arrive immediately.
+A CRM change never moves a lead backwards and never reopens a closed lead. Closing a lead in this way stops its sequences. The 30-minute sweep reads linked records back without any setup in your CRM; your CRM admin can also add webhooks to make changes arrive immediately.
 
 ## How do I get Slack notifications?
 
