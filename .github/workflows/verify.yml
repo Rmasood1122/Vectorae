@@ -123,7 +123,11 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
           base="${{ github.event.pull_request.base.sha }}"
-          if git diff --name-only "$base" HEAD | grep -qE '^frontend/'; then
+          # docs/help-center/ is the source of the in-app help copy that
+          # frontend/src/tests/helpCenterCopy.test.ts compares against, so a
+          # docs-only article change must run the frontend tests too (#128
+          # skipped them and left master red until #134).
+          if git diff --name-only "$base" HEAD | grep -qE '^(frontend/|docs/help-center/)'; then
             echo "run=true" >> "$GITHUB_OUTPUT"
           else
             echo "run=false" >> "$GITHUB_OUTPUT"

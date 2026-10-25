@@ -42,10 +42,12 @@ jobs:
           cache: 'gradle'
 
       # ── 3. Node.js (required by Next.js build + Capacitor CLI) ───────────────
-      - name: Set up Node.js 18
+      # Next.js 16 needs Node 20.9 or newer; 22 matches verify-frontend and
+      # the frontend Dockerfile (node:22-alpine).
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
