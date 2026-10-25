@@ -29,7 +29,7 @@ evidence is a test file, the file was confirmed present.
 | F-AI-06 | FIXED | `app/verification/loop.py` `_support_block` wraps research outputs, patterns and the GTM plan in `prompt_safety.block` |
 | F-OPS-01 | FIXED in manifest | `pyproject.toml`; `tests/test_firebase_dependency_declared.py`. The image itself was not rebuilt in this check |
 | F-OPS-02 | FIXED | `app/integrations/calendly.py` timestamp tolerance; `tests/test_calendly_webhook_freshness.py` |
-| F-OPS-03 | **OPEN** | both `app/config.py` and `app/core/config.py` exist; 97 modules import the first, 12 the second |
+| F-OPS-03 | FIXED | one Settings class in `app/config.py`: the 48 fields only `app/core/config.py` had moved unchanged, the 19 shared names are read-only aliases (`_CORE_ALIASES`), and `app/core/config.py` re-exports it. `tests/test_one_settings_module.py` also fails if one env var is ever read by two fields |
 | F-OPS-04 | FIXED | `app/services/notifications.py` accepts both names; `tests/test_firebase_credentials_env.py` |
 | F-OPS-05 | FIXED | `app/core/config.py` warning text |
 | F-OPS-06 | FIXED | `requirements.lock`, `frontend/package-lock.json` |
