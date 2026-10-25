@@ -46,7 +46,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy import false, func, or_, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, require_admin
+from app.api.deps import get_current_user, is_admin, require_admin
 from app.api.metering import refuse_if_daily_limit_reached
 from app.core.plans import PlanLimitExceeded, check_feature, check_plan_limit, plan_limit_response
 from app.core.rate_limiting import enforce_rate_limit
@@ -192,19 +192,6 @@ def _workspace_id_for(db: Session, current_user: User):
     ).scalars().first()
 
 
-def _is_admin(request: Request, current_user: User) -> bool:
-    """Whether the person signed in may manage our own marketing pages.
-
-    The same test as every admin route (require_admin): the signed-in actor,
-    not the workspace owner they act for, and never through a personal API key.
-    """
-    try:
-        require_admin(request, current_user)
-    except HTTPException:
-        return False
-    return True
-
-
 def _visible_pages_filter(workspace_id, admin: bool):
     """Pages this user may see: their workspace's, plus the global ones for an
     admin. A non-admin with no workspace sees none."""
@@ -220,7 +207,7 @@ def _target_workspace_id(db: Session, request: Request, current_user: User):
     """Where this user's new pages go: their workspace, or the global bucket
     for an admin with none. Anyone else is refused before anything is written."""
     workspace_id = _workspace_id_for(db, current_user)
-    if workspace_id is None and not _is_admin(request, current_user):
+    if workspace_id is None and not is_admin(request, current_user):
         raise HTTPException(
             status_code=409,
             detail={"error": "workspace_required",
@@ -236,7 +223,7 @@ def _owned_page(db: Session, page_id: uuid.UUID, current_user: User,
     page = db.execute(
         select(SitePage).where(
             SitePage.id == page_id,
-            _visible_pages_filter(workspace_id, _is_admin(request, current_user)))
+            _visible_pages_filter(workspace_id, is_admin(request, current_user)))
     ).scalars().first()
     if page is None:
         raise HTTPException(status_code=404, detail="page not found")
@@ -341,7 +328,7 @@ def list_pages(request: Request,
                current_user: User = Depends(get_current_user)) -> list[PageOut]:
     """This user's pages, newest first."""
     where = [_visible_pages_filter(_workspace_id_for(db, current_user),
-                                   _is_admin(request, current_user))]
+                                   is_admin(request, current_user))]
     if page_type is not None:
         where.append(SitePage.page_type == page_type)
     if status is not None:

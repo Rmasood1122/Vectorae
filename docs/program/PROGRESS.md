@@ -2,6 +2,11 @@
 
 Resume from this file, `status.json`, `DECISIONS.md` and `git log`.
 
+- 2026-10-25 — **F-SEC-05, WhatsApp templates half: admins manage templates** (founder choice in session: "Admins manage"). Gate PR #138 first: the sealed opt-out API test now creates its template as an admin, with the same assertions.
+  - Before, on master: any signed-in user could create, edit, submit to Meta, sync and generate the install's templates. Generated drafts, written from one account's private research, were readable by every user.
+  - Now: those five routes require an admin; generate still checks that the strategy is the caller's. A non-admin lists and reads APPROVED templates only. The Campaigns template panel is its own component, and its controls appear for admins only. `is_admin` is shared from `app/api/deps.py`; attribution and website builder used their own copies. Help article 10 updated.
+  - Pre-fix: on the old code, the 2 non-admin tests fail; the 2 admin tests pin kept behaviour.
+  - Not covered: a non-admin can still name a draft template in a sequence step by typing its name (the server accepts any template that is not rejected); it sends only once approved. Nothing imports `frontend/src/components/campaign/TemplateManager.tsx`, so it looks unused; reported, not removed. Making the install owner an admin is `ADMIN_EMAIL` (startup) or `app/cli/create_admin.py`.
 - 2026-10-25 — **F-SEC-05, website builder half: pages with no workspace are admin-only** (founder choice in session: "Admin-only").
   - Before, on master: any user on a plan with the builder could see, regenerate, publish and unpublish our marketing pages. Workspaceless users shared one bucket and saw each other's pages. Each generation put every workspace's published titles into the prompt. The public sitemap and the export listed customers' pages under leadpilot.io.
   - Now: a customer reaches only their workspace's pages, and only an admin reaches the global ones. A non-admin with no workspace gets 409 `workspace_required`. `POST /site/export` is admin-only, and the export and sitemap hold global pages only. The link menu holds only the same site's pages. Publishing a customer page no longer queues our export. The page limit counts only the bucket being written to.
