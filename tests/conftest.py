@@ -88,7 +88,8 @@ os.environ.setdefault("SMS_PROVIDER", "memory")
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -129,6 +130,16 @@ _assert_local_redis_only()
 # --------------------------------------------------------------------------
 # Database
 # --------------------------------------------------------------------------
+
+
+@event.listens_for(Engine, "connect")
+def _sqlite_without_fsync(dbapi_connection, _record):
+    """Tests only: SQLite files are scratch, so skip the fsync after each
+    write. A migration test that builds ~130 tables in a file database spent
+    ~1 s in fsync; ~0.2 s without. Data, schema and the journal are unchanged
+    (synchronous only decides whether SQLite waits for the disk)."""
+    if type(dbapi_connection).__module__.startswith("sqlite3"):
+        dbapi_connection.execute("PRAGMA synchronous=OFF")
 
 
 _SCHEMA_TEMPLATE = None
