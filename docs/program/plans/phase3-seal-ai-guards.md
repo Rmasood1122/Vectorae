@@ -1,6 +1,6 @@
 # Gate change (proposed, not yet made): seal the Phase 3 AI guard tests
 
-Date: 2026-10-22. **Status: proposal.** Nothing in `evals/compliance_testset.yaml`, `evals/baseline.json` or the block fixtures has changed. Sealing is its own reviewed PR, made on a `claude/gate-` branch after the Phase 3 PRs merge (CLAUDE.md; the `protect_sealed` hook). The pattern is the same as #86, #92 and #94.
+Date: 2026-10-22. **Status: superseded 2026-10-25 by `phase5-seal-ai-and-tenancy-guards.md` (sealed).** Original proposal: Nothing in `evals/compliance_testset.yaml`, `evals/baseline.json` or the block fixtures has changed. Sealing is its own reviewed PR, made on a `claude/gate-` branch after the Phase 3 PRs merge (CLAUDE.md; the `protect_sealed` hook). The pattern is the same as #86, #92 and #94.
 
 ## Why
 

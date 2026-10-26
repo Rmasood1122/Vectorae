@@ -32,7 +32,7 @@ import pytest
 from app.config import settings
 from app.db import models as m
 from app.integrations.token_store import TokenStore
-from app.services import credentials, meeting_followup, meeting_prep, system_settings
+from app.services import credentials, meeting_prep, system_settings
 from app.workers import meeting_prep_tasks
 
 from .conftest import auth_headers
@@ -381,30 +381,6 @@ class TestGeneration:
         assert sections["discovery_questions"] == ["single string"]
         assert sections["why_they_booked"] == ""
 
-    def test_an_invented_price_and_quote_are_removed(self, db_session, test_user, lead,
-                                                     fake_claude, emitted):
-        """T17: the seller repeats the brief on the call. A price the records
-        never named and a quote the prospect never wrote are removed; the
-        grounded rest is kept."""
-        db_session.add(m.InboundReply(lead_id=lead.id, from_address=lead.email,
-                                      body="Sure, Thursday works.",
-                                      classification="interested"))
-        db_session.commit()
-        fake_claude.meeting_prep_response = {
-            "why_they_booked": 'They said "we are switching providers this quarter". '
-                               "They replied that Thursday works.",
-            "deal_structure": "Offer $4,500 for a year up front.",
-            "talking_points": ["Inspections backlog", "Mention the 73% saving"],
-            "opening_60_seconds": "Thanks for booking.",
-        }
-        brief = _brief(db_session, lead, test_user)
-        assert meeting_prep.generate_brief(db_session, brief.id) == "ready"
-        db_session.refresh(brief)
-        sections = brief.sections_json
-        assert sections["why_they_booked"] == "They replied that Thursday works."
-        assert sections["deal_structure"] == ""
-        assert sections["talking_points"] == ["Inspections backlog"]
-        assert "4,500" not in brief.content_md and "switching providers" not in brief.content_md
 
     def test_reschedule_rearms_reminders(self, db_session, test_user, lead):
         start = datetime.now(UTC) + timedelta(hours=10)
@@ -611,21 +587,6 @@ class TestMeetingOutcome:
         assert send.json()["draft_status"] == "sent"
         assert client.post(f"/meeting-outcomes/{body['id']}/send").status_code == 409
 
-    def test_an_invented_price_date_or_promise_is_removed_from_the_draft(
-            self, client, db_session, lead, fake_claude):
-        """T18: the draft reads as the seller's promise. A price, date, free
-        extra or guarantee nobody stated is removed; what the notes support
-        stays."""
-        fake_claude.followup_email_response = {
-            "subject": "Next steps",
-            "body": "Hi Sara,\n\nThanks for today. I'll send the 2-page proposal by Friday."
-                    " The Studio plan is $2,400 a year.\n\nOnboarding is free onboarding and "
-                    "we offer a money-back guarantee.\n\nMaren"}
-        resp = client.post(f"/leads/{lead.id}/meeting-outcome", json={
-            "outcome": "interested", "notes": "Agreed: I send the 2-page proposal by Friday."})
-        assert resp.status_code == 201, resp.text
-        assert resp.json()["followup_body"] == (
-            "Hi Sara,\n\nThanks for today. I'll send the 2-page proposal by Friday.\n\nMaren")
 
     def test_interested_sets_next_action_no_deal(self, client, db_session, lead,
                                                  fake_claude):

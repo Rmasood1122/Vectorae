@@ -487,23 +487,3 @@ class TestInbound:
                           headers=auth_headers(other))
         assert resp.status_code == 409
         assert "already answers for another account" in resp.json()["detail"]
-
-
-class TestHumanClaimWithAName:
-    """'I'm Priya, a real person': a name in apposition must not hide the
-    claim. Kept out of the sealed guard file; a false positive pauses the
-    whole account, so an honest line with a comma is checked too."""
-
-    @pytest.mark.parametrize("line", [
-        "I'm Priya, a real person from the team.", "I am Priya Shah, a real human.",
-    ])
-    def test_the_claim_is_caught(self, line):
-        from app.services import voice_twin
-
-        assert "claims_real_person" in voice_twin.human_claim_labels(line, ("Rehan",)), line
-
-    def test_an_apology_is_not_a_claim(self):
-        from app.services import voice_twin
-
-        line = "I'm sorry, a real person will call you back about that."
-        assert voice_twin.human_claim_labels(line, ("Rehan",)) == []
