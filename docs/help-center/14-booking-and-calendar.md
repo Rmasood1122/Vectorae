@@ -15,7 +15,6 @@ sources:
   - app/api/webhooks.py
   - app/workers/outreach_tasks.py
   - app/api/sequences.py
-  - app/core/config.py
   - app/services/message_personalization.py
   - frontend/src/lib/api/outreach.ts
   - frontend/src/components/strategy/OutreachPanel.tsx

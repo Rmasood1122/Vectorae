@@ -13,7 +13,12 @@ x-backend-build: &backend-build
 
 services:
   db:
-    image: postgres:16-alpine
+    # pgvector (help-center search, migration 0094), the same image CI uses.
+    # Debian-based, so text sorts with glibc, not Alpine's musl: an EXISTING
+    # local volume made by postgres:16-alpine must be recreated (`docker compose down -v`
+    # drops local dev data) or dumped and restored, never reused. Steps: DEPLOY.md, "Moving to the pgvector
+    # image".
+    image: pgvector/pgvector:0.8.1-pg16
     restart: unless-stopped
     environment:
       POSTGRES_USER: leadpilot

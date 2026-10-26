@@ -25,11 +25,11 @@ evidence is a test file, the file was confirmed present.
 | F-AI-02 | FIXED | `app/services/prompt_safety.py` delimits untrusted text across the services; `tests/test_prompt_injection_containment.py` |
 | F-AI-03 | FIXED | `JUDGE_TEMPERATURE` in `app/services/anthropic_client.py`; models that refuse a temperature are handled (`TEMPERATURE_FREE_MODELS`, #130) |
 | F-AI-04 | **OPEN** | default `claude-sonnet-4-6` in `app/config.py` and `app/core/config.py`. The health probe (`app/services/health_checks.py`) checks the key and reachability; by its own comment it does not see a wrong model name. Needs the live key |
-| F-AI-05 | **OPEN** (LOW) | `app/services/message_personalization.py` `_applied_mutation` puts an applied mutation's `messaging_angle.proposed` and `revised_messaging` in front of the research, marked "takes precedence", without `prompt_safety`. That text is model-written (`app/services/strategy_mutation.py`). Only a person applying the version stands between the model and the precedence block |
+| F-AI-05 | FIXED | `app/services/message_personalization.py` `_mutation_guidance`: an applied mutation's angle and revised messaging are model-written and placed in front of the research as taking precedence, so a value with a link or wording addressed to the model is dropped (`prompt_safety.guidance_problem`, as for the style and voice profiles); nothing left means no precedence block. `tests/test_ai_intelligence.py::TestAppliedMutationGuidance`. Still true: a person must apply the version first |
 | F-AI-06 | FIXED | `app/verification/loop.py` `_support_block` wraps research outputs, patterns and the GTM plan in `prompt_safety.block` |
 | F-OPS-01 | FIXED in manifest | `pyproject.toml`; `tests/test_firebase_dependency_declared.py`. The image itself was not rebuilt in this check |
 | F-OPS-02 | FIXED | `app/integrations/calendly.py` timestamp tolerance; `tests/test_calendly_webhook_freshness.py` |
-| F-OPS-03 | **OPEN** | both `app/config.py` and `app/core/config.py` exist; 97 modules import the first, 12 the second |
+| F-OPS-03 | FIXED | one Settings class in `app/config.py`: the 48 fields only `app/core/config.py` had moved unchanged, the 19 shared names are read-only aliases (`_CORE_ALIASES`), and `app/core/config.py` re-exports it. `tests/test_one_settings_module.py` also fails if one env var is ever read by two fields |
 | F-OPS-04 | FIXED | `app/services/notifications.py` accepts both names; `tests/test_firebase_credentials_env.py` |
 | F-OPS-05 | FIXED | `app/core/config.py` warning text |
 | F-OPS-06 | FIXED | `requirements.lock`, `frontend/package-lock.json` |
@@ -39,7 +39,7 @@ evidence is a test file, the file was confirmed present.
 | F-DB-01 | FIXED | migration `0093_playbook_scores_owner`, per-account `UniqueConstraint("user_id", "pattern_key", "variant", ...)` in `app/db/models.py`; `tests/test_playbook_owner_migration.py`, `tests/integration/test_migration_0093_playbook_owner_pg.py` |
 | F-DB-02 | FIXED | see P0-6 in `docs/program/BASELINE.md` |
 | F-DB-03 | FIXED | `alembic/versions/0065_messages_dispatch_index.py` |
-| F-DB-04 | **OPEN** (LOW) | `app/workers/learning_tasks.py` binds `:reply_rate` into both `score` and `reply_rate` |
+| F-DB-04 | **IN PROGRESS** (step 1 of 3) | founder approved dropping `score` (2026-10-25). Step 1, migration `0095_playbook_score_nullable`: `score` nullable, the nightly trend compares `reply_rate`, the code still writes `score`. Step 2 stops writing it and step 3 drops the column, each once the previous one is deployed on API and worker (they deploy separately). `tests/test_playbook_score_nullable_migration.py` |
 | F-QA-01 | FIXED | `pyproject.toml` `norecursedirs` excludes `tests/integration` |
 | F-QA-02 | **OPEN** | 121 `TODO: verify` markers in `app/`, `frontend/src` and `sdk`; no live vendor contract confirmed |
 

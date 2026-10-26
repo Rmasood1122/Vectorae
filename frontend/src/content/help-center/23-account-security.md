@@ -10,7 +10,6 @@ sources:
   - app/services/auth_sessions.py
   - app/services/password_reset.py
   - app/config.py
-  - app/core/config.py
   - app/core/rate_limiting.py
   - app/services/network_guard.py
   - app/services/api_keys.py

@@ -173,10 +173,12 @@ def _upsert_playbook_score(db, score_data: dict) -> None:
             decay_half_life_days = EXCLUDED.decay_half_life_days,
             oldest_outcome_ts = EXCLUDED.oldest_outcome_ts,
             is_reliable = EXCLUDED.is_reliable,
+            -- F-DB-04: score is a copy of reply_rate and is being removed
+            -- (migration 0095), so the trend compares reply_rate itself.
             trend = CASE
-                WHEN playbook_scores.score IS NULL THEN 'new'
-                WHEN EXCLUDED.score > playbook_scores.score + 0.005 THEN 'rising'
-                WHEN EXCLUDED.score < playbook_scores.score - 0.005 THEN 'falling'
+                WHEN playbook_scores.reply_rate IS NULL THEN 'new'
+                WHEN EXCLUDED.reply_rate > playbook_scores.reply_rate + 0.005 THEN 'rising'
+                WHEN EXCLUDED.reply_rate < playbook_scores.reply_rate - 0.005 THEN 'falling'
                 ELSE 'stable'
             END,
             last_aggregated_at = NOW()

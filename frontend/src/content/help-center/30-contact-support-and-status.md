@@ -27,7 +27,6 @@ sources:
   - app/workers/celery_app.py
   - app/api/admin.py
   - app/config.py
-  - app/core/config.py
   - app/services/rbac.py
   - docs/features/ai-support-chat.md
   - docs/program/STAR_PROMPT.md

@@ -1738,7 +1738,9 @@ class PlaybookScore(TimestampMixin, Base):
     pattern_key: Mapped[str] = mapped_column(String(200), index=True)
     metric: Mapped[str | None] = mapped_column(String(50), nullable=True)  # legacy M1
     variant: Mapped[str] = mapped_column(String(20), default="A", nullable=False)
-    score: Mapped[float] = mapped_column(Float, default=0.0)
+    # F-DB-04: always a copy of reply_rate; nullable since 0095 and being
+    # removed (see that migration). Read reply_rate instead.
+    score: Mapped[float | None] = mapped_column(Float, nullable=True, default=0.0)
     reply_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     booking_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     sample_size: Mapped[int] = mapped_column(Integer, default=0)

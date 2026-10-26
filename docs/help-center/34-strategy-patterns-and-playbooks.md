@@ -23,7 +23,7 @@ sources:
   - app/services/system_settings.py
   - app/services/claim_verification.py
   - app/services/personalization_context.py
-  - app/core/config.py
+  - app/config.py
   - app/db/models.py
   - frontend/src/app/(app)/analytics/page.tsx
   - frontend/src/app/(admin)/admin/playbook/page.tsx

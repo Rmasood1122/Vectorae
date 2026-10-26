@@ -101,7 +101,7 @@ the model's text.
 | `SUPPORT_CHAT_HISTORY_TURNS` | `6` | Prior turns replayed. A direct multiplier on input cost. |
 | `SUPPORT_CHAT_RETENTION_DAYS` | `30` | Chat history lifetime. `0` disables the purge. |
 | `AI_MODE` | *(empty — auto)* | `console` \| `mock` \| `live`. Empty resolves to `live` when `ANTHROPIC_API_KEY` is set and `mock` when it is not. See **AI_MODE** below. |
-| `RATE_LIMIT_SUPPORT_CHAT` | `20` | Messages per user **per day**. Lives on `app/core/config.py` — the settings object `enforce_rate_limit` actually reads. |
+| `RATE_LIMIT_SUPPORT_CHAT` | `20` | Messages per user **per day**. Lives on `app/config.py` (moved there from `app/core/config.py`, F-OPS-03), the settings object `enforce_rate_limit` reads. |
 | `ANTHROPIC_API_KEY` | *(existing)* | **Currently invalid — see Outstanding.** |
 
 **20, lowered from 30 on 2026-08-30** at the product owner's instruction. The

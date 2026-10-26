@@ -5,11 +5,11 @@ cascade, the downgrade with data -- is in
 tests/integration/test_migration_0093_playbook_owner_pg.py.
 
 What must hold:
-  * the upgraded table matches the model (columns, indexes, FK, unique key);
+  * the upgraded table, with the later revisions that touch it, matches the
+    model (columns, indexes, FK, unique key);
   * rows that existed before the upgrade survive it with user_id NULL;
   * the downgrade restores the pre-0093 shape;
-  * it chains after 0092, is the single head, and the activation script
-    targets it;
+  * it chains after 0092, and the activation script targets the single head;
   * the table is account-owned for GDPR export and erasure.
 """
 
@@ -37,6 +37,14 @@ TABLE = "playbook_scores"
 def _load():
     spec = importlib.util.spec_from_file_location(
         MIGRATION[:-3], os.path.join(ROOT, "alembic", "versions", MIGRATION))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_revision(filename):
+    spec = importlib.util.spec_from_file_location(
+        filename[:-3], os.path.join(ROOT, "alembic", "versions", filename))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -121,6 +129,8 @@ def test_upgrade_matches_the_model_and_keeps_existing_rows(tmp_path):
     engine = _engine_before(tmp_path)
     _insert_pooled_row(engine, "pk-pooled")
     _run(engine, _load().upgrade)
+    # The model is at the head: 0095 (F-DB-04) later made `score` nullable.
+    _run(engine, _load_revision("0095_playbook_score_nullable.py").upgrade)
 
     reference = sa.create_engine(f"sqlite:///{tmp_path / 'model.db'}")
     Base.metadata.create_all(reference)

@@ -17,7 +17,7 @@ sources:
   - app/services/send_windows.py
   - app/services/system_settings.py
   - app/services/crm_service.py
-  - app/core/config.py
+  - app/config.py
   - app/core/plans.py
   - app/api/playbook.py
   - app/api/strategies_advanced.py

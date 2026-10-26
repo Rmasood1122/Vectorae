@@ -137,8 +137,8 @@ acquired, migration to head, uvicorn up, `/health` reporting
 
 ### Environment variables — Render dashboard → leadpilot-api → Environment
 
-Every name below is what the code actually reads (`app/config.py` and
-`app/core/config.py`), not a guess.
+Every name below is what the code actually reads (`app/config.py`; `app/core/config.py` now
+re-exports it), not a guess.
 
 | Variable | Value | Notes |
 |---|---|---|
@@ -291,7 +291,7 @@ Both verified live on 2026-08-20 against the real providers.
 
 ### Which env var name goes where
 
-Read from `app/config.py` and `app/core/config.py` — these are the names the
+Read from `app/config.py` (`app/core/config.py` re-exports it) — these are the names the
 code actually reads, not guesses.
 
 | Provider value | Env var(s) | Required suffix |

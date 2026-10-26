@@ -164,6 +164,46 @@ docker compose -f docker-compose.prod.yml up -d --no-deps api
 
 Migrations run automatically on API restart.
 
+### Moving to the pgvector image (once, for installs made before 2026-10-25)
+
+`docker-compose.prod.yml` now runs PostgreSQL from `pgvector/pgvector:0.8.1-pg16` instead of
+`postgres:16-alpine`. That is the same image CI uses, and it is what the help-center search
+needs (migration 0094). The new image is Debian-based: it sorts text with glibc, while the old
+Alpine image used musl. **Do not start the new image on the old data volume.** Its text indexes
+were built in the old order and can silently return wrong results. Move the data with a dump
+and restore instead:
+
+```bash
+# 1. Before pulling: stop everything that writes, then take a dump with the OLD image.
+docker compose -f docker-compose.prod.yml stop api celery-worker-pipeline celery-worker-outreach celery-worker-learning celery-beat
+docker exec clienthunter-postgres-1 pg_dump -U clienthunter -d clienthunter -Fc \
+  > /var/backups/clienthunter/before_pgvector.dump
+docker compose -f docker-compose.prod.yml stop postgres
+
+# 2. Keep the old volume as a fallback, under a new name, and free the original name.
+#    Compose prefixes the volume with the project name; this finds it.
+VOL=$(docker volume ls -q | grep -E '(^|_)postgres_data$')
+echo "$VOL"          # check it is exactly one name before going on
+docker compose -f docker-compose.prod.yml rm -f postgres
+docker volume create "${VOL}_alpine"
+docker run --rm -v "$VOL":/from -v "${VOL}_alpine":/to alpine sh -c "cp -a /from/. /to/"
+docker volume rm "$VOL"
+
+# 3. Pull the new compose file and start ONLY the database on a fresh volume.
+git pull
+docker compose -f docker-compose.prod.yml up -d postgres
+
+# 4. Restore the dump, then start the rest (migrations run on API start).
+docker exec -i clienthunter-postgres-1 pg_restore -U clienthunter -d clienthunter \
+  < /var/backups/clienthunter/before_pgvector.dump
+docker compose -f docker-compose.prod.yml up -d
+```
+
+If migration 0094 already ran on the old image, `help_chunks` has no `embedding` column.
+Search then stays text-only (BM25 and full-text), and works. Adding the column later is its own
+migration. To go back, stop the stack, copy `${VOL}_alpine` back into `$VOL` the same way, and run the
+old image.
+
 ---
 
 ## Troubleshooting
