@@ -17,6 +17,7 @@ Rules enforced here:
 import os
 import re
 import socket
+import sqlite3
 import sys
 
 os.environ["APP_ENV"] = "test"
@@ -130,14 +131,32 @@ _assert_local_redis_only()
 # --------------------------------------------------------------------------
 
 
+_SCHEMA_TEMPLATE = None
+
+
+def _schema_template():
+    """One in-memory database with every table created, built once per run.
+
+    Building all ~130 tables took ~110 ms per test, about half the offline
+    suite's wall time. Each test now gets its own fresh in-memory database
+    copied from this template with SQLite's backup API (~1 ms): the same
+    empty schema, nothing shared between tests. No engine-level connect
+    listener exists in app/, so a copy and a fresh create_all are the same.
+    """
+    global _SCHEMA_TEMPLATE
+    if _SCHEMA_TEMPLATE is None:
+        template = sqlite3.connect(":memory:", check_same_thread=False)
+        engine = create_engine("sqlite://", creator=lambda: template, poolclass=StaticPool)
+        Base.metadata.create_all(engine)
+        _SCHEMA_TEMPLATE = template
+    return _SCHEMA_TEMPLATE
+
+
 @pytest.fixture()
 def db_session():
-    engine = create_engine(
-        "sqlite://",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-    )
-    Base.metadata.create_all(engine)
+    fresh = sqlite3.connect(":memory:", check_same_thread=False)
+    _schema_template().backup(fresh)
+    engine = create_engine("sqlite://", creator=lambda: fresh, poolclass=StaticPool)
     TestingSession = sessionmaker(bind=engine, expire_on_commit=False)
     session = TestingSession()
     try:
