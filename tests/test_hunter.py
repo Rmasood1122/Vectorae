@@ -94,13 +94,12 @@ class TestHunterVerifierMapping:
 
 def _apollo_for_contract(fake_redis) -> ApolloAdapter:
     def handler(request):
-        if "mixed_people/search" in str(request.url):
-            import json as _json
-            body = _json.loads(request.content)
+        if "mixed_people/api_search" in str(request.url):
+            per_page = int(request.url.params["per_page"])
             people = [{"id": f"c{i}", "name": f"C {i}", "title": "CEO",
                        "organization": {"name": f"Org {i}", "primary_domain": f"org{i}.com"}}
-                      for i in range(body["per_page"])]
-            return httpx.Response(200, json={"people": people, "pagination": {"total_pages": 1}})
+                      for i in range(per_page)]
+            return httpx.Response(200, json={"people": people, "total_entries": per_page})
         return httpx.Response(200, json={"person": {"id": "c0", "name": "C 0", "email": "c0@org0.com",
                                                     "organization": {"name": "Org 0"}}})
     return ApolloAdapter(api_key="k", redis=fake_redis,

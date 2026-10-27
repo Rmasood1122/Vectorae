@@ -488,7 +488,7 @@ class TestDataGate:
         assert len(seen) == 1 and len(rows) == 1
         row = rows[0]
         assert (row.step, row.provider, row.operation, row.cost_units) == \
-            ("spend_guard", "apollo", "search", 3)
+            ("spend_guard", "apollo", "api_search", 3)
         assert row.batch_id == batch.id and row.user_id == test_user.id
         assert row.lead_id is None and row.email_domain is None
 
