@@ -19,9 +19,10 @@ says "channels only transport messages"):
     re-check is likewise repeated here for WhatsApp because suppression is
     a legal obligation, not a scheduling preference.
 
-Every Graph API endpoint path, version string, payload field and status
-value that is not 100% certain is marked:
-    # TODO: verify against current WhatsApp Cloud API docs
+Every endpoint path, version, payload field and status value below was
+checked against Meta's public WhatsApp Cloud API and Business Management API
+docs on 2026-10-27 (developers.facebook.com/documentation/business-messaging/
+whatsapp/...); tests/test_whatsapp_cloud_contract.py pins what was checked.
 Never invent Meta API behavior — extend only after checking the docs.
 
 Message kinds supported by send() — selected via OutboundMessage.metadata:
@@ -54,8 +55,13 @@ from app.workers.lead_tasks import is_suppressed
 
 logger = logging.getLogger(__name__)
 
-# TODO: verify against current WhatsApp Cloud API docs (Graph API base + version)
+# The version comes from settings.whatsapp_api_version.
 GRAPH_API_BASE = "https://graph.facebook.com"
+
+# text.body limit (docs: messages/text-messages).
+TEXT_BODY_MAX_CHARS = 4096
+# Template list pages followed before giving up on a name lookup.
+_TEMPLATE_PAGES_MAX = 20
 
 # The canonical compliance exception. This module used to declare its OWN
 # `class ComplianceError(Exception)`, which app.core.errors does not recognise:
@@ -74,23 +80,42 @@ class WhatsAppNotConfigured(Exception):
 # Meta message status -> our MessageStatus
 # --------------------------------------------------------------------------
 
-# TODO: verify against current WhatsApp Cloud API docs (webhook status values)
-# Known webhook status values: sent, delivered, read, failed.
-# "delivered" and "read" have no dedicated MessageStatus (that enum tracks
+# Webhook status values (docs: webhooks/reference/messages/status): sent,
+# delivered, read, failed, played (first play of a voice message).
+# "delivered", "read" and "played" have no dedicated MessageStatus (that enum tracks
 # our send lifecycle); they are recorded as Outcome events by the webhook
 # and returned verbatim in status() detail.
 META_STATUS_MAP: dict[str, MessageStatus] = {
     "sent": MessageStatus.SENT,
     "delivered": MessageStatus.SENT,
     "read": MessageStatus.SENT,
+    "played": MessageStatus.SENT,
     "failed": MessageStatus.FAILED,
 }
 
 
 def normalize_phone(phone: str) -> str:
-    """Digits-only E.164-ish form Meta expects (no '+', spaces or dashes).
-    # TODO: verify against current WhatsApp Cloud API docs (accepted formats)"""
+    """Digits only. The form webhook `from`/`wa_id` values arrive in, so it is
+    what inbound matching and suppression compare. Never send it: see to_e164."""
     return re.sub(r"[^\d]", "", phone or "")
+
+
+def to_e164(phone: str) -> str | None:
+    """'+<digits>' for a number stored in international format, else None.
+
+    Meta (messages/send-messages): "If the plus sign is omitted, your business
+    phone number's country calling code is prepended to the customer's phone
+    number. This can result in undelivered or misdelivered messages." So a
+    send always carries the '+', and a number with no '+' or '00' prefix is
+    refused: its country cannot be known, and guessing could reach a stranger.
+    """
+    raw = re.sub(r"[\s\-().]", "", phone or "")
+    if raw.startswith("00"):
+        raw = "+" + raw[2:]
+    digits = normalize_phone(raw)
+    if not raw.startswith("+") or not digits:
+        return None
+    return "+" + digits
 
 
 # --------------------------------------------------------------------------
@@ -230,10 +255,25 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
         lead = self.session.get(Lead, message.lead_id) if message.lead_id else None
         self._compliance_guard(message, kind, lead)
 
-        to = normalize_phone(message.to_address)
+        to = to_e164(message.to_address)
+        if to is None:
+            raise ComplianceError(
+                f"recipient {message.to_address!r} is not in international "
+                "format; without a country code Meta prepends our own "
+                "country's code, which can reach the wrong person",
+                rule="whatsapp_phone_not_international",
+                compliance_code="WHATSAPP_BLOCKED",
+                remediation="Store the number in international format, "
+                            "e.g. +14155550123.",
+            )
+        if kind == "text" and len(message.body or "") > TEXT_BODY_MAX_CHARS:
+            return SendResult(
+                ok=False, permanent_failure=True,
+                error=f"WhatsApp text body exceeds {TEXT_BODY_MAX_CHARS} characters",
+            )
         payload: dict = {
             "messaging_product": "whatsapp",
-            "recipient_type": "individual",  # TODO: verify against current WhatsApp Cloud API docs
+            "recipient_type": "individual",
             "to": to,
         }
         if kind == "template":
@@ -253,16 +293,13 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
                 "language": {"code": language},
             }
             if meta.get("components"):
-                # TODO: verify against current WhatsApp Cloud API docs
-                # (components array shape: header/body params, buttons)
+                # {type: header|body|button, parameters: [...]}; built by the caller.
                 payload["template"]["components"] = meta["components"]
         else:  # kind == "text" — guard above already proved the window is open
             payload["type"] = "text"
             payload["text"] = {"body": message.body, "preview_url": False}
-            # TODO: verify against current WhatsApp Cloud API docs (text object fields)
 
         endpoint = f"/{self.api_version}/{self.phone_number_id}/messages"
-        # TODO: verify against current WhatsApp Cloud API docs (messages endpoint path)
         try:
             data = self.call("POST", endpoint, json_body=payload)
         except ComplianceError:
@@ -278,8 +315,7 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
                 raw={"status": status_code},
             )
 
-        # TODO: verify against current WhatsApp Cloud API docs
-        # (response shape: {"messages": [{"id": "wamid...."}], "contacts": [...]})
+        # {"messaging_product", "contacts": [...], "messages": [{"id": "wamid..."}]}
         provider_id = None
         messages = data.get("messages") or []
         if messages:
@@ -287,7 +323,9 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
         return SendResult(
             ok=True,
             provider_message_id=provider_id,
-            thread_ref=to,  # WhatsApp "thread" == the recipient number
+            # WhatsApp "thread" == the recipient number, in the digits-only
+            # form inbound webhooks carry.
+            thread_ref=normalize_phone(to),
             raw=data,
         )
 
@@ -295,7 +333,6 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
     def fetch_replies(self, since: datetime | None = None) -> list[InboundMessage]:
         """WhatsApp Cloud API delivers inbound messages ONLY via webhooks —
         there is no supported polling endpoint for message history.
-        # TODO: verify against current WhatsApp Cloud API docs (no polling API)
 
         Inbound handling therefore lives in app/api/webhooks_whatsapp.py.
         This method exists to satisfy the interface and always returns [];
@@ -307,8 +344,8 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
     # ---- status ---------------------------------------------------------------
     def status(self, provider_message_id: str) -> dict:
         """Meta pushes delivery status via webhooks; there is no documented
-        GET-status-by-message-id endpoint to poll.
-        # TODO: verify against current WhatsApp Cloud API docs (status polling)
+        GET-status-by-message-id endpoint to poll ("You receive delivery
+        status via messages webhooks instead", messages/send-messages).
 
         So this returns the status we have PERSISTED from webhook events —
         which is the provider-side truth as last reported by Meta — rather
@@ -330,25 +367,31 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
 
     # ---- Business Management API: template review (Chunk 2) ----------------
     def submit_template(self, *, name: str, language: str, category: str,
-                        body: str) -> dict:
-        """Submit a template for Meta review under our WABA.
-        # TODO: verify against current WhatsApp Business Management API docs
-        (endpoint POST /{waba_id}/message_templates; category casing;
-        components array shape). Returns Meta's response (expects an 'id')."""
+                        body: str, examples: list[str] | None = None) -> dict:
+        """Submit a template for Meta review under our WABA:
+        POST /{version}/{waba_id}/message_templates, which returns
+        {id, status, category}. Meta requires an example value for each body
+        parameter ("example": {"body_text": [[...]]}, templates/components);
+        `examples` gives them in {{1}}..{{n}} order."""
         if not settings.whatsapp_business_account_id:
             raise WhatsAppNotConfigured(
                 "WHATSAPP_BUSINESS_ACCOUNT_ID must be set to manage templates"
             )
+        placeholders = len(set(re.findall(r"\{\{(\d+)\}\}", body)))
+        examples = list(examples or [])
+        if len(examples) != placeholders:
+            raise ValueError(
+                f"template body has {placeholders} placeholder(s) but "
+                f"{len(examples)} example value(s); Meta needs one example each"
+            )
+        component: dict = {"type": "BODY", "text": body}
+        if placeholders:
+            component["example"] = {"body_text": [examples]}
         payload = {
             "name": name,
             "language": language,
-            "category": category.upper(),  # TODO: verify casing (MARKETING/UTILITY)
-            "components": [
-                {"type": "BODY", "text": body},
-                # TODO: verify against current docs — bodies with {{n}}
-                # placeholders may require an example object:
-                # {"type": "BODY", "text": ..., "example": {"body_text": [[...]]}}
-            ],
+            "category": category.upper(),  # MARKETING / UTILITY / AUTHENTICATION
+            "components": [component],
         }
         endpoint = (
             f"/{self.api_version}/{settings.whatsapp_business_account_id}"
@@ -359,34 +402,41 @@ class WhatsAppChannel(BaseHttpAdapter, OutreachChannel):
     def fetch_template_status(self, *, name: str, language: str,
                               meta_template_id: str | None = None) -> dict | None:
         """Current review status of one template from Meta.
-        # TODO: verify against current WhatsApp Business Management API docs
-        (GET /{waba_id}/message_templates?name=...&fields=...; response
-        rows carry status + rejected_reason + language)."""
+
+        With its id: GET /{version}/{template_id}. Without: page through
+        GET /{version}/{waba_id}/message_templates (data + paging.cursors
+        .after) until the name and language match. `name` is sent as a
+        filter hint; Meta's reference does not list it, so every row is
+        still matched here."""
         if not settings.whatsapp_business_account_id:
             raise WhatsAppNotConfigured(
                 "WHATSAPP_BUSINESS_ACCOUNT_ID must be set to manage templates"
             )
+        fields = "id,name,language,status,rejected_reason"
+        if meta_template_id:
+            return self.call("GET", f"/{self.api_version}/{meta_template_id}",
+                             params={"fields": fields}) or None
         endpoint = (
             f"/{self.api_version}/{settings.whatsapp_business_account_id}"
             "/message_templates"
         )
-        data = self.call("GET", endpoint, params={
-            "name": name,
-            "fields": "id,name,language,status,rejected_reason",
-            # TODO: verify field list against current docs
-        })
-        for row in data.get("data") or []:
-            if meta_template_id and row.get("id") == meta_template_id:
-                return row
-            if row.get("name") == name and row.get("language") == language:
-                return row
+        params = {"name": name, "fields": fields}
+        for _ in range(_TEMPLATE_PAGES_MAX):
+            data = self.call("GET", endpoint, params=params)
+            for row in data.get("data") or []:
+                if row.get("name") == name and row.get("language") == language:
+                    return row
+            paging = data.get("paging") or {}
+            after = (paging.get("cursors") or {}).get("after")
+            if not paging.get("next") or not after:
+                return None
+            params = {**params, "after": after}
         return None
 
     # ---- health -----------------------------------------------------------------
     def health_check(self) -> bool:
-        """Cheap auth + connectivity check: read our own phone number object.
-        # TODO: verify against current WhatsApp Cloud API docs
-        (GET /{version}/{phone_number_id} fields)"""
+        """Cheap auth + connectivity check: read our own phone number object
+        (GET /{version}/{phone_number_id})."""
         if self.breaker.is_open():
             return False
         try:

@@ -108,8 +108,9 @@ def is_promotional(body: str | None) -> bool:
     return bool(_PROMOTIONAL_SIGNAL.search(body or ""))
 
 
-# Meta template names: lowercase letters, digits, underscores.
-# TODO: verify against current WhatsApp docs (exact charset + max length)
+# Meta template names: lowercase letters, digits and underscores, at most 512
+# characters (templates/overview, read 2026-10-27). 200 here on purpose: it is
+# the width of whatsapp_templates.name.
 _NAME_RE = re.compile(r"^[a-z0-9_]{1,200}$")
 
 
@@ -122,9 +123,9 @@ def validate_body(body: str) -> dict[int, str]:
     """Validate the body text; return {placeholder_no: ''} slots found.
 
     Rules:
-      - non-empty, within the configured length limit
-        (# TODO: verify limits against current WhatsApp docs — 1024 chars
-        for the body component is the configured default)
+      - non-empty, within the configured length limit (Meta's body
+        component maximum is 1024 characters, templates/components; that is
+        the configured default)
       (the opt-out instruction depends on the category: validate_opt_out)
       - variable placeholders must be exactly {{1}}..{{k}} — sequential,
         starting at 1, no gaps, no duplicates ({{2}} without {{1}} is a
@@ -300,11 +301,16 @@ def submit_template(session: Session, template: WhatsAppTemplate,
     # rule change.
     validate_body(template.body or "")
     validate_opt_out(template.body, template.category)
+    # Meta needs an example value per {{n}}; each placeholder's description
+    # (required by create_draft) is the example the reviewer sees.
+    descriptions = template.variable_descriptions_json or {}
+    slots = validate_body(template.body or "")
     result = adapter.submit_template(
         name=template.name,
         language=template.language,
         category=template.category.value,
         body=template.body or "",
+        examples=[str(descriptions.get(str(n), "")) for n in sorted(slots)],
     )
     template.meta_template_id = result.get("id") or template.meta_template_id
     template.status = WhatsAppTemplateStatus.SUBMITTED
@@ -313,12 +319,20 @@ def submit_template(session: Session, template: WhatsAppTemplate,
     return template
 
 
+# Meta template statuses, uppercase (webhooks/reference/
+# message_template_status_update, read 2026-10-27). A template Meta has
+# stopped "cannot be sent", so it leaves APPROVED here; we have no paused
+# state, so it is held as REJECTED with Meta's status named in the reason.
+# FLAGGED, LOCKED, IN_APPEAL and LIMIT_EXCEEDED do not change whether a
+# template can be sent, and stay unmapped (logged, ignored).
+_META_STOPPED = ("PAUSED", "DISABLED", "ARCHIVED", "DELETED", "PENDING_DELETION")
 _META_STATUS_TO_OURS = {
-    # TODO: verify against current WhatsApp docs (template status values;
-    # Meta uses uppercase e.g. APPROVED / REJECTED / PENDING)
     "APPROVED": WhatsAppTemplateStatus.APPROVED,
+    "REINSTATED": WhatsAppTemplateStatus.APPROVED,
+    "UNARCHIVED": WhatsAppTemplateStatus.APPROVED,
     "REJECTED": WhatsAppTemplateStatus.REJECTED,
     "PENDING": WhatsAppTemplateStatus.SUBMITTED,
+    **{status: WhatsAppTemplateStatus.REJECTED for status in _META_STOPPED},
 }
 
 
@@ -336,6 +350,10 @@ def apply_meta_status(session: Session, template: WhatsAppTemplate,
     template.status = mapped
     if meta_template_id:
         template.meta_template_id = meta_template_id
+    status_upper = (meta_status or "").upper()
+    if status_upper in _META_STOPPED:
+        reason = f"Meta status {status_upper}: this template cannot be sent" + (
+            f" ({reason})" if reason and reason.upper() != "NONE" else "")
     template.rejection_reason = (
         reason if mapped is WhatsAppTemplateStatus.REJECTED else None
     )

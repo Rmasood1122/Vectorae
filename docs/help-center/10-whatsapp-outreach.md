@@ -65,12 +65,16 @@ Go to **Campaigns**, choose a strategy, and open the **Templates** tab. The butt
 
 - **+ New draft** opens an editor. Enter a name (lowercase letters, digits and underscores, for example `intro_offer`) and a body. Templates created here use language `en_US` and category "marketing". For each placeholder you type, such as `{{1}}`, a "What goes in {{1}}?" field appears; describe what fills it (for example "first name").
 - **Generate with AI** (only for a strategy that is your own) asks the AI for 2 or 3 candidates from the strategy's research (any that fail the checks are dropped, so you may get only one), each with its placeholders described. Every valid candidate is saved as a draft straight away. Choose one and press **Edit & save this draft**; you can change the placeholders as long as each one is described and they still follow the template rules below. Drafts are never submitted automatically.
-- **Submit** sends a draft or rejected template to Meta for review, which "takes minutes to days". Victorae sends the name, language, category and body. It does not send example values for placeholders; whether Meta requires them has not been checked against Meta's current documentation.
+- **Submit** sends a draft or rejected template to Meta for review, which "takes minutes to days". Victorae sends the name, language, category and body. Meta requires an example value for each placeholder, and Victorae sends each placeholder's description as its example, so write descriptions a reviewer can read as a sample (for example "Sara" or "first name").
 - **Sync status** fetches Meta's latest decision. A rejected template shows Meta's reason, and an administrator can edit and resubmit it.
 
 Victorae checks a template before saving and again before submitting: the body cannot be empty, must be at most 1,024 characters by default, and its placeholders must run `{{1}}`, `{{2}}`, … in order with no gaps or repeats. A **marketing** template must also tell the contact how to opt out: an instruction with the word STOP in capitals, such as "Reply STOP to opt out.", "Text STOP anytime" or "STOP to unsubscribe". The word alone does not count ("NON-STOP deals" or a link ending in /STOP is refused), and only English is recognised, so other languages need an English opt-out line too. Utility templates are exempt. **Generate with AI** adds "Reply STOP to opt out." to a marketing draft that lacks it; in the editor you add it yourself. Editing an approved template creates a new draft version.
 
 Only **approved** templates are sent, and approval and the opt-out instruction are checked again at the moment of sending. A template that fails either (for example one approved before the opt-out rule) is not sent; the message is not sent and stops with the reason recorded (the timeline shows "WhatsApp not sent", and the campaign's WhatsApp card counts it under "need template").
+
+## What happens if Meta pauses an approved template?
+
+If Meta later pauses, disables, archives or deletes an approved template, Victorae marks it rejected with Meta's status in the reason (for example "Meta status PAUSED: this template cannot be sent"), and it is not sent. When Meta reinstates or unarchives it, it is approved again. Victorae learns this from Meta's webhook or when an administrator presses **Sync status**.
 
 ## Why won't a template with placeholders save?
 
@@ -91,7 +95,7 @@ The launch form on the strategy page creates email sequences only. WhatsApp step
 - **Template step:** names any template that has not been rejected (draft, submitted or approved; only administrators can see drafts and submitted ones) and says how each variable is filled. The template must be approved by the time the step is due; if it is not, the message is not sent then. If an earlier message in the sequence went out and the lead has not replied, Victorae retries that step automatically once the previous step's follow-up delay (72 hours by default) has passed since that message went out, and sends it if the template has been approved by then. A WhatsApp template that is the first step is not retried. Each variable comes from the lead's record (full name, first name, title, company or email) or from a short brief the AI fills from the lead's data without inventing facts. A message is never sent with an empty slot.
 - **Free-form text step:** only sends inside an open 24-hour window, and can never be the first step of a sequence.
 
-A sequence whose first step is on WhatsApp enrolls verified leads that have a phone number, including leads with no email address. If a later step is on a channel the lead has no address for, that message is cancelled and the sequence stops with the reason "no address for the step's channel".
+A sequence whose first step is on WhatsApp enrolls verified leads that have a phone number, including leads with no email address. The number must be stored in international format, starting with + and the country code (for example +14155550123; 00 in place of + also works). Meta adds your business number's own country code to a number without one, which can reach the wrong person, so Victorae does not send to such a number. The message is not sent: the lead's timeline shows "WhatsApp not sent", and the campaign's WhatsApp card counts it under "need template" even though the template is not the problem. The reason recorded on the message says the number "is not in international format". Correct the lead's phone number to include the country code. If a later step is on a channel the lead has no address for, that message is cancelled and the sequence stops with the reason "no address for the step's channel".
 
 ## Do contacts need to opt in?
 
@@ -131,7 +135,7 @@ Replies are classified like email replies. A real reply stops all of the contact
 
 ## Has WhatsApp been verified against Meta's live service?
 
-The founders confirmed WhatsApp steps as working end to end in production on 2026-10-13. The automated tests still run against simulated responses, and many request details are still marked in the code as unconfirmed against Meta's current documentation, so if something fails, contact support.
+The founders confirmed WhatsApp steps as working end to end in production on 2026-10-13. The automated tests still run against simulated responses. On 2026-10-27 every request, webhook and status detail the code relies on was checked against Meta's public documentation (not against a live account), and the differences found were fixed. If something fails, contact support.
 
 ## Related
 - [Sequences and follow-ups](08-sequences-and-follow-ups.md)

@@ -2,6 +2,12 @@
 
 Resume from this file, `status.json`, `DECISIONS.md` and `git log`.
 
+- 2026-10-27 — **F-QA-02, WhatsApp: 27 "TODO: verify" markers checked against Meta's public docs** (founder choices in session: "International only", "v25.0").
+  - Checked without any account or key, on developers.facebook.com, 2026-10-27. 17 matched; 8 partly; 2 wrong. No WhatsApp marker remains; 94 remain in other integrations.
+  - Fixed: default Graph API version v20.0 (expired 2026-09-24; Meta runs such calls on the next oldest usable version) -> v25.0. Sends carry '+<digits>'; a number not stored with '+' or '00' is refused (ComplianceError `whatsapp_phone_not_international`), because Meta prepends the business's own country code to a number without '+'. Template bodies with {{n}} send Meta's required examples (each placeholder's description). PAUSED / DISABLED / ARCHIVED / DELETED / PENDING_DELETION templates stop being sendable; REINSTATED / UNARCHIVED restore them. Status lookup by template id, and paging by name. "played" status mapped. Text over 4,096 characters fails locally.
+  - Pre-fix: 24 of the 30 tests in `tests/test_whatsapp_cloud_contract.py` fail on master; the other 6 pin kept behaviour.
+  - Help article 10 updated in both copies, fact-checked (11 supported, 1 corrected before commit).
+  - Reported, not fixed: a refused number is recorded as NEEDS_TEMPLATE and counted under "need template" on the campaign card; the template-webhook dedupe key `tmpl:{id}:{event}` drops a repeated event (a second PAUSED after a reinstatement), so Sync is needed; every `failed` delivery is treated as a hard bounce, though Meta codes such as 131050 (user stopped marketing messages) are closer to an opt-out; inbound `product` interactive replies come through as empty text.
 - 2026-10-27 — **Send-time slots per account** (founder choice in session: "Send-time per account").
   - Before, on master: the nightly `update_send_time_scores` cached one slot list per (channel, ICP industry, ICP size) for the whole install, and `GET /playbook/send-times` served it to every account with playbook access. One account's send hours and reply rates were shown to the others.
   - Now: the job groups by the strategy's owner (`products.user_id`) and writes `send_time:slots:{owner_id}:{channel}:{industry}:{size}`. The API reads only the caller's key; a caller with no data of their own gets the default hours. Old pooled keys are never read again and expire within 25 h (TTL).
