@@ -49,11 +49,6 @@ export function SubjectLineCard({ channel = "gmail" }: SubjectLineCardProps) {
                   {(p.avg_reply_rate * 100).toFixed(1)}% reply
                 </span>
               </div>
-              {p.example && (
-                <p className="text-[11px] text-muted-foreground italic truncate">
-                  e.g. &quot;{p.example}&quot;
-                </p>
-              )}
               {/* Mini progress bar */}
               <div className="h-1 rounded-full bg-muted overflow-hidden">
                 <div
@@ -67,7 +62,7 @@ export function SubjectLineCard({ channel = "gmail" }: SubjectLineCardProps) {
       )}
 
       <p className="text-[10px] text-muted-foreground">
-        Patterns detected from {channel} campaigns. Used to guide future message generation.
+        Rates pooled across every account on this install, from {channel} campaigns.
       </p>
     </div>
   );

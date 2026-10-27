@@ -2067,15 +2067,16 @@ class SubjectLinePattern(Base):
     id: Mapped[uuid.UUID] = _uuid_pk()
     pattern_type: Mapped[str] = mapped_column(String(50), index=True)
     channel: Mapped[str] = mapped_column(String(20), default="gmail")
+    # No longer written (2026-10-27): it held another account's sent subject
+    # line. Each nightly write sets it NULL.
     example: Mapped[str | None] = mapped_column(String(500), nullable=True)
     avg_reply_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     avg_meeting_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     sample_size: Mapped[int] = mapped_column(Integer, default=0)
     is_reliable: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(),
-        onupdate=func.now(), nullable=False
-    )
+    # Named as migration 0010 creates it; the raw SQL in
+    # app/services/subject_intelligence.py writes this column.
+    last_updated: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
 
 # --------------------------------------------------------------------------

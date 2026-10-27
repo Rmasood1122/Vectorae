@@ -77,7 +77,7 @@ Scores are kept per account. Another account's strategies with the same pattern 
 3. **Read the trend.** "new" means the first calculation. "rising" or "falling" means the reply rate moved more than half a percentage point (0.005) since the previous night; anything smaller is "stable".
 4. **Prefer booking rate over reply rate.** Replies include objections and refusals.
 
-Playbook scores are not shown on a customer screen yet. The **Analytics** page has a **Learning insights** card marked **Coming in M8**. On plans with playbook access, the Victorae API returns your scores at `GET /playbook/scores` (optionally for one `strategy_id`), and best-performing subject-line styles at `GET /playbook/subject-patterns`. Administrators see every score on the admin **Playbook Scores** page.
+Playbook scores are not shown on a customer screen yet. The **Analytics** page has a **Learning insights** card marked **Coming in M8**. On plans with playbook access, the Victorae API returns your scores at `GET /playbook/scores` (optionally for one `strategy_id`), and the subject-line styles with the highest meeting rate at `GET /playbook/subject-patterns`. Subject-line rates are pooled across every account on this install, so that endpoint returns each style with its reply and meeting rates and sample size, never an example subject line. Administrators see every score on the admin **Playbook Scores** page.
 
 ## What does Victorae do with the scores?
 
