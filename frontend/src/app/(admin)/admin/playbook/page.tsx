@@ -15,9 +15,10 @@ function pct(n: number | null) {
 export default function PlaybookPage() {
   const qc = useQueryClient();
 
+  // The API answers {scores: [...]}, not a bare array.
   const { data: scores = [], isLoading } = useQuery({
     queryKey: ["admin", "playbook", "scores"],
-    queryFn: () => adminApi.listPlaybookScores(),
+    queryFn: async () => (await adminApi.listPlaybookScores()).scores ?? [],
   });
 
   const recomputeMutation = useMutation({
@@ -35,7 +36,7 @@ export default function PlaybookPage() {
         <div>
           <h1 className="text-2xl font-bold">Playbook Scores</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Aggregated A/B variant performance across all users
+            A/B variant performance, one row per account and pattern
           </p>
         </div>
         <Button
@@ -56,6 +57,7 @@ export default function PlaybookPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Account</TableHead>
               <TableHead>Pattern Key</TableHead>
               <TableHead>Variant</TableHead>
               <TableHead className="text-right">Reply Rate</TableHead>
@@ -67,13 +69,16 @@ export default function PlaybookPage() {
           <TableBody>
             {scores.map((s: any, i: number) => (
               <TableRow key={i}>
+                <TableCell className="font-mono text-xs">
+                  {s.user_id ?? "pooled (before 0093)"}
+                </TableCell>
                 <TableCell className="font-mono text-xs">{s.pattern_key}</TableCell>
                 <TableCell className="text-sm">{s.variant}</TableCell>
                 <TableCell className="text-right font-medium">{pct(s.reply_rate)}</TableCell>
                 <TableCell className="text-right">{pct(s.booking_rate)}</TableCell>
                 <TableCell className="text-right text-muted-foreground">{s.sample_size}</TableCell>
                 <TableCell className="text-right text-sm text-muted-foreground">
-                  {s.last_updated ? new Date(s.last_updated).toLocaleDateString() : "—"}
+                  {s.last_aggregated_at ? new Date(s.last_aggregated_at).toLocaleDateString() : "—"}
                 </TableCell>
               </TableRow>
             ))}
