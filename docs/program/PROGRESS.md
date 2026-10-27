@@ -2,6 +2,12 @@
 
 Resume from this file, `status.json`, `DECISIONS.md` and `git log`.
 
+- 2026-10-27 — **Send-time slots per account** (founder choice in session: "Send-time per account").
+  - Before, on master: the nightly `update_send_time_scores` cached one slot list per (channel, ICP industry, ICP size) for the whole install, and `GET /playbook/send-times` served it to every account with playbook access. One account's send hours and reply rates were shown to the others.
+  - Now: the job groups by the strategy's owner (`products.user_id`) and writes `send_time:slots:{owner_id}:{channel}:{industry}:{size}`. The API reads only the caller's key; a caller with no data of their own gets the default hours. Old pooled keys are never read again and expire within 25 h (TTL).
+  - Pre-fix: the 3 new tests in `tests/test_send_time_slots_per_account.py` fail; the API test shows the other account's Thursday 15:00 slot first.
+  - Two existing tests now pass an owner (`tests/test_revenue_analytics.py`, `tests/integration/test_chunk4_advanced_learning.py`); their assertions are unchanged. The integration file passed on local PostgreSQL 16 (21 passed).
+  - Not covered: the scheduler's own send-time learning (`app/services/send_time.py`) was already per owner and is unchanged. `SendTimeCard` is imported by no page.
 - 2026-10-27 — **Offline fixes: admin Playbook Scores page, subject-line examples** (founder choice in session for the second: "Drop the example text").
   - Admin Playbook Scores page: `GET /admin/playbook/scores` answers `{scores: [...]}`, but the page used the reply as a bare array, so it crashed on `scores.map` whenever a row existed. It also read `last_updated`, which the API never sends. It now unwraps `scores`, shows `last_aggregated_at`, and has an Account column; rows from before 0093 read "pooled (before 0093)". Pre-fix: both page tests fail with `scores.map is not a function`.
   - Subject-line patterns: `subject_line_patterns` is one aggregate for the install, read by every user with playbook access. Each row kept `example`, a real sent subject line from whichever account sent it; "anonymize" replaced only `{braces}`/`[brackets]`. No example is now stored or returned: the nightly write sets it NULL (which clears old rows), the API and the prompt helper name none, and the card and help article 34 say the rates are pooled. Checked on PostgreSQL 16.15 with the migrated schema: an old row's example became NULL and new rows got ids.
