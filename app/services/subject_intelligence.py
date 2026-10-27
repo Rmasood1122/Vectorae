@@ -29,8 +29,10 @@ logger = get_logger("services.subject_intelligence")
 
 @dataclass
 class SubjectLinePattern:
+    # No example subject line: the table is one aggregate for the whole
+    # install, so any stored subject would be another account's (a sent
+    # subject is already filled in with the prospect's name or company).
     pattern_type: str
-    example: str          # anonymized: company names → [Company]
     avg_reply_rate: float
     avg_meeting_rate: float
     sample_size: int
@@ -165,7 +167,7 @@ def extract_patterns_from_outcomes(
     # Accumulate stats per (pattern_type, channel)
     from collections import defaultdict
     accum: dict[tuple, dict] = defaultdict(
-        lambda: {"sends": 0, "replies": 0, "bookings": 0, "examples": []}
+        lambda: {"sends": 0, "replies": 0, "bookings": 0}
     )
 
     for row in rows:
@@ -181,8 +183,6 @@ def extract_patterns_from_outcomes(
             accum[key]["sends"] += sends
             accum[key]["replies"] += replies
             accum[key]["bookings"] += bookings
-            if len(accum[key]["examples"]) < 3:
-                accum[key]["examples"].append(anonymize_subject(subject))
 
     min_sample = settings.PLAYBOOK_MIN_SAMPLE
     patterns: list[SubjectLinePattern] = []
@@ -191,7 +191,6 @@ def extract_patterns_from_outcomes(
         sends = max(data["sends"], 1)
         pattern = SubjectLinePattern(
             pattern_type=ptype,
-            example=data["examples"][0] if data["examples"] else "",
             avg_reply_rate=round(data["replies"] / sends, 4),
             avg_meeting_rate=round(data["bookings"] / sends, 4),
             sample_size=data["sends"],
@@ -206,34 +205,40 @@ def extract_patterns_from_outcomes(
 
 
 def persist_patterns(db_session, patterns: list[SubjectLinePattern]) -> None:
-    """Upsert subject line patterns into the subject_line_patterns table."""
+    """Upsert subject line patterns into the subject_line_patterns table.
+
+    `example` is written NULL, which also clears a subject line stored by
+    the code before 2026-10-27.
+    """
     import datetime
+    import uuid
     from sqlalchemy import text
 
     now = datetime.datetime.utcnow()
     for p in patterns:
         db_session.execute(text("""
             INSERT INTO subject_line_patterns
-                (pattern_type, channel, avg_reply_rate, avg_meeting_rate,
+                (id, pattern_type, channel, avg_reply_rate, avg_meeting_rate,
                  sample_size, is_reliable, example, last_updated)
             VALUES
-                (:ptype, :channel, :reply_rate, :meeting_rate,
-                 :sample, :reliable, :example, :now)
+                (:id, :ptype, :channel, :reply_rate, :meeting_rate,
+                 :sample, :reliable, NULL, :now)
             ON CONFLICT (pattern_type, channel) DO UPDATE SET
                 avg_reply_rate = EXCLUDED.avg_reply_rate,
                 avg_meeting_rate = EXCLUDED.avg_meeting_rate,
                 sample_size = EXCLUDED.sample_size,
                 is_reliable = EXCLUDED.is_reliable,
-                example = EXCLUDED.example,
+                example = NULL,
                 last_updated = EXCLUDED.last_updated
         """), {
+            # Supplied here, not left to the column default, which SQLite lacks.
+            "id": str(uuid.uuid4()),
             "ptype": p.pattern_type,
             "channel": p.channel,
             "reply_rate": p.avg_reply_rate,
             "meeting_rate": p.avg_meeting_rate,
             "sample": p.sample_size,
             "reliable": p.is_reliable,
-            "example": p.example,
             "now": now,
         })
     db_session.commit()
@@ -253,7 +258,7 @@ def get_top_patterns(
     try:
         rows = db_session.execute(text("""
             SELECT pattern_type, channel, avg_reply_rate, avg_meeting_rate,
-                   sample_size, is_reliable, example
+                   sample_size, is_reliable
             FROM subject_line_patterns
             WHERE channel = :channel AND is_reliable = true
             ORDER BY avg_meeting_rate DESC
@@ -262,7 +267,6 @@ def get_top_patterns(
 
         return [SubjectLinePattern(
             pattern_type=row["pattern_type"],
-            example=row["example"] or "",
             avg_reply_rate=row["avg_reply_rate"],
             avg_meeting_rate=row["avg_meeting_rate"],
             sample_size=row["sample_size"],
@@ -297,6 +301,6 @@ def build_phase6_pattern_context(patterns: list[SubjectLinePattern]) -> str:
         lines.append(
             f"  - {p.pattern_type.replace('_', ' ').title()}: "
             f"{p.avg_reply_rate:.0%} reply rate, {p.avg_meeting_rate:.0%} meeting rate "
-            f"(n={p.sample_size}). Example: \"{p.example}\""
+            f"(n={p.sample_size})."
         )
     return "\n".join(lines)

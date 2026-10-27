@@ -74,7 +74,8 @@ async def get_subject_patterns(
 ) -> list[dict]:
     """
     Top subject line patterns by meeting rate for a channel.
-    Only returns patterns with is_reliable=True.
+    Only returns patterns with is_reliable=True. The rates are pooled across
+    every account on this install, so no example subject line is returned.
     """
     try:
         check_feature(current_user, "playbook_access")
@@ -88,7 +89,6 @@ async def get_subject_patterns(
     return [
         {
             "pattern_type": p.pattern_type,
-            "example": p.example,
             "avg_reply_rate": p.avg_reply_rate,
             "avg_meeting_rate": p.avg_meeting_rate,
             "sample_size": p.sample_size,
