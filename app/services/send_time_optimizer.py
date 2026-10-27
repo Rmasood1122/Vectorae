@@ -5,7 +5,9 @@ Reads per-slot reply-rate data aggregated from `outcomes` and cached in Redis.
 Integrates with the M3 sequence scheduler (send_tasks.py): when scheduling
 a new step, prefer a recommended slot if one is available within 48 hours.
 
-Cache key pattern: send_time:{channel}:{icp_industry}:{icp_company_size}
+Cache key pattern: send_time:slots:{owner_id}:{channel}:{icp_industry}:{icp_company_size}
+(per account since 2026-10-27: one account's send hours and reply rates are
+never shown to another)
 Cache TTL: 25 hours (always fresh for next day's scheduling)
 
 API: GET /playbook/send-times?channel=&icp_industry=&icp_company_size=
@@ -45,13 +47,14 @@ class SendTimeRecommendation:
     fallback_used: bool = False
 
 
-def _cache_key(channel: str, icp_industry: Optional[str], icp_company_size: Optional[str]) -> str:
+def _cache_key(channel: str, icp_industry: Optional[str], icp_company_size: Optional[str],
+               *, owner_id) -> str:
     # Messages store channel "email"; the Analytics page asks for "gmail".
     # Normalise so both name the same cache entry.
     channel = "email" if channel == "gmail" else channel
     industry = (icp_industry or "any").lower().replace(" ", "_")
     size = (icp_company_size or "any").lower().replace(" ", "_")
-    return f"send_time:{channel}:{industry}:{size}"
+    return f"send_time:slots:{owner_id}:{channel}:{industry}:{size}"
 
 
 def _confidence_from_n(total_n: int) -> str:
@@ -68,16 +71,19 @@ def get_send_time_recommendation(
     channel: str,
     icp_industry: Optional[str],
     icp_company_size: Optional[str],
+    *,
+    owner_id,
 ) -> SendTimeRecommendation:
     """
-    Return slot recommendations for a channel+ICP combination.
+    Return slot recommendations for a channel+ICP combination, from the
+    sends of the account `owner_id` only.
     Reads from Redis cache (written nightly by update_send_time_scores).
     Falls back to default business hours if no cached data.
     """
     from app.core.redis_client import get_sync_redis
     try:
         redis = get_sync_redis()
-        key = _cache_key(channel, icp_industry, icp_company_size)
+        key = _cache_key(channel, icp_industry, icp_company_size, owner_id=owner_id)
         raw = redis.get(key)
     except Exception as e:
         logger.warning("send_time.cache_read_failed", error=str(e))
@@ -116,7 +122,8 @@ def update_send_time_scores(db_session) -> int:
     Compute per-slot reply rates from outcomes and write to Redis.
     Called nightly after compute_scores(). Returns number of keys written.
 
-    Slot = (channel, icp_industry, icp_company_size, day_of_week, hour_utc).
+    Slot = (owner, channel, icp_industry, icp_company_size, day_of_week, hour_utc):
+    one cache entry per account, from that account's sends only.
     Rates computed as: slot_replies / slot_sends.
     """
     from collections import defaultdict
@@ -125,7 +132,7 @@ def update_send_time_scores(db_session) -> int:
 
     from app.core.config import settings
     from app.core.redis_client import get_sync_redis
-    from app.db.models import Message, Outcome, OutcomeEvent, Sequence, Strategy
+    from app.db.models import Message, Outcome, OutcomeEvent, Product, Sequence, Strategy
 
     # Feature Group 3 repair. The old raw SQL selected s.icp_industry and
     # s.icp_company_size_bucket, columns strategies has never had, so this
@@ -138,10 +145,11 @@ def update_send_time_scores(db_session) -> int:
     try:
         rows = db_session.execute(
             select(Outcome.event, Outcome.ts, Message.sent_at, Message.channel,
-                   Strategy.pattern_inputs_json)
+                   Strategy.pattern_inputs_json, Product.user_id)
             .join(Message, Message.id == Outcome.message_id)
             .join(Sequence, Sequence.id == Message.sequence_id)
             .join(Strategy, Strategy.id == Sequence.strategy_id)
+            .join(Product, Product.id == Strategy.product_id)
             .where(Outcome.event.in_([OutcomeEvent.SENT, OutcomeEvent.REPLIED]))
         ).all()
     except Exception as e:
@@ -155,7 +163,7 @@ def update_send_time_scores(db_session) -> int:
         return 0
 
     counts: dict[tuple, list[int]] = defaultdict(lambda: [0, 0])
-    for event, ts, sent_at, channel, inputs in rows:
+    for event, ts, sent_at, channel, inputs, owner_id in rows:
         when = sent_at or ts
         if when is None:
             continue
@@ -167,15 +175,15 @@ def update_send_time_scores(db_session) -> int:
         # Sunday=0 .. Saturday=6: the convention the cached slots and
         # pick_next_send_datetime() already use.
         dow = (when.weekday() + 1) % 7
-        cell = counts[(ch, industry, size, dow, when.hour)]
+        cell = counts[(owner_id, ch, industry, size, dow, when.hour)]
         cell[0 if event is OutcomeEvent.SENT else 1] += 1
 
     min_sample = settings.PLAYBOOK_MIN_SAMPLE
     grouped: dict[tuple, list[dict]] = defaultdict(list)
-    for (ch, industry, size, dow, hour), (sends, replies) in counts.items():
+    for (owner_id, ch, industry, size, dow, hour), (sends, replies) in counts.items():
         if sends == 0:
             continue
-        grouped[(ch, industry, size)].append({
+        grouped[(owner_id, ch, industry, size)].append({
             "day_of_week": dow,
             "hour_utc": hour,
             "expected_reply_rate": round(replies / sends, 4),
@@ -186,9 +194,9 @@ def update_send_time_scores(db_session) -> int:
     # Sort each group by reply_rate desc, take top MAX_SLOTS
     redis = get_sync_redis()
     keys_written = 0
-    for (channel, industry, size), slots in grouped.items():
+    for (owner_id, channel, industry, size), slots in grouped.items():
         slots.sort(key=lambda x: x["expected_reply_rate"], reverse=True)
-        cache_key = _cache_key(channel, industry, size)
+        cache_key = _cache_key(channel, industry, size, owner_id=owner_id)
         payload = json.dumps({"slots": slots[:MAX_SLOTS]})
         redis.set(cache_key, payload, ex=CACHE_TTL_SECONDS)
         keys_written += 1
