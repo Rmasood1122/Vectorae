@@ -54,12 +54,16 @@ def mock_db():
 # Send-time optimizer (4 tests)
 # ===========================================================================
 
+# Slots are cached per account (send_time_optimizer._cache_key).
+OWNER = "00000000-0000-0000-0000-0000000000aa"
+
+
 class TestSendTimeOptimizer:
 
     def test_fallback_when_no_cache(self, mock_redis):
         with patch("app.core.redis_client.get_sync_redis", return_value=mock_redis):
             from app.services.send_time_optimizer import get_send_time_recommendation
-            rec = get_send_time_recommendation("gmail", "SaaS", "SMB")
+            rec = get_send_time_recommendation("gmail", "SaaS", "SMB", owner_id=OWNER)
             assert rec.fallback_used is True
             assert rec.confidence == "no_data"
             assert len(rec.recommended_slots) > 0
@@ -76,11 +80,11 @@ class TestSendTimeOptimizer:
         # a miss. Seed the store through the same key the service computes.
         from app.services.send_time_optimizer import _cache_key
 
-        mock_redis.set(_cache_key("gmail", "SaaS", "SMB"),
+        mock_redis.set(_cache_key("gmail", "SaaS", "SMB", owner_id=OWNER),
                        json.dumps(cached).encode())
         with patch("app.core.redis_client.get_sync_redis", return_value=mock_redis):
             from app.services.send_time_optimizer import get_send_time_recommendation
-            rec = get_send_time_recommendation("gmail", "SaaS", "SMB")
+            rec = get_send_time_recommendation("gmail", "SaaS", "SMB", owner_id=OWNER)
             assert rec.fallback_used is False
             # Confidence is a function of TOTAL sample size, not slot count:
             # _confidence_from_n(50) is "high" (>= 50). The old expectation of

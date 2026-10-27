@@ -607,8 +607,10 @@ def test_legacy_optimizer_runs_on_orm(db_session, verified_strategy, email_seque
     ])
     db_session.commit()
     assert update_send_time_scores(db_session) == 1
-    cached = json.loads(get_sync_redis().get("send_time:email:any:any"))
+    owner_id = db_session.get(m.Product, verified_strategy.product_id).user_id
+    cached = json.loads(get_sync_redis().get(f"send_time:slots:{owner_id}:email:any:any"))
     slot = cached["slots"][0]
     # Monday 10:00 in the Sunday=0 convention; the reply counts in its send slot.
     assert (slot["day_of_week"], slot["hour_utc"], slot["expected_reply_rate"]) == (1, 10, 1.0)
-    assert get_send_time_recommendation("gmail", None, None).fallback_used is False
+    assert get_send_time_recommendation("gmail", None, None,
+                                        owner_id=owner_id).fallback_used is False

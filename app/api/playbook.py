@@ -39,8 +39,8 @@ async def get_send_times(
     current_user=Depends(get_current_user),
 ) -> dict:
     """
-    Recommended send-time slots for a channel+ICP combination.
-    Returns up to 5 slots sorted by expected_reply_rate.
+    Recommended send-time slots for a channel+ICP combination, from the
+    caller's own sends only. Returns up to 5 slots sorted by expected_reply_rate.
     """
     try:
         check_feature(current_user, "playbook_access")
@@ -50,7 +50,8 @@ async def get_send_times(
     from app.services.send_time_optimizer import get_send_time_recommendation
     from dataclasses import asdict
 
-    rec = get_send_time_recommendation(channel, icp_industry, icp_company_size)
+    rec = get_send_time_recommendation(channel, icp_industry, icp_company_size,
+                                       owner_id=current_user.id)
     return {
         "channel": rec.channel,
         "icp_industry": rec.icp_industry,
