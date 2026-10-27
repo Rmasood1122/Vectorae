@@ -88,7 +88,11 @@ Each connected LinkedIn account has two daily ceilings, counted per UTC day:
 - **Connection requests:** default 20 per account per day.
 - **Messages (including InMail):** default 50 per account per day. An InMail counts against the message ceiling.
 
-Both numbers are set by your Victorae administrator in System Settings, so your deployment may use different values. If a send fails, the slot it reserved is given back.
+Connection requests also have a weekly ceiling, counted per ISO week (Monday to Sunday, UTC): default 180 per account, and at most 150 for an account without LinkedIn Premium. LinkedIn allows roughly 200 a week with Premium and 150 without, and Unipile does not limit them for you.
+
+These numbers are set by your Victorae administrator in System Settings, so your deployment may use different values. If a send fails, the slot it reserved is given back.
+
+If LinkedIn answers that an account has reached one of its own limits, the message is retried later instead of failing. If Unipile reports that an account is disconnected, needs its LinkedIn login again, or is restricted, that account is taken out of rotation until Unipile reports it working again or you reconnect it.
 
 When you have several accounts, a prospect's first touch goes from the active account with the fewest sends of that kind today. **Every later touch to that prospect comes from the same account**, so the conversation stays with one person. If that account is disconnected, the step fails with a message asking you to reconnect it.
 

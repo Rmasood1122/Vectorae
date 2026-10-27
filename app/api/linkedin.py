@@ -290,13 +290,19 @@ def _lead_for(db: Session, user_id, provider_id: str | None, profile_url: str | 
 
 @router.post("/webhooks/unipile")
 async def unipile_webhook(request: Request, db: Session = Depends(get_db)) -> dict:
-    """Replies (`message_received`) and accepted requests (`new_relation`).
-    # TODO: verify against current Unipile docs (event names + payload fields)"""
+    """Replies (`message_received`), accepted requests (`new_relation`) and
+    account status changes. Shapes per Unipile's webhook docs (read
+    2026-10-27): a message event carries account_info.user_id (our own
+    LinkedIn id) and sender.attendee_provider_id, and Unipile sends our OWN
+    messages through it too; a status event is {"AccountStatus": {account_id,
+    account_type, message}} with no `event` key."""
     raw = await request.body()
     secret = credentials.get_secret(db, "unipile", "webhook_secret")
     if not verify_unipile(raw, request.headers, secret):
         raise HTTPException(status_code=401, detail="invalid webhook signature")
     payload = json.loads(raw or b"{}")
+    if isinstance(payload.get("AccountStatus"), dict):
+        return _account_status(db, payload["AccountStatus"])
     event = payload.get("event") or payload.get("type")
     event_id = str(payload.get("message_id") or payload.get("event_id")
                    or hashlib.sha256(raw).hexdigest())[:200]
@@ -325,7 +331,9 @@ async def unipile_webhook(request: Request, db: Session = Depends(get_db)) -> di
         return {"ok": True, "matched": True, "action": "connected"}
 
     if event == "message_received":
-        if payload.get("is_sender"):
+        own_id = (payload.get("account_info") or {}).get("user_id")
+        if payload.get("is_sender") or (
+                own_id and own_id == (payload.get("sender") or {}).get("attendee_provider_id")):
             return {"ok": True, "matched": False, "reason": "own message"}
         sender = payload.get("sender") or {}
         lead = _lead_for(db, account.user_id, sender.get("attendee_provider_id"),
@@ -363,9 +371,30 @@ async def unipile_webhook(request: Request, db: Session = Depends(get_db)) -> di
             reply_tasks.enqueue(reply_id)
         return {"ok": True, "matched": True, "classification": classification}
 
-    if event in ("account_status", "credentials", "restricted"):
-        account.status = str(payload.get("status") or event)[:30].lower()
-        db.commit()
-        return {"ok": True, "action": "account_status"}
-
     return {"ok": True, "action": "ignored", "event": event}
+
+
+# AccountStatus.message (webhooks docs) -> linkedin_accounts.status. Only "ok"
+# is used for sending (linkedin_limits.pick_account); CONNECTING is a step on
+# the way and leaves the status as it is.
+_ACCOUNT_STATUS = {
+    "OK": "ok", "SYNC_SUCCESS": "ok", "RECONNECTED": "ok", "CREATION_SUCCESS": "ok",
+    "CREDENTIALS": "credentials_needed", "ERROR": "error", "STOPPED": "stopped",
+    "DELETED": "deleted",
+}
+
+
+def _account_status(db: Session, status_event: dict) -> dict:
+    """Not de-duplicated: the same status can recur (disconnected again after a
+    reconnect), and applying it twice is harmless."""
+    account = db.execute(
+        select(LinkedInAccount).where(
+            LinkedInAccount.unipile_account_id == status_event.get("account_id"))
+    ).scalar_one_or_none()
+    if account is None:
+        return {"ok": True, "matched": False, "reason": "unknown account"}
+    status = _ACCOUNT_STATUS.get(str(status_event.get("message") or "").upper())
+    if status is not None:
+        account.status = status
+        db.commit()
+    return {"ok": True, "action": "account_status", "status": account.status}
