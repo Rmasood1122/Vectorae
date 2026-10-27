@@ -5,8 +5,10 @@ code exchange, ENCRYPTED token storage, automatic refresh — plus the
 OutreachChannel skeleton and health check.
 Chunk 3 implements send(); Chunk 4 implements fetch_replies()/status().
 
-Google OAuth endpoints below are the documented stable ones; anything not
-100% certain is marked `# TODO: verify against current Gmail API docs`.
+Endpoints, scopes and request shapes were checked against Google's public
+Gmail API and OAuth docs on 2026-10-27 (developers.google.com/workspace/
+gmail/api, developers.google.com/identity/protocols/oauth2/web-server);
+tests/test_gmail_api_contract.py pins what was checked.
 Reuses the M2 plumbing (retry/backoff, structured logging, circuit
 breaker) for all Gmail API calls via BaseHttpAdapter.
 """
@@ -32,12 +34,14 @@ from app.integrations.outreach_base import (
     register_channel,
 )
 from app.core.mime_policy import OUTBOUND_POLICY
-from app.integrations.plumbing import BaseHttpAdapter
+from app.integrations.plumbing import BaseHttpAdapter, ExternalAPIError, OutcomeUnknown
 from app.services import crypto
 
 logger = logging.getLogger(__name__)
 
-# TODO: verify exact scope strings against current Gmail API docs
+# Scope strings as in gmail/api/auth/scopes. gmail.readonly and gmail.compose
+# are Restricted scopes (Google requires restricted-scope verification for
+# public use); gmail.send is Sensitive.
 GMAIL_SCOPES = [
     "https://www.googleapis.com/auth/gmail.send",
     "https://www.googleapis.com/auth/gmail.readonly",
@@ -61,7 +65,14 @@ GMAIL_SCOPES = [
 
 GOOGLE_AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
-GMAIL_API_BASE = "https://gmail.googleapis.com/gmail/v1"  # TODO: verify against current Gmail API docs
+GMAIL_API_BASE = "https://gmail.googleapis.com/gmail/v1"
+
+# handle-errors: 403s that are quota, not the request; Google says retry later.
+_GMAIL_RETRY_LATER_REASONS = {"rateLimitExceeded", "userRateLimitExceeded",
+                              "dailyLimitExceeded"}
+# users.messages.list: maxResults up to 500; pages followed per poll.
+_INBOX_PAGE_SIZE = 100
+_INBOX_PAGES_MAX = 10
 
 
 class GmailNotConnected(Exception):
@@ -137,8 +148,7 @@ class GmailOAuth:
         return resp.json()  # access_token, expires_in (no new refresh_token usually)
 
     def fetch_profile_email(self, access_token: str) -> str | None:
-        """The connected mailbox's address.
-        # TODO: verify against current Gmail API docs (users.getProfile)"""
+        """The connected mailbox's address (users.getProfile: emailAddress)."""
         try:
             resp = self.http.get(
                 f"{GMAIL_API_BASE}/users/me/profile",
@@ -293,18 +303,34 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
         raw = base64.urlsafe_b64encode(mime.as_bytes()).decode()
         payload: dict = {"raw": raw}
         if message.thread_ref:
-            payload["threadId"] = message.thread_ref  # TODO: verify against current Gmail API docs
+            # Gmail threads a message only with threadId AND RFC 2822
+            # In-Reply-To/References AND a matching Subject (users.messages);
+            # the headers come in message.headers when the caller has them.
+            payload["threadId"] = message.thread_ref
 
         try:
-            # TODO: verify against current Gmail API docs (users.messages.send)
-            data = self.call("POST", "/users/me/messages/send", json_body=payload)
+            # users.messages.send. Never retried once it may have reached Gmail:
+            # a timeout or 5xx does not prove the email was not sent.
+            data = self.call("POST", "/users/me/messages/send", json_body=payload,
+                             idempotent=False)
+        except OutcomeUnknown as exc:
+            return SendResult(
+                ok=False,
+                error=(f"{exc} -- Gmail did not confirm this send, so it is not "
+                       "resent automatically; check the mailbox's Sent folder"),
+                permanent_failure=True,
+                raw={"status": exc.status, "outcome_unknown": True},
+            )
         except Exception as exc:
             status_code = getattr(exc, "status", None)
+            reason = exc.provider_reason() if isinstance(exc, ExternalAPIError) else None
+            # handle-errors: these 403s are quota, not the recipient; retry later.
+            rate_limited = status_code == 429 or reason in _GMAIL_RETRY_LATER_REASONS
             return SendResult(
                 ok=False,
                 error=str(exc),
-                permanent_failure=status_code in (400, 403),
-                raw={"status": status_code},
+                permanent_failure=status_code in (400, 403) and not rate_limited,
+                raw={"status": status_code, "reason": reason},
             )
         return SendResult(
             ok=True,
@@ -317,18 +343,28 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
     def fetch_replies(self, since: datetime | None = None) -> list[InboundMessage]:
         """New inbound messages for this mailbox. Uses a Gmail search query
         window; message payloads are fetched individually and parsed
-        tolerantly. # TODO: verify against current Gmail API docs
-        (users.messages.list / users.messages.get, q syntax)."""
+        tolerantly. users.messages.list returns ids only (paged by
+        nextPageToken); users.messages.get fetches each one.
+
+        `after:<epoch seconds>` is not in Google's current search docs (they
+        show dates such as after:2004/04/16) but is the exact cut-off this
+        poll needs: a date would re-read up to a day of mail, and replies
+        are not de-duplicated downstream."""
         query = "in:inbox -from:me"
         if since is not None:
-            query += f" after:{int(since.timestamp())}"  # TODO: verify epoch support in q
-        listing = self.call("GET", "/users/me/messages",
-                            params={"q": query, "maxResults": 50})
+            query += f" after:{int(since.timestamp())}"
         out: list[InboundMessage] = []
-        for stub in listing.get("messages") or []:
-            data = self.call("GET", f"/users/me/messages/{stub['id']}",
-                             params={"format": "full"})
-            out.append(self._parse_inbound(data))
+        params: dict = {"q": query, "maxResults": _INBOX_PAGE_SIZE}
+        for _ in range(_INBOX_PAGES_MAX):
+            listing = self.call("GET", "/users/me/messages", params=params)
+            for stub in listing.get("messages") or []:
+                data = self.call("GET", f"/users/me/messages/{stub['id']}",
+                                 params={"format": "full"})
+                out.append(self._parse_inbound(data))
+            token = listing.get("nextPageToken")
+            if not token:
+                break
+            params = {**params, "pageToken": token}
         return out
 
     def status(self, provider_message_id: str) -> dict:
@@ -398,7 +434,7 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
         if self.breaker.is_open():
             return False
         try:
-            # TODO: verify against current Gmail API docs (users.getProfile)
+            # users.getProfile (needs readonly or compose, both requested).
             self.call("GET", "/users/me/profile")
             return True
         except Exception:
@@ -453,7 +489,10 @@ def create_draft(session: Session, account: GmailAccount, *, to: str,
                  subject: str, body: str, thread_ref: str | None = None,
                  oauth: GmailOAuth | None = None) -> dict:
     """users.drafts.create. Returns {"id": draftId, "message": {...}}.
-    # TODO: verify against current Gmail API docs (users.drafts.create)"""
+
+    threadId alone does not thread a draft: Gmail also needs In-Reply-To /
+    References and a matching Subject (users.messages). Outbound rows do not
+    store their Message-ID yet, so a draft may open as a new conversation."""
     message: dict = {"raw": _raw_message(account.email_address, to, subject, body)}
     if thread_ref:
         message["threadId"] = thread_ref

@@ -36,13 +36,31 @@ _RETRYABLE_STATUS = {429, 500, 502, 503, 504}
 class ExternalAPIError(Exception):
     """A provider call failed after all retries."""
 
-    def __init__(self, provider: str, endpoint: str, detail: str, status: int | None = None):
+    def __init__(self, provider: str, endpoint: str, detail: str, status: int | None = None,
+                 body: str | None = None):
         self.provider, self.endpoint, self.status = provider, endpoint, status
+        # The provider's error body (truncated), for callers that decide by
+        # the provider's own reason code rather than the status alone.
+        self.body = body
         super().__init__(f"[{provider}] {endpoint}: {detail}")
+
+    def provider_reason(self) -> str | None:
+        """errors[0].reason from a Google-style JSON error body, else None."""
+        try:
+            error = json.loads(self.body or "").get("error") or {}
+            return (error.get("errors") or [{}])[0].get("reason") or error.get("status")
+        except (ValueError, AttributeError, IndexError):
+            return None
 
 
 class RateLimitExceeded(ExternalAPIError):
     """429s persisted through every retry."""
+
+
+class OutcomeUnknown(ExternalAPIError):
+    """A non-idempotent request (for example sending an email) may have taken
+    effect: it timed out after being sent, or the provider answered 5xx.
+    Never retried automatically -- retrying could do it twice."""
 
 
 class CircuitOpenError(Exception):
@@ -193,7 +211,12 @@ class BaseHttpAdapter:
         json_body: dict | None = None,
         cache_ttl: int | None = None,
         cost_units: int = 1,
+        idempotent: bool = True,
     ) -> dict:
+        """idempotent=False (sending a message): a request that may have
+        reached the provider is never repeated. A connection that was never
+        opened, or a 429 (the provider refused it), is still retried; a
+        timeout after sending or a 5xx raises OutcomeUnknown at once."""
         self.breaker.check()
 
         cache_payload = {"m": method, "p": params, "j": json_body}
@@ -226,6 +249,11 @@ class BaseHttpAdapter:
                 )
             except httpx.HTTPError as exc:  # connect/timeout errors
                 last_error, last_status = f"{type(exc).__name__}: {exc}", None
+                if not idempotent and not isinstance(exc, httpx.ConnectError):
+                    # ConnectError (incl. ConnectTimeout): nothing was sent.
+                    self.breaker.record_failure()
+                    raise OutcomeUnknown(self.provider, endpoint,
+                                         f"outcome unknown ({last_error})") from exc
                 self._backoff(attempt, retry_after=None)
                 continue
 
@@ -236,6 +264,11 @@ class BaseHttpAdapter:
                 last_status = resp.status_code
                 self._log(endpoint, method, resp.status_code, latency_ms,
                           cost_units, cached=False, attempt=attempt)
+                if not idempotent and resp.status_code != 429:
+                    self.breaker.record_failure()
+                    raise OutcomeUnknown(self.provider, endpoint,
+                                         f"outcome unknown (HTTP {resp.status_code})",
+                                         status=resp.status_code, body=resp.text[:2000])
                 retry_after = _parse_retry_after(resp)
                 self._backoff(attempt, retry_after)
                 continue
@@ -248,7 +281,7 @@ class BaseHttpAdapter:
                 raise ExternalAPIError(
                     self.provider, endpoint,
                     f"HTTP {resp.status_code}: {resp.text[:300]}",
-                    status=resp.status_code,
+                    status=resp.status_code, body=resp.text[:2000],
                 )
 
             # Success
