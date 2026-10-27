@@ -31,9 +31,18 @@ SPECS = fw.load_all()
 CASES = [(spec, case) for spec in SPECS for case in spec.cases]
 
 
+_RESULTS: dict = {}
+
+
 def _run(spec, case):
-    client = fw.ReplayClient(case.recorded)
-    return fw.run_case(spec, case, ADAPTERS[spec.adapter], client, gr.GRADERS)
+    """One offline replay of a case. The replay is deterministic, so a result
+    is kept: the per-case tests and the summary gate below read the same one
+    instead of replaying all ~1,100 cases twice (that cost ~160 s a run)."""
+    key = (spec.id, case.id)
+    if key not in _RESULTS:
+        client = fw.ReplayClient(case.recorded)
+        _RESULTS[key] = fw.run_case(spec, case, ADAPTERS[spec.adapter], client, gr.GRADERS)
+    return _RESULTS[key]
 
 
 @pytest.mark.parametrize("spec", SPECS, ids=[s.id for s in SPECS])

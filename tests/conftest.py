@@ -17,6 +17,7 @@ Rules enforced here:
 import os
 import re
 import socket
+import sqlite3
 import sys
 
 os.environ["APP_ENV"] = "test"
@@ -87,7 +88,8 @@ os.environ.setdefault("SMS_PROVIDER", "memory")
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -130,14 +132,42 @@ _assert_local_redis_only()
 # --------------------------------------------------------------------------
 
 
+@event.listens_for(Engine, "connect")
+def _sqlite_without_fsync(dbapi_connection, _record):
+    """Tests only: SQLite files are scratch, so skip the fsync after each
+    write. A migration test that builds ~130 tables in a file database spent
+    ~1 s in fsync; ~0.2 s without. Data, schema and the journal are unchanged
+    (synchronous only decides whether SQLite waits for the disk)."""
+    if type(dbapi_connection).__module__.startswith("sqlite3"):
+        dbapi_connection.execute("PRAGMA synchronous=OFF")
+
+
+_SCHEMA_TEMPLATE = None
+
+
+def _schema_template():
+    """One in-memory database with every table created, built once per run.
+
+    Building all ~130 tables took ~110 ms per test, about half the offline
+    suite's wall time. Each test now gets its own fresh in-memory database
+    copied from this template with SQLite's backup API (~1 ms): the same
+    empty schema, nothing shared between tests. No engine-level connect
+    listener exists in app/, so a copy and a fresh create_all are the same.
+    """
+    global _SCHEMA_TEMPLATE
+    if _SCHEMA_TEMPLATE is None:
+        template = sqlite3.connect(":memory:", check_same_thread=False)
+        engine = create_engine("sqlite://", creator=lambda: template, poolclass=StaticPool)
+        Base.metadata.create_all(engine)
+        _SCHEMA_TEMPLATE = template
+    return _SCHEMA_TEMPLATE
+
+
 @pytest.fixture()
 def db_session():
-    engine = create_engine(
-        "sqlite://",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-    )
-    Base.metadata.create_all(engine)
+    fresh = sqlite3.connect(":memory:", check_same_thread=False)
+    _schema_template().backup(fresh)
+    engine = create_engine("sqlite://", creator=lambda: fresh, poolclass=StaticPool)
     TestingSession = sessionmaker(bind=engine, expire_on_commit=False)
     session = TestingSession()
     try:
