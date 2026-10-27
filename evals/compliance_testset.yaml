@@ -106,3 +106,8 @@ files:
   # drafted templates carry no links, guarantees or invented figures
   - tests/test_website_builder_guards.py
   - tests/test_whatsapp_template_guards.py
+  # Tenancy of the install-wide learning aggregates (2026-10-27): no account's sent
+  # subject line is stored or returned to another account; send-time slots are
+  # built and served per account
+  - tests/test_subject_patterns_no_example.py
+  - tests/test_send_time_slots_per_account.py
