@@ -125,3 +125,26 @@ def test_prompt_helper_names_no_example():
     context = si.build_phase6_pattern_context([pattern])
     assert "Question" in context
     assert "Example" not in context
+
+
+class _FailingSession:
+    def __init__(self):
+        self.rolled_back = False
+
+    def execute(self, *_a, **_k):
+        raise RuntimeError("query failed")
+
+    def rollback(self):
+        self.rolled_back = True
+
+
+@pytest.mark.parametrize("call", [
+    lambda s: si.extract_patterns_from_outcomes(s),
+    lambda s: si.get_top_patterns(s, channel="email"),
+])
+def test_a_failed_query_rolls_the_session_back(call):
+    # Both handlers called `db.rollback()`, an undefined name: the NameError
+    # was swallowed and the caller's session stayed in a failed transaction.
+    session = _FailingSession()
+    assert call(session) == []
+    assert session.rolled_back

@@ -158,7 +158,7 @@ def extract_patterns_from_outcomes(
     except Exception as e:
         # REPAIR: rollback — see send_time_optimizer note.
         try:
-            db.rollback()
+            db_session.rollback()
         except Exception:
             pass
         logger.error("subject_intelligence.query_failed", error=str(e))
@@ -275,7 +275,7 @@ def get_top_patterns(
         ) for row in rows]
     except Exception as e:
         try:
-            db.rollback()
+            db_session.rollback()
         except Exception:
             pass
         logger.error("subject_intelligence.get_top_failed", error=str(e))
