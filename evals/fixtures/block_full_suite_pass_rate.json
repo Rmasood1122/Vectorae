@@ -2,12 +2,12 @@
   "manifest": {
     "schema": "candidate/v2",
     "registry_hash": "cf8c14a4a40b6228f907fcbee84ed393ac5053b05aa8e4f463883c9e09366282",
-    "dataset_hash": "f08979a4cded7e4359ffcb3faf28f8625366f113c4639ea947103557e55a6347"
+    "dataset_hash": "ed30c042df773f5e8ecbb9c899dd2e83c0f68484e94e59594452fffbd5098e93"
   },
   "scores": {
     "compliance_suite_pass_rate": 1.0,
-    "full_suite_pass_rate": 0.9998774810095565,
-    "offline_test_count": 8161.0,
-    "suite_runtime_s": 1571.941
+    "full_suite_pass_rate": 0.9998778402150013,
+    "offline_test_count": 8185.0,
+    "suite_runtime_s": 648.351
   }
 }
