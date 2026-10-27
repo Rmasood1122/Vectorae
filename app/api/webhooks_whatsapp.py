@@ -17,8 +17,9 @@ Deliveries are signature-verified (X-Hub-Signature-256) and idempotent —
 Meta retries deliveries, and one delivery can carry MANY events, so dedupe
 is per event id, not per delivery.
 
-Payload structure notes are marked `# TODO: verify against current
-WhatsApp Cloud API docs` wherever not 100% certain.
+Payload shapes, the signature scheme and the verification handshake were
+checked against Meta's public webhook docs on 2026-10-27
+(developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/).
 """
 
 import hashlib
@@ -77,9 +78,8 @@ def _is_opt_out(text: str) -> bool:
 
 def verify_signature(raw_body: bytes, signature_header: str | None) -> bool:
     """X-Hub-Signature-256: 'sha256=' + HMAC-SHA256(app_secret, raw_body).
-    # TODO: verify against current WhatsApp Cloud API docs (header name +
-    exact scheme). Constant-time compare; missing secret => reject all
-    (fail-closed), never accept-all."""
+    (webhooks/create-webhook-endpoint). Constant-time compare; missing
+    secret => reject all (fail-closed), never accept-all."""
     if not settings.whatsapp_app_secret:
         logger.error("WHATSAPP_APP_SECRET unset — rejecting webhook delivery")
         return False
@@ -100,9 +100,9 @@ def verify_signature(raw_body: bytes, signature_header: str | None) -> bool:
 
 @router.get("/webhooks/whatsapp", response_class=PlainTextResponse)
 def whatsapp_verify(
-    # TODO: verify against current WhatsApp Cloud API docs (exact query
-    # param names; Meta uses dotted names hub.mode / hub.verify_token /
-    # hub.challenge, aliased here since dots aren't valid identifiers)
+    # Meta's dotted query names hub.mode / hub.verify_token / hub.challenge
+    # (webhooks/create-webhook-endpoint), aliased since dots aren't valid
+    # identifiers.
     hub_mode: str | None = Query(default=None, alias="hub.mode"),
     hub_verify_token: str | None = Query(default=None, alias="hub.verify_token"),
     hub_challenge: str | None = Query(default=None, alias="hub.challenge"),
@@ -130,7 +130,7 @@ async def whatsapp_webhook(request: Request, db: Session = Depends(get_db)) -> d
     payload = await request.json()
     processed, duplicates = 0, 0
 
-    # TODO: verify against current WhatsApp Cloud API docs (payload shape:
+    # Payload shape (webhooks/reference/messages):
     # {"object": "whatsapp_business_account", "entry": [{"changes":
     # [{"field": "messages", "value": {"statuses": [...], "messages": [...],
     # "metadata": {"phone_number_id": ...}, "contacts": [...]}}]}]})
@@ -140,8 +140,7 @@ async def whatsapp_webhook(request: Request, db: Session = Depends(get_db)) -> d
             value = change.get("value") or {}
 
             # Template review verdicts arrive as their own change field.
-            # TODO: verify against current WhatsApp docs (field name
-            # 'message_template_status_update' and value keys: event,
+            # Field 'message_template_status_update'; value keys: event,
             # message_template_id, message_template_name,
             # message_template_language, reason)
             if field == "message_template_status_update":
@@ -261,8 +260,8 @@ def _handle_template_status(db: Session, value: dict) -> None:
 def _handle_status(db: Session, status_ev: dict) -> None:
     wamid = status_ev.get("id")
     meta_status = (status_ev.get("status") or "").lower()
-    # TODO: verify against current WhatsApp Cloud API docs (status values
-    # and error object shape under statuses[].errors)
+    # Status values and statuses[].errors[] = {code, title, message,
+    # error_data, href}: webhooks/reference/messages/status.
     message = db.execute(
         select(Message).where(Message.provider_message_id == wamid)
     ).scalars().first()
@@ -304,8 +303,8 @@ def _handle_status(db: Session, status_ev: dict) -> None:
 def _inbound_text(msg: dict) -> str:
     """Extract a text body tolerantly. Non-text types (image, audio,
     button replies...) degrade to their type name so we still persist the
-    event. # TODO: verify against current WhatsApp Cloud API docs
-    (message type list and per-type payload shape)"""
+    event. Per-type shapes: webhooks/reference/messages (text, button,
+    interactive.button_reply / list_reply)."""
     msg_type = msg.get("type")
     if msg_type == "text":
         return (msg.get("text") or {}).get("body") or ""

@@ -164,7 +164,10 @@ class Settings(BaseSettings):
     # Meta App secret — used to validate X-Hub-Signature-256 on deliveries.
     whatsapp_app_secret: str = ""
     # TODO: verify against current WhatsApp Cloud API docs (latest version)
-    whatsapp_api_version: str = "v20.0"
+    # Graph API version. v20.0 expired 2026-09-24; v25.0 is supported until
+    # 2028-07-29 (developers.facebook.com/docs/graph-api/changelog/versions,
+    # read 2026-10-27).
+    whatsapp_api_version: str = "v25.0"
     # TODO: verify against current WhatsApp docs (body component limit)
     whatsapp_template_body_max_chars: int = 1024
     # Per-channel daily cap + warm-up (M4 Chunk 3). Deferred, never dropped.
