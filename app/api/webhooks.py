@@ -1,7 +1,8 @@
 """Webhooks — Calendly booking events (M3 Chunk 5).
 
 invitee.created  -> lead meeting_booked, sequences stop, `booked` outcome
-invitee.canceled -> lead back to replied, event recorded
+invitee.canceled -> lead back to replied, event recorded; a reschedule
+                    (rescheduled: true) leaves the lead booked
 Deliveries are signature-verified and idempotent (Calendly retries).
 
 NOTE FOR FEATURE 2 (reply intelligence). This module handles BOOKINGS; it
@@ -209,17 +210,27 @@ def _process_calendly_event(db: Session, payload: dict, event_id: str) -> dict:
         return {"ok": True, "matched": True, "action": "booked"}
 
     if event_type == "invitee.canceled":
-        lead.status = LeadStatus.REPLIED
-        if not _already_recorded(db, lead, OutcomeEvent.REPLIED, event_id):
-            db.add(Outcome(lead_id=lead.id, event=OutcomeEvent.REPLIED,
-                           channel="calendly",
-                           meta_json={"calendly_event": event_id, "canceled": True}))
         # Stop the brief's reminders: nobody wants a "meeting in 1 hour" push
         # for a call that was cancelled yesterday.
         from app.services.meeting_prep import SOURCE_CALENDLY, cancel_briefs  # noqa: PLC0415
 
         cancel_briefs(db, lead.id, source=SOURCE_CALENDLY,
                       external_ref=_calendly_event_ref(invitee, event_id))
+
+        # A reschedule arrives as a cancel of the old event with
+        # `rescheduled: true` plus an invitee.created for the new one, in
+        # either order (Calendly, "Webhook Payloads for Rescheduled Events").
+        # The meeting is still on, so the lead stays booked and no "replied"
+        # outcome is written. Only a real boolean counts.
+        if invitee.get("rescheduled") is True:
+            db.commit()
+            return {"ok": True, "matched": True, "action": "rescheduled"}
+
+        lead.status = LeadStatus.REPLIED
+        if not _already_recorded(db, lead, OutcomeEvent.REPLIED, event_id):
+            db.add(Outcome(lead_id=lead.id, event=OutcomeEvent.REPLIED,
+                           channel="calendly",
+                           meta_json={"calendly_event": event_id, "canceled": True}))
         db.commit()
         return {"ok": True, "matched": True, "action": "canceled"}
 
