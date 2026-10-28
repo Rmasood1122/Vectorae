@@ -332,12 +332,39 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
                 permanent_failure=status_code in (400, 403) and not rate_limited,
                 raw={"status": status_code, "reason": reason},
             )
+        rfc_message_id, rfc_references = self._sent_threading_headers(data.get("id"))
         return SendResult(
             ok=True,
             provider_message_id=data.get("id"),
             thread_ref=data.get("threadId"),
+            rfc_message_id=rfc_message_id,
+            rfc_references=rfc_references,
             raw=data,
         )
+
+    def _sent_threading_headers(self, gmail_id: str | None) -> tuple[str | None, str | None]:
+        """(Message-ID, References) of a message just sent, read back from
+        Gmail (users.messages.get, format=metadata) rather than set by us:
+        what the prospect's client threads on is the id Gmail actually sent.
+        A read failure costs only the threading of the NEXT email (it falls
+        back to threadId only); the send itself already succeeded, so this
+        never raises."""
+        if not gmail_id:
+            return None, None
+        from app.services import email_threading  # noqa: PLC0415
+
+        try:
+            data = self.call("GET", f"/users/me/messages/{gmail_id}",
+                             params={"format": "metadata",
+                                     "metadataHeaders": ["Message-ID", "References"]})
+        except Exception as exc:  # noqa: BLE001 -- see the docstring
+            logger.warning("gmail sent-message headers unavailable for %s: %s",
+                           gmail_id, type(exc).__name__)
+            return None, None
+        headers = {h.get("name", "").lower(): h.get("value", "")
+                   for h in ((data or {}).get("payload") or {}).get("headers") or []}
+        return (email_threading.clean_message_id(headers.get("message-id")),
+                email_threading.clean_references(headers.get("references")))
 
     # ---- inbound ----------------------------------------------------------
     def fetch_replies(self, since: datetime | None = None) -> list[InboundMessage]:
@@ -461,11 +488,14 @@ def _gmail_http() -> httpx.Client:
     return httpx.Client(base_url=GMAIL_API_BASE, timeout=30.0)
 
 
-def _raw_message(from_addr: str | None, to: str, subject: str, body: str) -> str:
+def _raw_message(from_addr: str | None, to: str, subject: str, body: str,
+                 reply_headers: dict | None = None) -> str:
     mime = EmailMessage(policy=OUTBOUND_POLICY)
     mime["From"] = from_addr or "me"
     mime["To"] = to
     mime["Subject"] = subject
+    for name, value in (reply_headers or {}).items():
+        mime[name] = value
     mime.set_content(body)
     return base64.urlsafe_b64encode(mime.as_bytes()).decode()
 
@@ -487,13 +517,17 @@ def _drafts_call(session: Session, account: GmailAccount, method: str, path: str
 
 def create_draft(session: Session, account: GmailAccount, *, to: str,
                  subject: str, body: str, thread_ref: str | None = None,
+                 reply_headers: dict | None = None,
                  oauth: GmailOAuth | None = None) -> dict:
     """users.drafts.create. Returns {"id": draftId, "message": {...}}.
 
     threadId alone does not thread a draft: Gmail also needs In-Reply-To /
-    References and a matching Subject (users.messages). Outbound rows do not
-    store their Message-ID yet, so a draft may open as a new conversation."""
-    message: dict = {"raw": _raw_message(account.email_address, to, subject, body)}
+    References and a matching Subject (users.messages). `reply_headers` are
+    those headers (email_threading.reply_headers) when the parent's
+    Message-ID is stored (migration 0096); a different Subject still opens a
+    new conversation in Gmail, though other clients thread on the headers."""
+    message: dict = {"raw": _raw_message(account.email_address, to, subject, body,
+                                         reply_headers)}
     if thread_ref:
         message["threadId"] = thread_ref
     return _drafts_call(session, account, "POST", "/users/me/drafts",
@@ -502,10 +536,11 @@ def create_draft(session: Session, account: GmailAccount, *, to: str,
 
 def update_draft(session: Session, account: GmailAccount, draft_id: str, *,
                  to: str, subject: str, body: str,
-                 thread_ref: str | None = None,
+                 thread_ref: str | None = None, reply_headers: dict | None = None,
                  oauth: GmailOAuth | None = None) -> dict:
     """users.drafts.update (full replace)."""
-    message: dict = {"raw": _raw_message(account.email_address, to, subject, body)}
+    message: dict = {"raw": _raw_message(account.email_address, to, subject, body,
+                                         reply_headers)}
     if thread_ref:
         message["threadId"] = thread_ref
     return _drafts_call(session, account, "PUT", f"/users/me/drafts/{draft_id}",

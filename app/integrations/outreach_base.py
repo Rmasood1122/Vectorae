@@ -39,6 +39,10 @@ class SendResult:
     thread_ref: str | None = None
     error: str | None = None
     permanent_failure: bool = False  # True => do not retry (e.g. invalid address)
+    # Email only: the sent message's own Message-ID / References (RFC 5322
+    # 3.6.4), so the next email in the conversation can reply to it.
+    rfc_message_id: str | None = None
+    rfc_references: str | None = None
     raw: dict = field(default_factory=dict)
 
 

@@ -82,7 +82,11 @@ def test_it_chains_after_0094_and_is_the_activation_target():
     assert (module.revision, module.down_revision) == (
         "0095_playbook_score_nullable", "0094_help_chunks")
     assert ScriptDirectory.from_config(_config()).get_heads() == [act.TARGET_REVISION]
-    assert act.TARGET_REVISION == module.revision
+    # 0096 (outbound threading) later became the head: the target must still
+    # carry this revision, i.e. be it or descend from it.
+    chain = {r.revision for r in ScriptDirectory.from_config(_config())
+             .walk_revisions("base", act.TARGET_REVISION)}
+    assert module.revision in chain
 
 
 def test_upgrade_makes_only_score_nullable_and_keeps_the_rows(tmp_path):

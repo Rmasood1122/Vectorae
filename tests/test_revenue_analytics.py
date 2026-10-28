@@ -215,7 +215,10 @@ def test_gmail_send_keeps_plain_text_first():
     sent = {}
 
     def fake_call(method, path, json_body=None, **kw):
-        sent["payload"] = json_body
+        # Only the send carries a body; the Message-ID read-back after it
+        # (migration 0096) is a GET without one.
+        if json_body is not None:
+            sent["payload"] = json_body
         return {"id": "g1", "threadId": "t1"}
 
     channel.call = fake_call
