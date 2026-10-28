@@ -3,12 +3,17 @@
 Auth via APOLLO_API_KEY (env). All calls inherit the shared plumbing:
 retry/backoff, Redis caching, structured logging, circuit breaker.
 
-Honesty rule from the project spec: any endpoint/parameter not verified
-against current Apollo documentation is marked with
-`# TODO: verify against current Apollo docs` rather than invented.
+Checked against Apollo's public API docs on 2026-10-27 (docs.apollo.io:
+reference/people-api-search, reference/people-enrichment, docs/test-api-key).
+People search is POST /mixed_people/api_search: it returns no emails or
+phone numbers (contact data comes from people/match, which the pipeline runs
+for every sourced lead) and its filters are query parameters named with [].
+The old /mixed_people/search is gone from the docs (deprecated for API
+callers). tests/test_apollo.py pins each point.
 """
 
 import logging
+import math
 
 from app.config import settings
 from app.integrations.base import EnrichedLead, LeadSource, RawLead, register_lead_source
@@ -21,9 +26,20 @@ logger = logging.getLogger(__name__)
 _LOCKED_EMAIL_MARKERS = ("email_not_unlocked", "not_unlocked")
 
 
-def icp_to_apollo_params(icp_criteria: dict) -> dict:
+# people-api-search: at most 100 per page and 500 pages (50,000 records).
+_SEARCH_PER_PAGE_MAX = 100
+_SEARCH_PAGES_MAX = 500
+
+
+def icp_to_apollo_params(icp_criteria: dict, *, industries_as_keywords: bool = False) -> dict:
     """Translate Victorae's structured ICP criteria into Apollo people
-    search parameters.
+    search query parameters (array filters carry a [] suffix).
+
+    Industries go to organization_industries[], which matches Apollo's own
+    industry names exactly (lowercase, e.g. "hospital & health care"). Our
+    industries are free text, so with industries_as_keywords they are added
+    to q_keywords instead (the search's fallback when the exact filter finds
+    nobody).
 
     Our ICP criteria schema (produced by app/services/icp_extraction.py or
     supplied explicitly by the API caller):
@@ -35,24 +51,28 @@ def icp_to_apollo_params(icp_criteria: dict) -> dict:
     """
     params: dict = {}
     if icp_criteria.get("titles"):
-        params["person_titles"] = list(icp_criteria["titles"])
+        params["person_titles[]"] = list(icp_criteria["titles"])
     if icp_criteria.get("locations"):
-        params["person_locations"] = list(icp_criteria["locations"])
+        params["person_locations[]"] = list(icp_criteria["locations"])
     if icp_criteria.get("company_size_ranges"):
-        # Apollo expects "min,max" strings.  # TODO: verify against current Apollo docs
-        params["organization_num_employees_ranges"] = list(icp_criteria["company_size_ranges"])
+        # "min,max" strings, e.g. "11,50".
+        params["organization_num_employees_ranges[]"] = list(icp_criteria["company_size_ranges"])
+    keywords = list(icp_criteria.get("keywords") or [])
     if icp_criteria.get("industries"):
-        # Industry filtering parameter name.  # TODO: verify against current Apollo docs
-        params["q_organization_keyword_tags"] = list(icp_criteria["industries"])
-    if icp_criteria.get("keywords"):
-        params["q_keywords"] = " ".join(icp_criteria["keywords"])
+        if industries_as_keywords:
+            keywords += list(icp_criteria["industries"])
+        else:
+            params["organization_industries[]"] = [
+                str(i).strip().lower() for i in icp_criteria["industries"]]
+    if keywords:
+        params["q_keywords"] = " ".join(keywords)
     return params
 
 
 @register_lead_source
 class ApolloAdapter(BaseHttpAdapter, LeadSource):
     provider = "apollo"
-    base_url = "https://api.apollo.io/api/v1"  # TODO: verify against current Apollo docs
+    base_url = "https://api.apollo.io/api/v1"
 
     def __init__(self, api_key: str | None = None, **kwargs):
         super().__init__(**kwargs)
@@ -61,7 +81,7 @@ class ApolloAdapter(BaseHttpAdapter, LeadSource):
             logger.warning("APOLLO_API_KEY is not set — Apollo calls will fail auth")
 
     def _auth(self) -> dict:
-        # Header-based key auth.  # TODO: verify against current Apollo docs
+        # x-api-key header (header names are case-insensitive).
         return {"headers": {
             "X-Api-Key": self.api_key,
             "Content-Type": "application/json",
@@ -73,56 +93,68 @@ class ApolloAdapter(BaseHttpAdapter, LeadSource):
     # ------------------------------------------------------------------
 
     def search(self, icp_criteria: dict, max_leads: int) -> list[RawLead]:
-        """Paginated people search, hard-capped at max_leads."""
+        """Paginated people search, hard-capped at max_leads.
+
+        If the exact industry filter finds nobody on the first page, the
+        search runs once more with the industries as free-text keywords
+        (founder choice, 2026-10-27). Search costs Apollo 0 credits, so the
+        retry only uses rate limit."""
         max_leads = min(max_leads, settings.leads_max_per_run)
-        base_params = icp_to_apollo_params(icp_criteria)
+        leads = self._search(icp_to_apollo_params(icp_criteria), max_leads)
+        if not leads and icp_criteria.get("industries"):
+            logger.info("apollo search: no match on exact industries %s; "
+                        "retrying them as keywords", icp_criteria["industries"])
+            leads = self._search(
+                icp_to_apollo_params(icp_criteria, industries_as_keywords=True), max_leads)
+        return leads
+
+    def _search(self, base_params: dict, max_leads: int) -> list[RawLead]:
         leads: list[RawLead] = []
         page = 1
-
-        while len(leads) < max_leads:
-            body = {
-                **base_params,
-                "page": page,
-                "per_page": min(settings.apollo_page_size, max_leads - len(leads)),
-            }
+        while len(leads) < max_leads and page <= _SEARCH_PAGES_MAX:
+            per_page = min(settings.apollo_page_size, _SEARCH_PER_PAGE_MAX,
+                           max_leads - len(leads))
+            params = {**base_params, "page": page, "per_page": per_page}
             data = self.call(
                 "POST",
-                "/mixed_people/search",  # TODO: verify against current Apollo docs
-                json_body=body,
+                "/mixed_people/api_search",
+                params=params,
                 cache_ttl=settings.cache_ttl_search_seconds,
-                cost_units=body["per_page"],
+                # Apollo bills this search 0 credits; it is still metered per
+                # requested lead, as before, so a spend cap errs early.
+                cost_units=per_page,
             )
-            people = data.get("people") or data.get("contacts") or []
+            people = data.get("people") or []
             if not people:
                 break
             leads.extend(self._to_raw_lead(p) for p in people)
-
-            pagination = data.get("pagination") or {}
-            total_pages = int(pagination.get("total_pages") or page)
-            if page >= total_pages:
+            # The response has total_entries, not a pagination object.
+            total_pages = math.ceil(int(data.get("total_entries") or 0) / per_page)
+            if len(people) < per_page or page >= total_pages:
                 break
             page += 1
-
         return leads[:max_leads]
 
     def enrich(self, lead: RawLead) -> EnrichedLead:
         """Enrich one person. Cached in Redis for
         CACHE_TTL_ENRICHMENT_SECONDS — the same person is never paid for
         twice (cache key is derived from the request payload)."""
+        # people/match takes these as query parameters; an Apollo person id
+        # from search is the most reliable key.
         if lead.external_id:
-            body = {"id": lead.external_id}  # TODO: verify against current Apollo docs
+            params = {"id": lead.external_id}
         elif lead.email:
-            body = {"email": lead.email}
+            params = {"email": lead.email}
         else:
-            body = {
+            params = {
                 "first_name": lead.first_name,
                 "last_name": lead.last_name,
                 "organization_name": lead.company,
             }
         data = self.call(
             "POST",
-            "/people/match",  # TODO: verify against current Apollo docs
-            json_body=body,
+            "/people/match",
+            params={k: v for k, v in params.items() if v},
             cache_ttl=settings.cache_ttl_enrichment_seconds,
         )
         person = data.get("person") or {}
@@ -142,10 +174,11 @@ class ApolloAdapter(BaseHttpAdapter, LeadSource):
         if self.breaker.is_open():
             return False
         try:
-            self.call("GET", "/auth/health")  # TODO: verify against current Apollo docs
-            return True
+            data = self.call("GET", "/auth/health")
         except Exception:
             return False
+        # {"healthy": true, "is_logged_in": true}; a bad key answers 200 too.
+        return bool(data.get("healthy")) and bool(data.get("is_logged_in"))
 
     # ------------------------------------------------------------------
     # Response mapping
@@ -158,7 +191,9 @@ class ApolloAdapter(BaseHttpAdapter, LeadSource):
         if email and any(marker in email for marker in _LOCKED_EMAIL_MARKERS):
             email = None
         phone = None
-        numbers = person.get("phone_numbers") or []
+        # people/match puts numbers under person.contact.phone_numbers.
+        numbers = (person.get("phone_numbers")
+                   or (person.get("contact") or {}).get("phone_numbers") or [])
         if numbers and isinstance(numbers[0], dict):
             phone = numbers[0].get("sanitized_number") or numbers[0].get("raw_number")
         return RawLead(

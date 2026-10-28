@@ -13,6 +13,15 @@ with a 36-hour TTL, so yesterday's counters expire on their own and nothing
 ever has to reset them. INMAIL counts against the MESSAGE ceiling too -- it is
 a message, and LinkedIn sees it as one.
 
+Connection requests also have a WEEKLY ceiling (li:usage:<id>:<ISO week>:
+connect_week, 8-day TTL): LinkedIn allows about 200 a week with Premium and
+about 150 without (Unipile's provider-limits page, read 2026-10-27), and
+Unipile enforces none of it. Default 180, at most 150 without Premium
+(founder choice, 2026-10-27).
+
+Only accounts whose Unipile status is "ok" are used: one that needs its
+credentials again, or is restricted, would fail every send.
+
 RESERVE, THEN SEND, THEN (ON FAILURE) RELEASE
 reserve() increments first and only then compares, rolling back if over the
 limit, so two workers racing for an account's 20th slot cannot both get it
@@ -38,6 +47,8 @@ from app.db.models import LinkedInAccount
 
 KINDS = ("connect", "message", "inmail")
 TTL_SECONDS = 36 * 3600
+WEEK_TTL_SECONDS = 8 * 24 * 3600
+FREE_WEEKLY_CONNECTION_CAP = 150
 
 
 def _redis():
@@ -52,6 +63,18 @@ def _day(now: datetime | None) -> str:
 
 def _key(account_id, kind: str, now: datetime | None) -> str:
     return f"li:usage:{account_id}:{_day(now)}:{kind}"
+
+
+def _week_key(account_id, now: datetime | None) -> str:
+    year, week, _ = (now or datetime.now(timezone.utc)).astimezone(timezone.utc).isocalendar()
+    return f"li:usage:{account_id}:{year}-W{week:02d}:connect_week"
+
+
+def weekly_connection_limit(session: Session, account: LinkedInAccount) -> int:
+    from app.services import system_settings  # noqa: PLC0415
+
+    limit = int(system_settings.get(session, "linkedin_weekly_connection_limit"))
+    return limit if account.has_premium else min(limit, FREE_WEEKLY_CONNECTION_CAP)
 
 
 def limits(session: Session) -> dict[str, int]:
@@ -94,6 +117,14 @@ def reserve(session: Session, account: LinkedInAccount, kind: str,
     if count > lim[ceiling_key]:
         redis.decr(key)
         return False
+    if kind == "connect":
+        week_key = _week_key(account.id, now)
+        weekly = redis.incr(week_key)
+        redis.expire(week_key, WEEK_TTL_SECONDS)
+        if weekly > weekly_connection_limit(session, account):
+            redis.decr(week_key)
+            redis.decr(key)
+            return False
     if kind == "inmail":
         inmail_key = _key(account.id, "inmail", now)
         redis.incr(inmail_key)
@@ -103,8 +134,10 @@ def reserve(session: Session, account: LinkedInAccount, kind: str,
 
 def release(account: LinkedInAccount, kind: str, now: datetime | None = None) -> None:
     redis = _redis()
-    for ceiling in _ceiling_kinds(kind):
-        key = _key(account.id, ceiling, now)
+    keys = [_key(account.id, ceiling, now) for ceiling in _ceiling_kinds(kind)]
+    if kind == "connect":
+        keys.append(_week_key(account.id, now))
+    for key in keys:
         if int(redis.get(key) or 0) > 0:
             redis.decr(key)
 
@@ -124,7 +157,8 @@ def pick_account(session: Session, user_id, kind: str, *,
     kind today wins, least-recently-used breaking ties.
     """
     query = select(LinkedInAccount).where(LinkedInAccount.user_id == user_id,
-                                          LinkedInAccount.is_active.is_(True))
+                                          LinkedInAccount.is_active.is_(True),
+                                          LinkedInAccount.status == "ok")
     if required_account_id is not None:
         query = query.where(LinkedInAccount.id == required_account_id)
     accounts = list(session.execute(query).scalars().all())

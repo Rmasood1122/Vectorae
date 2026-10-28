@@ -102,7 +102,9 @@ To resume, go to **Campaigns**, open the **Overview** tab, and press **Resume** 
 
 ## What if a send fails?
 
-- If Google rejects the message outright, it is marked failed and is not retried automatically.
+- If Google rejects the message outright (for example a malformed address or missing permission), it is marked failed and is not retried automatically.
+- If the mailbox is over a Gmail sending limit, the message is retried later.
+- If Gmail does not confirm the send (it timed out or Google answered with a server error), the message is marked failed with a note to check the mailbox's Sent folder, and is never resent automatically: Google says such an answer does not prove the email was not sent.
 - Other errors are retried later.
 - If a send was interrupted at the moment of sending, the message is flagged and never resent automatically, because it may already have gone out.
 - If you use client workspaces, an email is blocked when your Gmail address's domain is not in that client's sending-domain list.

@@ -61,7 +61,7 @@ By default you can start 5 sourcing requests per hour. Each lead uses paid Apoll
 
 Those of the Apollo and Hunter accounts whose API keys your administrator set on the server; you do not enter keys in the app. In **Settings**, on the **Integrations** tab, the **Apollo.io** and **Hunter.io** cards show the key masked, or "Key not set"; **Test** checks the connection.
 
-Victorae counts as paid: Apollo searches (one credit per person requested), each Apollo enrichment, and each Hunter email search and email check. Search results are cached for 1 day, and enrichment, email-finding and email-check results for 30 days; a cached repeat costs nothing (a repeated email check returns the earlier result). If your administrator turned on Spend Guard, the **Usage & spend** page (from **Analytics**) shows these as **Data credits**, in dollars only once an administrator sets a price per credit. There an owner or manager can set a **Monthly spend cap**: a run that does not fit is refused before it starts, and one that reaches it stops before its next paid call.
+Victorae counts as paid: Apollo searches (one credit per person requested; Apollo's current people search is itself free, so this count errs toward your cap), each Apollo enrichment, and each Hunter email search and email check. Search results are cached for 1 day, and enrichment, email-finding and email-check results for 30 days; a cached repeat costs nothing (a repeated email check returns the earlier result). If your administrator turned on Spend Guard, the **Usage & spend** page (from **Analytics**) shows these as **Data credits**, in dollars only once an administrator sets a price per credit. There an owner or manager can set a **Monthly spend cap**: a run that does not fit is refused before it starts, and one that reaches it stops before its next paid call.
 
 ## What happens to each lead?
 
@@ -131,7 +131,7 @@ When a strategy is full, a new sourcing request is refused with an upgrade messa
 
 ## What if a search finds nobody or a stage fails?
 
-- **Apollo returns no one.** The search stops at the first empty page and the run finishes with no new leads. No message says so; the list simply does not grow. The search uses all of the profile's titles, industries, locations, company sizes and keywords, so a narrow profile can return few or no people.
+- **Apollo returns no one.** The search stops at the first empty page and the run finishes with no new leads. No message says so; the list simply does not grow. The search uses all of the profile's titles, industries, locations, company sizes and keywords, so a narrow profile can return few or no people. Industries are first matched against Apollo's own industry names (for example "hospital & health care"); if that finds nobody, the search runs once more with the industries as free-text keywords.
 - **People are skipped** when they are already in the strategy, suppressed, on one of your exclusion lists (if your administrator turned those on), or beyond your plan's lead limit.
 - **A stage errors** (for example a provider is down or a key is wrong): it is retried up to 3 times, 30 seconds apart, and resumes where it stopped. The error is recorded but not shown in the app.
 

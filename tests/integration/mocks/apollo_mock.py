@@ -93,15 +93,12 @@ def reset_capture() -> None:
 
 
 def _people_search_handler(request: Request) -> Response:
-    try:
-        body = json.loads(request.content)
-    except Exception:
-        body = {}
-    _capture.search_calls.append(body)
-    return Response(200, json={
-        "people": PEOPLE,
-        "pagination": {"page": 1, "per_page": 25, "total_entries": len(PEOPLE), "total_pages": 1},
-    })
+    # mixed_people/api_search takes its filters as query parameters.
+    params: dict[str, Any] = {}
+    for key, value in request.url.params.multi_items():
+        params.setdefault(key, []).append(value)
+    _capture.search_calls.append(params)
+    return Response(200, json={"total_entries": len(PEOPLE), "people": PEOPLE})
 
 
 def _enrich_handler(request: Request) -> Response:
@@ -109,7 +106,8 @@ def _enrich_handler(request: Request) -> Response:
         body = json.loads(request.content)
     except Exception:
         body = {}
-    email = body.get("email", "")
+    # people/match takes query parameters; bulk_match still sends a body.
+    email = request.url.params.get("email") or body.get("email", "")
     _capture.enrich_calls.append(email)
     person = next((p for p in PEOPLE if p["email"] == email), PEOPLE[0])
     return Response(200, json={"person": person})
@@ -117,7 +115,7 @@ def _enrich_handler(request: Request) -> Response:
 
 def register(router: respx.MockRouter) -> None:
     """Register Apollo routes on the given respx router."""
-    router.post(f"{APOLLO_BASE}/mixed_people/search").mock(side_effect=_people_search_handler)
+    router.post(f"{APOLLO_BASE}/mixed_people/api_search").mock(side_effect=_people_search_handler)
     router.post(f"{APOLLO_BASE}/people/match").mock(side_effect=_enrich_handler)
     # Bulk enrichment endpoint
     router.post(f"{APOLLO_BASE}/people/bulk_match").mock(side_effect=_enrich_handler)

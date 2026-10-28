@@ -79,8 +79,28 @@ class LinkedInChannel(OutreachChannel):
             return SendResult(ok=True, raw=data, thread_ref=data.get("chat_id"),
                               provider_message_id=str(data.get("message_id") or ""))
         except UnipileError as exc:
+            if exc.account_fault:
+                self._mark_account(account_id, exc)
+            # A LinkedIn limit or an account problem is retried later; only a
+            # problem with this lead's request fails it for good.
             return SendResult(ok=False, error=str(exc), permanent_failure=exc.permanent,
-                              raw={"status": exc.status})
+                              raw={"status": exc.status, "type": exc.error_type})
+
+    def _mark_account(self, unipile_account_id: str, exc: UnipileError) -> None:
+        """Take a disconnected or restricted account out of rotation
+        (linkedin_limits.pick_account uses only status "ok") until Unipile
+        reports it OK again or the user reconnects it."""
+        from sqlalchemy import select  # noqa: PLC0415
+
+        from app.db.models import LinkedInAccount  # noqa: PLC0415
+
+        account = self.session.execute(
+            select(LinkedInAccount).where(LinkedInAccount.unipile_account_id == unipile_account_id)
+        ).scalar_one_or_none()
+        if account is not None:
+            account.status = ("restricted" if exc.error_type == "errors/account_restricted"
+                              else "credentials_needed")
+            self.session.commit()
 
     def fetch_replies(self, since: datetime | None = None) -> list[InboundMessage]:
         from sqlalchemy import select  # noqa: PLC0415

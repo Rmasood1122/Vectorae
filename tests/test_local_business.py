@@ -300,7 +300,7 @@ class TestSourcing:
         _local(db_session, verified_strategy)
         out = lb.apply_to_criteria(db_session, verified_strategy, {"titles": ["CTO"]})
         params = icp_to_apollo_params(out)
-        assert params["person_locations"] == ["Astoria, NY, US"]
+        assert params["person_locations[]"] == ["Astoria, NY, US"]
         assert not any("radius" in key or "distance" in key for key in params)
 
     def test_source_api_stores_local_criteria_on_the_batch(self, leads_client, db_session,

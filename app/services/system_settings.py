@@ -92,6 +92,9 @@ DEFAULTS: dict[str, tuple[Any, str]] = {
                                         "account per day."),
     "linkedin_daily_message_limit": (50, "LinkedIn messages (incl. InMail) "
                                      "per account per day."),
+    "linkedin_weekly_connection_limit": (180, "Connection requests per LinkedIn "
+                                         "account per week (accounts without "
+                                         "Premium: at most 150)."),
     # Feature Group 6 -- calling
     "phone_calling_enabled": (False, "Allow the AI phone channel. Calls cost "
                               "real money per minute, and AI-voice calls are "
