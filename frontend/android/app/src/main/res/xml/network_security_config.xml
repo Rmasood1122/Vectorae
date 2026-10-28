@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  network_security_config.xml — Victorae
+  network_security_config.xml — Vectorae
   Android API 28+ blocks cleartext (HTTP) traffic by default.
 
   DEV PROFILE: When NEXT_PUBLIC_API_URL=http://10.0.2.2:8000, the app makes

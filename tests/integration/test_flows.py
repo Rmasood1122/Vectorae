@@ -47,7 +47,7 @@ class TestFlow1WithClients:
         headers = _auth_headers(user_a_tokens)
         product = await create_product(api_client, headers)
         assert product["id"]
-        assert product["name"] == "Victorae"
+        assert product["name"] == "Vectorae"
         # ProductOut deliberately does not expose user_id -- a product is only
         # ever reachable by its owner (Phase A), so ownership is asserted by
         # the owner being able to read it back, not by a field in the payload.
@@ -650,7 +650,7 @@ class TestFlow3LearningLoop:
         headers = _auth_headers(user_a_tokens)
 
         # First strategy: produce a playbook winner
-        product1 = await create_product(api_client, headers, name="Victorae v1")
+        product1 = await create_product(api_client, headers, name="Vectorae v1")
         await create_past_clients(api_client, headers, product1["id"])
         strategy1 = await create_strategy(api_client, headers, product1["id"])
         # Promotion compares the BOOKING rate through a two-proportion
@@ -675,7 +675,7 @@ class TestFlow3LearningLoop:
         await api_client.post("/playbook/promote-winners", headers=admin_headers)
 
         # Second strategy with similar ICP — must get playbook injection
-        product2 = await create_product(api_client, headers, name="Victorae v2",
+        product2 = await create_product(api_client, headers, name="Vectorae v2",
                                         description="AI-powered client acquisition identical ICP")
         await create_past_clients(api_client, headers, product2["id"])
         strategy2 = await create_strategy(api_client, headers, product2["id"])
@@ -699,7 +699,7 @@ class TestFlow3LearningLoop:
         description similar to strategy1's product.
         """
         headers = _auth_headers(user_a_tokens)
-        product1 = await create_product(api_client, headers, name="Victorae Similarity Test",
+        product1 = await create_product(api_client, headers, name="Vectorae Similarity Test",
                                         description="AI-powered client acquisition for SaaS companies")
         await create_past_clients(api_client, headers, product1["id"])
         strategy1 = await create_strategy(api_client, headers, product1["id"])

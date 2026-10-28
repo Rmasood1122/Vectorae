@@ -94,7 +94,7 @@ export function HomePage() {
                 Six stages, one pipeline
               </h2>
               <p className="mt-4 text-[1.0625rem] leading-relaxed text-[#475569]">
-                Victorae runs on a server, so sequences keep sending and follow-ups keep firing when your computer
+                Vectorae runs on a server, so sequences keep sending and follow-ups keep firing when your computer
                 is off. Pick a stage to see what happens there and what stays your call.
               </p>
             </div>

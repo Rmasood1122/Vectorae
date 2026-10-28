@@ -1,4 +1,4 @@
-# Architecture — Victorae
+# Architecture — Vectorae
 
 ## Design Philosophy
 

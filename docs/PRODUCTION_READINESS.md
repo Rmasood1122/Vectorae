@@ -1,4 +1,4 @@
-# VICTORAE PRODUCTION READINESS
+# VECTORAE PRODUCTION READINESS
 
 **Last updated:** 2026-08-30
 **Local environment:** ✅ READY
@@ -161,7 +161,7 @@ ticket, logged at ERROR naming `ANTHROPIC_API_KEY`. A **transient** failure
 still degrades to a ticket, so a real outage is not hidden behind a slightly
 worse product.
 
-**Net effect: asking "what is Victorae" today returns the real answer, not
+**Net effect: asking "what is Vectorae" today returns the real answer, not
 "submit a ticket".**
 
 ---

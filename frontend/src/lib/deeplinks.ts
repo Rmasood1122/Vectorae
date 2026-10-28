@@ -1,5 +1,5 @@
 /**
- * deeplinks.ts - Victorae
+ * deeplinks.ts - Vectorae
  *
  * Deep link handling for the Capacitor Android app.
  *

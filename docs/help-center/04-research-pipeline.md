@@ -28,7 +28,7 @@ sources:
 
 # The research pipeline
 
-When you launch a strategy, Victorae runs a research pipeline: a fixed series of AI research steps that ends in a written strategy document. This article explains how many steps run, what the statuses mean, how budgets and the daily AI limit work, and how to resume a run that stopped.
+When you launch a strategy, Vectorae runs a research pipeline: a fixed series of AI research steps that ends in a written strategy document. This article explains how many steps run, what the statuses mean, how budgets and the daily AI limit work, and how to resume a run that stopped.
 
 ## What does the research pipeline do?
 
@@ -36,7 +36,7 @@ The pipeline is organized into 8 phases of 9 steps each. The ninth step of every
 
 The 8 strategy phases are: Product decomposition, ICP definition, Market sizing, Competitor analysis, Channel analysis, Messaging & offer, Objections & proof, and Execution plan.
 
-Before the first phase, Victorae fetches recent market signals once for the strategy: news headlines from the last 30 days (from Google News) and, where available, company funding and headcount signals from Apollo. They are labelled as headlines to check, not facts to quote. If this fetch fails, the pipeline continues without them.
+Before the first phase, Vectorae fetches recent market signals once for the strategy: news headlines from the last 30 days (from Google News) and, where available, company funding and headcount signals from Apollo. They are labelled as headlines to check, not facts to quote. If this fetch fails, the pipeline continues without them.
 
 The pipeline runs **once per strategy**. It does not run again for each prospect.
 
@@ -53,9 +53,9 @@ The GTM pipeline's 8 phases are: Positioning, Pricing, Launch sequencing, Channe
 
 ## How long does it take?
 
-There is no fixed duration; it depends on the AI service's response times. The research runs on Victorae's servers, so you can close the browser tab. The strategy page shows one progress card for each pipeline (the strategy pipeline, and the GTM pipeline when it runs) with the steps done out of the total, and under it each of the 8 phases by name with its own steps done out of the total. When verification finishes, Victorae sends a push notification ("Your strategy is ready" or "Strategy needs review") to devices registered for notifications.
+There is no fixed duration; it depends on the AI service's response times. The research runs on Vectorae's servers, so you can close the browser tab. The strategy page shows one progress card for each pipeline (the strategy pipeline, and the GTM pipeline when it runs) with the steps done out of the total, and under it each of the 8 phases by name with its own steps done out of the total. When verification finishes, Vectorae sends a push notification ("Your strategy is ready" or "Strategy needs review") to devices registered for notifications.
 
-Each pipeline run has a time limit of 2 hours. If a run is interrupted, for example by that limit or a temporary error, Victorae retries it automatically up to 3 times, 30 seconds apart, and each retry continues from the last finished step. If the error cannot succeed on retry, or the retries run out, the strategy is marked `failed` and the reason is shown on the strategy page.
+Each pipeline run has a time limit of 2 hours. If a run is interrupted, for example by that limit or a temporary error, Vectorae retries it automatically up to 3 times, 30 seconds apart, and each retry continues from the last finished step. If the error cannot succeed on retry, or the retries run out, the strategy is marked `failed` and the reason is shown on the strategy page.
 
 ## What do the strategy statuses mean?
 
@@ -72,11 +72,11 @@ Each pipeline run has a time limit of 2 hours. If a run is interrupted, for exam
 
 ## What is a strategy budget?
 
-Every strategy has a dollar budget for the AI spending of its research and verification. Writing outreach messages later does not count against it. Before each AI call, Victorae checks whether the call could take the run past its budget, assuming the worst case. If it could, the call is not made and the strategy stops as `budget_exhausted`. Nothing is spent on the refused call.
+Every strategy has a dollar budget for the AI spending of its research and verification. Writing outreach messages later does not count against it. Before each AI call, Vectorae checks whether the call could take the run past its budget, assuming the worst case. If it could, the call is not made and the strategy stops as `budget_exhausted`. Nothing is spent on the refused call.
 
 - The default budget is $15. Through the API you can choose any amount from $0.50 up to the server's ceiling, which is $50 by default. The New strategy form uses the default.
-- If the budget cannot cover the full pipeline, Victorae plans a shorter run instead of stopping partway: it always keeps each phase's summary step and runs fewer of the supporting research steps (between 2 and 8 steps per phase, instead of the full 9). A shorter run also gets at most 2 attempts per verification check.
-- If the budget cannot cover even 2 steps per phase, Victorae refuses to create the strategy and tells you the minimum needed.
+- If the budget cannot cover the full pipeline, Vectorae plans a shorter run instead of stopping partway: it always keeps each phase's summary step and runs fewer of the supporting research steps (between 2 and 8 steps per phase, instead of the full 9). A shorter run also gets at most 2 attempts per verification check.
+- If the budget cannot cover even 2 steps per phase, Vectorae refuses to create the strategy and tells you the minimum needed.
 
 ## What is the daily AI limit?
 

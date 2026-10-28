@@ -113,7 +113,7 @@ export default function RevenuePage() {
       <MeetingsLedgerPanel dateFrom={range.from} dateTo={range.to} />
       {/* F09: the same numbers, judged against criteria set on day 1. */}
       <p className="text-xs text-muted-foreground">
-        Evaluating Victorae? <Link className="underline" href="/pilot">Run a 30-day pilot</Link>{" "}
+        Evaluating Vectorae? <Link className="underline" href="/pilot">Run a 30-day pilot</Link>{" "}
         with success criteria you set up front.
       </p>
 

@@ -152,7 +152,7 @@ class UnipileClient:
     def hosted_link(self, *, notify_url: str, name: str, expires_on: str,
                     success_url: str | None = None) -> str:
         """Unipile's hosted-auth page. The user signs in to LinkedIn THERE;
-        Victorae never sees their LinkedIn password. POST
+        Vectorae never sees their LinkedIn password. POST
         /hosted/accounts/link; expiresOn is YYYY-MM-DDTHH:MM:SS.sssZ."""
         body = {"type": "create", "providers": ["LINKEDIN"], "api_url": self.dsn_url,
                 "expiresOn": expires_on, "notify_url": notify_url, "name": name}
@@ -165,7 +165,7 @@ class UnipileClient:
 
     def delete_account(self, account_id: str) -> None:
         """Disconnect a LinkedIn account: Unipile drops the stored session.
-        Used when the Victorae account that connected it is erased
+        Used when the Vectorae account that connected it is erased
         (app/services/account_erasure.py). DELETE /accounts/{id} also revokes
         the LinkedIn session (provider_session_revoke defaults to true)."""
         self._request("DELETE", f"/accounts/{account_id}")

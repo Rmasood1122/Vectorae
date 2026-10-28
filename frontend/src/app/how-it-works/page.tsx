@@ -14,7 +14,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "How Victorae works | Calendarharvest",
+  title: "How Vectorae works",
   description:
     `How ${PRODUCT_FULL_NAME} researches your market, finds and verifies business contacts, writes each email for one person, sends after your daily approval, and routes replies to you.`,
   ...canonicalMeta("/how-it-works/"),
@@ -24,7 +24,7 @@ const STEPS = [
   {
     number: "01",
     title: "Research",
-    body: "Research runs once per campaign strategy: 72 research steps, or 144 if you have no past clients yet, covering your ideal client profile, market, competitors, channels, and messaging. Sourced email addresses go through a verification check, and undeliverable ones are dropped. Right before an email is written, Victorae can pull company news so the first line references something real, and the AI is instructed never to invent a detail. Using a prospect's recent LinkedIn posts goes through the LinkedIn connection, which is not live yet.",
+    body: "Research runs once per campaign strategy: 72 research steps, or 144 if you have no past clients yet, covering your ideal client profile, market, competitors, channels, and messaging. Sourced email addresses go through a verification check, and undeliverable ones are dropped. Right before an email is written, Vectorae can pull company news so the first line references something real, and the AI is instructed never to invent a detail. Using a prospect's recent LinkedIn posts goes through the LinkedIn connection, which is not live yet.",
   },
   {
     number: "02",
@@ -34,7 +34,7 @@ const STEPS = [
   {
     number: "03",
     title: "Replies and meetings",
-    body: "Email and WhatsApp replies land in one inbox. Each reply is classified and the prospect's sequence stops. Victorae suggests a next step and a draft, but you write every answer. Prospects book on your own Victorae booking page, and a booking pauses their sequence.",
+    body: "Email and WhatsApp replies land in one inbox. Each reply is classified and the prospect's sequence stops. Vectorae suggests a next step and a draft, but you write every answer. Prospects book on your own Vectorae booking page, and a booking pauses their sequence.",
   },
 ];
 
@@ -82,7 +82,7 @@ export default function HowItWorksPage() {
             <p className="mt-6 text-lg leading-relaxed text-gray-300">
               You review the strategy and the leads before outreach launches, approve sending once a day,
               approve any message held for review, write every answer to a prospect, and take the calls
-              prospects book. Finding, checking, writing and sending in between, Victorae handles.
+              prospects book. Finding, checking, writing and sending in between, Vectorae handles.
             </p>
           </div>
         </section>
@@ -113,7 +113,7 @@ function SiteNav() {
     <header className="border-b border-white/10 px-6 py-5">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3">
         <Link href="/" className="text-lg font-bold text-white">
-          Victorae
+          Vectorae
         </Link>
         <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
           <li><Link href="/how-it-works" aria-current="page" className="text-white">How it Works</Link></li>

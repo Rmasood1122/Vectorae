@@ -5,7 +5,7 @@ Migration `0090_email_network`. Spec and code ship in the same PR (founder decis
 
 ## 1. Problem
 
-Founder request (2026-10-12): *"every one upload his mails data same like LinkedIn — Victorae
+Founder request (2026-10-12): *"every one upload his mails data same like LinkedIn — Vectorae
 filters them and all everything like LinkedIn"*. A founder's best first customers are usually
 people they already email. The LinkedIn network covers LinkedIn connections only.
 
@@ -69,7 +69,7 @@ people they already email. The LinkedIn network covers LinkedIn connections only
   per-account `RATE_LIMIT_AI_ACTION` limiter. Duplicate chunk delivery is harmless: tally,
   page token and `chunk_seq` are committed with a conditional UPDATE on `chunk_seq`.
 * Only the account OWNER may start a scan (it reads the owner's own mailbox); a workspace
-  manager gets 403. Victorae stores one Gmail connection per account; if there were ever
+  manager gets 403. Vectorae stores one Gmail connection per account; if there were ever
   several, the oldest (created_at, id) is used.
 * Tenancy: the Gmail account is looked up by the scan row's own `user_id`; no parameter selects
   an account. No `gmail.readonly` (or modify / mail.google.com) in the stored grant → 409
@@ -203,7 +203,7 @@ Every query filters on `user_id` (contacts, matches, messages, imports) or on th
 
 ## 10. Compliance review — every reading below needs founder/legal confirmation
 
-* **GDPR (EU/UK).** Controller of the contacts' data = the account (Victorae processes on its
+* **GDPR (EU/UK).** Controller of the contacts' data = the account (Vectorae processes on its
   behalf). Lawful basis relied on: the account's legitimate interest (Art. 6(1)(f)) in
   contacting **existing business contacts** about relevant offers; the attestation records the
   user's statement that they are their own business contacts. Data minimisation (Art. 5(1)(c)):

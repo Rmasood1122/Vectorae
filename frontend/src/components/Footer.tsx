@@ -45,7 +45,7 @@ const COLUMNS = [
   {
     heading: "Resources",
     links: [
-      { href: "/what-is-leadpilot", label: "What is Victorae" },
+      { href: "/what-is-leadpilot", label: "What is Vectorae" },
       { href: "/faq", label: "FAQ" },
       { href: "/help", label: "Help center" },
       { href: "/outbound-statistics", label: "Outbound statistics" },
@@ -109,7 +109,7 @@ export function Footer({
           ))}
         </div>
         <p className={`mt-10 border-t ${t.border} pt-6 text-sm ${t.text}`}>
-          &copy; 2026 Calendarharvest. All rights reserved.
+          &copy; 2026 Rehan Masood. Vectorae is operated by Rehan Masood.
         </p>
       </div>
     </footer>

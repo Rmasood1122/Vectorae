@@ -1,5 +1,5 @@
 /**
- * deeplinks.test.ts — Victorae (M7 Chunk 4)
+ * deeplinks.test.ts — Vectorae (M7 Chunk 4)
  *
  * Tests for src/lib/deeplinks.ts — URL parsing, route mapping, and URL builders.
  * No mocks needed — this module is pure functions.

@@ -3,7 +3,7 @@
 ## What it does
 
 1. **A prep brief the moment a meeting is booked.** A Calendly
-   `invitee.created` delivery or a booking on the Victorae calendar writes a
+   `invitee.created` delivery or a booking on the Vectorae calendar writes a
    `meeting_prep_briefs` row and queues generation on the `notifications`
    queue. The brief covers:
    - the lead profile (name, title, company, LinkedIn URL, email, …) — **copied
@@ -25,7 +25,7 @@
    once within 24h of the call and a 1-hour reminder whose body is the opening
    script. Both are claimed with a conditional UPDATE, so they are
    at-most-once across workers. A cancellation (Calendly `invitee.canceled` or
-   cancelling the Victorae booking) stops both; a reschedule re-arms them.
+   cancelling the Vectorae booking) stops both; a reschedule re-arms them.
 
 3. **Log Meeting Outcome.** On the lead page. The outcome is committed first
    (status change, CRM activity + note, `won`/`lost` outcome for the learning

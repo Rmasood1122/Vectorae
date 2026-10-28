@@ -2,7 +2,7 @@
 
 WHEN IT RUNS
 A lead reaches meeting_booked: a Calendly `invitee.created` delivery
-(app/api/webhooks.py) or a booking on Victorae's own calendar
+(app/api/webhooks.py) or a booking on Vectorae's own calendar
 (app/workers/calendar_tasks.py). Both call
 app/workers/meeting_prep_tasks.py::request_prep, which writes a PENDING brief
 row and enqueues generation on the `notifications` queue -- so a slow model
@@ -69,7 +69,7 @@ SOURCE_CALENDAR = "leadpilot_calendar"
 SOURCE_MANUAL = "manual"
 
 SYSTEM = (
-    "You are Victorae's meeting prep strategist. A seller is about to take a "
+    "You are Vectorae's meeting prep strategist. A seller is about to take a "
     "sales call with a prospect who booked a meeting. From ONLY the material "
     "provided, write the preparation the seller reads in the ten minutes "
     "before the call. Respond with ONLY a JSON object -- no prose, no "

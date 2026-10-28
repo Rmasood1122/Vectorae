@@ -4,12 +4,12 @@ AUTH: SERVER-TO-SERVER OAUTH, NOT THE USER-CONSENT FLOW
 Zoom offers both. This uses server-to-server (grant_type=account_credentials,
 Basic-authenticated with the app's client id/secret plus the account id),
 because the alternative would put a second per-user OAuth dance in front of
-booking a call. The Victorae operator authorises once, in the Zoom
+booking a call. The Vectorae operator authorises once, in the Zoom
 marketplace app, and every meeting is created under that account.
 
 The trade-off is stated rather than hidden: meetings are hosted by the
 configured Zoom account (or the configured `host_user` on it), not by each
-individual Victorae user. Right for solo founders; wrong for a team plan.
+individual Vectorae user. Right for solo founders; wrong for a team plan.
 
 CREDENTIALS (Feature 7)
 Read from Admin > Integrations > Zoom (TokenStore, encrypted) first, falling

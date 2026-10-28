@@ -32,7 +32,7 @@ export function StageStepper() {
     <div className="grid gap-8 lg:grid-cols-[17rem_1fr] lg:gap-12">
       <div
         role="tablist"
-        aria-label="Stages of a Victorae campaign"
+        aria-label="Stages of a Vectorae campaign"
         aria-orientation="vertical"
         className="lp-stage-tabs -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-col lg:gap-0 lg:overflow-visible lg:px-0 lg:pb-0"
         onKeyDown={(e) => {

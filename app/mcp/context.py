@@ -61,17 +61,17 @@ def http_detail(exc: HTTPException) -> str:
 def tool_call(*, scope: str = scopes.READ) -> Iterator[ToolCall]:
     token = get_access_token()
     if token is None:
-        raise ToolError("Not signed in to Victorae. Reconnect the Victorae connector.")
+        raise ToolError("Not signed in to Vectorae. Reconnect the Vectorae connector.")
     if scope not in token.scopes:
         raise ToolError(
             f"This action needs the '{scope}' permission, which this connection "
-            "was not granted. Reconnect Victorae and approve it.")
+            "was not granted. Reconnect Vectorae and approve it.")
     db = session_factory()
     try:
         try:
             user = load_principal(db, {"sub": token.subject, **(token.claims or {})})
         except PrincipalRejected as exc:
-            raise ToolError(f"Victorae refused this account: {exc}.") from None
+            raise ToolError(f"Vectorae refused this account: {exc}.") from None
         try:
             yield ToolCall(db=db, user=user, token=token)
         except HTTPException as exc:

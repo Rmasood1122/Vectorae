@@ -29,7 +29,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy for Victorae | Calendarharvest",
+  title: "Vectorae Privacy Policy",
   description: `How ${PRODUCT_FULL_NAME} collects, uses, and protects your data.`,
   robots: "index, follow",
   ...canonicalMeta("/privacy/"),
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
 
       <main className="px-6 py-24">
         <article className="mx-auto max-w-3xl">
-          <h1 className="text-4xl font-bold tracking-tight">Privacy Policy</h1>
+          <h1 className="text-4xl font-bold tracking-tight">Vectorae Privacy Policy</h1>
           <p className="mt-4 text-sm text-gray-400">Effective date: October 11, 2026</p>
 
           <Section title="1. Who we are and what this policy covers">
@@ -262,7 +262,7 @@ function SiteNav() {
     <header className="border-b border-white/10 px-6 py-5">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3">
         <Link href="/" className="text-lg font-bold text-white">
-          Victorae
+          Vectorae
         </Link>
         <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
           <li><Link href="/how-it-works" className="hover:text-white">How it Works</Link></li>

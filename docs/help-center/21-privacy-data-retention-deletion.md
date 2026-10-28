@@ -39,11 +39,11 @@ sources:
 
 # Privacy, data retention and deletion
 
-This article explains what Victorae stores about you and about the prospects you contact, how long it keeps it, and what you can download or delete yourself. It describes how the product behaves today, including what is not built yet. It is not legal advice.
+This article explains what Vectorae stores about you and about the prospects you contact, how long it keeps it, and what you can download or delete yourself. It describes how the product behaves today, including what is not built yet. It is not legal advice.
 
-## What does Victorae store about me?
+## What does Vectorae store about me?
 
-For your own account, Victorae stores:
+For your own account, Vectorae stores:
 
 - your email address, your name if you add one, and a one-way hash of your password (never the password itself);
 - your plan and billing status;
@@ -52,19 +52,19 @@ For your own account, Victorae stores:
 - your theme and writing-voice settings;
 - connections to Gmail, LinkedIn and other services. Their access tokens are stored encrypted.
 
-Victorae also keeps security and activity records about your account, such as sign-ins, refused attempts, data exports and deleted strategies.
+Vectorae also keeps security and activity records about your account, such as sign-ins, refused attempts, data exports and deleted strategies.
 
-## What does Victorae store about my prospects?
+## What does Vectorae store about my prospects?
 
-For each prospect (lead) found for a strategy, Victorae stores what it sourced and enriched: name, job title, company, email address, phone number, LinkedIn profile, and research notes such as recent posts or company news.
+For each prospect (lead) found for a strategy, Vectorae stores what it sourced and enriched: name, job title, company, email address, phone number, LinkedIn profile, and research notes such as recent posts or company news.
 
 It also stores the outreach itself: the subject and body of every message, when it was sent, and the replies prospects send back, including the reply text. Bookings, meetings, meeting notes and transcripts are stored too.
 
-For compliance, Victorae keeps a consent ledger (opt-ins, opt-outs and erasures) and a do-not-contact (suppression) list of email addresses, phone numbers and LinkedIn profiles.
+For compliance, Vectorae keeps a consent ledger (opt-ins, opt-outs and erasures) and a do-not-contact (suppression) list of email addresses, phone numbers and LinkedIn profiles.
 
 ## How long is my data kept?
 
-Apart from support chat history, Victorae does not delete your data automatically after a set time. Your products, strategies, leads, messages, replies and meetings stay until you delete them, or until you delete your account.
+Apart from support chat history, Vectorae does not delete your data automatically after a set time. Your products, strategies, leads, messages, replies and meetings stay until you delete them, or until you delete your account.
 
 **Support chat history** is the exception. A conversation is deleted 30 days after its last message, by a job that runs every night at 03:20 UTC. The number of days is a deployment setting; 30 is the default. Support tickets are not deleted by this job, even if the conversation they came from is.
 
@@ -78,7 +78,7 @@ After you delete your account, a few records are kept (see "Can I delete my whol
 2. In the **Download your data** card, type your password in **Confirm with your password**.
 3. Press **Download my data**.
 
-You get one JSON file, named like `victorae-account-export-2026-10-10.json`. It contains everything your account owns: profile, products, strategies, leads, messages, meetings, settings and the records listed above.
+You get one JSON file, named like `vectorae-account-export-2026-10-10.json`. It contains everything your account owns: profile, products, strategies, leads, messages, meetings, settings and the records listed above.
 
 Things to know:
 
@@ -93,7 +93,7 @@ Things to know:
 
 Open the lead from **Pipeline**, press **Delete (GDPR erasure)**, then press **Delete** in the "Permanently delete lead?" confirmation. In a workspace, SDRs and viewers cannot do this; it needs the owner or a manager.
 
-When you confirm, Victorae:
+When you confirm, Vectorae:
 
 1. records the erasure in the consent ledger first, so there is proof the request was honoured. That record keeps the email address or phone number it was about;
 2. adds the person's email, phone number and LinkedIn profile to the suppression list, so no strategy will contact or source them again;
@@ -127,7 +127,7 @@ Yes. It is immediate and cannot be undone, so download your data first if you wa
 3. Type `DELETE` (in capital letters) in **Type DELETE to confirm**.
 4. Press **Delete my account permanently**.
 
-When you confirm, Victorae:
+When you confirm, Vectorae:
 
 1. cancels any paid plan at once, so nothing more is charged. A monthly or annual plan ends immediately; the unused rest of the current month or year is not refunded automatically (contact support about a refund before deleting). Pay-per-meeting meetings that were not yet charged are waived. If the payment provider does not confirm the cancellation, or payments are not set up on the server your account runs on, nothing is deleted and you see a message asking you to try again or contact support;
 2. disconnects your LinkedIn accounts at Unipile, so the stored LinkedIn session is dropped there too;
@@ -137,11 +137,11 @@ When you confirm, Victorae:
 
 ## What is kept after I delete my account?
 
-- **Billing records** (amounts, dates and payment-provider reference numbers) for 7 years, for tax and accounting. Victorae's copy has no name or email address. Stripe, the payment provider, keeps its own customer record of you (name, email and payment details); Victorae does not ask Stripe to delete it.
+- **Billing records** (amounts, dates and payment-provider reference numbers) for 7 years, for tax and accounting. Vectorae's copy has no name or email address. Stripe, the payment provider, keeps its own customer record of you (name, email and payment details); Vectorae does not ask Stripe to delete it.
 - **The consent ledger and the suppression list**: every recorded opt-in, opt-out, suppression and erasure for your prospects, with the email address or phone number it concerns, so a prospect who opted out or asked to be erased is never contacted again.
 - **A security record** that the account was deleted, without your IP address, device or email address. Refused sign-in attempts recorded under your email address are cleared the same way.
 
-Outside Victorae's database:
+Outside Vectorae's database:
 
 - Answers from the contact-finding providers are cached for up to 30 days (search results for 1 day) and expire on their own.
 - The hosting provider's request logs record IP addresses and are kept for the period the hosting provider sets.
@@ -153,12 +153,12 @@ Outside Victorae's database:
 - In a workspace, this always deletes the account of the person who is signed in, never the workspace owner's.
 - A personal API key cannot delete an account, and an administrator account cannot be deleted from the app.
 - You can sign up again later with the same email address; it starts as a new, empty account.
-- Gmail, HubSpot, Salesforce and Slack connections are removed from Victorae, but Victorae does not revoke its access inside those services. You can remove it there yourself (for Google: your Google Account's third-party access page). A sign-in link to one of them that was still open when you deleted the account no longer works.
+- Gmail, HubSpot, Salesforce and Slack connections are removed from Vectorae, but Vectorae does not revoke its access inside those services. You can remove it there yourself (for Google: your Google Account's third-party access page). A sign-in link to one of them that was still open when you deleted the account no longer works.
 - If you type the wrong password you see "That password is not right."
 
 ## Where is the privacy policy?
 
-The public **Privacy** page on the Victorae website is the policy. It lists the email address for privacy requests. If anything in this article and that page seem to disagree, ask support.
+The public **Privacy** page on the Vectorae website is the policy. It lists the email address for privacy requests. If anything in this article and that page seem to disagree, ask support.
 
 ## Related
 - [Compliance](20-compliance.md)

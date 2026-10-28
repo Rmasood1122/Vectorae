@@ -26,7 +26,7 @@ sources:
 
 # Annual billing and changing your plan
 
-This article explains the yearly way to pay for Victorae, what changes when you move to a higher or lower plan, and what happens to money you have already paid and to campaigns that are already running. The limits of each plan are in [Plans, limits and billing](22-plans-limits-billing.md); they are not repeated here.
+This article explains the yearly way to pay for Vectorae, what changes when you move to a higher or lower plan, and what happens to money you have already paid and to campaigns that are already running. The limits of each plan are in [Plans, limits and billing](22-plans-limits-billing.md); they are not repeated here.
 
 ## Can I pay once a year, and does it cost less?
 
@@ -41,13 +41,13 @@ An annual plan costs 10 times the monthly price, billed once a year, so you pay 
 | Scale | $1,398 |
 | Enterprise | $2,998 |
 
-An annual plan has exactly the same limits as the monthly plan of the same tier, gets the same once-per-account 14-day free trial, and renews automatically every year until you cancel. There is no annual version of Pay per meeting or Free. Victorae never moves you to annual by itself; only you can choose it, at checkout. Before an annual plan renews, the account owner gets an email 30 days ahead with the amount and the date.
+An annual plan has exactly the same limits as the monthly plan of the same tier, gets the same once-per-account 14-day free trial, and renews automatically every year until you cancel. There is no annual version of Pay per meeting or Free. Vectorae never moves you to annual by itself; only you can choose it, at checkout. Before an annual plan renews, the account owner gets an email 30 days ahead with the amount and the date.
 
 ## Can I buy or change a plan online right now?
 
 Not yet. Online payment through Stripe is marked "simulated only": it has been built and tested against a simulated payment service, not against the live one. While that is the case, the **Pricing** page shows the prices but, instead of a checkout button, it says "Online checkout opens soon. To start now, book a call." with a **Book a call** button.
 
-So today, starting a paid plan, switching between monthly and annual, or moving to another tier goes through a conversation with the Victorae team rather than a checkout page. The rules in the rest of this article describe what the product does once online checkout is open, and they are what the billing code applies to any subscription that exists.
+So today, starting a paid plan, switching between monthly and annual, or moving to another tier goes through a conversation with the Vectorae team rather than a checkout page. The rules in the rest of this article describe what the product does once online checkout is open, and they are what the billing code applies to any subscription that exists.
 
 On a production deployment where payments are not set up at all, choosing a plan fails with a message saying payments are not configured.
 
@@ -65,7 +65,7 @@ If you would rather go down a level only when the period you paid for ends, canc
 
 ## What happens to the money I already paid if I change plans part-way through?
 
-Victorae does not refund or credit the unused part of a period when you switch. The Pricing page warns you of this before checkout: "The unused part of the period you already paid for is not refunded or credited (prorated changes are not available online yet)." No refunds are issued by the product itself.
+Vectorae does not refund or credit the unused part of a period when you switch. The Pricing page warns you of this before checkout: "The unused part of the period you already paid for is not refunded or credited (prorated changes are not available online yet)." No refunds are issued by the product itself.
 
 For an annual plan, this matters more, so a paid year is protected:
 

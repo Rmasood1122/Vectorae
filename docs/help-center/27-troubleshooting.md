@@ -83,7 +83,7 @@ Open **Settings** › **Integrations** and find the **Gmail** card.
 
 - "Your … plan's daily AI limit ($…) is used up. It resets at 00:00 UTC." – wait for the reset, or upgrade. Resume, Re-verify, lead sourcing and launch all show this message.
 - "This run is forecast to cost $…, but only $… of your $… monthly spend cap is left. …" – your monthly spend cap would be exceeded. Raise it on the Usage page or wait for the new month (UTC).
-- A plain "429 Too Many Requests" is a rate limit. Common defaults: 2 new strategies per hour, 5 lead-sourcing requests per hour, 10 sign-in attempts per 15 minutes, 20 support chat messages per day (Victorae's hosted service raises this to 30). Wait and try again. These are deployment settings.
+- A plain "429 Too Many Requests" is a rate limit. Common defaults: 2 new strategies per hour, 5 lead-sourcing requests per hour, 10 sign-in attempts per 15 minutes, 20 support chat messages per day (Vectorae's hosted service raises this to 30). Wait and try again. These are deployment settings.
 - "Too many attempts. Wait a while and try again." – too many password confirmations (for example when exporting data).
 
 **503 – temporarily unavailable.** Something on the server side is switched off or not reachable:

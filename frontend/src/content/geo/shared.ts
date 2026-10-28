@@ -43,13 +43,13 @@ export function checkoutSentence(): string {
 export function trialAnswer(): string {
   return CHECKOUT_LIVE
     ? `Yes. Each monthly plan starts with a ${catalog.trial_days}-day free trial, once per account. A free account also exists with tight limits (3 strategies, 100 leads per strategy, email only).`
-    : "Not online yet: free trials start through online checkout, which is not live yet, so the website does not offer one today. A free account exists with tight limits (3 strategies, 100 leads per strategy, email only). To try Victorae on your real market, [book a call](/contact) with the founders.";
+    : "Not online yet: free trials start through online checkout, which is not live yet, so the website does not offer one today. A free account exists with tight limits (3 strategies, 100 leads per strategy, email only). To try Vectorae on your real market, [book a call](/contact) with the founders.";
 }
 
 /** The canonical one-sentence description (entity card §2). */
 export const CANONICAL = PRODUCT_FACTS.description;
 
-/** "Victorae (calendarharvest.com) is not affiliated with LeadPilot AB (leadpilot.com)…" */
+/** "Vectorae (calendarharvest.com) is not affiliated with LeadPilot AB (leadpilot.com)…" */
 export const DISAMBIGUATION = `${PRODUCT_FULL_NAME} (calendarharvest.com) is not affiliated with LeadPilot AB (leadpilot.com), a Swedish company that also sells B2B prospecting software, or with other products named LeadPilot or Lead Pilot.`;
 
 /** "Rehan Masood and Ahmad Shahid" */
@@ -77,4 +77,4 @@ export function offByDefaultList(): string {
 
 /** Comparison pages: who wrote them. */
 export const FOUNDER_DISCLOSURE =
-  "Written by Victorae's founders. We make Victorae, so weigh this accordingly; each section says where the other tool is the better choice.";
+  "Written by Vectorae's founders. We make Vectorae, so weigh this accordingly; each section says where the other tool is the better choice.";

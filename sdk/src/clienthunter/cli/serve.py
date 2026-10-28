@@ -1,5 +1,5 @@
 """
-`clienthunter serve` — Start the Victorae backend locally.
+`clienthunter serve` — Start the Vectorae backend locally.
 
 New in M8-C3: --check-env flag validates all required environment variables
 before starting the server, so the user gets a clear diagnostic instead of
@@ -137,7 +137,7 @@ def serve(
     reload: bool = typer.Option(False, "--reload", help="Enable hot reload (development only)"),
 ) -> None:
     """
-    Start the Victorae backend server.
+    Start the Vectorae backend server.
 
     Use --check-env to validate your environment before the first launch:
         clienthunter serve --check-env

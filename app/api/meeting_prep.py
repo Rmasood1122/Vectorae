@@ -206,7 +206,7 @@ def get_lead_meeting_prep(lead_id: uuid.UUID, db: Session = Depends(get_db),
 def request_lead_meeting_prep(lead_id: uuid.UUID, body: PrepRequestIn,
                               db: Session = Depends(get_db),
                               current_user: User = Depends(get_current_user)) -> MeetingPrepBrief:
-    """A brief on demand -- for a call booked outside Victorae, or a lead the
+    """A brief on demand -- for a call booked outside Vectorae, or a lead the
     user simply wants to prepare for. Tied to a meeting when one is given, so
     the reminders follow that meeting's time."""
     enforce_rate_limit(str(current_user.id), "ai_action", _AI_LIMIT)

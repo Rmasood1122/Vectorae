@@ -417,7 +417,7 @@ def booking_links(session: Session, sequence: Sequence | None, owner_id) -> tupl
 
     The sequence's booking URL first, tagged with the owner exactly as the
     send path tags it (calendly.tag_booking_url); else the owner's first
-    active Victorae booking page. None when there is neither."""
+    active Vectorae booking page. None when there is neither."""
     from app.config import settings  # noqa: PLC0415
     from app.integrations.calendly import tag_booking_url  # noqa: PLC0415
 
@@ -489,7 +489,7 @@ def _send_enrollment(session: Session, lead: Lead,
 # --------------------------------------------------------------------------
 
 _SYSTEM = (
-    "You are Victorae's Reply Copilot drafter. You write ONE short answer to "
+    "You are Vectorae's Reply Copilot drafter. You write ONE short answer to "
     "ONE inbound reply to a B2B outreach message. A person on the sender's "
     "side reads, may edit, and approves your text before anything is sent.\n"
     "Respond with ONLY a JSON object, no prose and no markdown fences:\n"
@@ -1065,7 +1065,7 @@ def approve(session: Session, draft: ReplyDraft, *, actor: User | None,
 def copy(session: Session, draft: ReplyDraft, *, actor: User, body: str | None = None,
          now: datetime | None = None) -> ReplyDraft:
     """Record that a LinkedIn draft was copied (the browser writes the
-    clipboard). Victorae sends nothing. Same checks as approve."""
+    clipboard). Vectorae sends nothing. Same checks as approve."""
     now = now or _now()
     _lead, _strategy, _subject, final_body, edited = _check_and_decide(
         session, draft, subject=None, body=body, channel_required=LINKEDIN)

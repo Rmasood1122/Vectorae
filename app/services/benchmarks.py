@@ -1,9 +1,9 @@
-"""Anonymised benchmarks: your numbers against other Victorae accounts (Feature 6).
+"""Anonymised benchmarks: your numbers against other Vectorae accounts (Feature 6).
 
 WHAT A BENCHMARK IS -- AND IS NOT
 The spread of reply, meeting-booked and bounce rates ACROSS ACCOUNTS on this
 deployment, for one industry and channel, over a trailing window. It is an
-observation about Victorae's own customers. It is not an industry statistic,
+observation about Vectorae's own customers. It is not an industry statistic,
 and nothing that renders it may call it one (FEATURES.md Part 5: "no public
 benchmark numbers").
 
@@ -289,6 +289,6 @@ def comparison(db: Session, user: User, strategy: Strategy | None = None,
             "meeting_rate": "meetings booked / messages dispatched",
             "bounce_rate": "bounces / messages dispatched",
         },
-        "note": ("Observed across Victorae accounts on this deployment in the window. "
+        "note": ("Observed across Vectorae accounts on this deployment in the window. "
                  "Not an industry statistic."),
     }

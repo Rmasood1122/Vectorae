@@ -383,7 +383,7 @@ function BrandingForm({ data, onSave, saving, onLogo, onVerify, verifying }: {
           }}>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
-              White label this workspace (your name, logo and colour instead of Victorae&apos;s)
+              White label this workspace (your name, logo and colour instead of Vectorae&apos;s)
             </label>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1">

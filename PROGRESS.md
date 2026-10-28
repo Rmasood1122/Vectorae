@@ -24,7 +24,7 @@ New tests added: 22 modules, roughly 700 assertions.
 
 ### The three things I would look at first
 
-1. **Feature 5's VIP trigger, for your ICP.** Victorae sells to boutique
+1. **Feature 5's VIP trigger, for your ICP.** Vectorae sells to boutique
    agency *owners*, and "owner" is a VIP title — so with
    `send_review_vip_titles` on (the current default) every message to your core
    persona lands in the human review queue. Correct for someone selling into
@@ -453,7 +453,7 @@ with later.)
   campaign sends from.
 
 - **Feature 5: decide whether the VIP-title trigger should be ON for your
-  ICP.** Victorae sells to boutique agency OWNERS, and "owner"/"founder" is a
+  ICP.** Vectorae sells to boutique agency OWNERS, and "owner"/"founder" is a
   VIP title — so with `send_review_vip_titles` on (the current default), every
   message to your core persona lands in the review queue. That is correct
   behaviour for someone selling into enterprises and wrong for you. Turn it

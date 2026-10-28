@@ -32,7 +32,7 @@ _SEARCH_PAGES_MAX = 500
 
 
 def icp_to_apollo_params(icp_criteria: dict, *, industries_as_keywords: bool = False) -> dict:
-    """Translate Victorae's structured ICP criteria into Apollo people
+    """Translate Vectorae's structured ICP criteria into Apollo people
     search query parameters (array filters carry a [] suffix).
 
     Industries go to organization_industries[], which matches Apollo's own

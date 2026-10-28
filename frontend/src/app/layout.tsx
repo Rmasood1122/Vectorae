@@ -1,5 +1,5 @@
 /**
- * app/layout.tsx — Victorae root layout
+ * app/layout.tsx — Vectorae root layout
  *
  * M7 additions (marked with ── M7 ──):
  *   • NetworkProvider wraps everything (enables OfflineBanner context)
@@ -29,7 +29,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'Victorae',
+  title: 'Vectorae',
   description: 'AI-powered end-to-end client acquisition',
   // manifest for PWA (also used by Capacitor as the web app manifest)
   manifest: '/manifest.json',

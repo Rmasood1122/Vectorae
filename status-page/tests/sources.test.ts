@@ -75,7 +75,7 @@ describe("UptimeRobot", () => {
   });
 });
 
-describe("Victorae /status/public", () => {
+describe("Vectorae /status/public", () => {
   it("accepts the backend contract and drops anything unexpected", () => {
     const body = backendBody();
     body.components.push({ id: "secret-queue", name: "x", status: "operational", checked_at: "2026-10-11T11:59:40Z" });

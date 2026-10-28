@@ -48,15 +48,15 @@ sources:
 
 # Data processing and subprocessors
 
-This article lists the outside companies that store or process data for Victorae, what each one receives, and where the data is hosted. It also says which of them are live and which are only built so far. For what Victorae itself stores and how to delete it, see [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md).
+This article lists the outside companies that store or process data for Vectorae, what each one receives, and where the data is hosted. It also says which of them are live and which are only built so far. For what Vectorae itself stores and how to delete it, see [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md).
 
 ## Which outside companies handle my data all the time?
 
-These providers run the service itself, so they hold or carry your data whenever you use Victorae:
+These providers run the service itself, so they hold or carry your data whenever you use Vectorae:
 
 - **Neon** (managed PostgreSQL): the main database. It holds your account, products, strategies, prospects, messages, replies, meetings and the consent and suppression records. (Voicemail audio files are the exception: they are stored on the server's own disk.)
 - **Upstash** (managed Redis): the job queue for background work, and a short-term cache of answers from the contact-finding providers.
-- **Render**: runs the Victorae API and the background worker. Your data passes through these servers while it is processed, and Render's request logs record IP addresses.
+- **Render**: runs the Vectorae API and the background worker. Your data passes through these servers while it is processed, and Render's request logs record IP addresses.
 - **Vercel**: hosts the web app you sign in to.
 - **Anthropic** (Claude models): writes research, strategies and message drafts, and classifies replies. See below.
 - **Resend**: sends account emails such as sign-up verification and password-reset links. It receives your email address and the email's content.
@@ -71,7 +71,7 @@ So you should expect your data, and your prospects' data, to be processed in the
 
 The founders' design decision is that one deployment serves one customer organisation. The production deployment keeps public sign-up open, so in practice several customers' accounts share one database there, kept apart by ownership checks in the code. See [Security FAQ for buyers](42-security-faq-for-buyers.md).
 
-## Does Victorae send my prospects to an AI company?
+## Does Vectorae send my prospects to an AI company?
 
 Yes. Research, writing and reply handling are done by Anthropic's Claude models through Anthropic's API, using the deployment's own API key. What is sent depends on the task:
 
@@ -111,19 +111,19 @@ These receive data only when the feature is used or the account is connected.
 - **Mailreach**: your sending email address, to check inbox placement.
 - **Google Calendar and Meet**: meeting details and attendee emails, through your connected Google account, to create Meet links. **Google Postmaster Tools** is asked for your sending domain's spam rate; that import is built but switched off.
 - **Firebase Cloud Messaging**: notification titles and text sent to the Android app.
-- **AegisAudit, PostIQ and SIGNALFORGE**: separate tools that can be connected; today Victorae only checks the connection (and, for PostIQ and SIGNALFORGE, the key), and sends them no drafts or prospect data.
+- **AegisAudit, PostIQ and SIGNALFORGE**: separate tools that can be connected; today Vectorae only checks the connection (and, for PostIQ and SIGNALFORGE, the key), and sends them no drafts or prospect data.
 
 **IP checking services:** ipapi.co or ipinfo.io receive your IP address at the onboarding identity step to find its country; proxycheck.io or IPQualityScore receive it at sign-up and sign-in on production deployments to spot VPNs.
 
 The **Privacy** page also lists Calendly, Zoom, HubSpot, Salesforce and Slack, used when you connect them. See [CRM and integrations](16-crm-and-integrations.md) and [Known limitations](29-known-limitations.md).
 
-## Is Voyage AI one of Victorae's providers?
+## Is Voyage AI one of Vectorae's providers?
 
 Not yet. On 2026-10-18 the founders approved Voyage AI to power search in the in-app help assistant: it turns text into search vectors and ranks results, so the assistant can find the help-center passages that best match a question. When that change ships, Voyage AI will receive the help-center article text and your support questions exactly as you type them. A question can contain anything you type into it, including details about a prospect, so leave out what you would not want shared.
 
-Until that change ships, Voyage AI is not in use and receives nothing from Victorae. Support questions today go only to Anthropic, as described above.
+Until that change ships, Voyage AI is not in use and receives nothing from Vectorae. Support questions today go only to Anthropic, as described above.
 
-## How long is data kept, inside and outside Victorae?
+## How long is data kept, inside and outside Vectorae?
 
 - **Your account data** stays in the database until you delete it or delete your account.
 - **Support chat history** is deleted 30 days after a conversation's last message.
@@ -131,7 +131,7 @@ Until that change ships, Voyage AI is not in use and receives nothing from Victo
 - **Billing records** are kept for 7 years after an account is deleted, without your name or email address.
 - **Consent and suppression records** are kept without a time limit, so a person who opted out is never contacted again.
 
-Outside providers keep data under their own terms. When you delete your account, Victorae disconnects your LinkedIn account at Unipile, but it does not ask Stripe to delete its customer record, and it does not revoke its access inside Google, HubSpot, Salesforce or Slack. Details are in [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md).
+Outside providers keep data under their own terms. When you delete your account, Vectorae disconnects your LinkedIn account at Unipile, but it does not ask Stripe to delete its customer record, and it does not revoke its access inside Google, HubSpot, Salesforce or Slack. Details are in [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md).
 
 ## Is there a data processing agreement?
 

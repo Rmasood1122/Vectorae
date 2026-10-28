@@ -25,9 +25,9 @@ sources:
 
 # Reply classification and Reply Copilot
 
-This article explains how Victorae decides what kind of reply it received, which consequences follow automatically and which are only suggestions, and how Reply Copilot drafts answers for you to approve. What each class does to a sequence, and how the **Inbox** works, are covered in [Replies and the unified inbox](13-replies-and-unified-inbox.md).
+This article explains how Vectorae decides what kind of reply it received, which consequences follow automatically and which are only suggestions, and how Reply Copilot drafts answers for you to approve. What each class does to a sequence, and how the **Inbox** works, are covered in [Replies and the unified inbox](13-replies-and-unified-inbox.md).
 
-## How does Victorae decide what a reply means?
+## How does Vectorae decide what a reply means?
 
 Every reply is read by AI, which must pick exactly one routing class: `interested`, `question`, `objection`, `not_interested`, `unsubscribe_request`, `out_of_office`, `bounce` or `automated_response`. The AI sees the sender's address, the subject and the first 4000 characters of the body. The reply text is passed to it as untrusted data, so instructions written inside a reply are not followed. The AI is told that any request to stop contacting is `unsubscribe_request`, that delivery-failure notices are `bounce`, and that absence auto-replies are `out_of_office`.
 
@@ -66,18 +66,18 @@ A draft is written only when all of these are true:
 - it contains no opt-out wording such as "unsubscribe", "remove me" or "please stop". This is checked with fixed rules on the prospect's new text, whatever the AI decided;
 - the lead is not suppressed or excluded, and its status is still Replied, Contacted, Verified or Flagged. A lead that booked a meeting, was closed or disqualified gets no draft.
 
-Each reply gets at most one draft, of at most 140 words. When the same lead writes again, any older draft still waiting is marked superseded. If the AI writes a draft containing a link other than your booking link or your own sending domain, a placeholder such as `[Name]`, or a forbidden phrase, Victorae asks once more; if the second try fails, no draft is made and you answer by hand. Claims Victorae cannot back are removed and listed on the draft.
+Each reply gets at most one draft, of at most 140 words. When the same lead writes again, any older draft still waiting is marked superseded. If the AI writes a draft containing a link other than your booking link or your own sending domain, a placeholder such as `[Name]`, or a forbidden phrase, Vectorae asks once more; if the second try fails, no draft is made and you answer by hand. Claims Vectorae cannot back are removed and listed on the draft.
 
 ## How do I approve, edit or discard a draft?
 
 Open the prospect's conversation in **Inbox**. Waiting drafts appear in the **Reply Copilot** card above the conversation. You can change the text in the box, then:
 
 - **Approve & send** (email), or **Send edited** once you changed it;
-- **Copy** or **Copy edited** (LinkedIn): the text goes to your clipboard and you send it from LinkedIn yourself. Victorae never sends LinkedIn drafts;
+- **Copy** or **Copy edited** (LinkedIn): the text goes to your clipboard and you send it from LinkedIn yourself. Vectorae never sends LinkedIn drafts;
 - **Discard**: the reply stays in "Needs reply";
 - **Undo edits** puts the original draft back.
 
-Before anything is queued, Victorae checks the final words again. An answer longer than 5000 characters, one containing a forbidden phrase, or one with a claim it cannot back is refused, with the reason shown. An approved email is handed to the normal send path straight away: unsubscribe footer and headers, send window, daily cap and the send-review queue all apply, so it can wait. It is cancelled if, before it goes out, the prospect writes again, opts out, books a meeting, or the lead is closed. The card shows what happened, for example "sent", "queued (waits for the send window and daily cap)" or "held in the send-review queue".
+Before anything is queued, Vectorae checks the final words again. An answer longer than 5000 characters, one containing a forbidden phrase, or one with a claim it cannot back is refused, with the reason shown. An approved email is handed to the normal send path straight away: unsubscribe footer and headers, send window, daily cap and the send-review queue all apply, so it can wait. It is cancelled if, before it goes out, the prospect writes again, opts out, books a meeting, or the lead is closed. The card shows what happened, for example "sent", "queued (waits for the send window and daily cap)" or "held in the send-review queue".
 
 ## Can Reply Copilot answer replies on its own?
 

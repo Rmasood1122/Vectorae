@@ -70,7 +70,7 @@ STOPPING_STATUSES: frozenset[LeadStatus] = CLOSED_STATUSES | {LeadStatus.DROPPED
 
 def status_stop_reason(status: LeadStatus) -> str:
     """The stop reason for a status in STOPPING_STATUSES set inside
-    Victorae: "lead_removed" for DROPPED, "crm_<status>" for a close (both
+    Vectorae: "lead_removed" for DROPPED, "crm_<status>" for a close (both
     categorised by sequence_completion: lead_removed / crm_closed)."""
     if status is LeadStatus.DROPPED:
         return STOP_LEAD_REMOVED
@@ -169,7 +169,7 @@ def ramp_ceiling(days_since_first_send: int) -> int | None:
 
 
 def first_send_date(session: Session, sender_ref: str) -> date | None:
-    """The UTC date of the first message Victorae sent from this mailbox."""
+    """The UTC date of the first message Vectorae sent from this mailbox."""
     first = session.execute(
         select(func.min(Message.sent_at)).where(
             Message.sender_ref == sender_ref,
@@ -826,12 +826,12 @@ def check_bounce_rate(session: Session, strategy: Strategy) -> bool:
 # WHY PAUSE AND NOT STOP
 # The M3 rule is that a booked meeting is a hard stop (see the module
 # docstring, and app/api/webhooks.py where the Calendly path applies it). That
-# is right for Calendly, where Victorae finds out a meeting exists and nothing
+# is right for Calendly, where Vectorae finds out a meeting exists and nothing
 # ever tells it the meeting fell through: a link the invitee cancels produces a
 # separate `invitee.canceled` delivery that may or may not arrive, so treating
 # the booking as terminal is the safe reading.
 #
-# A booking made on Victorae's OWN calendar is different. We own the row. We
+# A booking made on Vectorae's OWN calendar is different. We own the row. We
 # know the moment it is cancelled, because the cancellation is a request to
 # this API. So the honest state is PAUSED -- "do not send while a meeting is
 # pending" -- and a cancelled meeting puts the lead back into the sequence

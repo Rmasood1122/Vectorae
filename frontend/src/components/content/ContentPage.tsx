@@ -177,7 +177,7 @@ export function MarketingNav({ current }: { current?: string }) {
   return (
     <header className="border-b border-white/10 px-6 py-5">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3">
-        <Link href="/" className="text-lg font-bold text-white">Victorae</Link>
+        <Link href="/" className="text-lg font-bold text-white">Vectorae</Link>
         <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
           {NAV.map((item) => (
             <li key={item.href}>

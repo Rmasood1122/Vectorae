@@ -28,7 +28,7 @@ BASE = "http://test.local"
 
 
 def _ch(access_token: str = "test_tok", refresh_token: str = "ref_tok") -> ClientHunter:
-    """Build a Victorae backed by a real httpx.Client (respx intercepts it)."""
+    """Build a Vectorae backed by a real httpx.Client (respx intercepts it)."""
     cfg = Config(api_url=BASE, access_token=access_token, refresh_token=refresh_token)
     return ClientHunter(_config=cfg, max_retries=2)
 

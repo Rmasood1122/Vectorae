@@ -2,7 +2,7 @@
 name = "vectorae_native_rs"
 version = "0.1.0"
 edition = "2021"
-description = "Victorae agents: lead priority, follow-up timing and the master supervisor (Rust core)"
+description = "Vectorae agents: lead priority, follow-up timing and the master supervisor (Rust core)"
 publish = false
 
 [lib]

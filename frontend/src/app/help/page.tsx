@@ -13,7 +13,7 @@ import { canonicalMeta } from "@/lib/seo/pageMeta";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "Victorae help center | Calendarharvest",
+  title: "Vectorae help center",
   description: `How ${PRODUCT_FULL_NAME} works in detail: research, verification, contacts, sending, replies, booking, compliance, plans and known limitations.`,
   ...canonicalMeta("/help/"),
 };

@@ -36,7 +36,7 @@ export function exportFilename(
   view: LedgerExportView = "campaigns",
 ): string {
   const suffix = format === "csv" && view === "events" ? "-events" : "";
-  return `victorae-meetings-ledger-${query.dateFrom}-${query.dateTo}${suffix}.${format}`;
+  return `vectorae-meetings-ledger-${query.dateFrom}-${query.dateTo}${suffix}.${format}`;
 }
 
 /** True when the API said the feature is switched off (not an error to show). */

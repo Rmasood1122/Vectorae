@@ -1,4 +1,4 @@
-# Learning Loop — Victorae
+# Learning Loop — Vectorae
 
 ## Overview
 

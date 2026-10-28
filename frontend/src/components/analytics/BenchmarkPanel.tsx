@@ -1,6 +1,6 @@
 "use client";
 
-/** Feature 6: your rates next to the spread across other Victorae accounts.
+/** Feature 6: your rates next to the spread across other Vectorae accounts.
  *
  *  Always labelled as what it is — an observation across this deployment's
  *  accounts, not an industry statistic — and silent rather than approximate

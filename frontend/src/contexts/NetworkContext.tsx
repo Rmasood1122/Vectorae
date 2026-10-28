@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * NetworkContext — Victorae
+ * NetworkContext — Vectorae
  *
  * Provides two distinct network states to the entire component tree:
  *

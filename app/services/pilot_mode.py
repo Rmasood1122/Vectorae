@@ -33,7 +33,7 @@ link runs the other way: billing READS get_active/verdict_final_at so a
 checkout during a pilot gets a trial that ends no earlier than the verdict
 (docs/features/annual-billing.md).
 
-EMAIL is Victorae's own transactional gateway (email_sender.send_email) to the
+EMAIL is Vectorae's own transactional gateway (email_sender.send_email) to the
 account owner's login address. It is not, and cannot become, an outreach send:
 no Gmail, no sequence, no `messages` row.
 
@@ -83,7 +83,7 @@ BILLING_STATEMENT = ("The pilot did not change your plan or billing. Ending a pi
 _MAX_COUNT = 100_000
 _MAX_MONEY_CENTS = 100_000_000    # 1,000,000.00 in the report currency
 
-# The pilot template: what a buyer can hold Victorae to. Each `metric` is a
+# The pilot template: what a buyer can hold Vectorae to. Each `metric` is a
 # key of meetings_ledger's totals -- F08 is the only source of numbers. No
 # target is pre-filled anywhere: a vendor-suggested target is a sales claim.
 CRITERIA: dict[str, dict] = {
@@ -579,7 +579,7 @@ _FINAL = {MET: "MET", NOT_MET: "NOT MET", NOT_COMPARABLE: "NOT COMPARABLE"}
 def scorecard_lines(pilot: Pilot, week: int, result: dict, days_left: int) -> list[str]:
     totals = result["totals"]
     cur = result["ledger_currency"]
-    lines = [f"Week {week} of {len(WEEKS)} of the 30-day Victorae pilot on your account "
+    lines = [f"Week {week} of {len(WEEKS)} of the 30-day Vectorae pilot on your account "
              f"({pilot.start_date.isoformat()} to {pilot.end_date.isoformat()}).",
              f"Numbers so far ({result['date_from']} to {result['date_to']}), from the "
              "meetings-per-dollar ledger:"]
@@ -699,7 +699,7 @@ def verdict_lines(pilot: Pilot) -> list[str]:
     v = pilot.verdict_json or {}
     cur = v.get("ledger_currency") or pilot.currency
     how = "ended early" if pilot.end_reason == ENDED_EARLY else "finished its 30 days"
-    lines = [f"The Victorae pilot on your account {how} "
+    lines = [f"The Vectorae pilot on your account {how} "
              f"({v.get('date_from')} to {v.get('date_to')}).",
              f"Verdict: {v.get('met_count', 0)} of {v.get('criteria_count', 0)} success "
              f"criteria met - {'all criteria met' if v.get('outcome') == MET else 'not all criteria met'}."]
@@ -855,7 +855,7 @@ def verdict_pdf(pilot: Pilot) -> bytes:
     v = pilot.verdict_json or {}
     cur = v.get("ledger_currency") or pilot.currency
     lines: list[tuple[str, str]] = [
-        ("Victorae 30-day pilot verdict", "title"),
+        ("Vectorae 30-day pilot verdict", "title"),
         (f"Pilot {v.get('date_from')} to {v.get('date_to')}  |  "
          f"{'ended early' if pilot.end_reason == ENDED_EARLY else 'completed'}  |  "
          f"computed {str(v.get('computed_at', ''))[:19]} UTC", "body"),

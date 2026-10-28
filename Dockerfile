@@ -13,7 +13,7 @@
 # first RUN with "exec format error", and re-pulling does not help.
 ARG PYTHON_IMAGE=python:3.11-slim
 
-# --- Victorae agents: native cores (docs/features/vectorae-agents.md) --------
+# --- Vectorae agents: native cores (docs/features/vectorae-agents.md) --------
 # Builds the Rust (PyO3) and C++ (pybind11) wheels in a throwaway stage so the
 # production image carries neither a compiler nor a Rust toolchain. The Rust
 # wheel is abi3 (any CPython >= 3.11); both are built against PYTHON_IMAGE.

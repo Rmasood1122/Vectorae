@@ -164,7 +164,7 @@ def channel_readiness(session: Session, owner_id, channel: str) -> list[dict]:
         ).first()
         if account is None:
             missing.append(_reason("gmail_not_connected", "Gmail is not connected.",
-                                   "Connect the Gmail account Victorae should send from.",
+                                   "Connect the Gmail account Vectorae should send from.",
                                    INTEGRATIONS_LINK))
         elif gmail_token_failed(session, account[0]):
             missing.append(_reason("gmail_token_invalid",

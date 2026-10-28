@@ -1,4 +1,4 @@
-"""Layered configuration for the Victorae SDK / CLI.
+"""Layered configuration for the Vectorae SDK / CLI.
 
 Resolution order (first match wins):
     1. Environment variables   CLIENTHUNTER_API_URL, CLIENTHUNTER_API_KEY
@@ -66,7 +66,7 @@ class Config:
     """Resolved SDK configuration.
 
     Attributes:
-        api_url:        Base URL of the Victorae backend.
+        api_url:        Base URL of the Vectorae backend.
         api_key:        Static API key (alternative to token-based auth).
         access_token:   Short-lived JWT returned by /auth/login or /auth/refresh.
         refresh_token:  Long-lived token used to obtain a new access_token.

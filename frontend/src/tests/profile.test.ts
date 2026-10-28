@@ -44,7 +44,7 @@ describe("data export (GDPR)", () => {
   });
   it("names the file by date", () => {
     expect(accountExportFilename(new Date("2026-10-10T13:00:00Z")))
-      .toBe("victorae-account-export-2026-10-10.json");
+      .toBe("vectorae-account-export-2026-10-10.json");
   });
   it("maps export errors", () => {
     expect(exportErrorMessage(new ApiError(403, "INVALID_PASSWORD"))).toMatch(/password is not right/);

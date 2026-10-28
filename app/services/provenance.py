@@ -51,7 +51,7 @@ IMPORT = "import"
 #: UI shows on hover. Every number here is a claim about the SOURCE, not about
 #: the value -- which is why they are constants and not model output.
 SOURCES: dict[str, tuple[float, str]] = {
-    MANUAL: (1.0, "Typed or corrected by a person in Victorae."),
+    MANUAL: (1.0, "Typed or corrected by a person in Vectorae."),
     REPLY: (0.98, "The prospect said it themselves in a reply."),
     HUNTER_VERIFIED: (0.95, "A verification provider confirmed the mailbox accepts mail."),
     CRM_SYNC: (0.9, "Synced from your CRM, where a person maintains it."),

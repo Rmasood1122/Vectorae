@@ -13,13 +13,13 @@ date, **Cancel plan**), helpers in `frontend/src/lib/pricing.ts` ·
 **Migration** `0082_annual_billing` (also carries F04's `answer_earlier_replies`) ·
 **Not plan-gated** (it is a way to pay for the existing plans).
 
-Founder decision 2026-10-11: **"Add Annual Plan"**, in answer to: Victorae has
+Founder decision 2026-10-11: **"Add Annual Plan"**, in answer to: Vectorae has
 no annual plan, and the monthly checkout's 14-day trial converts to paid before
 a 30-day pilot (F09) ends.
 
 ## Problem
 
-1. Buyers who have decided on Victorae want to pay yearly for a discount; there
+1. Buyers who have decided on Vectorae want to pay yearly for a discount; there
    was no way to do that (`BILLING_MODELS = (monthly, pay_per_meeting)`).
 2. The F09 spec recorded a real defect: a monthly checkout carries a 14-day
    Stripe trial (`TRIAL_DAYS`), so an account that starts paying during a
@@ -333,7 +333,7 @@ account). No cross-account reads.
 ## Compliance review — auto-renewal (zero tolerance; **needs founder/legal confirmation**)
 
 I am not a lawyer; the readings below are what the code was built against,
-not settled law. Victorae sells to businesses; several of these statutes
+not settled law. Vectorae sells to businesses; several of these statutes
 protect "consumers" and may not apply to B2B sales at all — the build complies
 anyway, because the posture is zero tolerance.
 
@@ -349,7 +349,7 @@ Exact windows chosen: renewal notice at **30 days** (inside CA 15–45 and NY
 15–30); trial notice at **7 days** (inside CA 3–21). Both are constants in
 `billing_catalog.py` (`RENEWAL_NOTICE_DAYS`, `TRIAL_NOTICE_DAYS`).
 
-Notices are Victorae's own **transactional** account mail to the customer (no
+Notices are Vectorae's own **transactional** account mail to the customer (no
 prospect, no outreach chokepoint, no marketing content) — CAN-SPAM's
 transactional/relationship category; GDPR basis: performance of the contract.
 CASL/PDPA: transactional messages about an existing subscription. The notice
@@ -423,7 +423,7 @@ Neither is measured yet: no live Stripe traffic.
   (not checked; the founder must create it at monthly × 10 or leave it unset).
 * Stripe sends its own receipts; whether Stripe's emails duplicate or conflict
   with the acknowledgment wording.
-* Whether the cited statutes apply to Victorae's B2B customers, and whether
+* Whether the cited statutes apply to Vectorae's B2B customers, and whether
   the exact wording satisfies them — **founder/legal confirmation needed**.
 * Email deliverability of the notices (Resend/SPF/DKIM for
   `calendarharvest.com` is itself unverified, GAP-007).

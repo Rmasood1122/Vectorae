@@ -31,11 +31,11 @@ sources:
 
 # Personalization and claim verification
 
-Victorae writes each outreach message for one person, using what it actually knows about them. Before a message is sent, every factual claim it makes about that person or their company is checked against stored data, and anything unsupported is taken out. This article explains what Victorae uses, what it removes, and where you can see both.
+Vectorae writes each outreach message for one person, using what it actually knows about them. Before a message is sent, every factual claim it makes about that person or their company is checked against stored data, and anything unsupported is taken out. This article explains what Vectorae uses, what it removes, and where you can see both.
 
 ## How is each message written?
 
-Messages are written at the moment they are sent, not when the sequence is created. For an email, Victorae gives the AI:
+Messages are written at the moment they are sent, not when the sequence is created. For an email, Vectorae gives the AI:
 
 - the step's **brief** (what you asked the message to say);
 - the strategy's **messaging research** (the summary of research phase 6);
@@ -44,22 +44,22 @@ Messages are written at the moment they are sent, not when the sequence is creat
 - your **voice profile**, if you set one up;
 - the sequence's booking link, if it has one.
 
-The AI is asked for a plain-text email under 140 words, with no placeholders such as [Name]. It does not write the unsubscribe footer; Victorae adds the compliant footer itself. The exact subject and body are saved on the message before it is sent, so you can always see what went out.
+The AI is asked for a plain-text email under 140 words, with no placeholders such as [Name]. It does not write the unsubscribe footer; Vectorae adds the compliant footer itself. The exact subject and body are saved on the message before it is sent, so you can always see what went out.
 
-## What information about a prospect does Victorae use?
+## What information about a prospect does Vectorae use?
 
 - **Enrichment** gathered during lead sourcing (from Apollo).
-- **Recent LinkedIn posts.** Right before writing an email, Victorae fetches the lead's three most recent posts if its stored copy is more than 7 days old. It reads them through Unipile, which needs a connected LinkedIn account, or through a RapidAPI scraper as a fallback. When posts are available, the email's first line is asked to reference one specific detail from them.
+- **Recent LinkedIn posts.** Right before writing an email, Vectorae fetches the lead's three most recent posts if its stored copy is more than 7 days old. It reads them through Unipile, which needs a connected LinkedIn account, or through a RapidAPI scraper as a fallback. When posts are available, the email's first line is asked to reference one specific detail from them.
 - **Company news.** News from NewsAPI from the last 30 days, refreshed if the stored copy is more than 3 days old. An article is kept only if the company name appears in its title or description, and the AI is told to use it only if it plausibly concerns this company.
-- **Your voice.** In **Settings**, on the **Voice** tab, you can paste up to 5 writing samples. Victorae extracts a style profile from them (tone, formality, vocabulary and similar). Only the profile is used when writing; your samples are stored for editing but never go into an outreach prompt.
+- **Your voice.** In **Settings**, on the **Voice** tab, you can paste up to 5 writing samples. Vectorae extracts a style profile from them (tone, formality, vocabulary and similar). Only the profile is used when writing; your samples are stored for editing but never go into an outreach prompt.
 
-If a provider is not set up or fails, Victorae writes the email without that input. It never holds back a send because of it.
+If a provider is not set up or fails, Vectorae writes the email without that input. It never holds back a send because of it.
 
 The LinkedIn post and news integrations have not yet been verified against the live services. Several request details for the LinkedIn post providers are still marked in the code as needing confirmation.
 
-You can see what Victorae has stored on a lead's detail page, on the **Personalization** tab (**Company news** and **Recent LinkedIn posts**).
+You can see what Vectorae has stored on a lead's detail page, on the **Personalization** tab (**Company news** and **Recent LinkedIn posts**).
 
-## What happens when a message makes a claim Victorae can't back up?
+## What happens when a message makes a claim Vectorae can't back up?
 
 Every AI-written message goes through a claim check after it is written and before it is sent. The check looks for claims about the prospect or their company in these categories: funding, headcount, hiring, a job change, news, metrics, expansion, and references to their own content (such as "your recent post").
 
@@ -68,7 +68,7 @@ A claim counts as supported only if both are true:
 - stored data of the right kind mentions the topic (for example, a funding claim needs funding evidence); and
 - every specific detail in the sentence, such as a number, an amount, a "Series B", a quoted phrase or a proper name, appears in that stored data.
 
-The only evidence that counts is what Victorae has stored on the lead: their name, title and company, enrichment data, stored company news and their own stored posts. Nothing new is looked up during the check.
+The only evidence that counts is what Vectorae has stored on the lead: their name, title and company, enrichment data, stored company news and their own stored posts. Nothing new is looked up during the check.
 
 When a claim is not supported:
 
@@ -77,7 +77,7 @@ When a claim is not supported:
 
 If the check itself fails with an error, every claim it detected by its rules is removed rather than sent unchecked.
 
-Besides its fixed rules, Victorae also asks the AI to find claims the rules missed. This is on by default; an administrator can turn it off, and it costs one extra AI call per message.
+Besides its fixed rules, Vectorae also asks the AI to find claims the rules missed. This is on by default; an administrator can turn it off, and it costs one extra AI call per message.
 
 The check runs on email, on WhatsApp free-form replies and template variables (the approved template text itself is fixed and is not changed), and on LinkedIn messages.
 

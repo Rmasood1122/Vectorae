@@ -225,7 +225,7 @@ def _render_pillow(context: dict) -> bytes:
     footer_font, brand_font = _font(13), _font(13, bold=True)
     draw.text((pad_x, footer_y + 12), f"Generated {context['generated_on']}",
               font=footer_font, fill=_MUTED)
-    brand = "Powered by Victorae"
+    brand = "Powered by Vectorae"
     draw.text((right - draw.textlength(brand, font=brand_font), footer_y + 12),
               brand, font=brand_font, fill=_INK)
 

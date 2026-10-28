@@ -18,7 +18,7 @@ _DEFAULT_LOCAL_URL = "http://localhost:8000"
 
 def init() -> None:
     """Interactive first-time setup: configure API URL, authenticate, verify connectivity."""
-    console.rule("[bold]Victorae[/bold] — Setup")
+    console.rule("[bold]Vectorae[/bold] — Setup")
     console.print()
 
     # --- Where is the backend? ---

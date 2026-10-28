@@ -39,7 +39,7 @@ sources:
 
 # Plans, limits and billing
 
-Every Victorae account is on a plan. The plan decides how many strategies you can have, how many leads each strategy can hold, how long a sequence can be, which channels you can send on, and how much AI work your account can run per day. This article lists those limits exactly as the product enforces them and explains how paying works.
+Every Vectorae account is on a plan. The plan decides how many strategies you can have, how many leads each strategy can hold, how long a sequence can be, which channels you can send on, and how much AI work your account can run per day. This article lists those limits exactly as the product enforces them and explains how paying works.
 
 ## What plans are there, and what are their limits?
 
@@ -89,19 +89,19 @@ Monthly and annual plans both renew automatically, so before you go to payment t
 
 **Running a 30-day pilot?** If your account has a pilot running when you start a monthly or annual plan, the free trial lasts until the pilot's verdict, so nothing is charged during the pilot, even if you have had a trial before.
 
-**Pay per meeting:** no monthly fee ($0) and $179 for each prospect who books a meeting through Victorae.
+**Pay per meeting:** no monthly fee ($0) and $179 for each prospect who books a meeting through Vectorae.
 
 The Free plan has no price. Free accounts are limited by the table above.
 
 ## How does pay per meeting work?
 
-- When a prospect books a meeting, Victorae records a charge for it, but does not take payment straight away. It waits 48 hours first.
+- When a prospect books a meeting, Vectorae records a charge for it, but does not take payment straight away. It waits 48 hours first.
 - If the meeting is no longer booked when the 48 hours are over (for example, it was cancelled), the charge is waived.
 - You are charged once per prospect. If the same prospect books again, there is no second charge.
 - A background job charges meetings whose 48 hours have passed. It runs every 30 minutes.
 - If the account has no saved payment method, or the card is declined, the charge is marked as failed.
 
-A meeting charge can be disputed only while it is still inside its 48-hour window. The web app has no dispute button yet; disputes go through the Victorae API. After the 48 hours, contact support instead. An administrator then decides whether to waive or charge a disputed meeting.
+A meeting charge can be disputed only while it is still inside its 48-hour window. The web app has no dispute button yet; disputes go through the Vectorae API. After the 48 hours, contact support instead. An administrator then decides whether to waive or charge a disputed meeting.
 
 ## How do I choose or change a plan?
 
@@ -114,11 +114,11 @@ Go to the **Pricing** page. You can also reach it from **Profile**, in the **Pla
 - You finish on a checkout page run by Stripe, the payment provider. For pay per meeting, this step saves your card for later charges. When checkout finishes you return to Settings.
 - Choosing a different plan replaces your current one. The subscription being replaced is cancelled straight away when the new checkout is completed, so you are not billed twice. The unused part of a period you already paid for is not refunded or credited: changing plans with proration is not available online yet. If you have a monthly or annual subscription (or are in its free trial), the Pricing page says this above the plans before you check out.
 - Leaving checkout without finishing does not change or downgrade your current plan.
-- Victorae never moves you to an annual plan by itself. Only you can choose annual, at checkout.
+- Vectorae never moves you to an annual plan by itself. Only you can choose annual, at checkout.
 - Once an annual year has been paid, it cannot be changed to another plan online before the year ends, because that would need a partial refund. Contact support, or cancel it and choose a new plan when the year ends. During the free trial of an annual plan you can still switch.
-- If a checkout you started earlier is completed after your annual year was paid, Victorae keeps both: your annual plan stays, the new subscription will not renew, and our team contacts you about a refund. Starting a new checkout closes any earlier unfinished one.
+- If a checkout you started earlier is completed after your annual year was paid, Vectorae keeps both: your annual plan stays, the new subscription will not renew, and our team contacts you about a refund. Starting a new checkout closes any earlier unfinished one.
 
-If you sign in and your account has no paid plan, Victorae takes you to the Pricing page once, right after sign-in. You can still go back to the app; the Free limits then apply.
+If you sign in and your account has no paid plan, Vectorae takes you to the Pricing page once, right after sign-in. You can still go back to the app; the Free limits then apply.
 
 If you are a member of someone else's workspace, you work under the workspace owner's plan and are not asked to buy your own, as long as the workspace owner has a paid plan. Only the account owner can buy or cancel a plan for their account.
 
@@ -127,7 +127,7 @@ If you are a member of someone else's workspace, you work under the workspace ow
 The action is refused and you see a message that names the limit, for example "Free plan allows 3 strategies. You have 3." The limits are checked at these points:
 
 - **Strategies:** when you create a new strategy. All strategies across all your products count. Deleting a strategy frees a place.
-- **Leads per strategy:** when you source leads. If the strategy is full, sourcing is refused. If there is some room, Victorae only asks for as many leads as fit, and checks again lead by lead.
+- **Leads per strategy:** when you source leads. If the strategy is full, sourcing is refused. If there is some room, Vectorae only asks for as many leads as fit, and checks again lead by lead.
 - **Sequence steps and channels:** when you create a sequence, again every time you launch it, and again when each scheduled message comes due. A sequence built while you were on a higher plan cannot be launched after a downgrade if it breaks the lower plan's limits. For sequences enrolled from 12 October 2026 on, messages are also checked when they come due: after a downgrade, a step on a channel your current plan does not include, or a step past your plan's step limit, is held instead of sent. The Campaigns page says how many messages are on hold and why, and the lead's message shows the reason (it starts with "plan_limit:"). Steps your plan still covers keep sending, and the sequence is not stopped. When your plan covers a held step again, for example after an upgrade, it is released automatically within about 30 minutes and goes out through the usual checks. Enrollments from before 12 October 2026, administrator accounts and Reply Copilot answers a person approved are not held this way.
 - **Channels for AI calls:** when you start a call.
 
@@ -154,7 +154,7 @@ Go to **Profile**, find the **Plan** card and press **Cancel plan**, then confir
 
 When a subscription ends, the account returns to the Free plan and its limits.
 
-Before you are charged for an annual plan, Victorae emails the account owner: once when the plan starts (with the renewal terms), 7 days before an annual free trial ends, and 30 days before each yearly renewal. Each email states the amount Stripe will actually charge, the date (in UTC) and how to cancel. A monthly trial that a pilot made longer than 31 days also gets the 7-day email.
+Before you are charged for an annual plan, Vectorae emails the account owner: once when the plan starts (with the renewal terms), 7 days before an annual free trial ends, and 30 days before each yearly renewal. Each email states the amount Stripe will actually charge, the date (in UTC) and how to cancel. A monthly trial that a pilot made longer than 31 days also gets the 7-day email.
 
 ## What if a payment fails?
 
@@ -164,7 +164,7 @@ If a monthly payment fails, the subscription is marked past due. You keep your p
 
 The Pricing page shows an analytics history length for each plan: 30 days on Free, 90 days on Starter, 365 days on Growth and Pay per meeting, and unlimited on Scale, Pro and Enterprise. The day-by-day chart of a strategy's sends, replies and other events only goes back that far, and its title says so (for example "last 30 days"). Totals and the A/B variant table are not limited.
 
-Multi-variate testing (comparing three or more variants at once; the results are on the **Analytics** page and through the Victorae API) is included in Growth, Scale, Pro and Enterprise. Starter and Pay per meeting include A/B testing but not multi-variate results; asking for them is refused with an upgrade message.
+Multi-variate testing (comparing three or more variants at once; the results are on the **Analytics** page and through the Vectorae API) is included in Growth, Scale, Pro and Enterprise. Starter and Pay per meeting include A/B testing but not multi-variate results; asking for them is refused with an upgrade message.
 
 On a production deployment where Stripe is not set up, choosing a plan fails with "payments are not configured; plans cannot be changed right now".
 

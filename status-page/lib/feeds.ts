@@ -4,7 +4,7 @@ import { IMPACT_LABELS, UPDATE_STATUS_LABELS, type Incident } from "./incidents.
 import { formatUtc } from "./format.ts";
 
 const FEED_LIMIT = 50;
-const TITLE = "Victorae status — incident history";
+const TITLE = "Vectorae status — incident history";
 
 export function escapeXml(s: string): string {
   return s
@@ -51,7 +51,7 @@ export function buildRss(incidents: Incident[], siteUrl: string, now: Date): str
     `    <title>${escapeXml(TITLE)}</title>`,
     `    <link>${escapeXml(siteUrl)}/history</link>`,
     `    <atom:link href="${escapeXml(siteUrl)}/history.rss" rel="self" type="application/rss+xml"/>`,
-    "    <description>Incidents and maintenance affecting Victorae.</description>",
+    "    <description>Incidents and maintenance affecting Vectorae.</description>",
     "    <language>en</language>",
     `    <lastBuildDate>${new Date(updated).toUTCString()}</lastBuildDate>`,
     items,
@@ -89,7 +89,7 @@ export function buildAtom(incidents: Incident[], siteUrl: string, now: Date): st
     `  <link href="${escapeXml(siteUrl)}/history.atom" rel="self"/>`,
     `  <link href="${escapeXml(siteUrl)}/history"/>`,
     `  <updated>${updated}</updated>`,
-    "  <author><name>Victorae</name></author>",
+    "  <author><name>Vectorae</name></author>",
     entries,
     "</feed>",
   ]

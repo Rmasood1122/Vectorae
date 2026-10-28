@@ -10,7 +10,7 @@ COST      four sources, all integer cents:
              spread across campaigns by their share of sends in the period
   api        metered Claude/OpenAI spend (usage_meter / api_usage)
   voice      AI-call minutes x the admin's voice_cost_per_minute
-  platform   Victorae's own pay-per-meeting fees (billable_meetings, Section
+  platform   Vectorae's own pay-per-meeting fees (billable_meetings, Section
              E): pending and charged meetings, by the day they were booked.
              Waived, disputed and failed meetings are not a cost.
 

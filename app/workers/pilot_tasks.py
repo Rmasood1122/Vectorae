@@ -4,7 +4,7 @@
 
 Ends pilots whose 30 days are over (always with a verdict), sends each active
 pilot's weekly scorecard once per week, and sends the once-only verdict
-notice. All email goes to the account owner through Victorae's transactional
+notice. All email goes to the account owner through Vectorae's transactional
 gateway -- never to a prospect, never through the outreach send path.
 
 On the `default` queue: short database work plus one transactional email at

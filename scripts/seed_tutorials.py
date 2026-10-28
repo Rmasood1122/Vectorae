@@ -1,4 +1,4 @@
-"""Seed the nine Learn Victorae tutorials into `tutorial_catalogue`.
+"""Seed the nine Learn Vectorae tutorials into `tutorial_catalogue`.
 
     python scripts/seed_tutorials.py
 
@@ -45,12 +45,12 @@ TUTORIALS = [
     # -- Beginner -------------------------------------------------------------
     {
         "slug": "welcome-to-leadpilot",
-        "title": "Welcome to Victorae — Your First 10 Minutes",
+        "title": "Welcome to Vectorae — Your First 10 Minutes",
         "level": "beginner",
         "duration_minutes": 10,
         "order": 1,
         "description": (
-            "Start here. This tutorial walks you through the Victorae dashboard, "
+            "Start here. This tutorial walks you through the Vectorae dashboard, "
             "explains what each section does, and shows you the order to complete "
             "your setup."),
     },
@@ -62,7 +62,7 @@ TUTORIALS = [
         "order": 2,
         "description": (
             "Your Ideal Customer Profile is the foundation of every campaign. This "
-            "tutorial shows you how to define your ICP inside Victorae, what fields "
+            "tutorial shows you how to define your ICP inside Vectorae, what fields "
             "matter most, and how to use the DSS scoring system to qualify prospects."),
     },
     {
@@ -72,7 +72,7 @@ TUTORIALS = [
         "duration_minutes": 8,
         "order": 3,
         "description": (
-            "Victorae uses a human sender model — your LinkedIn account sends the "
+            "Vectorae uses a human sender model — your LinkedIn account sends the "
             "messages. This tutorial walks you through the connection process, what "
             "permissions are needed, and what LinkedIn compliance limits apply."),
     },
@@ -96,7 +96,7 @@ TUTORIALS = [
         "duration_minutes": 18,
         "order": 5,
         "description": (
-            "When a prospect replies, Victorae classifies it automatically: Buying "
+            "When a prospect replies, Vectorae classifies it automatically: Buying "
             "Signal, Objection, Not Now, or Wrong Person. This tutorial shows you how "
             "to read each classification, review the AI-drafted response, and decide "
             "whether to send or edit."),
@@ -120,7 +120,7 @@ TUTORIALS = [
         "duration_minutes": 22,
         "order": 7,
         "description": (
-            "Victorae can write messages in your voice — not a template voice. This "
+            "Vectorae can write messages in your voice — not a template voice. This "
             "tutorial shows you how to submit your LinkedIn posts for analysis, review "
             "your voice profile, and understand how it affects outgoing message "
             "quality."),
@@ -133,7 +133,7 @@ TUTORIALS = [
         "order": 8,
         "description": (
             "When a prospect posts about frustration with Apollo, Clay, Instantly, or "
-            "any competitor — Victorae alerts you within 12 hours with a pre-written "
+            "any competitor — Vectorae alerts you within 12 hours with a pre-written "
             "DM. This tutorial shows you how to review alerts, act on them, and "
             "dismiss false positives."),
     },

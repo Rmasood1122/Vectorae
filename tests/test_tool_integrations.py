@@ -351,7 +351,7 @@ def _sf_ok(monkeypatch, **overrides):
 
 
 def test_signalforge_client_never_creates_prospects():
-    """Victorae's key holds READ/RESEARCH/AI_GENERATION only; creating needs WRITE."""
+    """Vectorae's key holds READ/RESEARCH/AI_GENERATION only; creating needs WRITE."""
     assert not hasattr(signalforge, "create_prospect")
 
 

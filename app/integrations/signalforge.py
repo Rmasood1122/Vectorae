@@ -17,11 +17,11 @@ Commands used, and the scope each needs:
   get_icp_score    READ           -> {overall_score, breakdown, icp_config_version}
   get_prospect     READ           -> {..., latest_draft: email_drafts row}
 
-Victorae's operator key holds the default scopes only: READ, RESEARCH,
+Vectorae's operator key holds the default scopes only: READ, RESEARCH,
 AI_GENERATION. It never creates prospects (that needs WRITE) — the user
-creates them in their own SIGNALFORGE instance and Victorae works from the
+creates them in their own SIGNALFORGE instance and Vectorae works from the
 prospect_id. APPROVAL and SEND are never used — the SQL gate in SIGNALFORGE
-alone decides whether anything leaves, and Victorae must never be a way
+alone decides whether anything leaves, and Vectorae must never be a way
 around it.
 """
 from __future__ import annotations

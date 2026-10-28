@@ -1,4 +1,4 @@
-"""The single gateway for every Anthropic API call in Victorae.
+"""The single gateway for every Anthropic API call in Vectorae.
 
 Pattern recognition (intake), all 72/144 pipeline steps, the 10
 verification passes and fix-generation all go through ClaudeClient, so

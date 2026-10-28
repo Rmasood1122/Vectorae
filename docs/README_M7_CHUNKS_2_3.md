@@ -34,7 +34,7 @@ Check in the emulator / physical device:
 - [ ] Splash screen shows, then fades out (not just a white flash)
 - [ ] Status bar color matches the app's primary blue (`#2563eb` default)
 - [ ] Pull down on leads kanban → spinner appears → haptic fires on physical device
-- [ ] Android back button at dashboard root → "Exit Victorae?" dialog
+- [ ] Android back button at dashboard root → "Exit Vectorae?" dialog
 - [ ] Android back button inside a strategy detail → navigates back to strategy list
 - [ ] Turn off WiFi on device → yellow "No connection" banner appears without blocking the app
 - [ ] Turn WiFi back on → banner disappears within 30 seconds

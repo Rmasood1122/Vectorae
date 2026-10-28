@@ -162,7 +162,7 @@ def post_for_user(db: Session, user_id, text: str,
 
 
 def markdown_blocks(title: str, body: str, link: str | None = None,
-                    link_label: str = "Open in Victorae") -> list[dict]:
+                    link_label: str = "Open in Vectorae") -> list[dict]:
     """A heading + body section (+ a button). Slack mrkdwn, not Markdown."""
     blocks: list[dict] = [
         {"type": "header", "text": {"type": "plain_text", "text": title[:150]}},

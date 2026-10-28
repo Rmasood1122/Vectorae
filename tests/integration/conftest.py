@@ -567,7 +567,7 @@ def _auth_headers(tokens: dict[str, str]) -> dict[str, str]:
 async def create_product(
     client: AsyncClient,
     headers: dict[str, str],
-    name: str = "Victorae",
+    name: str = "Vectorae",
     description: str = "AI-powered client acquisition",
     product_type: str = "product",
 ) -> dict[str, Any]:

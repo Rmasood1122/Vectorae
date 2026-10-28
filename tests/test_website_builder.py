@@ -511,12 +511,12 @@ class TestExportStaticSiteUnit:
 
 # ---------------------------------------------------------------------------
 # BR-D1: whose brand a generated page carries. A page of our own marketing
-# site (no workspace) is written as Victorae; a customer workspace's page is
+# site (no workspace) is written as Vectorae; a customer workspace's page is
 # written for that customer's business and never names us, our founder or
 # our ideal customer profile.
 # ---------------------------------------------------------------------------
 
-OUR_MARKERS = ("Victorae", "Vectorae", "LeadPilot", "Calendarharvest", "Rehan Masood",
+OUR_MARKERS = ("Vectorae", "Vectorae", "LeadPilot", "Calendarharvest", "Rehan Masood",
                "Boutique agency founders")
 
 
@@ -548,11 +548,11 @@ def _generate(**kwargs):
 
 
 class TestBrandContext:
-    def test_our_own_site_is_written_as_victorae(self, recording_claude):
+    def test_our_own_site_is_written_as_vectorae(self, recording_claude):
         _generate()
         prompt = recording_claude.calls[0]["prompt"]
-        assert "Product: Victorae, made by Calendarharvest" in prompt
-        assert "title tag: Agency pipelines | Victorae" in prompt
+        assert "Product: Vectorae, built by Rehan Masood and Ahmad Shahid" in prompt
+        assert "title tag: Agency pipelines | Vectorae" in prompt
         assert "author Rehan Masood" in prompt
 
     def test_a_customer_page_names_only_the_customer(self, recording_claude):

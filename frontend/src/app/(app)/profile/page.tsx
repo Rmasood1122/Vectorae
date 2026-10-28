@@ -192,7 +192,7 @@ export default function ProfilePage() {
             </ul>
           </div>
           <div className="text-sm text-muted-foreground">
-            <p>Outside Victorae&apos;s database:</p>
+            <p>Outside Vectorae&apos;s database:</p>
             <ul className="mt-1 list-disc space-y-1 pl-5">
               {DELETE_ACCOUNT_COPY.outside.map((line) => <li key={line}>{line}</li>)}
             </ul>

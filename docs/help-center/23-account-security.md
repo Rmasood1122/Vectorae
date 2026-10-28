@@ -33,9 +33,9 @@ This article covers how signing in works, how long you stay signed in, how to ch
 
 ## How does signing in work?
 
-You sign in with your email address and password. Passwords must be at least 8 characters. Victorae stores only a one-way hash of your password (PBKDF2-SHA256), never the password itself.
+You sign in with your email address and password. Passwords must be at least 8 characters. Vectorae stores only a one-way hash of your password (PBKDF2-SHA256), never the password itself.
 
-If the email or the password is wrong, the message is always "invalid email or password". Victorae does not say which one was wrong, so nobody can use the sign-in page to find out whether an address has an account.
+If the email or the password is wrong, the message is always "invalid email or password". Vectorae does not say which one was wrong, so nobody can use the sign-in page to find out whether an address has an account.
 
 New accounts must confirm their email address before they can use the app. Accounts created through public sign-up also go through identity onboarding, which includes verifying a mobile phone number. You can put the phone step off for the current browser session, but a verified phone number is required before you can choose a paid plan. (A production deployment with deliberately no text-message service cannot send codes, so it skips this step instead.)
 
@@ -50,7 +50,7 @@ The sign-in page has a **Keep me signed in** box, which is ticked by default.
 - **Ticked:** you stay signed in for 30 days from your last use. Each time the app refreshes your session, the 30 days start again, so an account you use regularly is not asked to sign in again. An account left unused for 30 days must sign in again.
 - **Not ticked:** the session ends when you close the browser, or after 12 hours, whichever comes first.
 
-Behind the scenes, the app uses a short access pass that lasts 15 minutes and renews it automatically. Each renewal can be used only once. If an old, already-used session pass shows up again (which suggests someone copied it), Victorae signs out that whole session and records the event in the security log.
+Behind the scenes, the app uses a short access pass that lasts 15 minutes and renews it automatically. Each renewal can be used only once. If an old, already-used session pass shows up again (which suggests someone copied it), Vectorae signs out that whole session and records the event in the security log.
 
 These durations are deployment settings; the numbers above are the defaults.
 
@@ -78,7 +78,7 @@ Two-factor sign-in is not available.
 
 ## Why am I told I'm using a VPN?
 
-On production deployments, Victorae blocks sign-up and sign-in from VPNs, proxies, Tor and hosting or data-centre networks. You then see:
+On production deployments, Vectorae blocks sign-up and sign-in from VPNs, proxies, Tor and hosting or data-centre networks. You then see:
 
 "It looks like you're connecting through a VPN, proxy or hosting network. Please disable your VPN or proxy and try again from your normal network."
 
@@ -90,14 +90,14 @@ Administrators can turn this blocking off, or allow specific network addresses, 
 
 Public sign-up can be closed or limited by your deployment:
 
-- If sign-up is closed, you see "Sign-up is closed on this Victorae deployment. Ask your administrator for an account."
-- If sign-up is limited to certain email domains, addresses from other domains see "Sign-up on this Victorae deployment is limited to approved email domains. Ask your administrator for an account."
+- If sign-up is closed, you see "Sign-up is closed on this Vectorae deployment. Ask your administrator for an account."
+- If sign-up is limited to certain email domains, addresses from other domains see "Sign-up on this Vectorae deployment is limited to approved email domains. Ask your administrator for an account."
 
 By default sign-up is open to any email domain. Existing accounts can always sign in.
 
 ## How do personal API keys work?
 
-API keys let tools such as Zapier, Make or your own scripts act as you through the Victorae API.
+API keys let tools such as Zapier, Make or your own scripts act as you through the Vectorae API.
 
 1. Open **Settings** and the **Integrations** tab.
 2. In the **API keys** card, type a **Name** and press **Create key**.
@@ -105,7 +105,7 @@ API keys let tools such as Zapier, Make or your own scripts act as you through t
 
 Facts about keys:
 
-- A key starts with `lpk_`. Victorae stores only a fingerprint (hash) of it, so it cannot show it to you later.
+- A key starts with `lpk_`. Vectorae stores only a fingerprint (hash) of it, so it cannot show it to you later.
 - A key acts as you on the normal API, but it never works on administrator pages, even if your account is an administrator.
 - A key cannot download your whole account's data; that needs a signed-in person and a password.
 - Changing or resetting your password revokes every key.

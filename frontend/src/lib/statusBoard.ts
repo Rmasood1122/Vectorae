@@ -12,7 +12,7 @@
  *     missing component is "unknown" ("No data"), and unknown beats
  *     operational in the overall state.
  *   - Cannot reach the API (network error, timeout, 5xx, unreadable body)
- *     -> "Victorae API unreachable — major outage". Old good data is dropped,
+ *     -> "Vectorae API unreachable — major outage". Old good data is dropped,
  *     never shown as current.
  *   - 429 means the API answered; it is not an outage. The last good result
  *     stays on screen, marked with its time, and polling backs off.
@@ -63,7 +63,7 @@ export const OVERALL_HEADLINES: Record<OverallState, string> = {
   major_outage: "Major outage",
   maintenance: "Maintenance in progress",
   unknown: "Some systems could not be checked",
-  unreachable: "Victorae API unreachable — major outage",
+  unreachable: "Vectorae API unreachable — major outage",
   unconfigured: "Live status checks are not configured on this site",
 };
 
@@ -71,10 +71,10 @@ export type UnreachableReason = "timeout" | "network" | "http_error" | "malforme
 
 /** Customer-facing explanations. No status codes, hosts or error text. */
 export const UNREACHABLE_DETAILS: Record<UnreachableReason, string> = {
-  timeout: `The Victorae API did not answer within ${FETCH_TIMEOUT_MS / 1000} seconds.`,
-  network: "The Victorae API could not be reached from your browser.",
-  http_error: "The Victorae API answered with an error instead of its status.",
-  malformed: "The Victorae API's answer could not be read.",
+  timeout: `The Vectorae API did not answer within ${FETCH_TIMEOUT_MS / 1000} seconds.`,
+  network: "The Vectorae API could not be reached from your browser.",
+  http_error: "The Vectorae API answered with an error instead of its status.",
+  malformed: "The Vectorae API's answer could not be read.",
 };
 
 /**

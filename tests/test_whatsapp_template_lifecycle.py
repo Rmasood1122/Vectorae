@@ -56,7 +56,7 @@ class TestLifecycle:
         assert t.rejection_reason == "SCAM"
         # edit in place -> clean draft again
         svc.update_template(db_session, t,
-                            body="Hello {{1}}, Sam from Victorae. "
+                            body="Hello {{1}}, Sam from Vectorae. "
                                  "Reply STOP to opt out.")
         assert t.status is m.WhatsAppTemplateStatus.DRAFT
         assert t.rejection_reason is None

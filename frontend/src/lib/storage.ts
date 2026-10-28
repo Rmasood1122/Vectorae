@@ -1,5 +1,5 @@
 /**
- * storage.ts — Victorae
+ * storage.ts — Vectorae
  *
  * Platform-aware key-value storage abstraction.
  *

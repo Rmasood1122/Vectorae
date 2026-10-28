@@ -79,7 +79,7 @@ export const REASON_LABELS: Record<ExclusionReason, string> = {
 };
 
 export const SOURCE_LABELS: Record<ExclusionSource, string> = {
-  manual: "Manual", csv: "CSV", crm_local: "Victorae CRM",
+  manual: "Manual", csv: "CSV", crm_local: "Vectorae CRM",
   crm_hubspot: "HubSpot", crm_salesforce: "Salesforce",
 };
 
@@ -109,7 +109,7 @@ export function importSummary(result: ImportResult): string {
 }
 
 const SYNC_SOURCE_NAMES: Record<string, string> = {
-  local: "Victorae CRM", hubspot: "HubSpot", salesforce: "Salesforce",
+  local: "Vectorae CRM", hubspot: "HubSpot", salesforce: "Salesforce",
 };
 
 /** One line per source: "HubSpot: 4 added" / "Salesforce: failed — HTTP 401". */

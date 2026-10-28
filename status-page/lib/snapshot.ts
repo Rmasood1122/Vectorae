@@ -3,7 +3,7 @@
  * incident files into what the page renders. buildSnapshot is pure; getSnapshot
  * does the fetching. Rules, in plain words:
  *
- *  1. Victorae's own checks (/status/public) decide API, Background
+ *  1. Vectorae's own checks (/status/public) decide API, Background
  *     processing, AI features and Booking pages when they can be read.
  *  2. When they cannot, API, Background processing and Booking pages are
  *     DERIVED from UptimeRobot and labelled "Detail unavailable"; AI features
@@ -197,14 +197,14 @@ function dataNotice(uptime: UptimeResult, backend: BackendResult): Snapshot["dat
     return {
       title: STATUS_DATA_UNAVAILABLE,
       text: ownOk
-        ? `${why}, so uptime history is missing and the Website & app component cannot be checked. The other components show Victorae's own checks.`
-        : `${why}, and Victorae's own checks could not be reached either. Component status is unknown until one of them answers.`,
+        ? `${why}, so uptime history is missing and the Website & app component cannot be checked. The other components show Vectorae's own checks.`
+        : `${why}, and Vectorae's own checks could not be reached either. Component status is unknown until one of them answers.`,
     };
   }
   if (!ownOk) {
     return {
       title: DETAIL_UNAVAILABLE,
-      text: "Victorae's own component checks could not be reached. Statuses below come from external monitoring where it covers a component; the rest show No data.",
+      text: "Vectorae's own component checks could not be reached. Statuses below come from external monitoring where it covers a component; the rest show No data.",
     };
   }
   return null;

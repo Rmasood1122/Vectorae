@@ -1,16 +1,16 @@
 """Two-way CRM sync — HubSpot and Salesforce (Feature Group 4).
 
 WHAT SYNCS
-  Victorae -> CRM   engaged leads (replied and beyond; every sourced lead too
+  Vectorae -> CRM   engaged leads (replied and beyond; every sourced lead too
                      if the user turns on `sync_new_leads`) become HubSpot
                      contacts / Salesforce leads, with their status mapped;
                      deals become HubSpot deals / Salesforce opportunities.
-  CRM -> Victorae   status changes on records Victorae linked: a contact
+  CRM -> Vectorae   status changes on records Vectorae linked: a contact
                      marked unqualified disqualifies the lead, lifecycle
                      "customer" closes it won, a deal moved to closed won/lost
                      settles the local deal and lead; a HubSpot deal created on
                      a linked contact is imported.
-Records that exist only in the CRM are not imported -- Victorae is where the
+Records that exist only in the CRM are not imported -- Vectorae is where the
 prospecting happens, not a second copy of the CRM.
 
 HOW
@@ -25,7 +25,7 @@ HOW
     make it immediate.
   * Inbound changes only move a lead FORWARD in the funnel or into a closed
     state, and never reopen a closed one. That is also what stops ping-pong:
-    Victorae pushes hs_lead_status OPEN_DEAL for a won lead, reads it back as
+    Vectorae pushes hs_lead_status OPEN_DEAL for a won lead, reads it back as
     "opportunity", and ignores it because closed_won is already further on.
 
 Status maps are defaults; a connection's settings_json can override them
@@ -332,7 +332,7 @@ def _save_link(db: Session, conn: CrmConnection, local_type: str, local_id,
 
 
 # --------------------------------------------------------------------------
-# Push: Victorae -> CRM
+# Push: Vectorae -> CRM
 # --------------------------------------------------------------------------
 
 
@@ -457,13 +457,13 @@ def _push_deal_salesforce(db: Session, conn: CrmConnection, deal: Deal) -> str:
     client = salesforce_client(db, conn)
     lead = db.get(Lead, deal.lead_id) if deal.lead_id else None
     fields = {
-        "Name": (deal.name or "Victorae deal")[:120],
+        "Name": (deal.name or "Vectorae deal")[:120],
         "StageName": _map(conn, "deal_stage_map", SALESFORCE_STAGE)[_status(deal.stage)],
         # CloseDate is required on an Opportunity; an open deal gets a
         # placeholder a month out that the Salesforce user will adjust.
         "CloseDate": (deal.close_date or (date.today() + timedelta(days=30))).isoformat(),
         "Amount": _deal_amount(deal),
-        "Description": f"Victorae deal {deal.id}" + (f" for {lead.email}" if lead and lead.email
+        "Description": f"Vectorae deal {deal.id}" + (f" for {lead.email}" if lead and lead.email
                                                      else ""),
     }
     link = _link(db, conn.user_id, "salesforce", "deal", deal.id)
@@ -557,7 +557,7 @@ def push_changed(db: Session, conn: CrmConnection, *, full: bool = False) -> dic
 
 
 # --------------------------------------------------------------------------
-# Apply: CRM -> Victorae
+# Apply: CRM -> Vectorae
 # --------------------------------------------------------------------------
 
 
@@ -735,8 +735,8 @@ def handle_hubspot_events(db: Session, events) -> dict:
 
 
 def import_hubspot_deal(db: Session, user_id, remote_deal_id: str) -> str:
-    """A deal created in HubSpot on a contact Victorae linked becomes a local
-    deal (source "hubspot"). A deal on a contact Victorae never pushed is
+    """A deal created in HubSpot on a contact Vectorae linked becomes a local
+    deal (source "hubspot"). A deal on a contact Vectorae never pushed is
     not ours to import."""
     conn = get_connection(db, user_id, "hubspot")
     if conn is None:

@@ -1,4 +1,4 @@
-"""Shared pytest fixtures for the Victorae SDK test suite."""
+"""Shared pytest fixtures for the Vectorae SDK test suite."""
 from __future__ import annotations
 
 import datetime
@@ -145,7 +145,7 @@ def ch(client_config: Config) -> ClientHunter:
 
 @pytest.fixture
 def mock_ch():
-    """A MagicMock that mimics the Victorae interface for CLI tests."""
+    """A MagicMock that mimics the Vectorae interface for CLI tests."""
     m = MagicMock()
 
     # Sensible defaults for common method returns

@@ -42,7 +42,7 @@ const PLANS = {
 const START = {
   id: "getting-started#do-i-need-a-plan",
   article_id: "getting-started",
-  title: "Getting started with Victorae",
+  title: "Getting started with Vectorae",
 };
 
 function assistant(overrides: Partial<ChatMessage> = {}): ChatMessage {
@@ -56,7 +56,7 @@ function assistant(overrides: Partial<ChatMessage> = {}): ChatMessage {
 describe("sourceTitlesFor", () => {
   it("returns article titles in citation order", () => {
     expect(sourceTitlesFor(assistant({ sources: [START, PLANS] }))).toEqual([
-      "Getting started with Victorae", "Plans, limits and billing",
+      "Getting started with Vectorae", "Plans, limits and billing",
     ]);
   });
 
@@ -79,7 +79,7 @@ describe("MessageSources", () => {
     render(<MessageSources message={assistant({ sources: [PLANS, START] })} />);
     const list = screen.getByRole("list", { name: "Sources" });
     expect(within(list).getAllByRole("listitem").map((li) => li.textContent)).toEqual([
-      "Plans, limits and billing", "Getting started with Victorae",
+      "Plans, limits and billing", "Getting started with Vectorae",
     ]);
   });
 

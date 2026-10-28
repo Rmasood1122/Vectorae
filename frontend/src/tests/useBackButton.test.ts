@@ -1,5 +1,5 @@
 /**
- * useBackButton.test.ts — Victorae (M7 Chunk 4)
+ * useBackButton.test.ts — Vectorae (M7 Chunk 4)
  *
  * Tests for src/hooks/useBackButton.ts
  *
@@ -79,7 +79,7 @@ describe('useBackButton', () => {
 
       fireBackButton(false);
 
-      expect(window.confirm).toHaveBeenCalledWith('Exit Victorae?');
+      expect(window.confirm).toHaveBeenCalledWith('Exit Vectorae?');
       unmount();
     });
   });

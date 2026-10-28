@@ -1,6 +1,6 @@
 """Feature 3 — founder voice cloning.
 
-Reads up to 20 of the Victorae client's own LinkedIn posts and extracts HOW
+Reads up to 20 of the Vectorae client's own LinkedIn posts and extracts HOW
 they write, as a small set of closed-vocabulary dimensions. Every outgoing
 message for that product is then written in their voice instead of a template
 voice.
@@ -60,7 +60,7 @@ DIMENSIONS = {
 }
 
 SYSTEM = (
-    "You are Victorae's voice analyst. You read one person's LinkedIn posts "
+    "You are Vectorae's voice analyst. You read one person's LinkedIn posts "
     "and describe HOW they write, so another writer can sound like them. "
     "Respond with ONLY a JSON object, no prose and no markdown fences:\n"
     '{"avg_sentence_length": "short|medium|long", '

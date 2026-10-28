@@ -48,7 +48,7 @@ _BODY = [re.compile(p, re.I) for p in (
 )]
 
 DETECTOR_SYSTEM = (
-    "You are Victorae's automated-reply detector. Decide whether an inbound "
+    "You are Vectorae's automated-reply detector. Decide whether an inbound "
     "email was written by a PERSON or sent automatically (auto-acknowledgement, "
     "helpdesk/ticket system, no-reply bot, newsletter, vacation responder). "
     'Respond with ONLY JSON: {"automated": true|false, "reason": "<short>"}.'

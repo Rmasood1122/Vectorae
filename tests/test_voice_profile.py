@@ -22,7 +22,7 @@ POSTS = [
 
 @pytest.fixture()
 def product(db_session, test_user):
-    product = m.Product(user_id=test_user.id, name="Victorae",
+    product = m.Product(user_id=test_user.id, name="Vectorae",
                         description="Outbound for boutique agencies",
                         type=m.ProductType.SKILL)
     db_session.add(product)

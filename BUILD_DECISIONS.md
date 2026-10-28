@@ -204,7 +204,7 @@ Reasoning:
 ### E4. Revenue analytics and access
 - Pay-per-meeting fees (pending + charged) are a new `platform` cost kind in
   `revenue_analytics.report`, attributed to the campaign that booked the
-  meeting, so cost-per-meeting and ROI include what Victorae charged.
+  meeting, so cost-per-meeting and ROI include what Vectorae charged.
 - `/billing` is a **personal** RBAC prefix: a workspace member buys and cancels
   only for their own account. Checkout is phone-gated (C1).
 

@@ -118,7 +118,7 @@ def main(argv: list[str]) -> int:
         answerable, refuse = answerable[:args.limit], refuse[:args.limit]
 
     print(f"model: {settings.anthropic_model}")
-    probe = support_chat.answer_question("What is Victorae?")
+    probe = support_chat.answer_question("What is Vectorae?")
     if probe.reason == "model_error" or probe.reason.startswith("mock_"):
         print(f"ABORTED: the model is not usable (probe reason={probe.reason}). Every "
               "item would land on a ticket and the must-refuse 'ticket' items would "

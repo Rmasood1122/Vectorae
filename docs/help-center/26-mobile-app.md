@@ -32,11 +32,11 @@ sources:
 
 # The Android app
 
-Victorae has an Android app. It is the same Victorae app you use in a web browser, packaged to run on an Android phone, with a few phone-specific additions such as push notifications. This article explains what the app does, how it differs from the web version, and what it cannot do.
+Vectorae has an Android app. It is the same Vectorae app you use in a web browser, packaged to run on an Android phone, with a few phone-specific additions such as push notifications. This article explains what the app does, how it differs from the web version, and what it cannot do.
 
 ## What is the Android app?
 
-The Android app is built from the same code as the web app, using a tool called Capacitor that wraps the web app for Android. Its app ID is `com.clienthunter.app` and its name on the phone is Victorae.
+The Android app is built from the same code as the web app, using a tool called Capacitor that wraps the web app for Android. Its app ID is `com.clienthunter.app` and its name on the phone is Vectorae.
 
 Because it is the same code, the screens are the same as on the web: Pipeline, Inbox, CRM, Campaigns, Calendar, Meetings, Strategies, Analytics, Network, Learn, Team, Clients, Profile and Settings. On a phone these appear as a bar of tabs along the bottom of the screen instead of a side menu.
 
@@ -44,7 +44,7 @@ There is no iPhone (iOS) app.
 
 ## Does my phone need to be on for campaigns to run?
 
-No. All the work happens on Victorae's servers: research, lead sourcing, sending emails and WhatsApp messages, follow-ups and bookings. The app is a window onto that server. It does not send messages itself and does not run campaign logic on the phone. A phone that is switched off, offline or has the app closed does not pause anything.
+No. All the work happens on Vectorae's servers: research, lead sourcing, sending emails and WhatsApp messages, follow-ups and bookings. The app is a window onto that server. It does not send messages itself and does not run campaign logic on the phone. A phone that is switched off, offline or has the app closed does not pause anything.
 
 To actually pause sending, use **Pause campaign** on the Campaigns page, in the app or on the web.
 
@@ -53,8 +53,8 @@ To actually pause sending, use **Pause campaign** on the Campaigns page, in the 
 The app adds a few things that only make sense on a phone:
 
 - **Push notifications** – see the next question.
-- **Back button** – the Android back button goes back one screen. On a main section (such as Strategies, Campaigns, Analytics or Settings) it asks "Exit Victorae?" before closing the app.
-- **Offline banner** – if your phone has no connection, a banner says "No connection" and "Scheduled sends run on Victorae's servers, not on this device, so losing your connection does not stop them. You'll be back in sync when connected." If the phone is online but cannot reach Victorae's server, it says "Server temporarily unreachable" and "We can't reach Victorae's server right now, so we can't confirm whether scheduled sends are going out. We'll reconnect automatically." The same banner appears in the web app.
+- **Back button** – the Android back button goes back one screen. On a main section (such as Strategies, Campaigns, Analytics or Settings) it asks "Exit Vectorae?" before closing the app.
+- **Offline banner** – if your phone has no connection, a banner says "No connection" and "Scheduled sends run on Vectorae's servers, not on this device, so losing your connection does not stop them. You'll be back in sync when connected." If the phone is online but cannot reach Vectorae's server, it says "Server temporarily unreachable" and "We can't reach Vectorae's server right now, so we can't confirm whether scheduled sends are going out. We'll reconnect automatically." The same banner appears in the web app.
 - **Links** – tapping a notification opens the matching screen in the app.
 - **Status bar colour** follows your chosen theme.
 
@@ -62,7 +62,7 @@ The bottom tab bar holds many destinations, so on a narrow phone it scrolls side
 
 ## Which push notifications will I get?
 
-After you sign in, the app asks for permission to show notifications. If you allow it, your phone is registered with Victorae for push notifications. Victorae sends push notifications for events such as:
+After you sign in, the app asks for permission to show notifications. If you allow it, your phone is registered with Vectorae for push notifications. Vectorae sends push notifications for events such as:
 
 - a strategy ready, or a strategy that needs your review;
 - a new reply from a lead;
@@ -76,9 +76,9 @@ After you sign in, the app asks for permission to show notifications. If you all
 
 A campaign you pause yourself does not send you a push notification, because you already know.
 
-Push notifications only work if your Victorae deployment has push notifications (Firebase) set up. Parts of the push setup in the app are marked in the code as not yet verified against the current version of the push service, so treat push notifications as a convenience, not as the only place you check for replies. Everything they announce is also visible in the app itself.
+Push notifications only work if your Vectorae deployment has push notifications (Firebase) set up. Parts of the push setup in the app are marked in the code as not yet verified against the current version of the push service, so treat push notifications as a convenience, not as the only place you check for replies. Everything they announce is also visible in the app itself.
 
-If you refused permission, you can turn notifications on later in your phone's settings for the Victorae app.
+If you refused permission, you can turn notifications on later in your phone's settings for the Vectorae app.
 
 ## How does signing in work on the phone?
 
@@ -86,16 +86,16 @@ You sign in with the same email and password as on the web, and the same rules a
 
 ## What can't I do in the app?
 
-- You cannot use the app offline to make changes. Creating a strategy, launching a campaign or changing a lead all need a connection to Victorae's server. Some screens you opened recently may still show their last data while offline.
+- You cannot use the app offline to make changes. Creating a strategy, launching a campaign or changing a lead all need a connection to Vectorae's server. Some screens you opened recently may still show their last data while offline.
 - There is no iOS version.
 - The app does not send outreach from your phone or use your phone's number or SIM. WhatsApp messages go out from the deployment's WhatsApp Business number, through the server.
 
 ## Where do I get the app?
 
-The app is built for distribution through the Google Play Store. Whether it is currently published there for your deployment is not confirmed in this help center. Ask your administrator or contact support for the current way to install it. If your team runs its own Victorae deployment, the app must be built to point at that deployment's server.
+The app is built for distribution through the Google Play Store. Whether it is currently published there for your deployment is not confirmed in this help center. Ask your administrator or contact support for the current way to install it. If your team runs its own Vectorae deployment, the app must be built to point at that deployment's server.
 
 ## Related
-- [What is Victorae](01-what-is-leadpilot.md)
+- [What is Vectorae](01-what-is-leadpilot.md)
 - [Pausing and stopping outreach](25-pause-stop-kill-switch.md)
 - [Account security](23-account-security.md)
 - [Replies and the unified inbox](13-replies-and-unified-inbox.md)

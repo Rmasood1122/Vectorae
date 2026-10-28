@@ -124,7 +124,7 @@ def copy_draft(draft_id: uuid.UUID, body: CopyIn | None = None,
                db: Session = Depends(get_db),
                current_user: User = Depends(get_current_user)):
     """LinkedIn: record that the (optionally edited) draft was copied to the
-    clipboard. Victorae sends nothing. Same checks as approve."""
+    clipboard. Vectorae sends nothing. Same checks as approve."""
     enforce_rate_limit(str(current_user.id), "crm_write", "RATE_LIMIT_CRM_WRITE")
     draft = _owned(db, draft_id, current_user)
     try:

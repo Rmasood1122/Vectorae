@@ -3,8 +3,9 @@
 
 WHY
 ---
-The product is Victorae (docs/program/DECISIONS.md VIC-NAME). Two earlier
-rename passes (LeadPilot/ClientHunter -> Vectorae) left old names in places
+The product is Vectorae (docs/program/DECISIONS.md VEC-NAME, which reverses
+VIC-NAME). Earlier rename passes (LeadPilot/ClientHunter -> Vectorae ->
+Victorae -> Vectorae) left old names in places
 people see, because find-and-replace cannot tell a display string from an
 identifier a database row, a customer integration, an installed Android app
 or a Redis key depends on. This check makes the split explicit and permanent:
@@ -17,7 +18,7 @@ Every git-tracked file: its PATH, and (for text files) every line, for the
 old names in any case and with or without a separator:
     LeadPilot  Lead Pilot  lead-pilot  lead_pilot  lead.pilot  LEADPILOT ...
     ClientHunter  Client Hunter  client-hunter  client_hunter ...
-    Vectorae (the previous name, replaced by Victorae)
+    Victorae (the name used 2026-10-20..28, reverted to Vectorae)
 Binary files (a NUL byte in the first 8 KiB) are checked by path only.
 
 THE ALLOWLIST (.brand-allowlist, repo root)
@@ -49,7 +50,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-BRAND = re.compile(r"lead[ _.\-]?pilot|client[ _.\-]?hunter|vectorae", re.IGNORECASE)
+BRAND = re.compile(r"lead[ _.\-]?pilot|client[ _.\-]?hunter|victorae", re.IGNORECASE)
 ALLOWLIST_NAME = ".brand-allowlist"
 REASON_CLASSES = ("B:", "C:")
 BINARY_SNIFF_BYTES = 8192
@@ -186,7 +187,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     print(f"brand_lint: {len(report.violations)} old-name occurrence(s) outside "
           f"{ALLOWLIST_NAME}, {len(report.errors)} allowlist error(s). Rename display "
-          "text to Victorae; add an identifier only with a B:/C: reason.")
+          "text to Vectorae; add an identifier only with a B:/C: reason.")
     return 1
 
 

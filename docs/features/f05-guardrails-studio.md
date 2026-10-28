@@ -15,13 +15,13 @@ Competitor complaint (STAR A.6, F05): **brand damage — pitching current or
 churned customers, ignoring opt-outs.** Scorecard row 5: *0 sends to excluded
 entities.*
 
-What Victorae already had before F05 (recon):
+What Vectorae already had before F05 (recon):
 
 | Building block | What it does | Gap F05 closes |
 |---|---|---|
 | `suppression_list` + `linkedin_suppressions`, `lead_tasks.is_suppressed` | Opt-outs (unsubscribe, STOP, GDPR erase). **Deployment-global**, contact-level only (email / phone / LinkedIn). Checked at sourcing, enrichment, email discovery, enrollment and at send time. | No per-account list, no **domain** or **company** level, no way to say "never pitch anyone at Acme, they are our customer". |
 | `send_message_impl` (`app/workers/outreach_tasks.py`) | The send chokepoint — every sequence, follow-up and re-engagement send goes through it. | Nothing account-specific is checked. |
-| `crm_sync` (HubSpot / Salesforce) | Two-way sync of records Victorae **linked**; never imports CRM-only records. | The CRM knows who the customers are; Victorae never asks. |
+| `crm_sync` (HubSpot / Salesforce) | Two-way sync of records Vectorae **linked**; never imports CRM-only records. | The CRM knows who the customers are; Vectorae never asks. |
 | `deals` table, lead `closed_won` | Local record of open and won deals. | A won deal at Acme does not stop a *different* lead at Acme being pitched in another campaign. |
 | `claim_verification` (A1) | Strips unsupported claims **about the prospect**. | Explicitly ignores claims about **us** ("We helped 40 agencies grow 3x") — those are unchecked. |
 | `adversarial_review` (A7, pre-launch outreach gate) + `send_review` (human queue) | Fixed spam/tone lists. | No per-product "never say this" list. |

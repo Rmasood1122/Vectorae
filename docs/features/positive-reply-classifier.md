@@ -7,7 +7,7 @@
 
 A reply rate counts "please remove me" as a win. Two campaigns with a 20% reply
 rate can be opposite outcomes: one booked meetings, the other annoyed a list.
-Nothing in Victorae could tell them apart, so nothing could tell you which
+Nothing in Vectorae could tell them apart, so nothing could tell you which
 sequence to keep running.
 
 ## What it does

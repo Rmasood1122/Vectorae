@@ -23,7 +23,7 @@ const ACCESS = "test-access-token";
 const REFRESH = "test-refresh-token";
 
 const REFUSAL =
-  "I can only help with questions about Victorae — how it works, setting up " +
+  "I can only help with questions about Vectorae — how it works, setting up " +
   "campaigns, outreach, the learning loop, tutorials, your data, and getting " +
   "support. Ask me anything about the product and I'll do my best.";
 
@@ -32,9 +32,9 @@ const TICKET_SUGGESTION =
   "guess. Submit a ticket and the team will respond within 24 hours.";
 
 const FAQ = [
-  { id: "what-is-leadpilot", question: "What is Victorae?", answer: "…" },
-  { id: "what-does-it-replace", question: "What does Victorae replace?", answer: "…" },
-  { id: "who-is-it-for", question: "Who is Victorae for?", answer: "…" },
+  { id: "what-is-leadpilot", question: "What is Vectorae?", answer: "…" },
+  { id: "what-does-it-replace", question: "What does Vectorae replace?", answer: "…" },
+  { id: "who-is-it-for", question: "Who is Vectorae for?", answer: "…" },
   { id: "how-outreach-works", question: "How does outreach work?", answer: "…" },
 ];
 
@@ -70,7 +70,7 @@ async function mockSupport(page: Page, opts: SupportMockOptions = {}) {
   const {
     chatEnabled = true,
     answer = {
-      text: "Victorae runs a 72-step research pipeline and books meetings.",
+      text: "Vectorae runs a 72-step research pipeline and books meetings.",
       on_topic: true, confidence: 0.92, suggest_ticket: false,
       reason: "answered",
     },
@@ -180,15 +180,15 @@ test("suggested questions come from the real FAQ", async ({ page }) => {
   await openWidget(page);
   const suggestions = page.getByTestId("support-suggestions");
   await expect(suggestions).toBeVisible();
-  await expect(suggestions).toContainText("What is Victorae?");
+  await expect(suggestions).toContainText("What is Vectorae?");
   await expect(suggestions).toContainText("How does outreach work?");
 });
 
 test("clicking a suggestion fills the input", async ({ page }) => {
   await mockSupport(page);
   await openWidget(page);
-  await page.getByRole("button", { name: "What is Victorae?" }).click();
-  await expect(page.getByTestId("support-input")).toHaveValue("What is Victorae?");
+  await page.getByRole("button", { name: "What is Vectorae?" }).click();
+  await expect(page.getByTestId("support-input")).toHaveValue("What is Vectorae?");
 });
 
 // --------------------------------------------------------------------------
@@ -199,10 +199,10 @@ test("an on-topic question shows the grounded answer", async ({ page }) => {
   await mockSupport(page);
   await openWidget(page);
 
-  await page.getByTestId("support-input").fill("What is Victorae?");
+  await page.getByTestId("support-input").fill("What is Vectorae?");
   await page.getByRole("button", { name: "Send" }).click();
 
-  await expect(page.getByTestId("support-msg-user")).toContainText("What is Victorae?");
+  await expect(page.getByTestId("support-msg-user")).toContainText("What is Vectorae?");
   await expect(page.getByTestId("support-msg-assistant"))
     .toContainText("72-step research pipeline", { timeout: 15_000 });
   // A confident answer does not push the ticket button at the user.
@@ -223,7 +223,7 @@ test("an OFF-TOPIC question shows the refusal and offers no ticket",
     await page.getByRole("button", { name: "Send" }).click();
 
     const reply = page.getByTestId("support-msg-assistant");
-    await expect(reply).toContainText("I can only help with questions about Victorae",
+    await expect(reply).toContainText("I can only help with questions about Vectorae",
                                       { timeout: 15_000 });
     await expect(reply).not.toContainText("Paris");
     await expect(page.getByTestId("support-escalate")).toHaveCount(0);

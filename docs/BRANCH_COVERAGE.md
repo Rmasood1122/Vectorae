@@ -1,4 +1,4 @@
-# Victorae — Branch Coverage Matrix
+# Vectorae — Branch Coverage Matrix
 
 Supporting document for `docs/FULL_PRODUCT_AUDIT.md`. Audit date 2026-10-01.
 Full-history clone; default branch `master`.

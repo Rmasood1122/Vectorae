@@ -1,4 +1,4 @@
-"""Victorae agents -- the native C++/Rust cores agree with the Python reference.
+"""Vectorae agents -- the native C++/Rust cores agree with the Python reference.
 
 app/agents/reference.py is the fallback the offline gate runs on and the
 oracle these tests hold the native modules to: the same inputs must give the

@@ -3,7 +3,7 @@
 The properties that matter:
   * threads are per PROSPECT, and channels merge into one of them,
   * machine mail is filed, never chased,
-  * "handled" is explicit and per reply, so a reply answered outside Victorae
+  * "handled" is explicit and per reply, so a reply answered outside Vectorae
     can be cleared and a second reply cannot be cleared by the first,
   * the needs-reply list is worked oldest first,
   * the badge counts people, not messages.

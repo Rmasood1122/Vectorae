@@ -1,5 +1,5 @@
 """
-test_notifications.py — Victorae (M7 Chunk 4)
+test_notifications.py — Vectorae (M7 Chunk 4)
 
 Tests for app/services/notifications.py.
 firebase_admin is mocked throughout — no real Firebase connection needed.

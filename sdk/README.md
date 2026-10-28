@@ -1,6 +1,6 @@
-# Victorae Python SDK
+# Vectorae Python SDK
 
-**Victorae** is an AI-powered client acquisition system: give it a product or skill, and it researches your market, sources verified leads, runs multi-channel outreach (email + WhatsApp), and books meetings — 24/7, in the cloud.
+**Vectorae** is an AI-powered client acquisition system: give it a product or skill, and it researches your market, sources verified leads, runs multi-channel outreach (email + WhatsApp), and books meetings — 24/7, in the cloud.
 
 This package gives you:
 - A **typed Python SDK** (`clienthunter.ClientHunter`) for scripting and integration
@@ -13,7 +13,7 @@ This package gives you:
 
 **Installing this package alone does NOT run campaigns.**
 
-The SDK is a thin typed client over the Victorae HTTP API.  All the intelligence lives in the cloud backend:
+The SDK is a thin typed client over the Vectorae HTTP API.  All the intelligence lives in the cloud backend:
 
 ```
  Your script / CLI          Cloud backend (or self-hosted via `clienthunter serve`)

@@ -82,7 +82,7 @@ def classify_headline(title: str) -> str:
 def _http() -> httpx.Client:
     """Factory tests monkeypatch."""
     return httpx.Client(timeout=15.0, follow_redirects=True,
-                        headers={"User-Agent": "Victorae/1.0 market-intel"})
+                        headers={"User-Agent": "Vectorae/1.0 market-intel"})
 
 
 # ---------------------------------------------------------------------------

@@ -13,7 +13,7 @@
  * scripts/seo/check_static_seo.mjs enforces these on the exported HTML.
  */
 
-import { COMPANY_NAME, PRODUCT_FACTS, PRODUCT_FULL_NAME, PRODUCT_NAME } from "@/lib/productFacts";
+import { PRODUCT_FACTS, PRODUCT_FULL_NAME, PRODUCT_NAME } from "@/lib/productFacts";
 import { SITE_ORIGIN, absoluteUrl, type SitePath } from "@/lib/seo/pageMeta";
 
 type Node = Record<string, unknown>;
@@ -42,7 +42,7 @@ function website(): Node {
     "@type": "WebSite",
     "@id": WEBSITE_ID,
     url: `${SITE_ORIGIN}/`,
-    name: COMPANY_NAME,
+    name: PRODUCT_NAME,
     publisher: { "@id": ORGANIZATION_ID },
   };
 }
@@ -72,7 +72,7 @@ function faqPage(path: SitePath, faq: readonly { q: string; a: string }[]): Node
   };
 }
 
-/** Home (the header's "Victorae" link) → this page (its nav or footer label). */
+/** Home (the header's "Vectorae" link) → this page (its nav or footer label). */
 function breadcrumbs(path: SitePath, name: string): Node {
   return {
     "@type": "BreadcrumbList",

@@ -1,7 +1,7 @@
 /**
  * /outbound-statistics/: sourced industry figures (docs/program/ai-visibility/geo/content/statistics_and_proof.md).
  * Every figure links its source; vendor-published figures say so. S7 of the
- * draft (sourced only to Victorae's own ICP notes) is left out. No Victorae
+ * draft (sourced only to Vectorae's own ICP notes) is left out. No Vectorae
  * performance figure appears: none has been supplied yet (founder answer Q-06).
  */
 
@@ -10,7 +10,7 @@ import { MEETING_PRICE, tierList } from "./shared";
 
 export const STATS_LEAD = [
   "Sourced figures on how B2B buyers respond to outreach, where agencies get clients, what an SDR costs, the rules email senders must meet, and the penalties for non-compliant outreach.",
-  "Compiled by the makers of Victorae. Each figure links to its source. Figures published by companies that sell outreach software are marked (vendor) because they may favour that vendor, and reply-rate benchmarks measure different things, so do not compare them directly.",
+  "Compiled by the makers of Vectorae. Each figure links to its source. Figures published by companies that sell outreach software are marked (vendor) because they may favour that vendor, and reply-rate benchmarks measure different things, so do not compare them directly.",
 ];
 
 const G1 = "https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-sales-survey-finds-61-percent-of-b2b-buyers-prefer-a-rep-free-buying-experience";
@@ -35,7 +35,7 @@ export const STATS_SECTIONS: Section[] = [
         ["67%", "B2B buyers who prefer a rep-free experience (Gartner survey of 646 buyers, Aug–Sep 2025)", `[Gartner, March 2026](${G2})`],
         ["45%", "B2B buyers who used AI during a recent purchase (same 2025 survey)", `[Gartner, March 2026](${G2})`],
       ]),
-      { kind: "p", text: "Buyers punish irrelevant messages, so a few researched, relevant emails beat volume. That is the reason Victorae writes each email for one person and caps sending at 100 a day per mailbox by default." },
+      { kind: "p", text: "Buyers punish irrelevant messages, so a few researched, relevant emails beat volume. That is the reason Vectorae writes each email for one person and caps sending at 100 a day per mailbox by default." },
     ],
   },
   {
@@ -96,7 +96,7 @@ export const STATS_SECTIONS: Section[] = [
     ],
   },
   {
-    heading: "Victorae specifications (how it works, not results)",
+    heading: "Vectorae specifications (how it works, not results)",
     blocks: [
       table([
         ["72 or 144 steps", "Research pipeline per strategy; 144 when you have no past clients", "[Research pipeline](/help/research-pipeline)"],
@@ -105,7 +105,7 @@ export const STATS_SECTIONS: Section[] = [
         [MEETING_PRICE, "Pay per meeting: per prospect who books, charged after 48 hours, waived if cancelled", "[Plans, limits and billing](/help/plans-limits-billing)"],
         ["Monthly plans", `${tierList()} per month, flat per account`, "[Pricing](/pricing)"],
       ]),
-      { kind: "p", text: "Victorae has no published performance results yet. Results will be added here only with their date range and how they were measured." },
+      { kind: "p", text: "Vectorae has no published performance results yet. Results will be added here only with their date range and how they were measured." },
     ],
   },
 ];

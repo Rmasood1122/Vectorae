@@ -1,5 +1,5 @@
 /**
- * GET ${LEADPILOT_API_URL}/status/public — Victorae's own component checks
+ * GET ${LEADPILOT_API_URL}/status/public — Vectorae's own component checks
  * (app/api/status_public.py). 5-second timeout. Anything other than a
  * well-formed answer counts as "unreachable": the page then derives what it
  * can from UptimeRobot and says "detail unavailable".

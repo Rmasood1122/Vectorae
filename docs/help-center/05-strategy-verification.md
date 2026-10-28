@@ -23,18 +23,18 @@ sources:
 
 # Strategy verification (the 10 checks)
 
-After the research pipeline finishes, Victorae checks the strategy document against 10 separate criteria before anything can reach a real person. This article explains the checks, what happens when one fails, and the two ways forward from `needs_human_review`: re-verifying, or passing a few checks yourself.
+After the research pipeline finishes, Vectorae checks the strategy document against 10 separate criteria before anything can reach a real person. This article explains the checks, what happens when one fails, and the two ways forward from `needs_human_review`: re-verifying, or passing a few checks yourself.
 
 ## How does verification work?
 
-Each check is judged on its own, one criterion at a time. An AI reviewer answers PASS, or FAIL with a concrete instruction for what to change. On a FAIL, Victorae rewrites the strategy document to resolve that one finding and runs the same check again.
+Each check is judged on its own, one criterion at a time. An AI reviewer answers PASS, or FAIL with a concrete instruction for what to change. On a FAIL, Vectorae rewrites the strategy document to resolve that one finding and runs the same check again.
 
 - By default each check gets up to 3 attempts. A strategy that was shortened to fit a small budget gets at most 2.
-- Victorae runs all 10 checks even if an earlier one fails.
+- Vectorae runs all 10 checks even if an earlier one fails.
 - If every check ends in PASS, the strategy becomes `verified`.
 - If any check still fails after its attempts, the strategy becomes `needs_human_review`.
 
-Until a strategy is `verified`, Victorae will not source leads for it or launch a sequence from it.
+Until a strategy is `verified`, Vectorae will not source leads for it or launch a sequence from it.
 
 ## What are the 10 checks?
 
@@ -59,8 +59,8 @@ On the strategy page, the **10x verification loop** card lists each check once, 
 
 A check can also stop early, before using all its attempts, for two reasons:
 
-- **Conflicting sources.** The proposed fix would put the document back the way it was on an earlier attempt, which means two sources disagree and editing cannot satisfy both. Victorae stops that check and leaves it for a person.
-- **Rewrite too long.** The rewritten document came back cut off even after one retry with a larger limit. Victorae leaves the document exactly as it was, rather than saving a truncated version, and fails that check.
+- **Conflicting sources.** The proposed fix would put the document back the way it was on an earlier attempt, which means two sources disagree and editing cannot satisfy both. Vectorae stops that check and leaves it for a person.
+- **Rewrite too long.** The rewritten document came back cut off even after one retry with a larger limit. Vectorae leaves the document exactly as it was, rather than saving a truncated version, and fails that check.
 
 ## What does "needs_human_review" mean?
 
@@ -83,7 +83,7 @@ Press **Confirm re-verify**. The finished research is reused, not repeated, but 
 
 ## How do I pass a check manually?
 
-Press **Review and pass manually**. It is offered when the strategy is `needs_human_review` or `budget_exhausted`, and also while it shows `verifying`. For a `verifying` strategy, Victorae refuses the sign-off until nothing has been logged for 15 minutes, because a run that is still working would overwrite your decision. If the Legal & compliance check is among the failures, the button is replaced by a note saying it cannot be passed manually.
+Press **Review and pass manually**. It is offered when the strategy is `needs_human_review` or `budget_exhausted`, and also while it shows `verifying`. For a `verifying` strategy, Vectorae refuses the sign-off until nothing has been logged for 15 minutes, because a run that is still working would overwrite your decision. If the Legal & compliance check is among the failures, the button is replaced by a note saying it cannot be passed manually.
 
 The form lists each failed check and why it failed. To submit:
 
@@ -102,7 +102,7 @@ The strategy then becomes `verified`. The original FAIL results stay in the log.
 
 ## How long does verification take?
 
-It varies with how many checks fail and need a rewrite. Victorae's own notes estimate one check-and-fix cycle at about 3 to 4 minutes. Each verification run has the same 2-hour time limit and automatic retries as the research pipeline.
+It varies with how many checks fail and need a rewrite. Vectorae's own notes estimate one check-and-fix cycle at about 3 to 4 minutes. Each verification run has the same 2-hour time limit and automatic retries as the research pipeline.
 
 ## Related
 - [The research pipeline](04-research-pipeline.md)

@@ -1,6 +1,6 @@
 """Hunter.io adapter — email finding + verification.
 
-Every email in Victorae MUST pass through `verify()` before any later
+Every email in Vectorae MUST pass through `verify()` before any later
 milestone may use it. Status mapping (project knowledge):
     deliverable -> verified | risky -> flagged | undeliverable -> dropped
 

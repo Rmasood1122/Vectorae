@@ -71,7 +71,7 @@ class IpapiCoProvider:
     def lookup(self, ip: str) -> GeoResult:
         with _http() as client:
             resp = client.get(self.URL.format(ip=ip),
-                              headers={"User-Agent": "Victorae/1.0"})
+                              headers={"User-Agent": "Vectorae/1.0"})
         if resp.status_code >= 400:
             raise GeolocationError(f"ipapi.co HTTP {resp.status_code}")
         data = resp.json() or {}

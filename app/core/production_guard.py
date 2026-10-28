@@ -224,14 +224,14 @@ def _check_sender_identity(problems: list[str]) -> None:
     """CAN-SPAM requires a real physical postal address in the footer.
 
     The default is the literal placeholder
-    "Victorae User, 123 Main St, City, Country", and it was absent from every
+    "Vectorae User, 123 Main St, City, Country", and it was absent from every
     env template — so it would have shipped verbatim in production email.
     """
     value = os.getenv("SENDER_IDENTITY", "").strip()
     if not value:
         problems.append(
             "SENDER_IDENTITY is not set. It defaults to the placeholder "
-            "'Victorae User, 123 Main St, City, Country', which would appear "
+            "'Vectorae User, 123 Main St, City, Country', which would appear "
             "as the CAN-SPAM physical address in every outbound email. Set it "
             "to a real postal address."
         )

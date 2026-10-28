@@ -38,6 +38,6 @@ describe("formatting", () => {
     expect(shortHash(null)).toBe("—");
   });
   it("names exports by date", () => {
-    expect(exportFilename("pdf", new Date("2026-09-13T12:00:00Z"))).toBe("victorae-audit-2026-09-13.pdf");
+    expect(exportFilename("pdf", new Date("2026-09-13T12:00:00Z"))).toBe("vectorae-audit-2026-09-13.pdf");
   });
 });

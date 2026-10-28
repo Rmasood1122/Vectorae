@@ -244,7 +244,7 @@ def test_white_label(client, db_session, team, monkeypatch):
     assert record["name"] == "_leadpilot-verify.app.acme.dev"
 
     public = client.get("/branding?host=app.acme.dev").json()
-    assert public["brand_name"] == "Victorae"          # not verified yet
+    assert public["brand_name"] == "Vectorae"          # not verified yet
     monkeypatch.setattr(workspaces, "_txt_records", lambda name: ["other", record["value"]])
     assert client.post("/workspaces/current/domain/verify").json()["verified"] is True
     public = client.get("/branding?host=app.acme.dev:443").json()

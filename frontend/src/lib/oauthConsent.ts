@@ -49,7 +49,7 @@ export function withConsentReturn(destination: string, consentReturn: string | n
   return destination;
 }
 
-/** The browser leaves Victorae only for a URI the server could have
+/** The browser leaves Vectorae only for a URI the server could have
  *  issued: https, or an http loopback callback (Claude Code). */
 export function isSafeClientRedirect(target: string): boolean {
   let url: URL;

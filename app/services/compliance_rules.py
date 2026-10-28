@@ -31,7 +31,7 @@ IT FAILS CLOSED, NEVER OPEN
 
 CONSENT REQUIRED
 Checked against real evidence: the WhatsApp opt-in record, the phone call
-consent record. Email and LinkedIn have NO consent record in Victorae, so a
+consent record. Email and LinkedIn have NO consent record in Vectorae, so a
 consent rule on those channels skips the send -- the restrictive reading, and
 documented as such.
 
@@ -282,5 +282,5 @@ def has_consent(session: Session, lead: Lead, channel: ChannelType) -> bool:
         from app.services import phone_calls  # noqa: PLC0415
 
         return bool(phone_calls.consent_ok(session, lead))
-    # Email and LinkedIn: Victorae records no consent for these channels.
+    # Email and LinkedIn: Vectorae records no consent for these channels.
     return False

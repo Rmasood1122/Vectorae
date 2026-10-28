@@ -70,7 +70,7 @@ place that the send path, the UI and the tests all read, so they cannot drift.
 | US | CAN-SPAM | Opt-out regime: no prior consent, but the opt-out must work |
 | CA | CASL | B2B relies on **implied** consent, which cannot be verified here — recorded as assumed |
 | EU / UK | GDPR / ePrivacy, UK GDPR / PECR | Legitimate interest; right to object stated; **tracking pixels not used** |
-| SG | PDPA | Phone and SMS also need the national DNC check, which Victorae does **not** perform |
+| SG | PDPA | Phone and SMS also need the national DNC check, which Vectorae does **not** perform |
 | AU / NZ | Spam Act 2003 / UEMA 2007 | Inferred consent + identification + unsubscribe |
 | *unknown* | strictest baseline | Identification and a working opt-out |
 

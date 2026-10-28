@@ -6,7 +6,7 @@ URL) is a user credential under "salesforce". Salesforce access tokens carry
 no expiry -- they die with the session policy -- so the client refreshes on a
 401 and retries once.
 
-Victorae leads sync to Salesforce LEADS (not Contacts): a cold prospect is
+Vectorae leads sync to Salesforce LEADS (not Contacts): a cold prospect is
 exactly what the Lead object is for, and conversion to Contact/Opportunity
 remains the Salesforce user's decision. Won/lost deals sync to Opportunities.
 """

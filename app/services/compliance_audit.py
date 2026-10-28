@@ -6,12 +6,12 @@ app/services/compliance_region.py), the regime that applies, the checks that
 were made and the decision. It is the answer to "on what basis did you
 email this person?", written at the moment the decision was made.
 
-Regimes and what Victorae does about each:
+Regimes and what Vectorae does about each:
   US  CAN-SPAM   unsubscribe link + sender identity in every email; honoured
                  immediately (the law allows 10 business days)
   CA  CASL       B2B cold email relies on IMPLIED consent (a published
                  business address and a message relevant to the role).
-                 Victorae cannot verify that; the audit records
+                 Vectorae cannot verify that; the audit records
                  "implied_consent_assumed" and the footer states the sender
                  and the unsubscribe route
   EU  GDPR       legitimate interest for B2B outreach; every email carries a
@@ -19,7 +19,7 @@ Regimes and what Victorae does about each:
   UK  UK GDPR /  as EU; corporate subscribers may be emailed under PECR
       PECR
   SG  PDPA       email with an unsubscribe route; phone and SMS additionally
-                 need the national Do-Not-Call check, which Victorae does NOT
+                 need the national Do-Not-Call check, which Vectorae does NOT
                  perform (recorded)
   AU/NZ          inferred consent + identification + unsubscribe
 Unknown region: the strictest common baseline (identification, unsubscribe)

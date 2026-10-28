@@ -14,7 +14,7 @@ verifiable source as the top differentiator.* Tools that write "congrats on
 the raise" do it from data nobody can trace, and often from news that is
 months old.
 
-Victorae already **fetches** most of what a "why now" needs, but never
+Vectorae already **fetches** most of what a "why now" needs, but never
 treats it as a signal with an age and a source:
 
 | Already exists | What it lacks |

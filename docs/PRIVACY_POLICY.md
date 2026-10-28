@@ -12,7 +12,7 @@
 
 ClientHunter Enterprise, also sold as Vectorae ("we," "us," "our"), is a software service for B2B client acquisition automation. The service is operated by:
 
-**Calendarharvest**
+**Rehan Masood**, an individual based in New York (no company has been registered yet)
 [Postal address] — TODO (founders): fill in before publishing
 ahmadshahid@calendarharvest.com — the privacy contact used on the public website (`frontend/src/app/privacy/page.tsx`). Founders: confirm this is the right address for privacy requests.
 
@@ -182,7 +182,7 @@ We will notify you of material changes to this policy by email or via an in-app 
 
 For privacy questions, data requests, or complaints:
 
-**Calendarharvest — privacy contact**
+**Vectorae — privacy contact (Rehan Masood)**
 ahmadshahid@calendarharvest.com — founders: confirm before publishing (same address as the public website's privacy page)
 [Your country] — TODO (founders): fill in before publishing
 

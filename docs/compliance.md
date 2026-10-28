@@ -1,4 +1,4 @@
-# Compliance Documentation — Victorae
+# Compliance Documentation — Vectorae
 
 ## Enforcement Architecture
 

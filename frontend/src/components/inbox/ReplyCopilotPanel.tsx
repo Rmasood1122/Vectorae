@@ -6,7 +6,7 @@
  *  Email: Approve & send (or Send edited) hands the words to the ordinary send
  *  path — suppression, unsubscribe footer, send window, caps and the review
  *  queue all still apply, so "approved" can mean "queued", not "sent".
- *  LinkedIn: copy-only; Victorae never sends it.
+ *  LinkedIn: copy-only; Vectorae never sends it.
  *
  *  Behind `reply_copilot_enabled` (default off): the API answers 404 and this
  *  renders nothing. */

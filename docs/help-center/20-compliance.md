@@ -35,11 +35,11 @@ sources:
 
 # Compliance (CAN-SPAM, GDPR, CASL, PDPA)
 
-Victorae builds several compliance safeguards into how it sends: an unsubscribe route in every email, a suppression list checked right before every send, rules that depend on where the recipient is, and a record of what was checked. This article describes what the software does. It is not legal advice, and it does not decide what the law requires for your business. You remain responsible for your outreach.
+Vectorae builds several compliance safeguards into how it sends: an unsubscribe route in every email, a suppression list checked right before every send, rules that depend on where the recipient is, and a record of what was checked. This article describes what the software does. It is not legal advice, and it does not decide what the law requires for your business. You remain responsible for your outreach.
 
 ## What does every outreach email include?
 
-Every email Victorae sends includes:
+Every email Vectorae sends includes:
 
 - a footer with the **sender identity** (your business name and postal address, set by whoever runs your deployment) and an unsubscribe link: "Don't want these emails? Unsubscribe instantly";
 - `List-Unsubscribe` headers that support one-click unsubscribe in mail apps that offer it.
@@ -53,7 +53,7 @@ Depending on the recipient's region, an extra notice is added above the footer:
 
 ## What happens when someone unsubscribes?
 
-Clicking the unsubscribe link takes effect **immediately**; no login is needed. The person sees "You're unsubscribed." Victorae then:
+Clicking the unsubscribe link takes effect **immediately**; no login is needed. The person sees "You're unsubscribed." Vectorae then:
 
 - adds them to the suppression list on **every** channel at once: email, phone, LinkedIn, and WhatsApp (their WhatsApp opt-in is revoked);
 - stops every sequence they are in;
@@ -63,7 +63,7 @@ A reply asking to stop ("remove me", "stop emailing me", "take me off your list"
 
 ## When is the suppression list checked?
 
-A suppressed person is never contacted again from any campaign on your deployment. Victorae checks the list:
+A suppressed person is never contacted again from any campaign on your deployment. Vectorae checks the list:
 
 - when leads are sourced, so suppressed people are not imported;
 - at the moment each message is sent, for email address, phone number and LinkedIn profile together;
@@ -71,20 +71,20 @@ A suppressed person is never contacted again from any campaign on your deploymen
 
 If a match is found at send time, the message is cancelled and the person's sequence is stopped. Viewing and adding entries to the full suppression list in **Settings** is limited to administrators.
 
-## How does Victorae decide which region's rules apply?
+## How does Vectorae decide which region's rules apply?
 
 It uses the country on the lead's enrichment record. If there is none, it uses the lead's time zone. If neither is known, the region is "unknown" and a baseline of sender identification and a working unsubscribe applies.
 
-| Region | Regime | What Victorae records as the basis |
+| Region | Regime | What Vectorae records as the basis |
 |---|---|---|
 | US | CAN-SPAM | opt-out regime |
-| Canada | CASL | implied consent **assumed** – Victorae cannot verify it |
+| Canada | CASL | implied consent **assumed** – Vectorae cannot verify it |
 | EU/EEA | GDPR | legitimate interest (B2B); right to object stated |
 | UK | UK GDPR / PECR | legitimate interest (B2B); corporate subscriber |
 | Singapore | PDPA | business contact information; Do-Not-Call registry **not** checked |
 | Australia / New Zealand | Spam Act 2003 / UEMA 2007 | inferred consent |
 
-Victorae does not check any national Do-Not-Call registry and cannot verify implied consent. The records say so.
+Vectorae does not check any national Do-Not-Call registry and cannot verify implied consent. The records say so.
 
 ## Are opens tracked?
 
@@ -97,13 +97,13 @@ Outreach emails can carry a tracking pixel to count opens, but **never for EU, E
 - **AI phone calls** are off by default (an administrator setting). When they are on, by default a lead is only called if their phone consent has been recorded; otherwise the call step is skipped and the sequence continues. AI-voice calls are regulated in the US under the TCPA. Every AI call, and every voicemail it leaves, starts by saying it is an AI assistant, and every call says it is recorded.
 - **Pre-launch review:** a sequence is checked before launch for compliance problems, such as briefs that remove the unsubscribe footer, misleading "Re:" subject lines, or a placeholder postal address. Blocking findings stop the launch unless an owner or manager overrides them with a written reason.
 
-Your administrator can set rules per workspace, region and channel (Admin › Compliance Rules): a different send window anywhere between 07:00 and 20:00, weekend sending on or off, lower daily caps, a lower bounce-pause threshold, or requiring recorded consent. Daily caps and the bounce-pause threshold can only be lowered, never raised past the deployment defaults. The send window can be set anywhere between 07:00 and 20:00, which can be wider than the default 09:00–17:00. If a matching rule is invalid, Victorae uses the strictest combination of the defaults and the valid rules. If the rules cannot be read at all, it falls back to the deployment defaults. Because Victorae records no consent for email or LinkedIn, a "consent required" rule on those channels stops those sends.
+Your administrator can set rules per workspace, region and channel (Admin › Compliance Rules): a different send window anywhere between 07:00 and 20:00, weekend sending on or off, lower daily caps, a lower bounce-pause threshold, or requiring recorded consent. Daily caps and the bounce-pause threshold can only be lowered, never raised past the deployment defaults. The send window can be set anywhere between 07:00 and 20:00, which can be wider than the default 09:00–17:00. If a matching rule is invalid, Vectorae uses the strictest combination of the defaults and the valid rules. If the rules cannot be read at all, it falls back to the deployment defaults. Because Vectorae records no consent for email or LinkedIn, a "consent required" rule on those channels stops those sends.
 
 ## Can the AI call people in my own voice?
 
-Yes, if your administrator has turned on AI calling and voice cloning (both are off by default). In **Settings**, **Voice**, under **Your voice on calls**, you sign a written consent that the recordings are of your own voice, then upload recordings (or record them in the browser). They are sent straight to ElevenLabs, which creates a Professional Voice Clone; Victorae does not keep the recordings. ElevenLabs then asks you to read a short text aloud to prove the voice is yours, and trains the voice, which can take hours. When it is ready you can hear the opening line and turn on **Use my voice for AI calls**.
+Yes, if your administrator has turned on AI calling and voice cloning (both are off by default). In **Settings**, **Voice**, under **Your voice on calls**, you sign a written consent that the recordings are of your own voice, then upload recordings (or record them in the browser). They are sent straight to ElevenLabs, which creates a Professional Voice Clone; Vectorae does not keep the recordings. ElevenLabs then asks you to read a short text aloud to prove the voice is yours, and trains the voice, which can take hours. When it is ready you can hear the opening line and turn on **Use my voice for AI calls**.
 
-Your voice sounds like you, but the assistant never pretends to be you or a human. Every call opens with "Hi, this is <your name>'s AI assistant, using <your name>'s voice. This call is recorded." If someone asks whether it is a real person, it says it is an AI assistant and offers to put them through to you. Notes or call briefs that tell it to hide that it is an AI are refused when you save them. After every call, Victorae checks what the assistant said; if it ever claimed to be human, all your AI calls are paused until you read the call and resume them. You can revoke your consent at any time: the voice stops being used at once and is deleted at ElevenLabs. Deleting your account deletes it too, and an unused clone is deleted after 3 years.
+Your voice sounds like you, but the assistant never pretends to be you or a human. Every call opens with "Hi, this is <your name>'s AI assistant, using <your name>'s voice. This call is recorded." If someone asks whether it is a real person, it says it is an AI assistant and offers to put them through to you. Notes or call briefs that tell it to hide that it is an AI are refused when you save them. After every call, Vectorae checks what the assistant said; if it ever claimed to be human, all your AI calls are paused until you read the call and resume them. You can revoke your consent at any time: the voice stops being used at once and is deleted at ElevenLabs. Deleting your account deletes it too, and an unused clone is deleted after 3 years.
 
 ## Can my AI assistant answer my calls, and can I take over a live call?
 
@@ -118,7 +118,7 @@ When any AI call is live you get a notification and a banner in the app. Press *
 
 ## How do I handle a request to erase someone's data?
 
-Delete the lead. Victorae erases the lead's personal data, puts their email, phone and LinkedIn profile on the suppression list so they are never contacted or re-imported, and records the erasure in the consent ledger first. See [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md) for details.
+Delete the lead. Vectorae erases the lead's personal data, puts their email, phone and LinkedIn profile on the suppression list so they are never contacted or re-imported, and records the erasure in the consent ledger first. See [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md) for details.
 
 ## Related
 - [Email sending through Gmail](09-email-sending-gmail.md)

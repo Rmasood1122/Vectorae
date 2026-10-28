@@ -1,6 +1,6 @@
-# Victorae — What It Is, Everything It Does, and Why It Is Built This Way
+# Vectorae — What It Is, Everything It Does, and Why It Is Built This Way
 
-**Victorae** takes a product or a skill as
+**Vectorae** takes a product or a skill as
 input and carries it to a booked meeting, on its own, running 24/7 in the
 cloud. You describe what you sell. It researches the market, writes and
 verifies a go-to-market strategy, sources and verifies real leads, writes and
@@ -44,7 +44,7 @@ traceable to a file, and the files are named.
 ## Part 0 — The 60-second version
 
 ```
-   YOU                          VICTORAE                            RESULT
+   YOU                          VECTORAE                            RESULT
    ───                          ─────────                            ──────
 
    "I sell local SEO      ┌──────────────────────────┐
@@ -591,7 +591,7 @@ acknowledged so Calendly stops retrying, logged loudly, matched to nothing.
 Falling back to a global email lookup is precisely the cross-tenant bug this
 replaced. *Never guess a tenant.*
 
-### Path B — Victorae's own calendar (new)
+### Path B — Vectorae's own calendar (new)
 
 Availability, booking pages and bookings on our own tables, on our own domain.
 The difference is where a booking **lands**: a booking made here already knows
@@ -648,7 +648,7 @@ migration `0021_calendar.py`
 
 ## Stage 10 · The meeting
 
-A **meeting room** inside Victorae:
+A **meeting room** inside Vectorae:
 
 ```
 ┌──────────────┬───────────────────────────────┬──────────────────┐
@@ -756,7 +756,7 @@ their next status change, and **the dashboard labels the figure estimated.**
 
 ### Pause, not stop
 
-A booking made on Victorae's own calendar **pauses** the enrollment. The M3
+A booking made on Vectorae's own calendar **pauses** the enrollment. The M3
 rule is that a booked meeting is a hard stop — correct for Calendly, where
 nothing reliably tells us the meeting fell through. But we *own* this row: we
 know the moment it is cancelled, because the cancellation is a request to this
@@ -1108,7 +1108,7 @@ lost, or an event silently fails to arrive. Concretely, in a stack:
 - The notetaker writes a summary into a fourth product that the sequence engine
   will never read.
 
-**In Victorae these are foreign keys.** A booking knows its page; the page
+**In Vectorae these are foreign keys.** A booking knows its page; the page
 knows its owner; the booking knows its lead; the lead knows its strategy; the
 strategy knows its outcomes; the outcomes feed the next strategy's prompt.
 There is no integration layer to fail, because there is no gap to integrate
@@ -1268,7 +1268,7 @@ page, not a document.
     display the baseline bounce threshold, not a workspace's lower one. The
     pause itself uses the rule.
   - **Consent:** a consent rule on email or LinkedIn stops those sends, because
-    Victorae records no consent for either channel.
+    Vectorae records no consent for either channel.
   - **Region:** it is only as good as the lead's enrichment country or timezone.
     Leads with neither fall under `unknown`, which only `*` or `unknown` rules
     match.
@@ -1339,7 +1339,7 @@ page, not a document.
   paths carry `# TODO: verify`, because Recall's quickstart and API reference
   disagree on `Token` vs `Bearer`. The docs name no webhook replay tolerance,
   so five minutes (the Svix default) is a choice, not a documented value.
-- **Victorae does not collect consent to record.** Sending a bot records
+- **Vectorae does not collect consent to record.** Sending a bot records
   everyone on the call. Some US states, and GDPR for EU/UK participants,
   require every party's consent. The meeting room tells the host to announce
   it; nothing enforces that.
