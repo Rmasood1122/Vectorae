@@ -9,16 +9,16 @@ marked **needs founder/legal confirmation**.
 
 ## Problem
 
-Victorae finds and messages people at companies. A restaurant, a clinic or a
+Vectorae finds and messages people at companies. A restaurant, a clinic or a
 corner shop asking "get me clients" usually means two different things:
 
 * **(A) Business buyers near them.** Offices that order catering, employers that
   buy occupational-health screenings, property managers that buy in bulk. That
-  is B2B outreach, which Victorae already does -- but its ICP research, lead
+  is B2B outreach, which Vectorae already does -- but its ICP research, lead
   search and message prompts know nothing about "near me" or about local plays,
   so a café gets a nationwide ICP and copy written for a SaaS buyer.
 * **(B) Their own past customers coming back.** That is consumer marketing, and
-  it is only lawful on a consent basis (see the compliance review). Victorae has
+  it is only lawful on a consent basis (see the compliance review). Vectorae has
   no way to import a business's own customer list today (help-center article 02:
   "There is no way to import your own contact list as leads").
 
@@ -114,7 +114,7 @@ code can enforce them):
   for themselves. (Enforced: lead sourcing is a B2B people search; there is no
   consumer source.)
 * Never state a distance or travel time to the prospect ("a 20-minute walk away")
-  unless it is in the lead data -- Victorae does not geocode prospects, so such a
+  unless it is in the lead data -- Vectorae does not geocode prospects, so such a
   sentence would be invented. The business may say it is based in / serves its
   area.
 * Offers and prices only from the offer text or the product description.
@@ -218,7 +218,7 @@ failed and nothing was saved".
   CAN-SPAM's opt-out model, the ePrivacy/PECR "soft opt-in" or CASL's
   existing-business-relationship implied consent for consumers -- each has
   conditions (same-product, 2-year windows, opt-out offered at collection) that
-  Victorae cannot verify from a CSV. A row that would only qualify under one of
+  Vectorae cannot verify from a CSV. A row that would only qualify under one of
   them is refused.
 * **An opt-out is final (review H1).** The WHOLE row is refused when ANY
   identifier on it -- email, phone or LinkedIn, whether or not the row consents
@@ -234,7 +234,7 @@ failed and nothing was saved".
   by email AND by normalised phone, prospects and suppressed ones included. A
   match updates that record; a row whose email and phone point at two different
   records is refused; nothing ever creates a second record for the same person.
-* SMS and phone calls are not offered: Victorae has no SMS sending channel, and
+* SMS and phone calls are not offered: Vectorae has no SMS sending channel, and
   AI calls to consumers are exactly what the TCPA restricts. `consent_channels`
   naming `sms` or `phone` is refused for that row.
 * An email that already belongs to a B2B prospect in the same strategy is refused
@@ -267,7 +267,7 @@ product is (or later becomes) healthcare is cancelled at send time. Message:
 "Customer win-back is not available for healthcare businesses. A clinic's or
 hospital's customer list is a patient list, and using patient information for
 marketing needs each patient's written HIPAA authorization (45 CFR 164.508(a)(3)),
-which Victorae does not collect. Use local business mode to reach employers,
+which Vectorae does not collect. Use local business mode to reach employers,
 schools, sports clubs, referring practices and insurers instead."
 
 **Customer sequences.** `POST /strategies/{id}/sequences` takes
@@ -473,7 +473,7 @@ creation and `PUT /products/{id}/local-business`):
    (`product.business_type_changed`, actor, product, `{from, to}`); every import
    is audited too (`customers.imported`, counts and attestation version).
 
-**Residual risk, stated plainly.** Victorae cannot know what a business really
+**Residual risk, stated plainly.** Vectorae cannot know what a business really
 is. A clinic that registers as a restaurant from day one, never selects
 healthcare, uploads a CSV with no health column and no health wording, and
 confirms an attestation that says it is not a HIPAA covered entity, will get
@@ -562,5 +562,5 @@ after legal confirmation switches it on.
 * The recommended local send windows: opinion, not measured.
 * Every legal reading above: needs founder/legal confirmation.
 * Whether a CSV "consent_source" sentence is enough evidence in a dispute
-  (likely depends on the business's own records); Victorae records what it is
+  (likely depends on the business's own records); Vectorae records what it is
   told and the owner's attestation.

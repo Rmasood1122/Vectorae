@@ -18,9 +18,9 @@
 
 import { CHECKOUT_LIVE, PRODUCT_FACTS, notLiveSentence, statusLabel } from "@/lib/productFacts";
 
-export const HOME_TITLE = "Victorae: from what you sell to meetings on your calendar | Calendarharvest";
+export const HOME_TITLE = "Vectorae: from what you sell to meetings on your calendar";
 export const HOME_DESCRIPTION =
-  "Describe what you sell. Victorae researches your market, finds and checks business contacts, " +
+  "Describe what you sell. Vectorae researches your market, finds and checks business contacts, " +
   "writes each email for one person, sends on a schedule you approve each day, and routes every reply to you.";
 
 export const SIGNUP_PATH = "/signup";
@@ -39,7 +39,7 @@ export const NAV = [
 export const HERO = {
   headline: "From what you sell to meetings on your calendar.",
   body:
-    "Describe your offer. Victorae researches your market, finds business contacts and checks " +
+    "Describe your offer. Vectorae researches your market, finds business contacts and checks " +
     "their email addresses, writes each email for one person, and sends on a schedule you approve " +
     "each day. Replies come to you. Meetings land on your booking calendar.",
   primary: "Start free",
@@ -55,17 +55,17 @@ export const VIDEO = {
   webm: "/media/leadpilot-walkthrough.webm",
   poster: "/media/leadpilot-walkthrough-poster.jpg",
   captions: "/media/leadpilot-walkthrough.en.vtt",
-  label: "Victorae product walkthrough",
+  label: "Vectorae product walkthrough",
   description: "A 26-second product animation with sample data. It has no sound.",
   /** Must match the cues of public/media/leadpilot-walkthrough.en.vtt, in order. */
   transcript: [
     "Describe what you sell: a name and a plain-language description.",
-    "Victorae researches your market once per strategy, then checks the strategy: 10 of 10 checks passed.",
+    "Vectorae researches your market once per strategy, then checks the strategy: 10 of 10 checks passed.",
     "It finds business contacts and verifies each email address. Undeliverable ones are removed.",
     "Each email is written for one person when it is sent, with an unsubscribe link in the footer.",
     "You approve automatic sending once a day. Emails go out in business hours in each prospect's time zone.",
     "Replies come to you, sorted. A reply stops the sequence. An unsubscribe suppresses the person everywhere.",
-    "Prospects book meetings on your Victorae booking page. All names shown are sample data.",
+    "Prospects book meetings on your Vectorae booking page. All names shown are sample data.",
   ],
 };
 
@@ -76,7 +76,7 @@ export interface Stage {
   body: string;
   /** Short facts, each one traceable to the code. */
   facts: string[];
-  /** What the person using Victorae decides at this stage. */
+  /** What the person using Vectorae decides at this stage. */
   you: string;
 }
 
@@ -87,7 +87,7 @@ export const STAGES: Stage[] = [
     name: "Research",
     title: "Research that runs once per strategy",
     body:
-      "Give Victorae a name and a plain-language description of what you sell. It researches your " +
+      "Give Vectorae a name and a plain-language description of what you sell. It researches your " +
       "ideal client, market, competitors, channels and messaging, then checks the finished strategy " +
       "against 10 criteria before a single lead is sourced. The legal and compliance check can only " +
       "pass on its own; nobody can wave it through.",
@@ -99,7 +99,7 @@ export const STAGES: Stage[] = [
     name: "Leads",
     title: "Business contacts, checked before they count",
     body:
-      "Victorae searches for people at companies that match the verified strategy, adds what it can " +
+      "Vectorae searches for people at companies that match the verified strategy, adds what it can " +
       "find about them, and checks every email address. Undeliverable addresses are dropped, and anyone " +
       "on your suppression list is skipped.",
     facts: ["Every email address verified", "Suppressed people never imported"],
@@ -111,7 +111,7 @@ export const STAGES: Stage[] = [
     title: "Each email written for one person",
     body:
       "Build a sequence with the steps and delays you want. Each email is written at the moment it is " +
-      "sent, from the strategy and what Victorae stored about that person. Any claim about the " +
+      "sent, from the strategy and what Vectorae stored about that person. Any claim about the " +
       "prospect has to be backed by stored data, or it is removed. Every sequence is reviewed for " +
       "spam and compliance problems before it can launch.",
     facts: ["Claims about prospects checked before sending", "Pre-launch review of every sequence"],
@@ -134,7 +134,7 @@ export const STAGES: Stage[] = [
     title: "Replies come to you, sorted",
     body:
       "Email and WhatsApp replies land in one inbox. Each reply is classified, and the " +
-      "prospect's sequence stops on every channel. Victorae suggests a next step and a draft, but it " +
+      "prospect's sequence stops on every channel. Vectorae suggests a next step and a draft, but it " +
       "never answers for you.",
     facts: ["A reply stops the sequence everywhere", "An unsubscribe suppresses the person on every channel"],
     you: "You write every answer to a prospect.",
@@ -144,7 +144,7 @@ export const STAGES: Stage[] = [
     name: "Meetings",
     title: "Meetings on your calendar",
     body:
-      "Prospects book on your own Victorae booking page, and a booking pauses their sequence.",
+      "Prospects book on your own Vectorae booking page, and a booking pauses their sequence.",
     facts: ["Booking pages on your own availability", "A booking pauses the prospect's sequence"],
     you: "You take the call.",
   },
@@ -346,12 +346,12 @@ export const FAQ = [
   {
     q: "Do I have to send the messages myself?",
     a:
-      "No. Once you launch a sequence and approve the day's sending, Victorae sends automatically. " +
+      "No. Once you launch a sequence and approve the day's sending, Vectorae sends automatically. " +
       "Before every send it re-checks the suppression list, the campaign and contact state, the send " +
       "window and the daily allowance.",
   },
   {
-    q: "Will Victorae reply to prospects for me?",
+    q: "Will Vectorae reply to prospects for me?",
     a:
       "No. Replies are classified and routed to you, with a suggested next step and a draft you can " +
       "edit. You write and send every answer.",
@@ -359,7 +359,7 @@ export const FAQ = [
   {
     q: "Can I upload my own contact list?",
     a:
-      "Not as leads. Leads come from Victorae's own sourcing, which checks every email address. On " +
+      "Not as leads. Leads come from Vectorae's own sourcing, which checks every email address. On " +
       "Growth plans and up you can upload your LinkedIn connections export; messaging those " +
       "connections uses LinkedIn steps, which are not live yet.",
   },

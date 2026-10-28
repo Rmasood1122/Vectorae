@@ -182,7 +182,7 @@ export default function AnalyticsPage() {
           </Card>
         )}
 
-        {/* Feature 6: anonymised benchmarks across Victorae accounts. */}
+        {/* Feature 6: anonymised benchmarks across Vectorae accounts. */}
         <BenchmarkPanel strategyId={effectiveId || undefined} />
 
         {/* M8 learning insights placeholder */}

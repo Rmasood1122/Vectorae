@@ -175,7 +175,7 @@ function ExclusionsSection({ enabled, onChange }: { enabled: boolean; onChange: 
       </div>
       <p className="text-xs text-muted-foreground">
         CSV: a header row of <code>type,value,reason,note</code>, or columns named domain, company,
-        email, phone, linkedin. CRM sync adds won customers and open deals from Victorae, plus
+        email, phone, linkedin. CRM sync adds won customers and open deals from Vectorae, plus
         customers, open deals and churned accounts from a connected HubSpot or Salesforce. It never
         removes anything.
       </p>

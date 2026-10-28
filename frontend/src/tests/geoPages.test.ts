@@ -24,13 +24,13 @@ describe("comparison pages", () => {
   for (const c of COMPARISONS) {
     it(`${c.competitor}: founders' authorship, a "when to choose" section and sources`, () => {
       const headings = comparisonSections(c).map((s) => s.heading);
-      expect(FOUNDER_DISCLOSURE).toMatch(/Written by Victorae's founders/);
-      expect(headings).toContain("When to choose Victorae");
+      expect(FOUNDER_DISCLOSURE).toMatch(/Written by Vectorae's founders/);
+      expect(headings).toContain("When to choose Vectorae");
       expect(headings.some((h) => h.startsWith(`When to choose ${c.competitor}`))).toBe(true);
       expect(headings).toContain("Sources");
       expect(c.sources.length).toBeGreaterThan(0);
       for (const s of c.sources) expect(s.href).toMatch(/^https:\/\//);
-      expect(c.title).toContain("Victorae");
+      expect(c.title).toContain("Vectorae");
     });
   }
 });

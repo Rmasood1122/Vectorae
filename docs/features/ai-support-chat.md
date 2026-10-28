@@ -9,7 +9,7 @@ actual refusal behaviour has never been measured against a real model. See
 
 ## What it does
 
-A chat widget on every dashboard page. Users ask about Victorae and get
+A chat widget on every dashboard page. Users ask about Vectorae and get
 answers grounded in a human-written FAQ. Anything else is refused. When the
 assistant cannot answer confidently, it offers a support ticket.
 
@@ -26,7 +26,7 @@ assistant cannot answer confidently, it offers a support ticket.
 ## The three guards
 
 An instruction in a prompt is a request, not a constraint. A model told to
-"only answer about Victorae" will still, given a plausible enough question,
+"only answer about Vectorae" will still, given a plausible enough question,
 answer about something else. So the refusal is enforced three times:
 
 | # | Where | What it does |
@@ -46,7 +46,7 @@ the model's text.
 
 | Decision | Why |
 |---|---|
-| **A curated FAQ, not RAG and not the model's own knowledge** | A support bot answering from model knowledge invents features — it will confidently describe LinkedIn automation Victorae does not have. That is worse than no chat: it *creates* support load and makes promises the product cannot keep. |
+| **A curated FAQ, not RAG and not the model's own knowledge** | A support bot answering from model knowledge invents features — it will confidently describe LinkedIn automation Vectorae does not have. That is worse than no chat: it *creates* support load and makes promises the product cannot keep. |
 | The keyword search **never drops entries** | The model cannot cite what it was not shown. Nine short entries cost almost nothing, so all nine go into every prompt and the ranking only affects ordering. A filtering retrieval step would turn a ranking miss into "sorry, I don't know" for a question the FAQ demonstrably answers. |
 | Confidence below **0.5** discards the answer | A hedged wrong answer still reads as an answer. An unnecessary ticket is an annoyance; a confident wrong answer is the failure this feature must not produce. |
 | **NaN confidence is coerced to 0** | Every comparison against NaN is False, so a naive `confidence < threshold` check would let it straight through. |

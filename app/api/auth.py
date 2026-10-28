@@ -221,9 +221,9 @@ def _deliver_verification(db: Session, user: User) -> bool:
     return True
 
 
-SIGNUP_CLOSED_DETAIL = ("Sign-up is closed on this Victorae deployment. "
+SIGNUP_CLOSED_DETAIL = ("Sign-up is closed on this Vectorae deployment. "
                         "Ask your administrator for an account.")
-SIGNUP_DOMAIN_DETAIL = ("Sign-up on this Victorae deployment is limited to "
+SIGNUP_DOMAIN_DETAIL = ("Sign-up on this Vectorae deployment is limited to "
                         "approved email domains. Ask your administrator for an "
                         "account.")
 
@@ -570,7 +570,7 @@ class PasswordResetConfirmIn(BaseModel):
     new_password: str = Field(min_length=8, max_length=256)
 
 
-PASSWORD_RESET_ACCEPTED = ("If that address has a Victorae account, we have "
+PASSWORD_RESET_ACCEPTED = ("If that address has a Vectorae account, we have "
                            "emailed it a link to reset the password.")
 PASSWORD_RESET_INVALID = ("This reset link is invalid or has expired. "
                           "Request a new one.")

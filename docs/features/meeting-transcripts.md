@@ -2,7 +2,7 @@
 
 ## What it does
 In the meeting room, **Record & transcribe** sends a Recall.ai bot to the call.
-When the call ends, Recall's `transcript.done` webhook tells Victorae. The
+When the call ends, Recall's `transcript.done` webhook tells Vectorae. The
 transcript is pulled into the meeting, and the AI summary is rebuilt from the
 transcript **and** the host's live notes.
 
@@ -33,7 +33,7 @@ and one webhook.
     tolerance; this is the Svix default.
 - **Once per delivery.** `processed_webhooks (recall, webhook-id)`.
 - **Never guess a meeting.** A delivery is matched only by
-  `meetings.recording_bot_id`, which Victorae wrote when it created the bot.
+  `meetings.recording_bot_id`, which Vectorae wrote when it created the bot.
   An unknown bot is acknowledged and matched to nothing. A payload whose
   `metadata.meeting_id` names a different meeting is refused.
 - **One bot per meeting.** A conditional update claims the meeting before
@@ -70,7 +70,7 @@ Meeting responses also carry `transcript_status`, `transcript_deadline_at` and
   `# TODO: verify`.
 - **No recording consent is collected.** A bot records everyone on the call.
   Two-party-consent jurisdictions and GDPR can require every participant's
-  consent. The UI tells the host to announce it; Victorae does not enforce it.
+  consent. The UI tells the host to announce it; Vectorae does not enforce it.
 - **A late transcript costs a second model call:** the notes-only summary, then
   the transcript summary.
 - **The provider transcript replaces chunk-streamed text** for the same

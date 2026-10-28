@@ -1,4 +1,4 @@
-# Production docker-compose for Victorae.
+# Production docker-compose for Vectorae.
 #
 # NOTE ON RAILWAY: the live deployment targets Railway, which does NOT read this
 # file. This compose file is (a) the source of truth for what each Railway

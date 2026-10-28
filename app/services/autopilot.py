@@ -94,7 +94,7 @@ LAWFUL_BASIS_TEXT = (
     "can review and remove leads, pause the campaign or turn Autopilot off at any time. "
     "Autopilot only runs while daily send approval is on for every channel it uses: "
     "nothing it schedules is sent on a day I have not approved automatic sending, and "
-    "every message still passes Victorae's compliance checks."
+    "every message still passes Vectorae's compliance checks."
 )
 
 AUDIT_CHANNEL = "autopilot"
@@ -215,7 +215,7 @@ def check_opt_in(db: Session, *, enabled: bool, confirmed: bool,
     if not enabled:
         return
     if not available(db):
-        raise AutopilotError("Autopilot is switched off on this Victorae deployment.", 409)
+        raise AutopilotError("Autopilot is switched off on this Vectorae deployment.", 409)
     if not confirmed:
         raise AutopilotError("Turning on Autopilot needs your confirmation that you have a "
                              "lawful basis to contact the people it finds "
@@ -385,8 +385,8 @@ def _notify(db: Session, row: AutopilotLaunch, owner_id, key: str, title: str, b
 
             url = event_bus.web_link(link)
             text = (f"{body}\n\nOpen the strategy: {url}\n\nYou get this email because "
-                    "Autopilot is on for one of your Victorae strategies.")
-            email_sender.send_email(to=owner.email, subject=f"Victorae Autopilot: {title}",
+                    "Autopilot is on for one of your Vectorae strategies.")
+            email_sender.send_email(to=owner.email, subject=f"Vectorae Autopilot: {title}",
                                     text=text,
                                     html="".join(f"<p>{escape(p)}</p>" for p in text.split("\n\n")))
     except Exception as exc:  # noqa: BLE001 -- push and the in-app state still stand
@@ -547,7 +547,7 @@ def _snapshot(db: Session, row: AutopilotLaunch) -> list[str]:
 # --------------------------------------------------------------------------
 
 _PLAN_SYSTEM = (
-    "You are Victorae's outreach sequence planner. From a verified client-"
+    "You are Vectorae's outreach sequence planner. From a verified client-"
     "acquisition strategy you write the step BRIEFS of a short outreach sequence "
     "for ONE channel. A brief says what the message should do; it is NOT the "
     "message (each message is written per prospect later). Never invent facts, "
@@ -714,7 +714,7 @@ def launch_gate(db: Session, strategy: Strategy, sequence: Sequence, owner: User
         db.rollback()
         detail = _detail_text(exc.detail)
         if detail == "PHONE_NOT_VERIFIED":
-            return "Verify your phone number before Victorae can start outreach."
+            return "Verify your phone number before Vectorae can start outreach."
         if "REVIEW_BLOCKED" in detail.upper():
             return ("The pre-send review blocked this sequence's content. Open the sequence "
                     "review to see why.")

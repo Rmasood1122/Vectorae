@@ -23,7 +23,7 @@ path and no new scheduler pattern. It extends:
 Competitor complaint it answers (STAR row F10): *stale titles; job changes are
 a strong trigger.*
 
-What that looks like in Victorae today:
+What that looks like in Vectorae today:
 
 1. **Titles are never re-checked.** A lead's title and company are written
    once, at sourcing (`lead_tasks.enrich_leads_impl`), and provenance records

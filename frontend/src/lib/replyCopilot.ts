@@ -94,7 +94,7 @@ export function intentTone(intent: CopilotIntent): "success" | "warning" | "defa
   return intent === "positive" ? "success" : intent === "objection" ? "warning" : "default";
 }
 
-/** Copy-only channels: Victorae never sends these. */
+/** Copy-only channels: Vectorae never sends these. */
 export function isCopyOnly(draft: Pick<ReplyDraft, "channel">): boolean {
   return draft.channel !== "email";
 }

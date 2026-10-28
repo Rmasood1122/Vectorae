@@ -1,4 +1,4 @@
-"""The single gateway for every embedding and rerank call in Victorae.
+"""The single gateway for every embedding and rerank call in Vectorae.
 
 Help AI v2 (docs/program/DECISIONS.md HELPAI-VENDOR) retrieves help-center
 chunks with dense vectors and a cross-encoder reranker from Voyage AI. Like

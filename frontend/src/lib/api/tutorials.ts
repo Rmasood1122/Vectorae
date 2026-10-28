@@ -2,7 +2,7 @@ import { api } from "./client";
 import type { Tutorial, TutorialCatalogue } from "./types";
 
 /**
- * Learn Victorae — tutorial API (Feature 2).
+ * Learn Vectorae — tutorial API (Feature 2).
  *
  * Search and level filtering happen on the SERVER, not in the browser. Nine
  * items would filter fine client-side today, but the moment the catalogue

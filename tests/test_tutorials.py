@@ -1,4 +1,4 @@
-"""Feature 2 (+ Task 3) — Learn Victorae tutorial section.
+"""Feature 2 (+ Task 3) — Learn Vectorae tutorial section.
 
 The catalogue now lives in the `tutorial_catalogue` TABLE, not in code, so
 every test here seeds it through the `catalogue` fixture. That matters more
@@ -141,7 +141,7 @@ class TestSearchAndFilter:
         assert {t["level"] for t in found} == {level}
 
     def test_search_and_level_combine(self, catalogue, client):
-        found = _list(client, q="victorae", level="beginner")["tutorials"]
+        found = _list(client, q="vectorae", level="beginner")["tutorials"]
         assert all(t["level"] == "beginner" for t in found)
 
     def test_unknown_level_is_empty_not_422(self, catalogue, client):
@@ -508,7 +508,7 @@ class TestPublishVisibility:
 
     def test_an_empty_catalogue_does_NOT_grant_every_badge(self, db_session, client):
         """all() over an empty list is True. Without the bool(required) guard a
-        brand-new user on a fresh install would be handed 'Victorae
+        brand-new user on a fresh install would be handed 'Vectorae
         Certified' for doing nothing."""
         seed_catalogue(db_session, published=False)
         payload = _list(client)

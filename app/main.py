@@ -1,5 +1,5 @@
 """
-Victorae — FastAPI application entry point.
+Vectorae — FastAPI application entry point.
 Combined build: all milestones M1–M8 wired.
 
 M1–M4  core API, pipeline, verification, Gmail, WhatsApp
@@ -104,7 +104,7 @@ from app.api.autopilot import router as autopilot_router               # Autopil
 from app.api.local_business import router as local_business_router     # local business mode
 from app.api.voice_twin import router as voice_twin_router               # voice twin
 from app.api.oauth import router as oauth_router                         # connector OAuth 2.1 AS
-from app.api.agents import router as agents_router                       # Victorae agents + master
+from app.api.agents import router as agents_router                       # Vectorae agents + master
 
 # M9: registers the SQLAlchemy session listeners that publish CRM events
 # to Redis. Imported for its SIDE EFFECT -- install() is a no-op marker so
@@ -170,7 +170,7 @@ async def _lifespan(_app: FastAPI):
 
 app = FastAPI(
     lifespan=_lifespan,
-    title="Victorae API",
+    title="Vectorae API",
     version="1.0.0",
     description=(
         "End-to-end client acquisition: strategy → research → outreach → booked "
@@ -363,7 +363,7 @@ app.include_router(autopilot_router)             # /strategies/{id}/autopilot|be
 app.include_router(local_business_router)        # local business mode + win-back import
 app.include_router(voice_twin_router)            # voice twin: /me/voice-clone*, /voice-twin/*
 app.include_router(oauth_router)                 # connector OAuth: /oauth/*, /.well-known/oauth-authorization-server
-app.include_router(agents_router)                # Victorae agents: /agents, /agents/{name}/run
+app.include_router(agents_router)                # Vectorae agents: /agents, /agents/{name}/run
 
 # Remote MCP server for the Claude / ChatGPT connector: the MCP path and its
 # RFC 9728 metadata (app/mcp/server.py). Plain routes, not a Mount, so the
@@ -399,4 +399,4 @@ if _debug_settings.debug_routes_allowed:
 
 @app.get("/", include_in_schema=False)
 async def root() -> dict:
-    return {"name": "Victorae API", "docs": "/docs", "health": "/health"}
+    return {"name": "Vectorae API", "docs": "/docs", "health": "/health"}

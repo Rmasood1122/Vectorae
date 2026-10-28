@@ -1,6 +1,6 @@
 """Daily send approval -- a person says "yes" to automatic sending once a day.
 
-Founder decision (2026-10-11): before Victorae sends anything AUTOMATICALLY on
+Founder decision (2026-10-11): before Vectorae sends anything AUTOMATICALLY on
 a given day, the account owner (or a workspace owner/manager) is notified and
 decides, per channel. For LinkedIn they are told plainly that LinkedIn may
 restrict or suspend accounts that use automation. Spec:
@@ -686,22 +686,22 @@ def email_content(counts: dict[str, int], local_date: date, tz_name: str,
                   linkedin_gated: bool) -> dict:
     """Subject / text / html of the owner email. Pure (tested)."""
     lines = [
-        f"Victorae has automatic messages ready to send today ({local_date.isoformat()}, "
+        f"Vectorae has automatic messages ready to send today ({local_date.isoformat()}, "
         f"{tz_name}), and nothing automatic will be sent until you approve it.",
         "Queued for today: " + _summary(counts) + ".",
         f"Approve or decline here: {approval_link()}",
         "You choose the channels. An approval is valid until the end of the day; "
-        "tomorrow Victorae will ask again.",
+        "tomorrow Vectorae will ask again.",
     ]
     if linkedin_gated:
         lines.append("LinkedIn: " + LINKEDIN_WARNING_TEXT)
     lines.append("Messages a person already approved one by one (the send-review queue, "
                  "Reply Copilot answers you approved) are not affected.")
     lines.append("You get this email because daily send approval is on for your "
-                 "Victorae account.")
+                 "Vectorae account.")
     text = "\n\n".join(lines)
     html = "".join(f"<p>{escape(line)}</p>" for line in lines)
-    return {"subject": "Approve today's automatic sending in Victorae",
+    return {"subject": "Approve today's automatic sending in Vectorae",
             "text": text, "html": html}
 
 

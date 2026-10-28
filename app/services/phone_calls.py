@@ -73,7 +73,7 @@ from app.services import anthropic_client, prompt_safety
 logger = logging.getLogger(__name__)
 
 SCRIPT_SYSTEM = (
-    "You are Victorae's cold call script writer. You prepare an AI voice "
+    "You are Vectorae's cold call script writer. You prepare an AI voice "
     "assistant for ONE outbound sales call. Respond with ONLY a JSON object: "
     '{"first_message": "...", "objective": "...", "talking_points": ["..."], '
     '"objection_handling": [{"objection": "...", "response": "..."}], '
@@ -89,7 +89,7 @@ SCRIPT_SYSTEM = (
 )
 
 ANALYSIS_SYSTEM = (
-    "You are Victorae's call transcript analyst. From the transcript of one "
+    "You are Vectorae's call transcript analyst. From the transcript of one "
     "AI sales call, report what happened. Respond with ONLY a JSON object: "
     '{"outcome": "interested"|"not_interested"|"answered", "summary": "...", '
     '"objections": ["..."], "interest_signals": ["..."], "next_step": "...", '

@@ -31,19 +31,19 @@ PAGES = [
     {
         "page_type": PageType.LANDING,
         "slug": "",
-        "title": "Victorae — Outbound Pipeline for Agency Founders",
-        "meta_title": "Victorae — Outbound Pipeline for Agency Founders",
+        "title": "Vectorae — Outbound Pipeline for Agency Founders",
+        "meta_title": "Vectorae — Outbound Pipeline for Agency Founders",
         "meta_description": (
-            "Victorae removes you from your own pipeline. Automated outreach "
+            "Vectorae removes you from your own pipeline. Automated outreach "
             "system for boutique agency founders. US, UK, CA, AU. Book a call."),
         "target_keyword": "outbound pipeline for agencies",
         "secondary_keywords": ["client acquisition for agency founders",
                                "b2b outreach automation", "agency pipeline system"],
         "brief": (
-            "Homepage for Victorae. Hero: the founder is trapped "
+            "Homepage for Vectorae. Hero: the founder is trapped "
             "delivering and cannot prospect at the same time. The pipeline runs "
             "when they push it. It stops when they stop. Three sections: the "
-            "problem, how Victorae works (72-step research pipeline, human "
+            "problem, how Vectorae works (72-step research pipeline, human "
             "senders, learning loop), who it is for (boutique agency founders "
             "3-30 staff). One CTA: book a call. Tone: founder to founder, "
             "direct, no hype, no buzzwords."),
@@ -52,7 +52,7 @@ PAGES = [
         "page_type": PageType.BLOG,
         "slug": "blog/agency-founder-prospecting-delivery-problem",
         "title": "Why Agency Founders Cannot Prospect and Deliver at the Same Time",
-        "meta_title": "Why Agency Founders Can't Prospect and Deliver | Victorae",
+        "meta_title": "Why Agency Founders Can't Prospect and Deliver | Vectorae",
         "meta_description": (
             "If your pipeline stops when delivery gets heavy, you do not have a "
             "prospecting problem. You have a structural problem. Here is why "
@@ -71,8 +71,8 @@ PAGES = [
     {
         "page_type": PageType.COMPARISON,
         "slug": "blog/apollo-clay-leadpilot-comparison",
-        "title": "Apollo vs Clay vs Victorae — Which One Runs Without You?",
-        "meta_title": "Apollo vs Clay vs Victorae Comparison 2026 | Victorae",
+        "title": "Apollo vs Clay vs Vectorae — Which One Runs Without You?",
+        "meta_title": "Apollo vs Clay vs Vectorae Comparison 2026 | Vectorae",
         "meta_description": (
             "Apollo gives you data. Clay gives you enrichment. Neither gives you "
             "a pipeline that runs without you. Honest comparison for agency "
@@ -94,7 +94,7 @@ PAGES = [
         "page_type": PageType.BLOG,
         "slug": "blog/cold-email-not-working-agency",
         "title": "Cold Email Is Not Dead — You Are Just Doing It Wrong",
-        "meta_title": "Why Cold Email Is Not Working for Your Agency | Victorae",
+        "meta_title": "Why Cold Email Is Not Working for Your Agency | Vectorae",
         "meta_description": (
             "One founder sent 1000 cold emails and got zero responses. He changed "
             "his entire strategy. Here is what actually works for boutique agency "
@@ -114,7 +114,7 @@ PAGES = [
         "page_type": PageType.BLOG,
         "slug": "blog/client-pipeline-works-during-delivery",
         "title": "How to Build a Client Pipeline That Works During Delivery",
-        "meta_title": "Build a Pipeline That Works During Delivery | Victorae",
+        "meta_title": "Build a Pipeline That Works During Delivery | Vectorae",
         "meta_description": (
             "The best agency founders do not prospect harder. They build systems "
             "that prospect for them. Here is the architecture that works during "

@@ -1,4 +1,4 @@
-# Victorae — Claude Code Handoff Brief
+# Vectorae — Claude Code Handoff Brief
 
 ## Your task
 Take this project from its current state to fully cloud-deployment-ready.
@@ -23,7 +23,7 @@ that were "probably fine" until actually tested — assume nothing.
 ---
 
 ## What this project is
-Victorae — a self-learning B2B client-acquisition
+Vectorae — a self-learning B2B client-acquisition
 platform. FastAPI + PostgreSQL + Celery backend, Next.js (static export,
 for Capacitor mobile bundling) frontend. Backend at repo root
 (`app/`), frontend in `frontend/`.
@@ -426,7 +426,7 @@ a pass — it would mean the router mounted and merely rejected the caller.
    builds the response and then RE-RAISES, so httpx's ASGITransport and
    TestClient both saw an unhandled exception instead of a 422. The app's own
    exception types (`ComplianceError`, `ResourceNotFoundError`,
-   `ForbiddenError`, `VictoraeError`) are now registered by concrete type
+   `ForbiddenError`, `VectoraeError`) are now registered by concrete type
    so they go through `ExceptionMiddleware` and return real responses.
 5. **`app/integrations/whatsapp.py` declares its OWN `ComplianceError`**
    instead of importing `app.core.exceptions.ComplianceError` — the eighth
@@ -1878,7 +1878,7 @@ Production would have inherited the code defaults:
   link no recipient could use — a CAN-SPAM violation and a fast route to the
   spam folder.
 * `SENDER_IDENTITY` → the literal placeholder
-  `"Victorae User, 123 Main St, City, Country"`, which is the **CAN-SPAM
+  `"Vectorae User, 123 Main St, City, Country"`, which is the **CAN-SPAM
   physical postal address** printed in every email footer.
 
 Both added to `.env.production.example` and both now enforced by
@@ -1940,7 +1940,7 @@ Domain: **leadpilot.com** / **api.leadpilot.com**.
 
 Source `image.png` measured before use: PNG, RGBA, **528x532**, fully opaque,
 flat `#100F14` ground. It is a LOCKUP — a blue ascending arrow (bbox
-113,123-460,346) above a "VICTORAE" wordmark (bbox y 381-397, only 17px tall,
+113,123-460,346) above a "VECTORAE" wordmark (bbox y 381-397, only 17px tall,
 ~3% of the canvas).
 
 That measurement drove the design: **icons use the arrow mark only.** At a 192px
@@ -1971,7 +1971,7 @@ In-app usage via a new `frontend/src/components/ui/Logo.tsx` (`LogoMark` /
 `Shell.tsx`, the admin sidebar (which had no brand anchor at all), and the login
 page, where the lockup replaces the words and the title drops to "Sign in".
 The mark is `alt=""` + `aria-hidden` beside real text; the lockup carries
-`alt="Victorae"`.
+`alt="Vectorae"`.
 
 **No og:image was added.** The project has no `openGraph` metadata at all, and
 inventing a social-sharing setup was out of scope.
@@ -2322,12 +2322,12 @@ intended — those did real lookup work.
 `tests/test_rate_limit_wiring.py` was UPDATED, not deleted: its tripwire now
 asserts the handler calls `enforce_rate_limit` with the right setting.
 
-### 4. Browser tab and PWA name still said "Victorae"
+### 4. Browser tab and PWA name still said "Vectorae"
 
 Display strings only, per instruction. `layout.tsx` title, `manifest.json`
 `name`/`short_name`, the privacy page's title/description/body copy, the
-onboarding checklist copy, the `Exit Victorae?` back-button dialog (and its
-test), and `capacitor.config.ts` `appName` all now say **Victorae**.
+onboarding checklist copy, the `Exit Vectorae?` back-button dialog (and its
+test), and `capacitor.config.ts` `appName` all now say **Vectorae**.
 `appId` (`com.clienthunter.app`) is untouched — it cannot change after a Play
 Store publish — and file-header comments were left alone. Changing `appName`
 only reaches Android after `npx cap sync`.
@@ -2373,9 +2373,9 @@ only reaches Android after `npx cap sync`.
   `statusTone("failed")` resolves to `destructive` — the red badge is reachable
   with real data for the first time.
 * **Finding 4 in a real built artifact**, not just source: production build
-  served over HTTP shows `<title>Victorae</title>` on every page,
-  `Privacy Policy — Victorae`, and a manifest with `name`/`short_name` of
-  `Victorae`.
+  served over HTTP shows `<title>Vectorae</title>` on every page,
+  `Privacy Policy — Vectorae`, and a manifest with `name`/`short_name` of
+  `Vectorae`.
 
 Celery's eager mode re-executes retries inline, so `apply()` can never show an
 intermediate RETRY state — "retries" and "does not retry" look identical from
@@ -2745,7 +2745,7 @@ blockers remain.**
    running through another project's Redis. Both files now use 6380.
    `.env.production.example` was already correct (it uses the compose hostname
    `redis:6379`) and was left alone.
-   Leftover Victorae keys still sit in that other project's Redis; they are
+   Leftover Vectorae keys still sit in that other project's Redis; they are
    only cache entries, and deleting data from another project's datastore is
    the user's call, so they were left in place.
 

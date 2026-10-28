@@ -9,7 +9,7 @@ export const MAX_PASSWORD = 256;
 /** The confirmation shown after a reset request, whatever the address. The
  *  API never says whether an account exists, so neither may the page. */
 export const REQUEST_SENT_MESSAGE =
-  "If that address has a Victorae account, we have emailed it a link to reset " +
+  "If that address has a Vectorae account, we have emailed it a link to reset " +
   "the password. The link works once and expires after a short time. Check " +
   "your spam folder if it does not arrive within a few minutes.";
 

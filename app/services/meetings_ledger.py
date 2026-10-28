@@ -72,7 +72,7 @@ DEFINITIONS = {
     QUALIFIED: ("Distinct leads with an interested reply (the attribution ledger's "
                 "positive-reply rule) or a booked meeting in the period."),
     BOOKED: "Distinct leads with a booked-meeting outcome in the period.",
-    HELD: ("Distinct leads with a meeting marked completed in Victorae, or a "
+    HELD: ("Distinct leads with a meeting marked completed in Vectorae, or a "
            "logged meeting outcome, in the period."),
     "total_cost": ("AI (metered model spend, AI-call minutes, recorded AI costs) + "
                    "data (recorded data costs) + other recorded costs + a share of "

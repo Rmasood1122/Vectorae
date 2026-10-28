@@ -228,7 +228,7 @@ def _send_invite(ctx: Context, email: str, role: str, token: str) -> None:
     from app.services.email_sender import send_email  # noqa: PLC0415
 
     brand = (ctx.workspace.brand_name if ctx.workspace.white_label_enabled else None) \
-        or "Victorae"
+        or "Vectorae"
     link = invite_link(token)
     subject = f"{ctx.actor.email} invited you to {ctx.workspace.name} on {brand}"
     text = (f"{ctx.actor.email} invited you to join {ctx.workspace.name} as {role}.\n\n"
@@ -290,14 +290,14 @@ def accept(db: Session, actor: User, token: str) -> dict:
 
 
 def default_branding() -> dict:
-    return {"white_label": False, "brand_name": "Victorae", "logo_url": None,
+    return {"white_label": False, "brand_name": "Vectorae", "logo_url": None,
             "primary_color": None, "support_email": None}
 
 
 def branding_out(ws: Workspace, *, private: bool = False) -> dict:
     out = {
         "white_label": bool(ws.white_label_enabled),
-        "brand_name": ws.brand_name or ("Victorae" if not ws.white_label_enabled else ws.name),
+        "brand_name": ws.brand_name or ("Vectorae" if not ws.white_label_enabled else ws.name),
         "logo_url": ws.logo_url, "primary_color": ws.primary_color,
         "support_email": ws.support_email,
     }

@@ -146,7 +146,7 @@ def record_opt_in(
     ):
         raise OptInError(
             "this phone is on the suppression list (a prior opt-out or "
-            "unsubscribe). Victorae will not message a suppressed contact "
+            "unsubscribe). Vectorae will not message a suppressed contact "
             "again, and the suppression cannot be lifted from the app, so "
             "no opt-in can be recorded for it."
         )

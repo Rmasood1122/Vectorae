@@ -1,4 +1,4 @@
-//! Victorae native agents, Rust core. Pure Rust in `scoring`, `timing` and
+//! Vectorae native agents, Rust core. Pure Rust in `scoring`, `timing` and
 //! `supervisor`; the `python` feature adds the PyO3 module `vectorae_native_rs`.
 
 pub mod scoring;

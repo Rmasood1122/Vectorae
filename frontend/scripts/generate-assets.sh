@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ─── Victorae — Mobile Asset Generation ───────────────────────
+# ─── Vectorae — Mobile Asset Generation ───────────────────────
 # Generates all required Android icon sizes and splash screen images from
 # two source files using @capacitor/assets.
 #

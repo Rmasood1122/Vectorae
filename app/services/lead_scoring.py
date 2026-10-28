@@ -51,7 +51,7 @@ _SENIORITY = [
 ]
 
 SYSTEM = (
-    "You are Victorae's lead scoring analyst. For each lead, estimate the "
+    "You are Vectorae's lead scoring analyst. For each lead, estimate the "
     "probability (0-100) that they book a sales meeting from cold outreach "
     "for the product described. Each lead comes with a HEURISTIC baseline "
     "computed from factual factors. You may move a lead's score at most 20 "

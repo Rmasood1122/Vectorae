@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     )
 
     # --- App -----------------------------------------------------------
-    app_name: str = "Victorae"
+    app_name: str = "Vectorae"
     app_env: str = "development"  # development | production | test
     # DEDICATED flag for app/api/debug.py. Deliberately separate from app_env,
     # is_test and log_level so that no unrelated configuration change can turn
@@ -761,7 +761,7 @@ class Settings(BaseSettings):
     """
 
     RATE_LIMIT_AGENT_RUN: int = 120
-    """Max Victorae agent runs (POST /agents/{name}/run) per user per hour.
+    """Max Vectorae agent runs (POST /agents/{name}/run) per user per hour.
     No model call, but a run reads up to a few thousand rows."""
 
     RATE_LIMIT_CRM_WRITE: int = 600

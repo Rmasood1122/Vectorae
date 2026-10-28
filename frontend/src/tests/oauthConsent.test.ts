@@ -43,7 +43,7 @@ describe("connector consent return", () => {
   });
 });
 
-describe("leaving Victorae after consent", () => {
+describe("leaving Vectorae after consent", () => {
   it("allows the callbacks the server can issue", () => {
     expect(isSafeClientRedirect("https://claude.ai/api/mcp/auth_callback?code=x&iss=y")).toBe(true);
     expect(isSafeClientRedirect("https://chatgpt.com/connector_platform_oauth_redirect?code=x")).toBe(true);

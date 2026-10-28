@@ -207,7 +207,7 @@ export function StatusBoard({
                   {" · "}refreshes every 30 seconds while this tab is open
                 </>
               ) : (
-                "Contacting the Victorae API…"
+                "Contacting the Vectorae API…"
               )}
             </p>
             <button
@@ -223,7 +223,7 @@ export function StatusBoard({
         </div>
         <noscript>
           <p className="mt-4 text-sm text-gray-300">
-            This page checks Victorae&apos;s live status with JavaScript. Turn JavaScript on to see it.
+            This page checks Vectorae&apos;s live status with JavaScript. Turn JavaScript on to see it.
           </p>
         </noscript>
       </section>

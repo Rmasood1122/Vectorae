@@ -42,7 +42,7 @@ row can therefore only arrive by raw SQL, and the admin page flags it.
 ## Consent evidence
 - **WhatsApp:** the recorded opt-in.
 - **Phone:** the recorded call consent (`phone_calls.consent_ok`).
-- **Email and LinkedIn:** Victorae records no consent, so a consent rule on
+- **Email and LinkedIn:** Vectorae records no consent, so a consent rule on
   those channels **stops those sends**. That is the restrictive reading, and it
   is intentional.
 

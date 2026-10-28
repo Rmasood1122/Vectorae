@@ -1,4 +1,4 @@
-# Victorae — Launch Checklist
+# Vectorae — Launch Checklist
 
 Work through this from top to bottom before going live. Every item has a verification step.
 

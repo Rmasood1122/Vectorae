@@ -1,10 +1,10 @@
 {
   "brand": {
-    "product_name": "Victorae",
-    "company_name": "Calendarharvest"
+    "product_name": "Vectorae",
+    "company_name": "Rehan Masood"
   },
   "organization": {
-    "name": "Calendarharvest",
+    "name": "Vectorae",
     "url": "https://www.calendarharvest.com/",
     "logo": "https://www.calendarharvest.com/icons/icon-512.png"
   },
@@ -27,7 +27,7 @@
       "job_title": "Founder"
     }
   ],
-  "description": "Victorae is an AI outbound sales tool for agencies and B2B service firms: it researches your market, finds and verifies business contacts, writes one-to-one emails, sends on a schedule you approve each day, and books meetings.",
+  "description": "Vectorae is an AI outbound sales tool for agencies and B2B service firms: it researches your market, finds and verifies business contacts, writes one-to-one emails, sends on a schedule you approve each day, and books meetings.",
   "tagline": "AI outbound sales for agencies and B2B service firms",
   "fit": [
     {
@@ -44,8 +44,8 @@
     }
   ],
   "not_fit": [
-    "Selling to consumers or homeowners. Victorae only finds people at companies.",
-    "Emailing a list you already have. Leads come from Victorae's own sourcing; you cannot import them.",
+    "Selling to consumers or homeowners. Vectorae only finds people at companies.",
+    "Emailing a list you already have. Leads come from Vectorae's own sourcing; you cannot import them.",
     "High-volume sending. By default each mailbox sends at most 100 emails a day."
   ],
   "status_labels": {
@@ -84,7 +84,7 @@
   ],
   "limits": [
     "By default a newly connected Gmail account sends 10 emails on its first day, adds 10 a day, and stops at 100 a day.",
-    "Leads come only from Victorae's own sourcing; you cannot import a contact list as leads.",
+    "Leads come only from Vectorae's own sourcing; you cannot import a contact list as leads.",
     "Automatic sending waits each day until the account owner approves it."
   ],
   "compliance_features": [

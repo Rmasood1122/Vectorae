@@ -1,4 +1,4 @@
-"""Victorae agents -- behaviour of the agent cores.
+"""Vectorae agents -- behaviour of the agent cores.
 
 Runs against whichever core app/agents/native.py loaded (the native C++/Rust
 modules when installed, else the Python reference), so the same expectations

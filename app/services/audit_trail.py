@@ -423,7 +423,7 @@ def render_pdf(report: dict) -> bytes:
     the signature so it can be matched to it."""
     chain, sig = report.get("chain") or {}, report.get("signature") or {}
     header = [
-        ("Victorae activity audit trail", "title"),
+        ("Vectorae activity audit trail", "title"),
         (f"Account {report['account']['user_id']}  ·  generated {report['generated_at']}", "body"),
         (f"Scope: lead={report['scope']['lead_id'] or 'all'}  from={report['scope']['date_from'] or '—'}"
          f"  to={report['scope']['date_to'] or '—'}", "body"),

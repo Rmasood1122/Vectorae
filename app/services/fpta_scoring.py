@@ -77,7 +77,7 @@ _GROWTH_WORDS = re.compile(
     r"just joined|promoted|announcement)\b", re.I)
 
 SYSTEM = (
-    "You are Victorae's F-P-T-A prospect analyst. For each prospect you are "
+    "You are Vectorae's F-P-T-A prospect analyst. For each prospect you are "
     "given four deterministic BASELINE sub-scores (0-100) and the exact "
     "evidence each was computed from:\n"
     "  fit      - are they the company and person this offer is for?\n"

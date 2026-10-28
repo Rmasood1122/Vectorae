@@ -125,7 +125,7 @@ def _render_progress(s: StrategyStatus) -> Panel:
         renderables.append("\n[bold]Verification Passes[/bold]")
         renderables.append(v_table)
 
-    return Panel(Group(header, *renderables), title="[bold]Victorae — Pipeline[/bold]",
+    return Panel(Group(header, *renderables), title="[bold]Vectorae — Pipeline[/bold]",
                  border_style="cyan")
 
 
@@ -217,7 +217,7 @@ def run(
 
     else:
         # Interactive wizard
-        console.rule("[bold]Victorae[/bold] — New Campaign")
+        console.rule("[bold]Vectorae[/bold] — New Campaign")
         console.print()
         console.print("[muted]Describe the product or skill you want clients for.[/muted]\n")
 

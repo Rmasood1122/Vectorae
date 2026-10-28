@@ -1,4 +1,4 @@
-# Victorae connector for Claude and ChatGPT (remote MCP server)
+# Vectorae connector for Claude and ChatGPT (remote MCP server)
 
 Status: **Phase 3 — read tools, OAuth 2.1 authorization server, three write
 tools.** Off by default (`MCP_ENABLED=false`); a deployment switches it on
@@ -8,7 +8,7 @@ CONN-DEPS, CONN-WORKSPACE, CONN-AUDIT. Recon: `docs/program/plans/connector-00-r
 
 ## What it is
 
-A remote [MCP](https://modelcontextprotocol.io) server served by the Victorae
+A remote [MCP](https://modelcontextprotocol.io) server served by the Vectorae
 API at **`https://api.calendarharvest.com/mcp`**. Claude (claude.ai, Desktop,
 mobile, Cowork, Claude Code) and ChatGPT connect to it from their own servers
 over HTTPS and act in the signed-in user's account. A Skill

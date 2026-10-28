@@ -72,7 +72,7 @@ MAX_TOKENS = 400
 MAX_BODY = 4000
 
 _SYSTEM = (
-    "You are Victorae's reply-quality classifier. You read ONE inbound reply "
+    "You are Vectorae's reply-quality classifier. You read ONE inbound reply "
     "to a cold outreach message and decide whether it was a positive reply.\n"
     "Answer with ONLY a JSON object:\n"
     '{"label": "<label>", "confidence": <0..1>, "reason": "<max 25 words>"}\n'

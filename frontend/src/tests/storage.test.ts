@@ -1,5 +1,5 @@
 /**
- * storage.test.ts — Victorae (M7 Chunk 4)
+ * storage.test.ts — Vectorae (M7 Chunk 4)
  *
  * Tests for src/lib/storage.ts — the platform-aware storage abstraction.
  *

@@ -8,7 +8,7 @@ decision** until real credentials exist — see [Outstanding](#outstanding).
 
 ## What it does
 
-A new account cannot use Victorae until the person behind it proves they
+A new account cannot use Vectorae until the person behind it proves they
 control the email address.
 
 1. `POST /auth/signup` creates the account with `users.email_verified = false`
@@ -81,7 +81,7 @@ Full reference: [`docs/setup/environment-variables.md`](../setup/environment-var
 |---|---|---|
 | `EMAIL_PROVIDER` | `console` | `resend` \| `smtp` \| `console` \| `memory`. **Production must be `resend` or `smtp`.** |
 | `EMAIL_FROM` | `noreply@calendarharvest.com` | Domain must be verified in Resend |
-| `EMAIL_FROM_NAME` | `Victorae` | |
+| `EMAIL_FROM_NAME` | `Vectorae` | |
 | `RESEND_API_KEY` | *(empty)* | Required when `EMAIL_PROVIDER=resend` |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASSWORD` / `SMTP_STARTTLS` | Mailtrap sandbox host, `2525`, empty, empty, `true` | Required when `EMAIL_PROVIDER=smtp` |
 | `EMAIL_VERIFICATION_TTL_HOURS` | `24` | |

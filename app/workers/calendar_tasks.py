@@ -227,7 +227,7 @@ def _notify_owner(session: Session, lead: Lead, booking: CalendarBooking) -> Non
     """Push notification to the lead's owner. Never raises (dispatch swallows).
 
     Reuses the M7 notification the Calendly path already sends, so a booking
-    made on Victorae's own calendar reaches the user's phone the same way a
+    made on Vectorae's own calendar reaches the user's phone the same way a
     Calendly one does rather than being the quiet kind of booking.
     """
     from app.services import notifications  # noqa: PLC0415
@@ -247,7 +247,7 @@ def _notify_owner(session: Session, lead: Lead, booking: CalendarBooking) -> Non
     notification_tasks.enqueue_event(
         owner, "meeting_booked", push=False, title="Meeting booked",
         body=f"{booking.invitee_name or lead.full_name or 'A lead'} booked a meeting "
-             f"on your Victorae calendar.",
+             f"on your Vectorae calendar.",
         deep_link=f"/leads/detail?id={lead.id}", data={"leadId": str(lead.id)},
         webhook_payload={"lead": event_bus.lead_payload(lead), "source": "leadpilot_calendar",
                          "booking_id": str(booking.id)},
@@ -265,7 +265,7 @@ def on_booking_cancelled_impl(session: Session, booking_id: uuid.UUID,
     """Cancellation email, and put the lead back into its sequence.
 
     The resume is the reason pause_for_meeting exists. A cancelled meeting on
-    Victorae's own calendar is a fact we own, so the lead goes back to where
+    Vectorae's own calendar is a fact we own, so the lead goes back to where
     they were instead of sitting in the terminal state a Calendly cancellation
     would have left them in.
     """

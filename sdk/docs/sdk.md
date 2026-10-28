@@ -1,4 +1,4 @@
-# Victorae Python SDK Reference
+# Vectorae Python SDK Reference
 
 ```python
 pip install clienthunter

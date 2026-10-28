@@ -23,7 +23,7 @@ credits consumed by stale records.* Buyers of outbound tools are surprised by
 the bill: credits are spent per attempt whether or not the attempt produced
 anything, and nothing tells them before a run what it is about to cost.
 
-What that looks like in Victorae today:
+What that looks like in Vectorae today:
 
 1. **No forecast.** Creating a strategy or sourcing leads starts spending at
    once. The strategy budget (F-AI-01) and the plan's daily AI cap (P0-5)
@@ -33,7 +33,7 @@ What that looks like in Victorae today:
    the waterfall but explicitly left dollar pricing, forecasts and caps to F07
    ("one price table, not two").
 3. **No customer ceiling.** The only account-level ceiling is the plan's
-   *daily* AI cap, set by Victorae. A customer cannot say "never spend more
+   *daily* AI cap, set by Vectorae. A customer cannot say "never spend more
    than $X this month", and is never warned as they approach a limit.
 4. **No success/attempt split.** Nothing shows how much was spent on attempts
    that produced nothing versus results that were verified.
@@ -202,14 +202,14 @@ F01's metric keeps its meaning.
 * **In-app**: every alert of the current month is listed on the usage page
   with a banner for the highest threshold reached.
 * **Email** (when the account's `email_alerts` is on and its email is
-  verified): one transactional email via `email_sender.send_email` — Victorae's
+  verified): one transactional email via `email_sender.send_email` — Vectorae's
   own system mail to the account owner, **never** the outreach send path. No
   prospect data in it. The result (`sent` / `failed` / `skipped`) is stored on
   the alert row; a failed email is not retried (the in-app alert stands).
 
 ### "Charge credits only on successful verified results"
 
-**Victorae has no customer credit system.** Billing is either a monthly tier
+**Vectorae has no customer credit system.** Billing is either a monthly tier
 or pay-per-meeting (`billable_meetings`, which already charges only on a
 booked meeting — an outcome, never an attempt). F07 does **not** build a
 billing system. The honest minimum it ships is the split on the usage page:
@@ -408,7 +408,7 @@ never appear and never count toward this account's cap.
 
 ## Compliance review (CAN-SPAM / GDPR / CASL / PDPA)
 
-* **No send path.** Nothing here sends outreach. Alert emails are Victorae's
+* **No send path.** Nothing here sends outreach. Alert emails are Vectorae's
   own transactional mail to the account holder about their own account
   (`email_sender`, the same path as verification email) — not commercial
   messages to prospects, so CAN-SPAM/CASL outreach rules do not apply and the

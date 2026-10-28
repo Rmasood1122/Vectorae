@@ -8,8 +8,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: "Victorae Status", template: "%s · Victorae Status" },
-  description: "Current status, uptime and incident history for Victorae.",
+  title: { default: "Vectorae Status", template: "%s · Vectorae Status" },
+  description: "Current status, uptime and incident history for Vectorae.",
   alternates: {
     types: {
       "application/rss+xml": "/history.rss",

@@ -31,7 +31,7 @@ Built from existing parts, no parallel duplicates:
 **Request** — `POST /auth/password-reset/request` `{email}`
 
 - Always **200** `{"status": "accepted", "detail": "If that address has a
-  Victorae account, we have emailed it a link to reset the password."}` —
+  Vectorae account, we have emailed it a link to reset the password."}` —
   for an unknown address, a passwordless pre-auth row, a suspended account and
   a real account alike.
 - Rate limited before any lookup: per IP (`password_reset_ip`) and per
@@ -59,7 +59,7 @@ Built from existing parts, no parallel duplicates:
   account" measurably slower. A transport failure is logged
   (`password reset email FAILED for …`) and the answer is still 200.
 
-**Email** — subject "Reset your Victorae password"; link
+**Email** — subject "Reset your Vectorae password"; link
 `FRONTEND_URL/reset-password#token=<token>`. The token is in the URL
 **fragment**: browsers never send a fragment to any server (static host, CDN
 logs, Referer), so the token only travels in the confirm request's JSON body.

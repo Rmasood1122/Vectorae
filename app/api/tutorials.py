@@ -1,4 +1,4 @@
-"""Learn Victorae — the tutorial section (Feature 2).
+"""Learn Vectorae — the tutorial section (Feature 2).
 
 GET    /tutorials                      catalogue + this user's progress, with
                                        optional ?q= search and ?level= filter
@@ -209,7 +209,7 @@ def _badges(db: Session, progress: dict[str, TutorialProgress]) -> list[dict]:
         # Requirements are the PUBLISHED tutorials only. `bool(required)` below
         # is what stops an empty catalogue from making every badge vacuously
         # earned -- all() over an empty list is True, so with nothing published
-        # a brand-new user would be handed "Victorae Certified".
+        # a brand-new user would be handed "Vectorae Certified".
         required = [t.slug for t in published
                     if badge.level is None or t.level == badge.level]
         earned = bool(required) and all(s in done for s in required)

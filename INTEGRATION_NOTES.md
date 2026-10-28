@@ -1,4 +1,4 @@
-# INTEGRATION_NOTES — Victorae Combined Build
+# INTEGRATION_NOTES — Vectorae Combined Build
 
 This document records every non-trivial decision made during the combined-build
 session that merged milestones M1–M8 into a single runnable codebase.  Read
@@ -47,7 +47,7 @@ re-exports the real implementation:
 | `app.core.database` (Base, engine, SessionLocal, get_db) | `app.db.base` | `app/core/database.py` |
 | `app.db.session` | `app.db.base` | `app/db/session.py` |
 | `app.core.redis_client` (get_sync_redis, get_redis) | inline via `redis.from_url` | `app/core/redis_client.py` |
-| `app.core.exceptions` (VictoraeError, ComplianceError …) | new; ComplianceError carries `rule`/`remediation`/`compliance_code` | `app/core/exceptions.py` |
+| `app.core.exceptions` (VectoraeError, ComplianceError …) | new; ComplianceError carries `rule`/`remediation`/`compliance_code` | `app/core/exceptions.py` |
 | `app.api.deps` (get_current_user, require_admin) | `app.services.auth.get_current_user` | `app/api/deps.py` |
 | `app.models.*` (per-model files) | monolithic `app/db/models.py` | `app/models/__init__.py` + per-model aliases |
 | `app.services.suppression_service` | `app.workers.lead_tasks.is_suppressed` | `app/services/suppression_service.py` |

@@ -1,5 +1,5 @@
 """
-devices.py — Victorae (M7 Chunk 3)
+devices.py — Vectorae (M7 Chunk 3)
 
 Device token registration API for FCM push notifications.
 

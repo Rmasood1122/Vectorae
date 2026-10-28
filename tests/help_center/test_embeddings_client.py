@@ -124,7 +124,7 @@ class TestMock:
 
     def test_similar_text_is_closer_than_unrelated_text(self, mock_mode):
         q, near, far = ec.embed(["connect my gmail mailbox",
-                                 "How do I connect a Gmail mailbox to Victorae?",
+                                 "How do I connect a Gmail mailbox to Vectorae?",
                                  "Annual billing and plan downgrades"], "query")
         assert ec._dot(q, near) > ec._dot(q, far)
 
@@ -138,7 +138,7 @@ class TestMock:
         assert out[0][1] == ec.embed(["a two"])[0]
 
     def test_rerank_orders_by_similarity_and_caps_top_k(self, mock_mode):
-        docs = ["Annual billing", "Connect Gmail to Victorae", "Gmail connection keeps asking"]
+        docs = ["Annual billing", "Connect Gmail to Vectorae", "Gmail connection keeps asking"]
         out = ec.rerank("gmail connect", docs, top_k=2)
         assert len(out) == 2 and out[0].index in (1, 2) and out[0].score >= out[1].score
 

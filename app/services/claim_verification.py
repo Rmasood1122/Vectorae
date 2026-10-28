@@ -208,7 +208,7 @@ def build_evidence(lead: Lead) -> list[Evidence]:
 def _sender_vocabulary(session: Session, strategy: Strategy | None) -> str:
     from app.config import settings  # noqa: PLC0415
 
-    parts = ["Victorae", settings.sender_identity or ""]
+    parts = ["Vectorae", settings.sender_identity or ""]
     if strategy is not None:
         product = session.get(Product, strategy.product_id)
         if product is not None:
@@ -395,7 +395,7 @@ def verify_text(text: str | None, *, field_name: str, lead: Lead, evidence: list
 
 
 EXTRACTOR_SYSTEM = (
-    "You are Victorae's claim extractor. You read one outreach message and list "
+    "You are Vectorae's claim extractor. You read one outreach message and list "
     "every sentence that asserts a FACT about the recipient or their company (funding, "
     "headcount, hiring, a job change, news, metrics, expansion, something they posted, "
     "or any other specific factual statement about them). Opinions, questions and "

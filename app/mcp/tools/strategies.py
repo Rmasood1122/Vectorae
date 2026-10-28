@@ -51,7 +51,7 @@ def register(server) -> None:
         name="list_strategies",
         title="List strategies",
         description=(
-            "Lists the signed-in user's Victorae strategies (research runs and "
+            "Lists the signed-in user's Vectorae strategies (research runs and "
             "their outreach campaigns), newest first, with pipeline status and "
             "campaign state (active, paused_manual or paused_bounce_rate). "
             "Use offset/limit (limit 1-50) to page."),

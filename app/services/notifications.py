@@ -1,5 +1,5 @@
 """
-notifications.py — Victorae (M7 Chunk 3)
+notifications.py — Vectorae (M7 Chunk 3)
 
 Firebase Cloud Messaging notification service.
 

@@ -117,7 +117,7 @@ def strip_foreign_links(body: str, booking_url: str | None, own_domains: set[str
     return "\n".join(out).strip()
 
 _SYSTEM = (
-    "You are Victorae's message personalization engine. You write one "
+    "You are Vectorae's message personalization engine. You write one "
     "concise, specific, non-spammy B2B outreach email for one lead, "
     "following the messaging playbook and the step brief. Respond with "
     'ONLY a JSON object: {"subject": "...", "body": "..."} — no prose, '
@@ -333,7 +333,7 @@ def render_message(
 # --------------------------------------------------------------------------
 
 _WA_SYSTEM = (
-    "You are Victorae's WhatsApp template variable filler. You produce "
+    "You are Vectorae's WhatsApp template variable filler. You produce "
     "SHORT values for numbered template variables, from real lead data and "
     "the messaging playbook. Respond with ONLY a JSON object mapping each "
     'requested variable number to its value, e.g. {"1": "Sara", "2": '
@@ -491,7 +491,7 @@ def preview_whatsapp_body(template_body: str, values: dict[str, str]) -> str:
 # follow-up being indistinguishable from a step somebody wrote.
 
 _FOLLOWUP_SYSTEM = (
-    "You are Victorae's follow-up brief writer. A prospect was contacted and "
+    "You are Vectorae's follow-up brief writer. A prospect was contacted and "
     "has not replied. You write the BRIEF for the next touch -- instructions "
     "to the message writer, not the message itself. Respond with ONLY a JSON "
     'object: {"brief": "..."} -- no prose, no markdown fences.\n'
@@ -651,7 +651,7 @@ def build_followup_brief(
 # "no" as easy to send as "yes" -- not another push.
 
 _REENGAGEMENT_SYSTEM = (
-    "You are Victorae's re-engagement brief writer. A prospect received a "
+    "You are Vectorae's re-engagement brief writer. A prospect received a "
     "complete outreach sequence some weeks ago and did not reply. You write the "
     "BRIEF for one final, low-pressure message -- instructions to the message "
     "writer, not the message itself. Respond with ONLY a JSON object: "

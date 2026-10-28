@@ -77,7 +77,7 @@ sets them today; this stops a future change from silently removing them.
 `sequence_engine.RAMP_SCHEDULE`: days since the mailbox's first send
 0–6 → ≤ 10/day, 7–13 → ≤ 20, 14–20 → ≤ 30, 21–27 → ≤ 40, 28+ → no extra
 ceiling. Combined with the existing linear ramp and every cap by `min()`. A
-mailbox that has never sent from Victorae starts at day 0 — Victorae cannot
+mailbox that has never sent from Vectorae starts at day 0 — Vectorae cannot
 see its history elsewhere, and the cost of guessing wrong is the domain.
 Sends over the allowance are **deferred, never dropped** (existing rule).
 `GET /strategies/{id}/stats` shows the same cap the send path enforces.
@@ -119,7 +119,7 @@ What was verified on 2026-10-11 (documentation only — no live call):
 ## Non-goals
 
 - **No peer warm-up network** (STAR row: third-party inbox pools carry
-  reputation and terms-of-service risk). The ramp is Victorae's own volume.
+  reputation and terms-of-service risk). The ramp is Vectorae's own volume.
 - No connect flow for the Postmaster grant in this PR (see Unverified).
 - No post-launch **block** on auth regressions: mailbox health already
   re-reads DNS every 4h and throttles (−55 points) — unchanged.
@@ -238,6 +238,6 @@ covers 0072 up/down. Frontend: `mailboxHealth.test.ts` for the label.
   Public Suffix List); a `.co.uk` subdomain sender is looked up at
   `_dmarc.co.uk` and blocks until DMARC is published at the exact domain.
 - Ramp numbers are conventional industry guidance, not measured on
-  Victorae traffic.
+  Vectorae traffic.
 - Help-center article: `docs/help-center/` does not exist on this branch
   (Phase 2 not merged); the article update is a follow-up.

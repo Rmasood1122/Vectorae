@@ -377,6 +377,6 @@ def strategy_roi_card(
         headers={
             "Cache-Control": "private, max-age=0, no-store",
             "Content-Disposition":
-                f'inline; filename="victorae-roi-{date_from}-{date_to}.png"',
+                f'inline; filename="vectorae-roi-{date_from}-{date_to}.png"',
         },
     )

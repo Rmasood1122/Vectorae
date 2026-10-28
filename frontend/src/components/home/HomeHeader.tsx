@@ -42,7 +42,7 @@ export function HomeHeader() {
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
         <Link href="/" className="lp-wordmark flex items-center gap-2.5 text-lg font-extrabold tracking-tight text-white">
           <span aria-hidden className="h-3 w-3 rounded-[3px] bg-[#f2b544]" />
-          Victorae
+          Vectorae
         </Link>
         <nav aria-label="Main" className="hidden md:block">
           <ul className="flex items-center gap-6 text-[0.95rem] text-[#cbd5e1]">

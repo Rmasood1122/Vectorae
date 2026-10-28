@@ -1,6 +1,6 @@
 """Feature 5 — client ROI dashboard.
 
-What Victorae actually produced for the founder using it, in six numbers they
+What Vectorae actually produced for the founder using it, in six numbers they
 would recognise as their own business results rather than as software metrics.
 
     meetings_booked      leads that got past step 3 and booked
@@ -53,7 +53,7 @@ from app.db.models import (
 
 logger = logging.getLogger(__name__)
 
-# Hours saved per unit of work Victorae did instead of the founder.
+# Hours saved per unit of work Vectorae did instead of the founder.
 # 15 minutes to research and write one message by hand; 90 minutes of prep
 # and admin around one booked meeting.
 HOURS_PER_MESSAGE = 0.25

@@ -35,7 +35,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 app = FastAPI(
-    title="Victorae worker health",
+    title="Vectorae worker health",
     docs_url=None,
     redoc_url=None,
     openapi_url=None,

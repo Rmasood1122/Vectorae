@@ -845,7 +845,7 @@ def _alert_email(user_email: str, threshold: int, spent: int, cap: int) -> dict:
     html = (f"<p><strong>{headline}.</strong></p>"
             f"<p>Used this month: ${spent / 1e6:.2f} of ${cap / 1e6:.2f}.</p>"
             f"<p>{tail}</p><p><a href=\"{link}\">Review usage or change the cap</a></p>")
-    return {"to": user_email, "subject": f"Victorae: {headline}", "text": text, "html": html}
+    return {"to": user_email, "subject": f"Vectorae: {headline}", "text": text, "html": html}
 
 
 def evaluate_alerts(db: Session, user_id, now: datetime | None = None, *,
@@ -948,7 +948,7 @@ def _iso(value: datetime | None) -> str | None:
 
 def billable_summary(db: Session, user_id, now: datetime | None = None,
                      per_unit: dict[str, int] | None = None) -> dict:
-    """Victorae has no customer credit system (spec, Non-goals). The honest
+    """Vectorae has no customer credit system (spec, Non-goals). The honest
     minimum: verified results this month beside the cost of every attempt."""
     from app.db.models import (  # noqa: PLC0415
         BatchStage, EnrichmentAttempt, LeadBatch, Product, Strategy,
@@ -981,7 +981,7 @@ def billable_summary(db: Session, user_id, now: datetime | None = None,
         "internal_data_usd": usd(data_micros),
         "cost_per_verified_result_usd": (usd(round(data_micros / verified))
                                          if verified and data_micros else None),
-        "note": ("Victorae does not sell credits: nothing here is billed per "
+        "note": ("Vectorae does not sell credits: nothing here is billed per "
                  "attempt. Verified results are leads that passed verification in "
                  "lead batches finalized this month; internal cost includes every "
                  "attempt, successful or not."),

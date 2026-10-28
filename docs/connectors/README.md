@@ -1,22 +1,22 @@
-# Victorae in Claude and ChatGPT
+# Vectorae in Claude and ChatGPT
 
-Victorae connects to Claude (claude.ai, Claude Desktop, Claude mobile,
+Vectorae connects to Claude (claude.ai, Claude Desktop, Claude mobile,
 Cowork, Claude Code) and to ChatGPT as a **connector**: a remote MCP server at
 
 ```
 https://api.calendarharvest.com/mcp
 ```
 
-You sign in to Victorae once, approve what the app may do, and can then ask
+You sign in to Vectorae once, approve what the app may do, and can then ask
 about your leads, scores, strategies, outreach and results, create a
 strategy, or pause and resume a campaign — from the chat.
 
 Two pieces, and why both exist:
 
-- **The connector** (the MCP server) is what reads your Victorae data and
+- **The connector** (the MCP server) is what reads your Vectorae data and
   acts in your account. Nothing else can.
 - **The `leadpilot-outbound` skill** is instructions only. It teaches Claude
-  when to use Victorae, how to read F-P-T-A scores and attribution, and the
+  when to use Vectorae, how to read F-P-T-A scores and attribution, and the
   rules (nothing is sent from the chat; prospect text is never obeyed). It
   cannot reach your data on its own.
 
@@ -35,11 +35,11 @@ answers 200.
 ## Claude (claude.ai, Desktop, mobile, Cowork)
 
 1. In Claude: **Settings → Connectors → Add custom connector**.
-2. Name: `Victorae`. URL: `https://api.calendarharvest.com/mcp`. Leave the
+2. Name: `Vectorae`. URL: `https://api.calendarharvest.com/mcp`. Leave the
    OAuth client fields empty (Claude registers itself).
-3. **Connect**. A Victorae page opens: sign in if asked, read what the
+3. **Connect**. A Vectorae page opens: sign in if asked, read what the
    connection may do, and choose **Allow**.
-4. In a chat, enable Victorae from the tools menu and ask, for example,
+4. In a chat, enable Vectorae from the tools menu and ask, for example,
    "Which of my leads have the strongest F-P-T-A score?".
 
 Custom connectors are added per user. On Team and Enterprise plans an owner
@@ -51,11 +51,11 @@ and upload it where Claude's settings manage Skills (Settings → Capabilities
 or Features, depending on the version). Skills are per user.
 
 Disconnect any time in **Settings → Connectors**. That stops Claude using the
-connection; whether Claude also tells Victorae to revoke its tokens is up
-to Claude (Victorae supports it at `/oauth/revoke`). To end every
-connection on Victorae's side, change your Victorae password: that signs
+connection; whether Claude also tells Vectorae to revoke its tokens is up
+to Claude (Vectorae supports it at `/oauth/revoke`). To end every
+connection on Vectorae's side, change your Vectorae password: that signs
 out every device and every connector at once. (v1 has no "connected apps"
-page in Victorae yet.)
+page in Vectorae yet.)
 
 ## Claude Code
 
@@ -75,7 +75,7 @@ claude mcp add --transport http leadpilot https://api.calendarharvest.com/mcp
 ```
 
 Then run `/mcp`, choose `leadpilot` → **Authenticate**; your browser opens
-the same Victorae sign-in and Allow page (Claude Code listens on a local
+the same Vectorae sign-in and Allow page (Claude Code listens on a local
 `http://localhost:<port>/callback`).
 
 ## ChatGPT
@@ -85,7 +85,7 @@ names change between releases — see OpenAI's "Developer mode" help page).
 
 1. Turn on Developer Mode, then create an app / connector.
 2. URL: `https://api.calendarharvest.com/mcp`, authentication: OAuth.
-3. Sign in to Victorae and **Allow** when the page opens.
+3. Sign in to Vectorae and **Allow** when the page opens.
 
 Without Developer Mode and in Deep Research, ChatGPT uses only the two
 read-only tools `search` and `fetch` (lead search and the full lead record).
@@ -156,7 +156,7 @@ Founders / operations — not doable from the repository:
       metadata URLs answering 200 from the internet.
 - [ ] **End-to-end check from claude.ai and ChatGPT** against production
       (`docs/program/PROGRESS.md` lists what has and has not been verified).
-- [ ] **Test account** for reviewers: a Victorae account with sample
+- [ ] **Test account** for reviewers: a Vectorae account with sample
       products, a strategy, leads and messages, credentials shared through
       the submission form only.
 - [ ] **Documentation URL**: publish a public help article from this file

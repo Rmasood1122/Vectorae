@@ -55,7 +55,7 @@ from app.services import similarity
 logger = logging.getLogger(__name__)
 
 JUDGE_SYSTEM = (
-    "You are Victorae's consensus judge. Two independent go-to-market "
+    "You are Vectorae's consensus judge. Two independent go-to-market "
     "strategists, A and B, answered the SAME research brief. Compare them and "
     "report only MEANINGFUL disagreements: a different recommendation, a "
     "contradictory fact or figure, or a different target segment, channel, "

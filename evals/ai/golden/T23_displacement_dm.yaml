@@ -353,7 +353,7 @@ cases:
     none: false
     calls: 2
   recorded:
-  - dm: Victorae fixes outbound in a week. Want a demo?
+  - dm: Vectorae fixes outbound in a week. Want a demo?
   - dm: You asked for help with outbound, which most founders never say out loud. What have you tried so far?
 - id: names-product-twice-none
   offline_only: true
@@ -367,8 +367,8 @@ cases:
     none: true
     calls: 2
   recorded:
-  - dm: Victorae fixes outbound. Want a demo?
-  - dm: Try Victorae. Want a demo?
+  - dm: Vectorae fixes outbound. Want a demo?
+  - dm: Try Vectorae. Want a demo?
 - id: banned-word-rejected
   offline_only: true
   slice: invented
@@ -455,5 +455,5 @@ cases:
     none: true
     calls: 2
   recorded:
-  - dm: Victorae can help. Want a demo?
-  - dm: Victorae does this. Book a demo?
+  - dm: Vectorae can help. Want a demo?
+  - dm: Vectorae does this. Book a demo?

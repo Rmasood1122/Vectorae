@@ -31,7 +31,7 @@ sources:
 
 # Analytics, health score and ROI
 
-Victorae reports on your campaigns in several places: the **Analytics** page, the **Revenue & ROI** page, a shareable ROI dashboard, and a Pipeline Health Score. This article explains how each number is calculated so you know what it does and does not tell you.
+Vectorae reports on your campaigns in several places: the **Analytics** page, the **Revenue & ROI** page, a shareable ROI dashboard, and a Pipeline Health Score. This article explains how each number is calculated so you know what it does and does not tell you.
 
 ## What is the Pipeline Health Score?
 
@@ -51,7 +51,7 @@ The total falls into a band with a short message:
 
 Because the reply-rate part uses the raw percentage, a campaign with a normal cold-outreach reply rate earns only a few points from it. Read the four parts, not just the total. If the calculation fails, the score shows 0 and "critical" with an error flag, so a failed measurement can be told apart from an empty pipeline.
 
-The score is refreshed every six hours for verified and running campaigns, and recalculated live when requested. It is available on every plan. On a verified strategy's page, the **Pipeline health** card shows the score out of 100, its band and message, and the four parts. It is also available through the Victorae API.
+The score is refreshed every six hours for verified and running campaigns, and recalculated live when requested. It is available on every plan. On a verified strategy's page, the **Pipeline health** card shows the score out of 100, its band and message, and the four parts. It is also available through the Vectorae API.
 
 ## What does the Analytics page show?
 
@@ -61,7 +61,7 @@ The positive reply rate counts only replies labelled **interested**. Replies tha
 
 ## How does attribution decide which message earned a meeting?
 
-Every booked meeting, won deal and **interested** reply is credited to a message, and Victorae always records how it decided and how sure it is:
+Every booked meeting, won deal and **interested** reply is credited to a message, and Vectorae always records how it decided and how sure it is:
 
 - **Direct reply:** their reply is linked to a specific message. Confidence 1.0.
 - **Thread match:** their reply is in the same email thread as one of your messages. Confidence 0.85.
@@ -72,7 +72,7 @@ The panel groups results by step and by channel, and each group shows how many e
 
 ## How are benchmarks calculated, and what are they not?
 
-**How you compare** shows your reply rate, meeting-booked rate and bounce rate per channel next to the spread across **other accounts on this Victorae deployment** over the last 90 days. It is not an industry statistic.
+**How you compare** shows your reply rate, meeting-booked rate and bounce rate per channel next to the spread across **other accounts on this Vectorae deployment** over the last 90 days. It is not an industry statistic.
 
 Rules that apply (defaults, set by your administrator):
 

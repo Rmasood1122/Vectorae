@@ -47,7 +47,7 @@ ACTIONS = ("auto", "connect", "message", "inmail")
 MESSAGE_MAX = 1500
 
 SYSTEM = (
-    "You are Victorae's LinkedIn message writer. You write ONE LinkedIn "
+    "You are Vectorae's LinkedIn message writer. You write ONE LinkedIn "
     "touch for one prospect, following the step brief and the messaging "
     "playbook. Respond with ONLY a JSON object: {\"text\": \"...\", "
     "\"subject\": \"...\"}. RULES. Plain text, no links unless the brief "

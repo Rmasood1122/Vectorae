@@ -1,4 +1,4 @@
-// Victorae agents, C++ core: Deliverability Guard, Reply Triage and Claim &
+// Vectorae agents, C++ core: Deliverability Guard, Reply Triage and Claim &
 // Compliance Check. Pure functions over plain values; bindings.cpp exposes
 // them to Python as the module `vectorae_native_cpp`.
 #pragma once

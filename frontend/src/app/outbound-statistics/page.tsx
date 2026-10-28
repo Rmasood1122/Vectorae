@@ -12,7 +12,7 @@ import { canonicalMeta } from "@/lib/seo/pageMeta";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "Outbound sales statistics for agencies and B2B service firms (2026) | Victorae | Calendarharvest",
+  title: "Outbound sales statistics for agencies and B2B service firms (2026) | Vectorae",
   description:
     "Sourced 2025–2026 figures on B2B buyers, agency referrals, SDR cost, cold email reply rates, Gmail and Outlook sender rules, and CAN-SPAM, GDPR and CASL penalties.",
   ...canonicalMeta("/outbound-statistics/"),
@@ -28,8 +28,8 @@ export default function OutboundStatisticsPage() {
       lastChecked={FACTS_CHECKED}
       sections={STATS_SECTIONS}
       related={[
-        { href: "/for/agencies", label: "Victorae for agencies" },
-        { href: "/compare/leadpilot-vs-artisan", label: "Victorae vs hiring an SDR" },
+        { href: "/for/agencies", label: "Vectorae for agencies" },
+        { href: "/compare/leadpilot-vs-artisan", label: "Vectorae vs hiring an SDR" },
         { href: "/help/compliance", label: "Compliance (help center)" },
       ]}
     />

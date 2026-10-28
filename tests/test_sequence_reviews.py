@@ -134,7 +134,7 @@ class TestRules:
         from app.config import settings
 
         seq = _sequence(db_session, verified_strategy, "A friendly question.")
-        monkeypatch.setattr(settings, "sender_identity", "Victorae User, 123 Main St, City, Country")
+        monkeypatch.setattr(settings, "sender_identity", "Vectorae User, 123 Main St, City, Country")
         dev = next(f for f in ar.rule_findings(db_session, seq)
                    if f["code"] == "compliance:sender_identity")
         assert dev["severity"] == "warn"

@@ -2,11 +2,11 @@
 
 ## Slack
 Settings › Integrations › **Slack**: connect (OAuth v2, bot scopes only), pick a
-channel, send a test message. Victorae posts:
+channel, send a test message. Vectorae posts:
 
 | Event | When |
 |---|---|
-| Meeting booked | Calendly or the Victorae calendar |
+| Meeting booked | Calendly or the Vectorae calendar |
 | Interested reply | A reply classified *interested* (email, WhatsApp, LinkedIn, call) |
 | Campaign auto-paused | Bounce rate over the limit (manual pauses are not posted) |
 | Strategy mutation | An idle campaign's strategy was rewritten |
@@ -23,16 +23,16 @@ Connect from Settings › Integrations. Admin setup: **HubSpot app**
 and **Salesforce connected app** (`client_id`, `client_secret`, `webhook_secret`;
 callback `<PUBLIC_BASE_URL>/integrations/salesforce/callback`, scopes `api refresh_token`).
 
-**Victorae → CRM.** Leads that engaged (replied, meeting booked, opportunity,
+**Vectorae → CRM.** Leads that engaged (replied, meeting booked, opportunity,
 closed, disqualified) become HubSpot **contacts** / Salesforce **leads**, matched
 by email; turn on *Sync new leads* to push every verified lead as well. Deals
 become HubSpot **deals** (associated with the contact) / Salesforce
 **opportunities**. Pushes happen immediately on key events (meeting booked,
 reply, call, deal won, kanban move, deal edit) and in a 30-minute sweep (each worker burst).
 
-**CRM → Victorae.** Only records Victorae linked, and only forward:
+**CRM → Vectorae.** Only records Vectorae linked, and only forward:
 
-| CRM change | Victorae effect |
+| CRM change | Vectorae effect |
 |---|---|
 | HubSpot `hs_lead_status` = UNQUALIFIED | lead → disqualified |
 | HubSpot `hs_lead_status` = OPEN_DEAL, lifecycle = opportunity | lead → opportunity |
@@ -41,10 +41,10 @@ reply, call, deal won, kanban move, deal edit) and in a 30-minute sweep (each wo
 | Deal amount or close date | copied to the local deal |
 | Salesforce lead converted | lead → opportunity |
 | Salesforce lead "Closed - Not Converted" | lead → disqualified |
-| HubSpot deal created on a linked contact | imported as a Victorae deal |
+| HubSpot deal created on a linked contact | imported as a Vectorae deal |
 
 A CRM change never moves a lead backwards and never reopens a closed lead —
-which also stops Victorae and the CRM from overwriting each other. Closing a
+which also stops Vectorae and the CRM from overwriting each other. Closing a
 lead stops its sequences.
 
 Changes arrive two ways: the 30-minute sweep reads every linked record back
@@ -72,7 +72,7 @@ Outbound webhooks for `meeting_booked`, `reply_received`, `lead_sourced` and
 Every delivery is signed:
 `X-LeadPilot-Signature: t=<unix ts>,v1=<hex HMAC-SHA256(secret, "<ts>.<body>")>`.
 Retries back off 30s → 2h: the first attempt plus 5 retries, 6 attempts in all (it stopped after 5 before the send-path-gaps fix, so the 2-hour retry never ran); a `410 Gone` unsubscribes (the
-Zapier REST-hook convention). Targets must be public HTTPS URLs; Victorae
+Zapier REST-hook convention). Targets must be public HTTPS URLs; Vectorae
 refuses private addresses and does not follow redirects.
 
 Zapier and Make authenticate with a **personal API key** (Settings ›

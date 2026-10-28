@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "leadpilot"
 version = "0.1.0"
-description = "Victorae - self-learning client acquisition system (backend core)"
+description = "Vectorae - self-learning client acquisition system (backend core)"
 requires-python = ">=3.11"
 dependencies = [
     # THE BOUNDS BELOW MUST MATCH requirements.txt (tests/test_dependency_pins.py

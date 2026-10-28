@@ -1,7 +1,7 @@
 """scripts/gate/brand_lint.py: no old product name outside .brand-allowlist.
 
-The product is Victorae (docs/program/DECISIONS.md VIC-NAME). What must hold:
-  * every old-name variant is caught -- LeadPilot, ClientHunter and Vectorae,
+The product is Vectorae (docs/program/DECISIONS.md VEC-NAME). What must hold:
+  * every old-name variant is caught -- LeadPilot, ClientHunter and Victorae,
     in any case, with or without a space, hyphen, underscore or dot -- in file
     contents AND in file names;
   * an allowlist entry allows exactly what its regex contains on matching
@@ -56,7 +56,7 @@ VARIANTS = [
     "ClientHunter", "clienthunter", "CLIENTHUNTER", "Clienthunter",
     "Client Hunter", "client hunter", "client-hunter", "client_hunter", "CLIENT_HUNTER",
     "client.hunter",
-    "Vectorae", "vectorae", "VECTORAE", "VeCtOrAe",
+    "Victorae", "victorae", "VICTORAE", "ViCtOrAe",
     "LeadPilot Enterprises", "ClientHunter Enterprise",
 ]
 
@@ -69,15 +69,15 @@ class TestVariants:
         assert report.violations[0].line == 1
 
     @pytest.mark.parametrize("variant", ["leadpilot", "Lead_Pilot", "client-hunter",
-                                         "ClientHunter", "vectorae"])
+                                         "ClientHunter", "victorae"])
     def test_every_variant_is_caught_in_file_names(self, tmp_path, variant):
         report = _lint(tmp_path, {f"docs/{variant}-guide.md": "nothing here\n"})
         assert [(v.path, v.line) for v in report.violations] == [
             (f"docs/{variant}-guide.md", 0)]
 
-    @pytest.mark.parametrize("clean", ["Victorae", "victorae", "VICTORAE",
+    @pytest.mark.parametrize("clean", ["Vectorae", "vectorae", "VECTORAE",
                                        "client hunting",
-                                       "vector", "leadpilo"])
+                                       "vector", "victor", "leadpilo"])
     def test_the_new_name_and_near_misses_pass(self, tmp_path, clean):
         assert _lint(tmp_path, {"a.md": f"{clean}\n"}).ok
 
@@ -153,7 +153,7 @@ class TestAllowlist:
 class TestCommandLine:
     def test_exit_codes(self, tmp_path):
         subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
-        (tmp_path / "a.md").write_text("Victorae\n", encoding="utf-8")
+        (tmp_path / "a.md").write_text("Vectorae\n", encoding="utf-8")
         (tmp_path / bl.ALLOWLIST_NAME).write_text("", encoding="utf-8")
         subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True)
         run = [sys.executable, str(SCRIPT), "--root", str(tmp_path)]
@@ -182,5 +182,5 @@ def test_the_repository_has_no_old_name_outside_the_allowlist():
                      (ROOT / bl.ALLOWLIST_NAME).read_text(encoding="utf-8"))
     problems = report.errors + [str(v) for v in report.violations]
     assert not problems, (
-        f"{len(problems)} problem(s). Rename display text to Victorae, or add an "
+        f"{len(problems)} problem(s). Rename display text to Vectorae, or add an "
         "identifier to .brand-allowlist with a B:/C: reason:\n" + "\n".join(problems[:40]))

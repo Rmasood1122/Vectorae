@@ -1,4 +1,4 @@
-"""Remote MCP server: Victorae as a Claude / ChatGPT connector.
+"""Remote MCP server: Vectorae as a Claude / ChatGPT connector.
 
 Mounted on the main FastAPI app (app/main.py), so it shares the process,
 settings and database session factory -- not a second service. Streamable
@@ -7,7 +7,7 @@ Mcp-Session-Id; every request carries its bearer token and is answered on
 its own (docs/program/plans/connector-00-recon.md section 3).
 
   server.py      builds the MCPServer, routes /mcp and the RFC 9728 metadata
-  auth.py        bearer-token verification -> the Victorae User
+  auth.py        bearer-token verification -> the Vectorae User
   context.py     one DB session + resolved principal per tool call
   untrusted.py   the `untrusted_content` envelope for third-party text
   scopes.py      the OAuth scopes the connector understands

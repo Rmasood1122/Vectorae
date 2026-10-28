@@ -3,7 +3,7 @@
 /** Daily send approval — decide today's automatic sending, per channel.
  *
  *  Founder decision 2026-10-11 (docs/features/daily-send-approval.md): nothing
- *  Victorae sends AUTOMATICALLY goes out on a day nobody approved it for that
+ *  Vectorae sends AUTOMATICALLY goes out on a day nobody approved it for that
  *  channel. LinkedIn is a separate, explicit choice that is never pre-ticked,
  *  with its own acknowledgement of LinkedIn's restriction risk. Messages a
  *  person approved one by one (send-review queue, Reply Copilot) are not
@@ -106,8 +106,8 @@ function Decision({ state }: { state: SendApprovalState }) {
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <p>
-            Victorae does not send anything automatically until you approve it for the day.
-            An approval is valid until the end of today; tomorrow Victorae asks again.
+            Vectorae does not send anything automatically until you approve it for the day.
+            An approval is valid until the end of today; tomorrow Vectorae asks again.
           </p>
           <p className="text-muted-foreground">{timezoneNote(state)}</p>
           <p className="text-muted-foreground">

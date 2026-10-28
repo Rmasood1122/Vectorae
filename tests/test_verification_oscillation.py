@@ -35,12 +35,12 @@ from app.verification.passes import PRECEDENCE_RULE
 # The two competing states, standing in for the real pricing conflict.
 DOC_EARLY = (
     "# Strategy\n\n## Pricing\n"
-    "Victorae is priced at $2,500-$7,500/month versus $10K-$13K/month "
+    "Vectorae is priced at $2,500-$7,500/month versus $10K-$13K/month "
     "for a fully-loaded SDR.\n\n## Channels\nReferral-led outreach."
 )
 DOC_LATE = (
     "# Strategy\n\n## Pricing\n"
-    "Victorae is priced at $3,000-$5,500/month versus $10K-$13K/month "
+    "Vectorae is priced at $3,000-$5,500/month versus $10K-$13K/month "
     "for a fully-loaded SDR.\n\n## Channels\nReferral-led outreach."
 )
 

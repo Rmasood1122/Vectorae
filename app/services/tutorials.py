@@ -95,9 +95,9 @@ SEED_CATALOGUE: tuple[SeedTutorial, ...] = (
     # -- Beginner -----------------------------------------------------------
     SeedTutorial(
         slug="getting-started-with-leadpilot",
-        title="Getting Started with Victorae",
+        title="Getting Started with Vectorae",
         description=(
-            "A tour of the platform end to end: what Victorae automates, how a "
+            "A tour of the platform end to end: what Vectorae automates, how a "
             "strategy becomes a booked meeting, and what to set up first."
         ),
         level="beginner",
@@ -117,7 +117,7 @@ SEED_CATALOGUE: tuple[SeedTutorial, ...] = (
         slug="understanding-your-icp",
         title="Understanding Your ICP",
         description=(
-            "What an Ideal Customer Profile is, how Victorae extracts one from "
+            "What an Ideal Customer Profile is, how Vectorae extracts one from "
             "your past clients, and how to correct it when it gets you wrong."
         ),
         level="beginner",
@@ -146,7 +146,7 @@ SEED_CATALOGUE: tuple[SeedTutorial, ...] = (
     ),
     SeedTutorial(
         slug="using-the-leadpilot-dashboard",
-        title="Using the Victorae Dashboard",
+        title="Using the Vectorae Dashboard",
         description=(
             "Pipeline, campaigns, strategies and settings -- what each view is "
             "for and the fastest path through your daily workflow."
@@ -213,7 +213,7 @@ BADGES: tuple[Badge, ...] = (
           "Finished every Intermediate tutorial.", "intermediate"),
     Badge("advanced-complete", "Advanced Complete",
           "Finished every Advanced tutorial.", "advanced"),
-    Badge("leadpilot-certified", "Victorae Certified",
+    Badge("leadpilot-certified", "Vectorae Certified",
           "Finished every tutorial in the library.", None),
 )
 

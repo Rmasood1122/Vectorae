@@ -1,4 +1,4 @@
-"""Victorae agents: five advisory agents with native cores and a master
+"""Vectorae agents: five advisory agents with native cores and a master
 supervisor. See docs/features/vectorae-agents.md.
 
     lead_priority, followup_timing      Rust   (native/rust)

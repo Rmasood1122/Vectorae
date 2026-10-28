@@ -1,7 +1,7 @@
 {
   "name": "leadpilot",
   "version": "1.0.0",
-  "description": "Victorae in Claude Code: the Victorae connector (remote MCP server, OAuth sign-in) plus the leadpilot-outbound skill that explains when and how to use it.",
+  "description": "Vectorae in Claude Code: the Vectorae connector (remote MCP server, OAuth sign-in) plus the leadpilot-outbound skill that explains when and how to use it.",
   "author": {
     "name": "Vectorae"
   },

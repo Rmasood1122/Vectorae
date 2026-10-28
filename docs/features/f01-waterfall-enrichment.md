@@ -17,7 +17,7 @@ guard to the existing send chokepoint (`app/workers/outreach_tasks.py`
 Competitor complaint it answers (STAR row F01): *Apollo users report 15–35%
 bounces on "verified" data; Clay charges per attempt.*
 
-What that looks like in Victorae today:
+What that looks like in Vectorae today:
 
 1. **No fall-through.** Apollo's email is verified by Hunter; if Hunter says
    it is undeliverable the lead is dropped. Hunter's email finder is only

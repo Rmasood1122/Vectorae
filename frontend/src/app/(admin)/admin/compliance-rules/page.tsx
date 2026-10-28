@@ -208,7 +208,7 @@ export default function AdminComplianceRulesPage() {
           <h2 className="text-sm font-medium">Add or update a rule</h2>
           <p className="text-xs text-muted-foreground">
             Leave a field blank to inherit it. Saving the same scope, region and channel updates that rule.
-            Email and LinkedIn have no consent record in Victorae, so requiring consent there stops those sends.
+            Email and LinkedIn have no consent record in Vectorae, so requiring consent there stops those sends.
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
             <select className={selectClass} value={form.scope} aria-label="Scope"

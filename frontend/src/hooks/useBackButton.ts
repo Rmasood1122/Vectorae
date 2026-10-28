@@ -1,14 +1,14 @@
 'use client';
 
 /**
- * useBackButton — Victorae
+ * useBackButton — Vectorae
  *
  * Handles Android hardware/gesture back button via @capacitor/app.
  * Required Android UX behaviour — Play Store reviewers check this.
  *
  * Rules:
  *   • At the root of any section (/, /strategies, /campaigns, /leads,
- *     /analytics, /settings) → show "Exit Victorae?" confirm dialog.
+ *     /analytics, /settings) → show "Exit Vectorae?" confirm dialog.
  *   • Inside a section (e.g. /strategies/123) → router.back().
  *   • No-op on web (browser manages its own history).
  *
@@ -45,7 +45,7 @@ export function useBackButton() {
       listener = await App.addListener('backButton', ({ canGoBack }) => {
         if (isRootRoute(pathname)) {
           // At root — show exit confirm
-          const confirmed = window.confirm('Exit Victorae?');
+          const confirmed = window.confirm('Exit Vectorae?');
           if (confirmed) {
             App.exitApp();
           }

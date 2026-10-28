@@ -53,7 +53,7 @@ from app.services import anthropic_client
 logger = logging.getLogger(__name__)
 
 SYSTEM = (
-    "You are Victorae's strategy mutation strategist. A cold outreach "
+    "You are Vectorae's strategy mutation strategist. A cold outreach "
     "campaign has run for days and received ZERO replies. Diagnose why, from "
     "the evidence given, and propose concrete changes. Respond with ONLY a "
     'JSON object: {"diagnosis": "...", "messaging_angle": {"current": "...", '

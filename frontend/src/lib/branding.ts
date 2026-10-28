@@ -21,7 +21,7 @@ export interface PublicBranding {
 
 export const DEFAULT_BRANDING: PublicBranding = {
   white_label: false,
-  brand_name: "Victorae",
+  brand_name: "Vectorae",
   logo_url: null,
   primary_color: null,
   support_email: null,

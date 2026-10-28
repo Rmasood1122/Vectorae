@@ -25,13 +25,13 @@ from tests.conftest import auth_headers
 # Phase 2 (help center): the assistant cites help-center chunk ids and mock
 # mode answers with a chunk's opening paragraph. The FAQ id
 # "what-is-leadpilot" (FakeClaude's default citation) now resolves to this
-# chunk through the permanent alias map, and "what is Victorae" is answered
+# chunk through the permanent alias map, and "what is Vectorae" is answered
 # with the first paragraph of article 01 -- asserted against the article
 # text itself, not against the retriever's own output.
 WHAT_IS_CHUNK = help_center.LEGACY_FAQ_ALIASES["what-is-leadpilot"]
 WHAT_IS_ANSWER = help_center.opening_paragraph(
     help_center.chunk_by_id(WHAT_IS_CHUNK).sections[0])
-assert WHAT_IS_ANSWER.startswith("Victorae is an outbound sales system.")
+assert WHAT_IS_ANSWER.startswith("Vectorae is an outbound sales system.")
 
 
 def _ask(client, message, session_id=None):
@@ -62,7 +62,7 @@ class TestKnowledgeBase:
         assert {e["id"] for e in payload["faq"]} == {e.id for e in support_kb.FAQ}
 
     @pytest.mark.parametrize("query,expected_first", [
-        ("what is victorae", "what-is-leadpilot"),
+        ("what is vectorae", "what-is-leadpilot"),
         ("how do I set up my first campaign", "first-campaign"),
         ("do you automate linkedin", "how-outreach-works"),
         ("what tutorials are there", "tutorial-section"),
@@ -142,7 +142,7 @@ class TestRefusalEnforcement:
 
     def test_system_prompt_carries_the_rules_and_the_whole_kb(self, client,
                                                               fake_claude):
-        _ask(client, "what is victorae")
+        _ask(client, "what is vectorae")
         # FakeClaude records the user prompt; the system prompt is asserted
         # directly since that is where the rules live.
         system = support_chat.SYSTEM_PROMPT_HEADER
@@ -157,7 +157,7 @@ class TestConfidenceFloor:
         """A hedged wrong answer still reads as an answer."""
         fake_claude.support_response = {
             "on_topic": True, "confidence": 0.2,
-            "answer": "I think maybe Victorae costs $99?", "faq_ids": [],
+            "answer": "I think maybe Vectorae costs $99?", "faq_ids": [],
         }
         body = _ask(client, "how much does it cost").json()
         assert body["answer"]["text"] == support_kb.TICKET_SUGGESTION
@@ -191,7 +191,7 @@ class TestFailureFallbacks:
     def test_model_outage_degrades_to_a_ticket_not_a_500(self, client,
                                                          fake_claude):
         fake_claude.support_response = RuntimeError("anthropic is down")
-        resp = _ask(client, "what is victorae")
+        resp = _ask(client, "what is vectorae")
         assert resp.status_code == 200
         assert resp.json()["answer"]["reason"] == "model_error"
         assert resp.json()["answer"]["suggest_ticket"] is True
@@ -210,7 +210,7 @@ class TestFailureFallbacks:
         monkeypatch.setattr(anthropic_client, "get_client", lambda: fake_claude)
         for response in (RuntimeError("boom"), None, "string", 42, {}):
             fake_claude.support_response = response
-            result = support_chat.answer_question("what is victorae")
+            result = support_chat.answer_question("what is vectorae")
             assert isinstance(result, support_chat.SupportAnswer)
 
     def test_hallucinated_faq_ids_are_stripped(self, client, fake_claude):
@@ -233,12 +233,12 @@ class TestFailureFallbacks:
 
 class TestChatPersistence:
     def test_both_turns_are_stored(self, client, db_session):
-        _ask(client, "What is Victorae?")
+        _ask(client, "What is Vectorae?")
         rows = db_session.execute(
             select(m.ChatMessage).order_by(m.ChatMessage.created_at)
         ).scalars().all()
         assert [r.role for r in rows] == ["user", "assistant"]
-        assert rows[0].content == "What is Victorae?"
+        assert rows[0].content == "What is Vectorae?"
 
     def test_refusals_are_stored_too(self, client, db_session, fake_claude):
         """An answer nobody can read back is an answer nobody can audit."""
@@ -252,7 +252,7 @@ class TestChatPersistence:
         assert assistant.content == support_kb.REFUSAL_MESSAGE
 
     def test_diagnostics_are_persisted(self, client, db_session):
-        _ask(client, "What is Victorae?")
+        _ask(client, "What is Vectorae?")
         assistant = db_session.execute(
             select(m.ChatMessage).where(m.ChatMessage.role == "assistant")
         ).scalars().one()
@@ -261,7 +261,7 @@ class TestChatPersistence:
         assert assistant.faq_ids == [WHAT_IS_CHUNK]
 
     def test_follow_ups_continue_the_same_session(self, client, db_session):
-        first = _ask(client, "What is Victorae?").json()["session_id"]
+        first = _ask(client, "What is Vectorae?").json()["session_id"]
         second = _ask(client, "And what does it replace?").json()["session_id"]
         assert first == second
         assert db_session.execute(
@@ -269,9 +269,9 @@ class TestChatPersistence:
         ).scalars().all().__len__() == 1
 
     def test_history_is_passed_to_the_model(self, client, fake_claude):
-        _ask(client, "What is Victorae?")
+        _ask(client, "What is Vectorae?")
         _ask(client, "what about the second one?")
-        assert "What is Victorae?" in fake_claude.support_prompts[-1]
+        assert "What is Vectorae?" in fake_claude.support_prompts[-1]
 
     def test_new_session_starts_a_separate_thread(self, client):
         _ask(client, "first question")
@@ -286,7 +286,7 @@ class TestChatPersistence:
         assert sessions[0]["title"] == "How do I set up my first campaign?"
 
     def test_get_session_returns_the_transcript(self, client):
-        session_id = _ask(client, "What is Victorae?").json()["session_id"]
+        session_id = _ask(client, "What is Vectorae?").json()["session_id"]
         payload = client.get(f"/support/chat/sessions/{session_id}").json()
         assert [msg["role"] for msg in payload["messages"]] == ["user", "assistant"]
 
@@ -689,13 +689,13 @@ class TestMockMatching:
     """
 
     ON_TOPIC = [
-        "what is Victorae", "What is Victorae?", "how does outreach work",
+        "what is Vectorae", "What is Vectorae?", "how does outreach work",
         "does it post on linkedin", "how do I set up my first campaign",
         "what tutorials are there", "how do I contact support",
         "what data do you store", "what does it replace",
         "tell me about the learning loop", "can I white label this",
-        "is my data deleted", "how do I get started", "WHAT IS VICTORAE",
-        "badges", "gdpr", "does victorae send emails automatically",
+        "is my data deleted", "how do I get started", "WHAT IS VECTORAE",
+        "badges", "gdpr", "does vectorae send emails automatically",
         "whatsapp outreach",
     ]
 
@@ -715,12 +715,12 @@ class TestMockMatching:
     @pytest.mark.parametrize("question", OFF_TOPIC)
     def test_off_topic_questions_match_NOTHING(self, question):
         """A false match here is the failure that matters: it answers a
-        question about the weather with a sentence about Victorae."""
+        question about the weather with a sentence about Vectorae."""
         assert support_kb.best_match(question) is None, question
 
     def test_matching_is_case_insensitive(self):
-        assert (support_kb.best_match("WHAT IS VICTORAE?").id
-                == support_kb.best_match("what is victorae?").id
+        assert (support_kb.best_match("WHAT IS VECTORAE?").id
+                == support_kb.best_match("what is vectorae?").id
                 == "what-is-leadpilot")
 
     def test_a_question_with_no_words_left_after_stopwords_is_no_match(self):
@@ -738,7 +738,7 @@ class TestMockMatching:
             assert support_kb.best_match(question) is None
 
     def test_scored_returns_every_entry_best_first(self):
-        ranked = support_kb.scored("what is victorae")
+        ranked = support_kb.scored("what is vectorae")
         assert len(ranked) == len(support_kb.FAQ)
         assert ranked[0][1].id == "what-is-leadpilot"
         assert [s for s, _ in ranked] == sorted((s for s, _ in ranked),
@@ -754,7 +754,7 @@ class TestMockModeAnswers:
         live mode's: there is no step at which a fact could be added.
 
         Phase 2: "the FAQ answer" is now the help-center paragraph."""
-        data = _ask(client, "what is Victorae").json()["answer"]
+        data = _ask(client, "what is Vectorae").json()["answer"]
         assert data["text"] == WHAT_IS_ANSWER
         assert data["reason"] == "mock_faq_match"
         assert data["faq_ids"] == [WHAT_IS_CHUNK]
@@ -772,15 +772,15 @@ class TestMockModeAnswers:
                                       no_model_allowed):
         """Both halves: the client is booby-trapped AND the call counter on
         the stub stays at zero."""
-        for question in ("what is Victorae", "what is the weather",
+        for question in ("what is Vectorae", "what is the weather",
                          "how does outreach work"):
             assert _ask(client, question).status_code == 200
         assert fake_claude.completions == 0
 
     def test_mock_answers_are_case_insensitive(self, client, mock_mode,
                                                no_model_allowed):
-        loud = _ask(client, "WHAT IS VICTORAE?").json()["answer"]
-        quiet = _ask(client, "what is victorae?").json()["answer"]
+        loud = _ask(client, "WHAT IS VECTORAE?").json()["answer"]
+        quiet = _ask(client, "what is vectorae?").json()["answer"]
         assert loud["text"] == quiet["text"]
         assert loud["reason"] == quiet["reason"] == "mock_faq_match"
 
@@ -789,12 +789,12 @@ class TestMockModeAnswers:
                                                     no_model_allowed):
         """Mock is a real conversation, not a stub -- this is what makes it a
         usable pre-launch state."""
-        _ask(client, "what is Victorae")
+        _ask(client, "what is Vectorae")
         rows = db_session.execute(
             select(m.ChatMessage).order_by(m.ChatMessage.seq)
         ).scalars().all()
         assert [r.role for r in rows] == ["user", "assistant"]
-        assert rows[0].content == "what is Victorae"
+        assert rows[0].content == "what is Vectorae"
         assert rows[1].reason == "mock_faq_match"
         assert rows[1].faq_ids == [WHAT_IS_CHUNK]
 
@@ -813,7 +813,7 @@ class TestMockModeAnswers:
         does not TIGHTEN on users the day a real key is added."""
         from app.core.config import settings as core_settings
         monkeypatch.setattr(core_settings, "RATE_LIMIT_SUPPORT_CHAT", 3)
-        codes = [_ask(client, f"what is Victorae {i}").status_code
+        codes = [_ask(client, f"what is Vectorae {i}").status_code
                  for i in range(5)]
         assert codes[:3] == [200, 200, 200], codes
         assert codes[3:] == [429, 429], codes
@@ -847,7 +847,7 @@ class TestMockModeAnswers:
         from app.config import settings as app_settings
         monkeypatch.setattr(app_settings, "ai_mode", "console")
         with caplog.at_level(logging.INFO, logger="app.services.support_chat"):
-            data = _ask(client, "what is Victorae").json()["answer"]
+            data = _ask(client, "what is Vectorae").json()["answer"]
         assert data["text"] == WHAT_IS_ANSWER
         assert data["reason"] == "mock_faq_match"
         assert any("AI_MODE=console" in r.getMessage()
@@ -892,7 +892,7 @@ class TestInvalidKeyFallsBackToTheFAQ:
     def test_a_401_serves_the_CURATED_ANSWER_not_a_ticket(self, client,
                                                           fake_claude):
         fake_claude.support_response = self._auth_error()
-        data = _ask(client, "what is Victorae").json()["answer"]
+        data = _ask(client, "what is Vectorae").json()["answer"]
         assert data["reason"] == "mock_faq_match"
         assert data["text"] == WHAT_IS_ANSWER
         assert data["suggest_ticket"] is False
@@ -910,7 +910,7 @@ class TestInvalidKeyFallsBackToTheFAQ:
         through a five-minute blip hides a real incident behind a slightly
         worse product."""
         fake_claude.support_response = RuntimeError("anthropic is down")
-        data = _ask(client, "what is Victorae").json()["answer"]
+        data = _ask(client, "what is Vectorae").json()["answer"]
         assert data["reason"] == "model_error"
         assert data["suggest_ticket"] is True
 
@@ -921,7 +921,7 @@ class TestInvalidKeyFallsBackToTheFAQ:
         import logging
         fake_claude.support_response = self._auth_error()
         with caplog.at_level(logging.ERROR, logger="app.services.support_chat"):
-            _ask(client, "what is Victorae")
+            _ask(client, "what is Vectorae")
         assert any("PERMANENT model failure" in r.getMessage()
                    for r in caplog.records), caplog.text
         assert any("ANTHROPIC_API_KEY" in r.getMessage()
@@ -933,7 +933,7 @@ class TestInvalidKeyFallsBackToTheFAQ:
         """`reason` is what makes the history unambiguous about whether a
         model was involved. A dead-key answer must not read as a live one."""
         fake_claude.support_response = self._auth_error()
-        _ask(client, "what is Victorae")
+        _ask(client, "what is Vectorae")
         row = db_session.execute(
             select(m.ChatMessage).where(m.ChatMessage.role == "assistant")
         ).scalars().one()

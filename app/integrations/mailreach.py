@@ -1,6 +1,6 @@
 """Mailreach — email account health (Feature Group 9). Optional.
 
-Victorae's own DNS checks (SPF, DKIM, DMARC, blacklists) run for every
+Vectorae's own DNS checks (SPF, DKIM, DMARC, blacklists) run for every
 sending domain whether or not Mailreach is configured. A Mailreach key adds
 what DNS cannot see: the account's inbox-placement / spam score from warm-up
 traffic. The key may be a system credential or the user's own ("both" scope).

@@ -1,4 +1,4 @@
-# CLAUDE.md — Victorae
+# CLAUDE.md — Vectorae
 
 Rules for any Claude Code session working in this repository. The governing
 project records (gap register, requirements, evidence index) live in the

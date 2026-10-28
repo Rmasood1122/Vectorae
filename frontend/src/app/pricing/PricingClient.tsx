@@ -159,7 +159,7 @@ export function PricingClient({ footer, staticPlans, intro, checkoutLive }: {
     <main className="min-h-dvh bg-background">
       <header className="mx-auto flex max-w-6xl items-center justify-between p-4">
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <LogoMark size={22} /> Victorae
+          <LogoMark size={22} /> Vectorae
         </Link>
         <Link href={signedIn ? "/pipeline" : "/login"} className="text-sm underline">
           {signedIn ? "Back to app" : "Sign in"}
@@ -175,7 +175,7 @@ export function PricingClient({ footer, staticPlans, intro, checkoutLive }: {
           {intro}
           {needsPlan && (
             <p role="status" className="mt-4 rounded-lg border border-border bg-card p-3 text-sm">
-              Welcome, {viewer?.email}. Choose a plan to start using Victorae.
+              Welcome, {viewer?.email}. Choose a plan to start using Vectorae.
             </p>
           )}
         </div>

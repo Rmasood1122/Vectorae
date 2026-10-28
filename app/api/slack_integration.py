@@ -133,7 +133,7 @@ def slack_test(db: Session = Depends(get_db),
         raise HTTPException(status_code=409, detail="choose a channel first")
     try:
         slack.post_message(conn["token"], conn["channel_id"],
-                           "Victorae is connected. Meeting bookings, interested replies, "
+                           "Vectorae is connected. Meeting bookings, interested replies, "
                            "campaign pauses and strategy changes will be posted here.")
     except slack.SlackError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc

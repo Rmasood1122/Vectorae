@@ -190,7 +190,7 @@ class TestMockModeMeasurement:
         a borrowed paragraph. Coverage is IDF-weighted, so it moves with the
         corpus: the privacy-policy question sat at 0.454 when the first floor
         was chosen; since the 2026-10-18 articles the nearest is "How much
-        will Victorae cost next year?" at 0.552. Probed at 0.40, well under
+        will Vectorae cost next year?" at 0.552. Probed at 0.40, well under
         the shipped 0.60."""
         loose = measure_golden.tally(GOLDEN, lambda q: measure_golden.new_outcome(
             q, help_center.MOCK_MIN_SCORE, 0.40))

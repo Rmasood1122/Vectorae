@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Victorae</string>
-    <string name="title_activity_main">Victorae</string>
+    <string name="app_name">Vectorae</string>
+    <string name="title_activity_main">Vectorae</string>
     <string name="package_name">com.clienthunter.app</string>
     <string name="custom_url_scheme">com.clienthunter.app</string>
 </resources>

@@ -5,7 +5,7 @@
  *    defaults OFF in app/services/system_settings.py; a feature listed as
  *    "available on request" must really be off by default. Read from the
  *    backend source, so flipping a default without updating the page fails.
- *  - Phrases that would promise what Victorae does not do are banned from
+ *  - Phrases that would promise what Vectorae does not do are banned from
  *    every home page source file.
  */
 import { readFileSync } from "node:fs";
@@ -37,7 +37,7 @@ const BANNED: { phrase: RegExp; why: string }[] = [
   { phrase: /guarantee/i, why: "no outcome is guaranteed" },
   { phrase: /no credit card/i, why: "Stripe Checkout collects a payment method by default; app/services/billing.py does not turn that off" },
   { phrase: /unlimited/i, why: "every plan has finite limits (app/core/plans.py)" },
-  { phrase: /repl(y|ies) (to prospects )?for you/i, why: "Victorae never answers a prospect for you" },
+  { phrase: /repl(y|ies) (to prospects )?for you/i, why: "Vectorae never answers a prospect for you" },
   { phrase: /auto-?repl(y|ies)/i, why: "no automatic replies to prospects" },
   { phrase: /upload (your|a) (contact )?list/i, why: "leads cannot be imported" },
   { phrase: /\b\d+x\b|\b\d+%\s+(more|higher|better)/i, why: "no measured uplift exists to quote" },
@@ -113,7 +113,7 @@ describe("home page claims match the code (D1)", () => {
   });
 
   it("the page title carries the brand", () => {
-    expect(HOME_TITLE).toMatch(/\| Calendarharvest$/);
+    expect(HOME_TITLE).toMatch(/^Vectorae/);
     expect(readFileSync("src/app/page.tsx", "utf8")).toContain(`title: "${HOME_TITLE}"`);
   });
 

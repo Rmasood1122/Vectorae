@@ -6,7 +6,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.clienthunter.app',
-  appName: 'Victorae',
+  appName: 'Vectorae',
   webDir: 'out',
 
   android: {

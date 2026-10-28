@@ -27,7 +27,7 @@ function describe(text: string): string {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const a = helpArticle((await params).slug);
   return {
-    title: `${a.title} | Victorae help | Calendarharvest`,
+    title: `${a.title} | Vectorae help`,
     description: describe(a.lead[0] ?? a.title),
     ...canonicalMeta(pathOf(a.id)),
   };
@@ -45,7 +45,7 @@ export default async function HelpArticlePage({ params }: { params: Promise<{ sl
       disclosure={helpStatusNote()}
       lastChecked={a.lastVerified || undefined}
       sections={a.sections}
-      related={[{ href: "/help", label: "All help articles" }, { href: "/faq", label: "Victorae FAQ" }]}
+      related={[{ href: "/help", label: "All help articles" }, { href: "/faq", label: "Vectorae FAQ" }]}
     />
   );
 }

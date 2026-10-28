@@ -1,5 +1,5 @@
 @echo off
-REM ─── Victorae — Mobile Asset Generation (Windows) ──────────
+REM ─── Vectorae — Mobile Asset Generation (Windows) ──────────
 REM Generates all required Android icon sizes and splash screen images.
 REM See generate-assets.sh for full documentation on source file specifications.
 REM

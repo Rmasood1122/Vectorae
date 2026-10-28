@@ -8,7 +8,7 @@
 - **LinkedIn steps in sequences** (`channel: "linkedin"`, optional
   `linkedin_action`: `auto` | `connect` | `message` | `inmail`).
 - **Multiple accounts per user**, connected through Unipile's hosted page
-  (the user signs in to LinkedIn on Unipile; Victorae stores only an account id).
+  (the user signs in to LinkedIn on Unipile; Vectorae stores only an account id).
 
 ## How a LinkedIn step resolves (`auto`)
 | Lead state | Action |

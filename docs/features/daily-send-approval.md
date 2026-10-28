@@ -6,12 +6,12 @@ defaults **on**.
 
 ## Founder decision (Rehan, 2026-10-11, verbatim)
 
-> "users decide this every time when Victorae have to send automatically
-> Messages Victorae send mail to user notify on mobile Desktop and App also To
+> "users decide this every time when Vectorae have to send automatically
+> Messages Vectorae send mail to user notify on mobile Desktop and App also To
 > make Decission Tell LinkedIn can be restrict with this action do you want to
 > proceed user select this ones a day"
 
-Read as: before Victorae sends anything **automatically** on a given day, the
+Read as: before Vectorae sends anything **automatically** on a given day, the
 account owner (or a workspace owner/manager) is notified by email and on the
 phone/desktop app and makes the decision; for LinkedIn they are told plainly
 that LinkedIn can restrict the account for this and asked whether to proceed;
@@ -19,7 +19,7 @@ the choice is made once a day.
 
 ## Problem
 
-Victorae sends outreach automatically: sequence steps on a schedule, automatic
+Vectorae sends outreach automatically: sequence steps on a schedule, automatic
 follow-ups, post-sequence re-engagement, "not now" return visits, and (when an
 account opts in) Reply Copilot auto-answers. LinkedIn sends go out through
 Unipile using the customer's own LinkedIn account. LinkedIn's User Agreement
@@ -96,7 +96,7 @@ and how it is treated:
 | Sequence / follow-up / re-engagement / not-now / Reply Copilot sends | `outreach_tasks.send_message_impl` | the scheduler | per the table above |
 | **LinkedIn network BULK send** — up to 25 Celery jobs, 90 s apart, sending through Unipile on the customer's LinkedIn account | `POST /linkedin-network/messages/bulk-send` -> `network_tasks.send_queued` -> `network_messages.deliver` | a click queues them; **the jobs send later, unattended** | **Yes — automatic LinkedIn sending**: needs today's LinkedIn approval (with the acknowledgement) before each job transmits |
 | LinkedIn network single send ("Send" on one saved message) | `POST /linkedin-network/messages/{id}/send` -> `network_messages.deliver` | a person, one message, now | No — a person's action |
-| LinkedIn network copy / mark sent | `mark-sent` | a person (Victorae sends nothing) | n/a |
+| LinkedIn network copy / mark sent | `mark-sent` | a person (Vectorae sends nothing) | n/a |
 | AI "Call now" on one lead | `POST /leads/{id}/call` (`app/api/calls.py`) -> `PhoneChannel.send` | a person, one call, now | No — a person's action (every other gate still applies there) |
 | Meeting follow-up email | `meeting_followup.send_followup` -> `gmail.send_draft` | a person presses Send on a draft they reviewed | No — a person's action |
 | Debug WhatsApp sends | `app/api/debug.py` (test-only router, refused outside dev/test) | developer | n/a in production |
@@ -199,7 +199,7 @@ NULL`, so concurrent workers send it once. It is never retried in a loop and a
 failure never affects the deferral.
 
 1. **Email** to the account owner's address via `email_sender.send_email`
-   (transactional gateway, Victorae's own domain). Never the outreach path.
+   (transactional gateway, Vectorae's own domain). Never the outreach path.
    Never to members or prospects.
 2. **Push** through `event_bus` event `send_approval_needed` (queued on the
    `notifications` queue): FCM to the owner's registered devices (Android /
@@ -220,7 +220,7 @@ email:
 
 > LinkedIn's User Agreement does not allow automated tools to send messages or
 > connection requests. LinkedIn may restrict or suspend LinkedIn accounts that
-> use automation, including Victorae's automatic LinkedIn sending through your
+> use automation, including Vectorae's automatic LinkedIn sending through your
 > connected account. Do you want to proceed with automatic LinkedIn sending
 > today?
 

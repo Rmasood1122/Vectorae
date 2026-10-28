@@ -1,5 +1,5 @@
 /**
- * E2E — Feature 2, the Learn Victorae tutorial section.
+ * E2E — Feature 2, the Learn Vectorae tutorial section.
  *
  * The backend is mocked with page.route(), matching this directory's
  * convention. The mock does REAL filtering on ?q= and ?level= rather than
@@ -36,7 +36,7 @@ interface MockTutorial {
 
 /** Mirrors app/services/tutorials.py — same slugs, same levels, same order. */
 const CATALOGUE: MockTutorial[] = [
-  { slug: "getting-started-with-leadpilot", title: "Getting Started with Victorae",
+  { slug: "getting-started-with-leadpilot", title: "Getting Started with Vectorae",
     description: "A tour of the platform end to end.", level: "beginner", order: 1,
     youtube_id: null, duration_seconds: null, completed: false, percent: 0 },
   { slug: "setting-up-your-first-campaign", title: "Setting Up Your First Campaign",
@@ -51,7 +51,7 @@ const CATALOGUE: MockTutorial[] = [
   { slug: "writing-high-converting-dms", title: "Writing High-Converting DMs",
     description: "The anatomy of a message that gets replies.", level: "intermediate", order: 2,
     youtube_id: null, duration_seconds: null, completed: false, percent: 0 },
-  { slug: "using-the-leadpilot-dashboard", title: "Using the Victorae Dashboard",
+  { slug: "using-the-leadpilot-dashboard", title: "Using the Vectorae Dashboard",
     description: "Pipeline, campaigns, strategies and settings.", level: "intermediate", order: 3,
     youtube_id: null, duration_seconds: null, completed: false, percent: 0 },
   { slug: "multi-channel-outreach-strategy", title: "Multi-Channel Outreach Strategy",
@@ -134,7 +134,7 @@ function buildPayload(state: MockTutorial[], q: string | null, level: string | n
       badgeFor("beginner-complete", "Beginner Complete", "beginner"),
       badgeFor("intermediate-complete", "Intermediate Complete", "intermediate"),
       badgeFor("advanced-complete", "Advanced Complete", "advanced"),
-      badgeFor("leadpilot-certified", "Victorae Certified", null),
+      badgeFor("leadpilot-certified", "Vectorae Certified", null),
     ],
     query: { q, level },
   };
@@ -203,7 +203,7 @@ async function openLearn(page: Page) {
   await seedSession(page);
   await mockShell(page);
   await page.goto("/learn/");
-  await expect(page.getByRole("heading", { name: "Learn Victorae" }))
+  await expect(page.getByRole("heading", { name: "Learn Vectorae" }))
     .toBeVisible({ timeout: 20_000 });
 }
 
@@ -229,7 +229,7 @@ test("Learn appears in the dashboard navigation and routes to the page",
     await expect(learnLink).toBeVisible({ timeout: 20_000 });
     await learnLink.click();
     await page.waitForURL(/\/learn\/?$/);
-    await expect(page.getByRole("heading", { name: "Learn Victorae" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Learn Vectorae" })).toBeVisible();
   });
 
 // --------------------------------------------------------------------------

@@ -5,7 +5,7 @@ build-backend = "scikit_build_core.build"
 [project]
 name = "vectorae-native-cpp"
 version = "0.1.0"
-description = "Victorae agents, C++ core (deliverability guard, reply triage, claim check)"
+description = "Vectorae agents, C++ core (deliverability guard, reply triage, claim check)"
 requires-python = ">=3.11"
 
 [tool.scikit-build]

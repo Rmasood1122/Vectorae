@@ -210,13 +210,13 @@ export function ChatWidget() {
   return (
     <section
       data-testid="support-widget"
-      aria-label="Victorae support"
+      aria-label="Vectorae support"
       className="no-print fixed bottom-20 right-4 z-30 flex max-h-[70vh] w-[min(24rem,calc(100vw-2rem))] flex-col rounded-lg border border-border bg-card shadow-xl md:bottom-6"
     >
       <header className="flex items-center justify-between border-b border-border p-3">
         <span className="flex items-center gap-2 text-sm font-semibold">
           <LifeBuoy size={16} aria-hidden="true" />
-          Victorae support
+          Vectorae support
         </span>
         <div className="flex items-center gap-1">
           <button
@@ -279,7 +279,7 @@ export function ChatWidget() {
             {messages.length === 0 && (
               <div className="space-y-2" data-testid="support-suggestions">
                 <p className="text-xs text-muted-foreground">
-                  Ask about Victorae — setup, outreach, tutorials, your data.
+                  Ask about Vectorae — setup, outreach, tutorials, your data.
                 </p>
                 {(faq.data?.faq ?? []).slice(0, 4).map((entry) => (
                   <button

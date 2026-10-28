@@ -149,7 +149,7 @@ def send_code(db: Session, user: User, raw_phone: str,
 
     minutes = max(int(ttl.total_seconds() // 60), 1)
     try:
-        sms.send_sms(phone, f"Your Victorae verification code is {code}. "
+        sms.send_sms(phone, f"Your Vectorae verification code is {code}. "
                             f"It expires in {minutes} minutes. Never share this code.")
     except sms.SmsSendError as exc:
         row.expires_at = now  # an undeliverable code must not stay live

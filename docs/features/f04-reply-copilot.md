@@ -21,7 +21,7 @@ handling.** An outbound tool that books meetings on paper but answers a
 "sounds interesting — how does it work?" with silence, a canned line, or a
 hallucinated case study loses exactly the replies it worked hardest to get.
 
-Victorae already *reads* every reply three ways (routing class, Feature 2
+Vectorae already *reads* every reply three ways (routing class, Feature 2
 category + an ungrounded draft, Feature 1 positive-intent label) and files it
 in the unified inbox. What it could not do was **answer**: the Feature 2 draft
 is not grounded in the campaign's objection research, the approved-claims
@@ -172,7 +172,7 @@ Drafts appear in the unified inbox thread for that prospect.
   edit). The reply is marked handled at approval, and the marker then follows
   the send (§4.4).
 - **Copy (LinkedIn)** — the same final-words checks; the draft becomes
-  `copied` and the reply is marked handled. **Nothing is sent by Victorae**:
+  `copied` and the reply is marked handled. **Nothing is sent by Vectorae**:
   the UI copies the text to the clipboard. `approve` on a LinkedIn draft is
   **409** ("copy-only").
 - **Discard** — `discarded`; nothing else changes (the reply stays in "needs
@@ -533,9 +533,9 @@ Neither number is measured yet — see Unverified.
 - Drafts are made only for interested, question and objection replies, on email and LinkedIn (`app/services/reply_copilot.py:89`).
 - Opt-out replies never get a draft, whatever the classifier said; suppressed and excluded contacts never get one either (`app/services/reply_copilot.py:259`, `app/services/reply_copilot.py:367`).
 - Drafts use the campaign's objection research, your approved claims and your booking link, and may contain no other link except your own domain (`app/services/reply_copilot.py:490`, `app/services/reply_copilot.py:566`).
-- An edit with a claim Victorae cannot back, or a forbidden phrase, cannot be approved (`app/services/reply_copilot.py:860`; API returns 422, `app/api/reply_copilot.py:74`).
+- An edit with a claim Vectorae cannot back, or a forbidden phrase, cannot be approved (`app/services/reply_copilot.py:860`; API returns 422, `app/api/reply_copilot.py:74`).
 - Approve sends through the normal send path with the unsubscribe footer and one-click headers, so it can wait for the prospect's send window or the daily cap (`app/workers/outreach_tasks.py:487`, `app/workers/outreach_tasks.py:754`).
-- LinkedIn drafts are copy-only; Victorae never sends them (`app/services/reply_copilot.py:1014`).
+- LinkedIn drafts are copy-only; Vectorae never sends them (`app/services/reply_copilot.py:1014`).
 - A queued answer is cancelled if the lead books a meeting, is disqualified or closed, or writes again before it goes out (`app/services/reply_copilot.py`, `send_time_hold`).
 - When a prospect wrote twice, an approved answer to the later reply is still sent by default; turn off "When a prospect wrote twice, still send an approved answer to the later reply" to send only answers to the reply that stopped the sequence (`app/services/reply_copilot.py`, `stop_explained_by`; setting `answer_earlier_replies`).
 - Auto-send covers only "send me a time" email replies and needs an admin switch plus your own opt-in, both off by default (`app/services/reply_copilot.py:806`, `app/services/system_settings.py:299`).

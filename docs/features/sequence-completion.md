@@ -36,7 +36,7 @@ exists to make impossible to hide.
 | `meeting_booked` | ✅ | the Calendly webhook |
 | `suppressed` | ✅ | the send-time suppression check |
 | `opted_out` | ✅ | WhatsApp STOP |
-| `crm_closed` | ✅ | a HubSpot/Salesforce close (`crm_<provider>`), or a lead moved to closed won / closed lost / disqualified inside Victorae (`crm_<status>`, `sequence_engine.stop_for_status`; added 2026-10-11, gaps-sweep-2 #3) |
+| `crm_closed` | ✅ | a HubSpot/Salesforce close (`crm_<provider>`), or a lead moved to closed won / closed lost / disqualified inside Vectorae (`crm_<status>`, `sequence_engine.stop_for_status`; added 2026-10-11, gaps-sweep-2 #3) |
 | `call_outcome` | ✅ | an AI call that ended the conversation |
 | `meeting_outcome` | ✅ | "Log Meeting Outcome" (`meeting_outcome_<kind>`; was counted as `other` until 2026-10-11, gaps-sweep-2 #4) |
 | `system_kill` | ❌ | `kill_signal:*` (the conversion-probability sweep) |

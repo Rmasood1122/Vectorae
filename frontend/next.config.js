@@ -19,7 +19,7 @@ const nextConfig = {
 
   // ── Image optimization ──────────────────────────────────────────────────
   // Must be unoptimized when output:'export' — no server to transform images.
-  // All images in Victorae are either API-served URLs or CSS backgrounds,
+  // All images in Vectorae are either API-served URLs or CSS backgrounds,
   // so this has no visual impact.
   images: {
     unoptimized: true,

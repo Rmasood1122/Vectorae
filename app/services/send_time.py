@@ -340,7 +340,7 @@ def validate_override(raw: dict) -> dict:
 # --------------------------------------------------------------------------
 
 _PLAN_SYSTEM = (
-    "You are Victorae's send-time planner. From an ideal customer profile you "
+    "You are Vectorae's send-time planner. From an ideal customer profile you "
     "choose, per outreach channel, when in the PROSPECT'S OWN local time a "
     "first-touch message is most likely to be read and answered. Respect the "
     "prospect's working rhythm (service rushes, clinic hours, shift patterns). "

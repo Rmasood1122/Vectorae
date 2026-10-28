@@ -1,4 +1,4 @@
-# Victorae status page — Phase 3
+# Vectorae status page — Phase 3
 
 **Primary location (2026-10-11): https://www.calendarharvest.com/status/** — a public page
 inside the main frontend (`frontend/src/app/status/`), deployed by the existing Vercel project
@@ -22,7 +22,7 @@ the page still loads and says so. If it cannot check something, it says "No data
  browser ──► www.calendarharvest.com/status/   (Vercel project "lead-pilot", static export:
                │                                out/status/index.html, no server code)
                │  on load, then every 30 s while the tab is visible; 8 s timeout
-               └─► Victorae API  GET ${NEXT_PUBLIC_API_URL}/status/public   (Render)
+               └─► Vectorae API  GET ${NEXT_PUBLIC_API_URL}/status/public   (Render)
                      the same checks as GET /health (app/services/health_checks.py)
 ```
 
@@ -33,7 +33,7 @@ the page still loads and says so. If it cannot check something, it says "No data
   A "Check now" button forces a check. One request in flight at a time.
 - **Unreachable:** network error, CORS rejection, 8 s timeout, any non-2xx other than 429
   (for example the host's error page while the service is down), or a body that is not the expected
-  JSON → headline **"Victorae API unreachable — major outage"**, API shown as Major outage,
+  JSON → headline **"Vectorae API unreachable — major outage"**, API shown as Major outage,
   the other components "No data", plus one plain sentence (e.g. "did not answer within 8
   seconds"). Earlier good data is dropped, never shown as current.
 - **429** (rate limited) is not an outage: the last good result stays, marked with its time,
@@ -121,7 +121,7 @@ two lists are separate.
   failure, 5xx page, 429, degraded component, all ok, missing/unknown component, tab hidden →
   no polling → visible → immediate check.
 - `NEXT_PUBLIC_API_URL=https://api.example.test npm run build`: the export contains
-  `out/status/index.html` (title "Victorae Status | Calendarharvest", static "Checking
+  `out/status/index.html` (title "Vectorae Status", static "Checking
   status…" and "No incidents reported."), the API origin is compiled into the page chunk, and
   `out/about/index.html` links `href="/status/"`. (Google Fonts is blocked in the sandbox; the
   build used Next's `NEXT_FONT_GOOGLE_MOCKED_RESPONSES` test hook for the Inter font.)
@@ -156,7 +156,7 @@ site links can stay on `/status/` (Part A) or point at the subdomain; decide the
                ├─► UptimeRobot API v2 getMonitors      read-only key, server-side env only
                │     6 external monitors (section 4): up/down now + 90 daily uptime values
                │
-               └─► Victorae API  GET /status/public   5 s timeout
+               └─► Vectorae API  GET /status/public   5 s timeout
                      the same checks as GET /health (app/services/health_checks.py)
 ```
 
@@ -199,7 +199,7 @@ preview URL (section 10).
 | Component | Normal source | When `/status/public` cannot be read |
 |---|---|---|
 | Website & app | UptimeRobot: Website + App login monitors. All up = Operational; one down = Partial outage; both down = Major outage; otherwise No data | same |
-| API | Backend: DB `SELECT 1` + Redis PING. Both ok = Operational; Redis down = Partial outage; DB down = Major outage | "Victorae - API" monitor: up = Operational, down = Major outage, else No data. Note: "Detail unavailable — status from external monitoring" |
+| API | Backend: DB `SELECT 1` + Redis PING. Both ok = Operational; Redis down = Partial outage; DB down = Major outage | "Vectorae - API" monitor: up = Operational, down = Major outage, else No data. Note: "Detail unavailable — status from external monitoring" |
 | Background processing | Backend: Celery heartbeat age. ≤120 s = Operational; 120–300 s = Degraded; missing, unreadable or Redis down = Major outage | Keyword monitor up = Operational; worker monitor down, or API up but keyword down = Major outage; else No data |
 | AI features | Backend: Anthropic Models API with the gateway key (no model call, no tokens billed). 200 = Operational; 429/5xx/529/timeout = Degraded; 401/403/404 or no key = Major outage | Never derived: No data |
 | Booking pages | Backend: DB reachable and the 3 booking tables queryable = Operational, else Major outage. Also Major outage if the "Booking page" monitor is down | API monitor down or booking monitor down = Major outage; else No data |
@@ -253,9 +253,9 @@ Names must match exactly (case ignored): the site finds monitors by name.
 
 | id | name | type | state |
 |---|---|---|---|
-| 804163676 | Victorae API /health (keyword) | Keyword, alert if `"status":"ok"` does NOT exist | UP for 7 days |
-| 804162778 | Victorae API | HTTP | PAUSED (duplicate) |
-| 804162687 | Victorae API /health | HTTP | PAUSED (duplicate) |
+| 804163676 | Vectorae API /health (keyword) | Keyword, alert if `"status":"ok"` does NOT exist | UP for 7 days |
+| 804162778 | Vectorae API | HTTP | PAUSED (duplicate) |
+| 804162687 | Vectorae API /health | HTTP | PAUSED (duplicate) |
 
 **The active keyword monitor cannot detect the outage it was made for.** A degraded `/health`
 body still contains `"status":"ok"` inside its healthy sub-components:
@@ -376,7 +376,7 @@ processing showed "No data" rather than Operational. Data layer alone (`npm run 
 API down):
 ```
 sources        uptimerobot=ok backend=unreachable
-DATA NOTICE    Detail unavailable: Victorae's own component checks could not be reached. ...
+DATA NOTICE    Detail unavailable: Vectorae's own component checks could not be reached. ...
 BANNER         Major outage
   Website & app          Operational           source=external
   API                    Major outage          source=external Detail unavailable — status from external monitoring
@@ -390,7 +390,7 @@ BANNER         Major outage
 ```
 notice: Status data unavailable — External monitoring is not configured for this page, so uptime
         history is missing and the Website & app component cannot be checked. The other
-        components show Victorae's own checks.
+        components show Vectorae's own checks.
 Website & app = unknown (No data); API, Background processing, Booking pages = operational
 (backend); AI features = major_outage (backend); uptime bars rendered: 0
 ```

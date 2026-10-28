@@ -147,7 +147,7 @@ DEFAULTS: dict[str, tuple[Any, str]] = {
     # Part 1 Feature 5 -- the human review queue for high-risk sends.
     # Each trigger is separately switchable because which ones are useful
     # depends entirely on the ICP. In particular: if the people you sell to
-    # ARE founders and owners (Victorae's own ICP is boutique agency
+    # ARE founders and owners (Vectorae's own ICP is boutique agency
     # owners), leaving the VIP trigger on puts every message in the queue and
     # a queue nobody can finish is a queue nobody reads. Turn it off there.
     "send_review_enabled": (True, "Hold high-risk messages for explicit human "

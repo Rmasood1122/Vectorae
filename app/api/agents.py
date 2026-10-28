@@ -1,4 +1,4 @@
-"""Victorae agents: five advisory agents and the master supervisor.
+"""Vectorae agents: five advisory agents and the master supervisor.
 
 GET   /agents                       the master's view: every agent, which core
                                     runs it (native C++/Rust or the Python

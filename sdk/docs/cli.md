@@ -1,4 +1,4 @@
-# Victorae CLI Reference
+# Vectorae CLI Reference
 
 The `clienthunter` CLI is installed by `pip install clienthunter`.  It is a
 window into the cloud backend — all intelligence (research pipeline, outreach,
@@ -23,7 +23,7 @@ clienthunter init
 **Example session:**
 
 ```
-─── Victorae — Setup ───────────────────────────────
+─── Vectorae — Setup ───────────────────────────────
 Connect to the hosted cloud backend at clienthunter.ai? [Y/n]: Y
 
 Backend API URL [https://api.clienthunter.ai]:
@@ -64,7 +64,7 @@ clienthunter run [OPTIONS]
 **Interactive example:**
 
 ```
-─── Victorae — New Campaign ────────────────────────
+─── Vectorae — New Campaign ────────────────────────
 Product / skill name: Project Pulse
 Description: Real-time project tracking for remote engineering teams
 Type (product, skill) [product]:
@@ -84,7 +84,7 @@ Client #1
 
 Following pipeline (Ctrl-C to detach — pipeline keeps running)
 
-╭─ Victorae — Pipeline ────────────────────────────────────────╮
+╭─ Vectorae — Pipeline ────────────────────────────────────────╮
 │ Strategy 9b2e7f4a-…  Flow: with_clients  Status: researching     │
 │                                                                   │
 │ STRATEGY Pipeline (9/72 steps)                                    │

@@ -18,7 +18,7 @@ THE FOUR INPUTS
              a mailbox suddenly sending four times its recent average is the
              single most reliable precursor of a reputation problem
 
-HONESTY ABOUT THE COMPLAINT RATE. Victorae has no feedback-loop (FBL) or
+HONESTY ABOUT THE COMPLAINT RATE. Vectorae has no feedback-loop (FBL) or
 Postmaster Tools integration, so a true "marked as spam" signal is not
 available. `complaint_rate` is a documented PROXY: unsubscribes plus replies
 asking to stop, over sends in the window. It correlates with complaints and it
@@ -574,6 +574,6 @@ def status(db: Session, user_id) -> dict:
         "thresholds": {"throttle_below": THROTTLE_BELOW, "pause_below": PAUSE_BELOW,
                        "throttle_fraction": THROTTLE_FRACTION},
         "complaint_note": ("Complaint rate is a proxy (unsubscribes plus replies asking "
-                           "to stop) — Victorae has no feedback-loop feed."),
+                           "to stop) — Vectorae has no feedback-loop feed."),
         "mailboxes": items,
     }

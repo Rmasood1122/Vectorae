@@ -31,11 +31,11 @@ sources:
 
 # Replies and the unified inbox
 
-When a prospect replies by email, WhatsApp or LinkedIn, Victorae stores the reply, classifies it, and changes what happens next in their sequence. By default Victorae does not reply to a person automatically; the optional Reply Copilot is the exception (see below). The **Inbox** gathers every reply into one conversation per prospect so you can see who is waiting for an answer.
+When a prospect replies by email, WhatsApp or LinkedIn, Vectorae stores the reply, classifies it, and changes what happens next in their sequence. By default Vectorae does not reply to a person automatically; the optional Reply Copilot is the exception (see below). The **Inbox** gathers every reply into one conversation per prospect so you can see who is waiting for an answer.
 
-## How does Victorae pick up replies?
+## How does Vectorae pick up replies?
 
-- **Email:** Victorae checks your connected Gmail accounts for new replies on a schedule. The default is every 30 minutes; your deployment can change this.
+- **Email:** Vectorae checks your connected Gmail accounts for new replies on a schedule. The default is every 30 minutes; your deployment can change this.
 - **WhatsApp and LinkedIn:** replies arrive through the providers' webhooks.
 
 An email reply is matched to a prospect first by the email thread, then by the sender's address. Matching only looks at prospects that belong to the account whose Gmail received the reply, so another customer's reply can never change your leads.
@@ -54,7 +54,7 @@ If the AI's answer cannot be read, the reply is treated as a **question**. That 
 
 A reply on one channel stops the whole sequence, including steps on other channels, because stopping applies to the prospect's enrollment, not to one channel.
 
-## Does Victorae answer replies for me?
+## Does Vectorae answer replies for me?
 
 Not by default. Replies are classified and routed, and a person writes the answer. The exception is Reply Copilot, which is off unless your administrator turns it on: it drafts an answer that a person approves before it is sent, and only if automatic sending is also allowed can an answer go out without a person. See [Reply Copilot and reply classification](38-reply-copilot-and-classification.md).
 
@@ -65,7 +65,7 @@ What it does do is suggest. A second AI pass reads each reply and decides what y
 - **Not now** – a timing issue, not a rejection.
 - **Wrong person** – they are not the buyer or name someone else.
 
-It writes a suggested draft of under 150 words onto the reply. The draft is never sent by Victorae; you read it, edit it, and send your answer yourself. For a buying signal, the sequence is lined up so that the next step would be step 3, but its status is not changed, so nothing sends until a person acts.
+It writes a suggested draft of under 150 words onto the reply. The draft is never sent by Vectorae; you read it, edit it, and send your answer yourself. For a buying signal, the sequence is lined up so that the next step would be step 3, but its status is not changed, so nothing sends until a person acts.
 
 ## What is the positive reply label?
 
@@ -77,7 +77,7 @@ If the AI call fails, the reply is left **unclassified** instead of being guesse
 
 A reply labelled **not now** creates a re-engagement plan that records their reason in their own words and a return date. If they named a date, that date is used. Otherwise the wait depends on the reason: 60 days for timing or a project, 90 for budget or headcount, 120 for priority, 180 for a contract, and the configured default (90 days) when no reason is given.
 
-When the date arrives, Victorae first re-checks that coming back is still appropriate. If the lead has since been dropped (for example after a bounce), disqualified, closed as won or lost, moved on to a meeting, opportunity or proposal, or put on the suppression list, the plan is cancelled with the reason recorded. Otherwise you are notified. Sending a message automatically at that point is off by default. If your administrator turns it on, a return message is scheduled on the prospect's earlier sequence and goes through every normal send check (suppression, exclusions, send window, daily cap and the review queue). It is allowed past the stop that the "not now" reply caused, and only that stop. It is cancelled instead if the prospect has written again since, if the plan was cancelled, if automatic sending was switched off in the meantime, or if coming back is no longer appropriate. Until the message goes out, you can still cancel the plan (**Never** on the lead's page); that cancels the message too. Sending it does not restart the old sequence.
+When the date arrives, Vectorae first re-checks that coming back is still appropriate. If the lead has since been dropped (for example after a bounce), disqualified, closed as won or lost, moved on to a meeting, opportunity or proposal, or put on the suppression list, the plan is cancelled with the reason recorded. Otherwise you are notified. Sending a message automatically at that point is off by default. If your administrator turns it on, a return message is scheduled on the prospect's earlier sequence and goes through every normal send check (suppression, exclusions, send window, daily cap and the review queue). It is allowed past the stop that the "not now" reply caused, and only that stop. It is cancelled instead if the prospect has written again since, if the plan was cancelled, if automatic sending was switched off in the meantime, or if coming back is no longer appropriate. Until the message goes out, you can still cancel the plan (**Never** on the lead's page); that cancels the message too. Sending it does not restart the old sequence.
 
 ## How does the Inbox work?
 

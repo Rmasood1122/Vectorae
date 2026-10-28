@@ -68,10 +68,10 @@ def export_trail(format: str = Query(default="json", pattern="^(json|pdf)$"),  #
     stamp = report["generated_at"][:10]
     headers = {"Cache-Control": "private, no-store"}
     if format == "pdf":
-        headers["Content-Disposition"] = f'attachment; filename="victorae-audit-{stamp}.pdf"'
+        headers["Content-Disposition"] = f'attachment; filename="vectorae-audit-{stamp}.pdf"'
         return Response(content=audit_trail.render_pdf(report), media_type="application/pdf",
                         headers=headers)
-    headers["Content-Disposition"] = f'attachment; filename="victorae-audit-{stamp}.json"'
+    headers["Content-Disposition"] = f'attachment; filename="vectorae-audit-{stamp}.json"'
     return JSONResponse(content=report, headers=headers)
 
 

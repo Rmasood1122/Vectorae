@@ -63,7 +63,7 @@ def start_audit(
         "prompt": prompt,
         "answer": answer,
         "mode": mode,
-        "title": "Victorae draft audit",
+        "title": "Vectorae draft audit",
         "providers": providers,
         "consentToSendData": consent_to_send_data,
     })

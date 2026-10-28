@@ -2,7 +2,7 @@
   "name": "leadpilot-status-page",
   "version": "1.0.0",
   "private": true,
-  "description": "status.calendarharvest.com - public status page for Victorae (docs/program/STATUS_PAGE.md)",
+  "description": "status.calendarharvest.com - public status page for Vectorae (docs/program/STATUS_PAGE.md)",
   "type": "module",
   "engines": {
     "node": ">=22.18"

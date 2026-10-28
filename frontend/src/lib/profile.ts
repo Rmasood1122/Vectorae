@@ -38,9 +38,9 @@ export const planLabel = (plan: string): string => LABELS[plan] ?? plan;
 /** Enterprise is the top tier: there is nothing to upgrade to. */
 export const canUpgrade = (plan: string): boolean => plan !== "enterprise";
 
-/** File name for the account export, e.g. victorae-account-export-2026-10-10.json */
+/** File name for the account export, e.g. vectorae-account-export-2026-10-10.json */
 export function accountExportFilename(now: Date = new Date()): string {
-  return `victorae-account-export-${now.toISOString().slice(0, 10)}.json`;
+  return `vectorae-account-export-${now.toISOString().slice(0, 10)}.json`;
 }
 
 export function exportErrorMessage(err: unknown): string {
@@ -76,7 +76,7 @@ export const DELETE_ACCOUNT_COPY = {
   ],
   outside: [
     "Stripe keeps its own customer record of you (name, email, payment details).",
-    "Access you gave Victorae inside Google, HubSpot, Salesforce or Slack is not revoked on " +
+    "Access you gave Vectorae inside Google, HubSpot, Salesforce or Slack is not revoked on " +
       "their side; remove it there.",
     "Cached answers from contact-finding providers expire within 30 days; hosting logs with IP " +
       "addresses are kept for the period the hosting provider sets.",

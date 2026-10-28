@@ -4,7 +4,7 @@
  *  rotates across, each with today's usage against its daily ceiling.
  *
  *  Connecting goes through Unipile's hosted page: the user signs in to
- *  LinkedIn THERE and Victorae receives only an account id, never a LinkedIn
+ *  LinkedIn THERE and Vectorae receives only an account id, never a LinkedIn
  *  password. Linking an existing Unipile account id is the fallback for
  *  deployments where the hosted callback cannot reach the API. */
 

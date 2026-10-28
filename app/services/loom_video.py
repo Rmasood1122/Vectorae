@@ -12,7 +12,7 @@ record it. So "auto-generate a video" means what it honestly can:
   2. The user records it in Loom and pastes the share link on the lead page.
      The lead is marked `recorded`.
   3. Sequence step 2 for that lead then includes a call to action linking to
-     a Victorae-hosted page -- /v?t=<token> -- pre-populated with the lead's
+     a Vectorae-hosted page -- /v?t=<token> -- pre-populated with the lead's
      first name and company, which embeds the video.
 
 A step 2 that renders before a video exists gets NO video CTA. Sending a link
@@ -42,7 +42,7 @@ PURPOSE = "loom_video"
 _LOOM_ID = re.compile(r"loom\.com/(?:share|embed)/([a-f0-9]{32})", re.I)
 
 SYSTEM = (
-    "You are Victorae's video script writer. Write a script the seller will "
+    "You are Vectorae's video script writer. Write a script the seller will "
     "read while recording a 60-90 second personal Loom video for ONE "
     "prospect. Respond with ONLY a JSON object: {\"title\": \"...\", "
     "\"script\": \"...\", \"on_screen\": \"what to show while talking\"}. "
