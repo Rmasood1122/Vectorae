@@ -1,4 +1,4 @@
-"""Sitemap and robots.txt for the Victorae marketing site.
+"""Sitemap and robots.txt for the Vectorae marketing site.
 
 Serves the LIVE versions of the two files Google reads first. The static
 export (app/services/website_builder.py::export_static_site) writes its own

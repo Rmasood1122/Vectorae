@@ -42,7 +42,7 @@ Table: `tutorial_catalogue`. Run in the Neon SQL editor.
 
 | Placeholder  | Slug                                 | Title |
 |--------------|--------------------------------------|-------|
-| REPLACE_ME_1 | `welcome-to-leadpilot`               | Welcome to Victorae — Your First 10 Minutes |
+| REPLACE_ME_1 | `welcome-to-leadpilot`               | Welcome to Vectorae — Your First 10 Minutes |
 | REPLACE_ME_2 | `setting-up-your-icp`                | Setting Up Your ICP — Who You Are Targeting |
 | REPLACE_ME_3 | `connecting-your-linkedin-account`   | Connecting Your LinkedIn Account |
 | REPLACE_ME_4 | `reading-your-pipeline-health-score` | Reading Your Pipeline Health Score |
@@ -100,6 +100,6 @@ ORDER BY sort_order;
 ## The nine older drafts
 
 Migration 0018 created nine earlier tutorials, such as "Getting Started with
-Victorae" and "Understanding Your ICP". They are still in the table,
+Vectorae" and "Understanding Your ICP". They are still in the table,
 **unpublished**, and invisible to users. The seed script does not touch them.
 Delete them from `/admin/tutorials` if they will not be used.

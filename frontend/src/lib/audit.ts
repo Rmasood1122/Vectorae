@@ -53,5 +53,5 @@ export function shortHash(hash: string | null | undefined, length = 12): string 
 }
 
 export function exportFilename(format: "json" | "pdf", now: Date = new Date()): string {
-  return `victorae-audit-${now.toISOString().slice(0, 10)}.${format}`;
+  return `vectorae-audit-${now.toISOString().slice(0, 10)}.${format}`;
 }

@@ -5,7 +5,7 @@ Since the FCC's **February 2024** declaratory ruling, AI-generated voices are an
 "artificial or prerecorded voice" under the US **TCPA**. Calling a US mobile
 number with one — or leaving a prerecorded voicemail — requires the called
 party's **prior express consent** (written consent for telemarketing). Other
-countries have their own rules. Victorae therefore:
+countries have their own rules. Vectorae therefore:
 
 - ships with calling **off** (`phone_calling_enabled`, Admin › System Settings);
 - **requires recorded consent per lead** (`phone_require_consent`, default on).

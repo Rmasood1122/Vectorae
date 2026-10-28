@@ -14,7 +14,7 @@ EMAIL="${2:?Usage: $0 <domain> <email>}"
 API_DOMAIN="api.${DOMAIN}"
 
 echo "================================================================"
-echo " Victorae — SSL Certificate Setup"
+echo " Vectorae — SSL Certificate Setup"
 echo " Domain:     ${DOMAIN}"
 echo " API Domain: ${API_DOMAIN}"
 echo " Email:      ${EMAIL}"

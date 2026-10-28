@@ -7,11 +7,11 @@ import { describe, expect, it } from "vitest";
  *  were false: outreach is sent automatically (app/workers/outreach_tasks.py),
  *  not by human senders; the research pipeline runs per campaign strategy
  *  (app/pipeline/engine.py), not per prospect; and the brand is
- *  Calendarharvest (calendarharvest.com), not "Clanderharvest". If one of them
+ *  domain is calendarharvest.com, not "clanderharvest". If one of them
  *  comes back, this fails and names the file. */
 
 const BANNED: { phrase: RegExp; why: string }[] = [
-  { phrase: /clanderharvest/i, why: "typo of Calendarharvest" },
+  { phrase: /clanderharvest/i, why: "typo of the calendarharvest.com domain" },
   { phrase: /not\s+bots/i, why: "outreach is sent automatically" },
   { phrase: /human\s+senders?/i, why: "outreach is sent automatically" },
   { phrase: /on\s+every\s+prospect/i, why: "research runs per campaign strategy" },
@@ -63,10 +63,12 @@ describe("website copy matches the code (D1)", () => {
     });
   }
 
-  it("the brand is spelled Calendarharvest in titles and the footer", () => {
-    expect(readFileSync("src/components/Footer.tsx", "utf8")).toContain("Calendarharvest");
+  it("the brand is Vectorae in titles and the footer names the operator", () => {
+    expect(readFileSync("src/components/Footer.tsx", "utf8")).toContain("Vectorae is operated by Rehan Masood.");
     for (const page of PUBLIC_PAGES.filter((p) => p.endsWith("page.tsx"))) {
-      expect(readFileSync(page, "utf8")).toMatch(/title: "[^"]*\| Calendarharvest"/);
+      const src = readFileSync(page, "utf8");
+      expect(src).toMatch(/title: "[^"]*Vectorae[^"]*"/);
+      expect(src).not.toMatch(/title: "[^"]*Calendarharvest/);
     }
   });
 });

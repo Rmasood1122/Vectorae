@@ -136,7 +136,7 @@ def register(server) -> None:
         name="list_leads",
         title="List leads",
         description=(
-            "Lists the signed-in user's Victorae leads (prospects), one page at a "
+            "Lists the signed-in user's Vectorae leads (prospects), one page at a "
             "time, with status and F-P-T-A score. Optional filters: strategy_id, "
             "status, min_fpta (0-100) and search (matches name, company, email or "
             "title). Use offset/limit (limit 1-50) to page; `has_more` says whether "
@@ -196,7 +196,7 @@ def register(server) -> None:
         title="Get claim verification",
         description=(
             "Returns the claim-verification log for one lead: each factual claim "
-            "Victorae checked in a drafted message, the verdict (verified, "
+            "Vectorae checked in a drafted message, the verdict (verified, "
             "stripped or rewritten), how it was checked, and the evidence. "
             "Newest first; limit 1-50."),
         annotations=read_only("Get claim verification"),

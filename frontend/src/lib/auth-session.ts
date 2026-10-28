@@ -1,5 +1,5 @@
 /**
- * auth-session.ts — Victorae
+ * auth-session.ts — Vectorae
  *
  * JWT access + refresh token management.
  *

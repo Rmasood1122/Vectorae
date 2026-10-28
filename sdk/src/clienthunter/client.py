@@ -1,4 +1,4 @@
-"""Victorae sync HTTP client.
+"""Vectorae sync HTTP client.
 
 Architecture:
     ``ClientHunter`` is the entry point.  It owns an ``httpx.Client`` and
@@ -661,7 +661,7 @@ class _IntegrationsResource:
     def gmail_auth_url(self, user_email: str) -> str:
         """Get the Gmail OAuth authorisation URL.
 
-        Open this URL in a browser to grant Victorae access to send email
+        Open this URL in a browser to grant Vectorae access to send email
         on behalf of the user.  The OAuth callback is handled by the backend.
 
         Args:
@@ -682,7 +682,7 @@ class _IntegrationsResource:
 
 
 class ClientHunter:
-    """Typed sync client for the Victorae API.
+    """Typed sync client for the Vectorae API.
 
     Usage (with stored config)::
 

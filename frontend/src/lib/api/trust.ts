@@ -87,7 +87,7 @@ export interface MailboxHealth {
   auth: { spf: boolean | null; dkim: boolean | null; dmarc: boolean | null;
           dmarc_policy: string | null };
   complaint_rate: number | null;
-  /** Always "proxy" today — Victorae has no feedback-loop feed. */
+  /** Always "proxy" today — Vectorae has no feedback-loop feed. */
   complaint_source: string;
   bounce_rate: number | null;
   sends_today: number;

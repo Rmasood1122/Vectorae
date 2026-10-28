@@ -260,7 +260,7 @@ describe("reduceStatus", () => {
   it("unreachable -> major outage headline; API shown down, the rest 'No data'", () => {
     const v = reduceStatus(null, { kind: "unreachable", reason: "timeout" }, NOW);
     expect(v.overall).toBe("unreachable");
-    expect(OVERALL_HEADLINES[v.overall]).toBe("Victorae API unreachable — major outage");
+    expect(OVERALL_HEADLINES[v.overall]).toBe("Vectorae API unreachable — major outage");
     expect(v.reason).toBe("timeout");
     expect(v.components.find((c) => c.id === "api")?.status).toBe("major_outage");
     expect(v.components.filter((c) => c.id !== "api").every((c) => c.status === "unknown")).toBe(true);

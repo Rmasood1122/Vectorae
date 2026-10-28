@@ -1,8 +1,8 @@
-# Victorae — USA Ideal Customer Profile (ICP)
+# Vectorae — USA Ideal Customer Profile (ICP)
 
 **Status:** research/strategy deliverable. No application code, tests, or deploy
 config touched by this document.
-**Scope:** Victorae's own go-to-market (not a customer's ICP run through the
+**Scope:** Vectorae's own go-to-market (not a customer's ICP run through the
 product). Target market: USA. Founder based in Pakistan.
 
 ---
@@ -26,14 +26,14 @@ original "commercial B2B service contractors" framing assumed:
    claim isn't "we're affordable and ZoomInfo isn't" (true but not the live
    competitive question for this buyer) — it's "Apollo gives you a database
    and a sequencer, you still have to build the list, write the sequence, and
-   run it yourself; Victorae does the research, targeting, and outreach
+   run it yourself; Vectorae does the research, targeting, and outreach
    generation for you." That's a done-for-you vs. self-serve distinction, not
    a price distinction. This matters for messaging (Section 6).
 3. **Staffing/recruiting is more competitively crowded than the earlier
    framing assumed.** Multiple point solutions already sell specifically into
    staffing agency BD (Pin, Overloop, agency-leads.com, Instalent, and others
    surfaced repeatedly in research), several with staffing-specific features
-   (hiring-signal targeting, VMS/preferred-supplier awareness) Victorae
+   (hiring-signal targeting, VMS/preferred-supplier awareness) Vectorae
    doesn't have. This doesn't disqualify the niche, but it changes its rank
    (see Section 1).
 4. **Commercial HVAC is a minority slice of "HVAC," and most HVAC-industry
@@ -73,16 +73,16 @@ cleaning company).
 
 | Rank | Sub-niche | Why |
 |---|---|---|
-| 1 | **Small marketing/web-dev/design agencies** | Best combination of: buyer already thinks in "channels and messaging" terms (fastest to understand what Victorae does), documented existing spend on adjacent tools (CRM, lead-gen software — Section 4), and a single owner-operator decision maker. Weakness: this buyer is the most likely to want to DIY it themselves rather than pay for a tool, since GTM is literally their trade. |
+| 1 | **Small marketing/web-dev/design agencies** | Best combination of: buyer already thinks in "channels and messaging" terms (fastest to understand what Vectorae does), documented existing spend on adjacent tools (CRM, lead-gen software — Section 4), and a single owner-operator decision maker. Weakness: this buyer is the most likely to want to DIY it themselves rather than pay for a tool, since GTM is literally their trade. |
 | 2 | **Commercial cleaning/janitorial — but only the "at scale" tier, not the median business** | The category is enormous (<cite index="13-1">the U.S. janitorial services market is worth $112 billion, with over 1 million cleaning businesses as of 2026</cite>) but the *median* firm is far too small to be a buyer: <cite index="15-1">the average janitorial business employs just 1.9 people</cite>. The real target inside this sub-niche is the minority of firms that have scaled past solo/family operation into the 10–50 employee band with recurring commercial contracts — a smaller pool than the headline market size implies, but with clear budget (contracts run $500–$2,000/year just for basic maintenance work, so B2B sales relationships have real recurring value) (assumption on budget-to-value math, unverified). |
 | 3 | **Small accounting/immigration/law consultancies** | Not independently researched in this pass beyond the general assumption from the original framing — flagged here as **(assumption, unverified)** rather than ranked with confidence. Plausibly a good fit (single decision-maker, high-value clients, referral-dependent) but needs its own research pass before being used in outreach; do not treat this rank as validated the way ranks 1, 2, and 4 are. |
-| 4 | **B2B staffing/recruiting agencies** | Downgraded from the original framing. The buyer profile is genuinely strong — <cite index="26-1">agency owners run structured discovery calls and actively want to filter on hiring signals, existing vendor mix, and trigger events</cite> — but the competitive water is already crowded with staffing-specific point solutions (Pin, Overloop, Instalent, agency-leads.com among others found in this research), several offering hiring-signal and VMS-aware features Victorae does not have. Fit is real, differentiation is harder, and expect a more skeptical, more-shopped-around buyer. |
+| 4 | **B2B staffing/recruiting agencies** | Downgraded from the original framing. The buyer profile is genuinely strong — <cite index="26-1">agency owners run structured discovery calls and actively want to filter on hiring signals, existing vendor mix, and trigger events</cite> — but the competitive water is already crowded with staffing-specific point solutions (Pin, Overloop, Instalent, agency-leads.com among others found in this research), several offering hiring-signal and VMS-aware features Vectorae does not have. Fit is real, differentiation is harder, and expect a more skeptical, more-shopped-around buyer. |
 | 5 | **Commercial HVAC / facilities maintenance** | Lowest confidence rank. <cite index="31-1">The majority of HVAC firms are small, family-owned businesses or sole proprietorships, typically owner-operated with fewer than five employees and annual revenues under $1 million</cite> — meaning most of the industry is below the target size band before even separating commercial from residential work. Commercial-only HVAC/facilities firms in the right size band likely exist and likely fit, but the available market data doesn't segment cleanly enough to size or characterize them with confidence here — this needs its own targeted research pass, not inference from general HVAC statistics. |
 
 ### Geographic concentration
 
 No sub-niche-specific geographic research was done in this pass beyond one
-data point: <cite index="15-1">janitorial business formation is heavily state-concentrated — New York alone is a $9.7 billion janitorial market with about 71,014 businesses, and Illinois supports about 46,042 janitorial businesses</cite>. Facilities/commercial-services firms in general are plausibly concentrated in major metros (assumption, unverified — not independently confirmed for this document). Given Victorae has no existing US footprint, geographic concentration is not yet a targeting lever worth building into outreach — it's more useful once outreach starts producing results and a pattern emerges.
+data point: <cite index="15-1">janitorial business formation is heavily state-concentrated — New York alone is a $9.7 billion janitorial market with about 71,014 businesses, and Illinois supports about 46,042 janitorial businesses</cite>. Facilities/commercial-services firms in general are plausibly concentrated in major metros (assumption, unverified — not independently confirmed for this document). Given Vectorae has no existing US footprint, geographic concentration is not yet a targeting lever worth building into outreach — it's more useful once outreach starts producing results and a pattern emerges.
 
 ---
 
@@ -104,7 +104,7 @@ thesis holds up.
 **Technical sophistication — flag for product, not just marketing:** this
 buyer runs field operations, contracts, and (for agencies) client campaigns —
 they are not naive users, but they are also not going to configure API
-integrations or tune a sequencer's send logic themselves. <cite index="43-1">Expandi, a comparable outbound automation tool, is priced at $99/month for the software alone, with the explicit caveat that this doesn't include "the person operating it."</cite> That gap — tool cost vs. operating cost — is exactly where Victorae's
+integrations or tune a sequencer's send logic themselves. <cite index="43-1">Expandi, a comparable outbound automation tool, is priced at $99/month for the software alone, with the explicit caveat that this doesn't include "the person operating it."</cite> That gap — tool cost vs. operating cost — is exactly where Vectorae's
 done-for-you positioning has to land for this buyer, and it means onboarding
 needs to minimize configuration decisions rather than offer them. This is a
 product/onboarding note, not just a marketing one.
@@ -136,13 +136,13 @@ messaging copy.
 
 - General-purpose CRM: <cite index="41-1">$7 to $60/month for CRM software, $10 to $209/month for marketing automation, $56–$99/month for lead scraping tools</cite>.
 - Self-serve prospecting/sequencing (the closest existing substitute for
-  Victorae): <cite index="50-1">Apollo starts at $49 per seat per month, self-serve, with no contract</cite>; <cite index="43-1">Expandi starts at $99/month for the software layer alone</cite>.
+  Vectorae): <cite index="50-1">Apollo starts at $49 per seat per month, self-serve, with no contract</cite>; <cite index="43-1">Expandi starts at $99/month for the software layer alone</cite>.
 - Agency/DFY lead generation (the other closest substitute — paying someone
-  else to do the work, which is the model closer to Victorae's positioning):
+  else to do the work, which is the model closer to Vectorae's positioning):
   <cite index="44-1">small businesses and startups typically spend $500 to $2,500 per month</cite> on budget-conscious lead-gen approaches, while <cite index="43-1">full agency retainers run $3,000 to $25,000 per month</cite> — the retainer end is well above this buyer's realistic ceiling, but the $500–$2,500/month band is squarely relevant.
 - Enterprise data tools this buyer will **not** buy: <cite index="52-1">ZoomInfo's Professional tier runs approximately $14,995/year on a mandatory annual contract</cite>, confirming they're out of reach and out of relevance for this ICP.
 
-**Sanity-check against Victorae's stated pricing tiers ($49–99 / $199–299 /
+**Sanity-check against Vectorae's stated pricing tiers ($49–99 / $199–299 /
 $499+):**
 
 - The **$49–99 tier lines up well** against this buyer's existing tool
@@ -151,7 +151,7 @@ $499+):**
 - The **$199–299 tier is defensible but is the tier that needs the clearest
   differentiation story**, because it sits above self-serve tool pricing and
   into the low end of "budget-conscious DFY lead gen" territory
-  ($500–$2,500/month). At this price the buyer will compare Victorae against
+  ($500–$2,500/month). At this price the buyer will compare Vectorae against
   a cheap freelancer or a small local lead-gen shop, not against Apollo — the
   pitch has to be "cheaper and faster than a freelancer, more consistent than
   referrals," not "cheaper than ZoomInfo."
@@ -162,7 +162,7 @@ $499+):**
   above, none of which cluster anywhere near that level for a business this
   size. $499+ is priced closer to where a small DFY retainer starts
   ($3,000–$25,000/month range), which suggests that tier is aimed at a buyer
-  who wants meetings delivered, not a subscription — if Victorae sells that
+  who wants meetings delivered, not a subscription — if Vectorae sells that
   tier into this ICP, it likely needs to be sold and scoped as a
   quasi-managed service (with a human-reviewed component, consistent with
   the codebase's existing verification-loop pattern) rather than as "the
@@ -190,7 +190,7 @@ above rather than sourced from a survey of this specific buyer segment):
   <cite index="41-1">buying lead lists and cold data is not advised due to its high failure rate from dated data and non-compliant risk</cite>).
 - Doesn't believe a tool can understand their specific niche (a commercial
   cleaning company's buyer language and a staffing agency's buyer language
-  are genuinely different) — this is where Victorae's per-ICP research and
+  are genuinely different) — this is where Vectorae's per-ICP research and
   pattern-based tactic classification (channels/motion/cadence, see Section
   7) is a real answer, not just marketing spin, since the product is
   architecturally built to differentiate by niche rather than templating one
@@ -234,7 +234,7 @@ SaaS copy:
    (<cite index="22-1">around $25/lead</cite>) but capped in volume.
 2. **"You already pay for a CRM you don't have time to fill."** Targets the
    buyer who already owns a $7–60/month CRM (Section 4) that sits mostly
-   empty because nobody's feeding it new prospects — reframes Victorae as
+   empty because nobody's feeding it new prospects — reframes Vectorae as
    the missing input to a tool they already bought, not a new category of
    spend.
 3. **"Not another database you have to work — a service that works it for
@@ -300,8 +300,8 @@ since a real Flow 1 seed would carry both.
 ```
 
 `flow_type` is set to `no_clients` (Flow 2) deliberately: this is a
-prospective seed for Victorae's own outbound into a new ICP, not a strategy
-anchored on a proven past client — Victorae doesn't have a signed marketing-
+prospective seed for Vectorae's own outbound into a new ICP, not a strategy
+anchored on a proven past client — Vectorae doesn't have a signed marketing-
 agency client yet to anchor a Flow 1 (`with_clients`) strategy on. Once a
 first agency client closes, the `past_client_pattern` block above should be
 replaced with real, stated values (not the placeholder/assumption values
@@ -314,7 +314,7 @@ shown), and a Flow 1 strategy becomes possible for this niche.
 Target small marketing, web-design, or digital agencies in the US with
 roughly 8–25 employees — not commercial cleaning or staffing first, even
 though those were the original front-runners. Agencies already think in
-"channels and messaging" terms so they'll get what Victorae does fastest,
+"channels and messaging" terms so they'll get what Vectorae does fastest,
 they already spend money on adjacent tools (a CRM, maybe Apollo) so a new
 subscription isn't a new budget category, and staffing is more crowded with
 competing point-solutions than assumed going in. Lead with LinkedIn and cold

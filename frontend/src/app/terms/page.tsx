@@ -14,7 +14,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "Terms of Service for Victorae | Calendarharvest",
+  title: "Vectorae Terms of Service",
   description: `The terms that govern your use of ${PRODUCT_FULL_NAME}.`,
   robots: "index, follow",
   ...canonicalMeta("/terms/"),
@@ -35,7 +35,7 @@ export default function TermsPage() {
 
       <main className="px-6 py-24">
         <article className="mx-auto max-w-3xl">
-          <h1 className="text-4xl font-bold tracking-tight">Terms of Service</h1>
+          <h1 className="text-4xl font-bold tracking-tight">Vectorae Terms of Service</h1>
           <p className="mt-4 text-sm text-gray-400">Effective date: September 13, 2026</p>
 
           <Section title="1. Acceptance of terms">
@@ -209,7 +209,7 @@ function SiteNav() {
     <header className="border-b border-white/10 px-6 py-5">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3">
         <Link href="/" className="text-lg font-bold text-white">
-          Victorae
+          Vectorae
         </Link>
         <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
           <li><Link href="/how-it-works" className="hover:text-white">How it Works</Link></li>

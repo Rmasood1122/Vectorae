@@ -1,4 +1,4 @@
-# Brand allowlist: every old product name (LeadPilot, ClientHunter, Vectorae) that
+# Brand allowlist: every old product name (LeadPilot, ClientHunter, Victorae) that
 # stays in the repository, and why. Checked by scripts/gate/brand_lint.py (quick
 # gate + tests/test_brand_lint.py in CI). Format, one entry per line:
 #     <path glob> | <regex that contains the occurrence> | <B: or C:> <reason>
@@ -6,14 +6,14 @@
 #     integrations, installed apps, in-flight tasks, URLs, deploy config).
 # C = a founder decision (legal text, third-party names, dated records).
 # Keep each regex as narrow as the identifier. Classification and evidence:
-# docs/program/brand/rename-inventory.md; decisions: docs/program/DECISIONS.md VIC-*.
+# docs/program/brand/rename-inventory.md; decisions: docs/program/DECISIONS.md VIC-*, VEC-NAME.
 
 # --- Program records (C: founder decision VIC-KEEP, 2026-10-20) ---------------
 docs/program/brand/* | .* | C: rename inventory and founder actions: they list the old names by design
 docs/program/ai/* | .* | C: Victorae program AI inventory: quotes old prompts and code as they were
 docs/program/plans/* | .* | C: dated plans; renaming would falsify the record (VIC-KEEP)
 docs/program/fixes/* | .* | C: dated defect sweeps (VIC-KEEP)
-docs/program/ai-visibility/* | .* | C: dated GEO round of 2026-10-13..16 built on the old name; to be redone for Victorae (founder action), not find-and-replaced
+docs/program/ai-visibility/* | .* | C: dated GEO round of 2026-10-13..16 built on the old name; to be redone for Vectorae (founder action), not find-and-replaced
 docs/program/STAR_PROMPT.md | .* | C: verbatim prompt of 2026-10-10 (VIC-KEEP)
 docs/program/STAR_VICTORAE.md | .* | C: verbatim program prompt; names the old brands by design
 docs/program/BASELINE.md | .* | C: dated Phase 0 baseline of 2026-10-10 (VIC-KEEP)
@@ -21,12 +21,9 @@ docs/program/PROGRESS.md | .* | C: dated progress log (VIC-KEEP)
 docs/program/DECISIONS.md | .* | C: dated founder decisions, some quoting the old names (VIC-KEEP)
 docs/program/status.json | .* | C: dated program state record (VIC-KEEP)
 docs/program/help-center-factcheck.md | .* | C: dated fact-check log quoting article sentences as checked (VIC-KEEP)
-docs/program/help-center-discoveries.md | .* | C: dated defect log (VIC-KEEP)
 docs/program/help-center-eval.md | .* | C: dated eval record (VIC-KEEP)
-docs/FINDINGS_REGISTER.md | .* | C: dated audit register (VIC-KEEP)
 docs/FULL_PRODUCT_AUDIT.md | .* | C: dated September audit (VIC-KEEP)
 docs/VERIFICATION_REPORT.md | .* | C: dated audit verification (VIC-KEEP)
-docs/PREVIOUS_EVALUATION_RECONCILIATION.md | .* | C: dated evaluation record (VIC-KEEP)
 reports/* | .* | C: dated launch-checklist decomposition reports (VIC-KEEP)
 CHANGES.md | .* | C: dated change log (VIC-KEEP)
 
@@ -64,9 +61,7 @@ app/* | leadpilot-account-export | B: export format id written into every GDPR e
 * | X-LeadPilot-[A-Za-z-]+ | B: webhook/request header names; customers' signature-verification code reads them
 * | X-ClientHunter-Signature | B: legacy webhook signature header still sent for older receivers
 * | leadpilot:(?:read|write|admin) | B: OAuth scopes held by existing connector grants and tool allowlists
-* | Vectorae-Webhooks/1\.0 | B: outbound webhook User-Agent; receivers may filter on it
 * | leadpilot_calendar | B: stored enum/payload value in customers' webhook payloads
-* | LeadSource[^\n]{0,40}Vectorae|Vectorae[^\n]{0,20}LeadSource | B: LeadSource value written into customers' Salesforce records; their reports filter on it
 * | _leadpilot-verify[\w.-]* | B: DNS TXT record name customers have already published
 * | leadpilot-audit-trail | B: key-derivation salt; changing it breaks verification of every signed audit trail
 
@@ -97,10 +92,6 @@ frontend/android/* | clienthunter | B: Android package path segment and keystore
 * | (?:postgres(?:ql)?|psycopg2)(?:\+psycopg2)?://[^\s"'`]*|@(?:db|localhost):\d+/\w+ | B: database URLs and names in compose, CI and test config (existing volumes)
 * | POSTGRES_(?:USER|DB|PASSWORD)[:=-]*\w*|clienthunter_test|clienthunter-postgres-1 | B: compose database user/name and container names (existing volumes)
 * | (?:/var/backups/|/var/log/|/usr/local/bin/|s3://[\w-]+/|backups/)clienthunter[\w./-]*|clienthunter-backup[\w.-]*|leadpilot-backups|leadpilot-restore-test|leadpilot_pre0015\.dump|/tmp/leadpilot_site_export | B: backup paths, scripts and dump names on operators' servers
-* | docs/features/vectorae-agents\.md|features/vectorae-agents\.md|vectorae-agents\.md | B: doc path cited from Dockerfile, sealed verify.yml and shipped migration 0092
-docs/features/vectorae-agents.md | vectorae-agents | B: file name cited from Dockerfile, sealed verify.yml and shipped migration 0092
-* | vectorae[_-]native[_-](?:rs|cpp)|vectorae_core|vectorae/[\w.]+\.hpp | B: native Python module, crate and header names imported by app/agents/native.py
-native/* | vectorae | B: native crate/namespace/include identifiers (internal ABI)
 
 # --- Test fixture domain (B, VIC-KEEP) ---------------------------------------
 * | [\w.+-]*@?[\w.-]*\b[Ll]ead[Pp]ilot\.dev[\w./:-]*|[\w.-]*leadpilot-test[\w.@-]* | B: synthetic test-fixture domain leadpilot.dev (never real mail; founder kept it, VIC-KEEP)
@@ -146,56 +137,30 @@ tests/integration/conftest.py | leadpilot role | B: local test database role nam
 tests/test_connector_skill.py | leadpilot | B: plugin, skill and MCP server names the test checks against the shipped manifests
 
 # --- Legal, consent and compliance text (C: founders + counsel, VIC-KEEP) ----
-frontend/src/app/terms/page.tsx | ^(?!\s*title:)(?!\s*Vectorae\s*$).* | C: Terms of Service body; legal text names the product and operator; changes need counsel. Not the page title or the site header (VIC-NAME: those are Victorae)
-frontend/src/app/privacy/page.tsx | ^(?!\s*title:)(?!\s*Vectorae\s*$).* | C: Privacy Policy body; legal text; changes need counsel. Not the page title or the site header (VIC-NAME: those are Victorae)
 docs/PRIVACY_POLICY.md | .* | C: privacy policy source; legal text; changes need counsel
-frontend/src/app/oauth/consent/page.tsx | Vectorae | C: OAuth connector consent screen text shown before a grant
-app/services/voice_twin.py | owner of this Vectorae|consent for Vectorae|Vectorae does not keep my recordings | C: versioned voice-clone written consent (CONSENT_VERSION must bump and owners re-consent if it changes)
-app/services/voice_twin.py | name=f"Vectorae - |\(Vectorae voice twin\) | C: voice name/description created at ElevenLabs; existing voices keep the old name
-frontend/src/components/settings/VoiceTwinCard.tsx | not kept by Vectorae|Vectorae does not keep them|Vectorae keeps retrying | C: voice-twin data-handling statements in the consent flow
-app/services/daily_send_approval.py | Vectorae's automatic LinkedIn sending | C: versioned LinkedIn risk disclosure (LINKEDIN_WARNING_VERSION must bump if it changes)
-app/services/billing.py | your Vectorae subscription | C: required subscription auto-renewal notice
-app/services/consent.py | which Vectorae does NOT perform | C: DNC/TCPA/PDPA regulatory disclaimer
-app/services/system_settings.py | Vectorae does NOT check | C: TCPA regulatory disclaimer
-app/services/local_business.py | which Vectorae does not collect|Vectorae never accepts health data|Vectorae never imports patients | C: HIPAA health-data compliance statements
-docs/connectors/README.md | What leaves Vectorae|Vectorae does not|What Vectorae stores|executed by Vectorae | C: connector data-handling disclosures
 
 # --- Names configured in third-party dashboards (C: founder-actions.md) ------
-app/config.py | email_from_name: str = "Vectorae" | C: Resend sender display name; changed with the sending domain's settings, not in code alone
-* | EMAIL_FROM_NAME[=:]\s*"?Vectorae"? | C: Resend sender display name set on Render (render.yaml, env templates)
-app/config.py | "Vectorae User, 123 Main St | C: CAN-SPAM postal-identity placeholder; production refuses it; founders supply the real identity
-app/integrations/recall.py | "Vectorae Notetaker" | C: meeting-bot name prospects see; recording-disclosure wording is a founder decision
-app/integrations/stripe_billing.py | f"Vectorae \{tier | C: Stripe product name on invoices; billing and Stripe are out of scope for this program
-frontend/src/components/ui/Logo.tsx | "?Vectorae"?|"VECTORAE" | C: logo alt text and notes tied to the wordmark artwork (which still shows LEADPILOT); new artwork is a founder action
 docs/STORE_ASSETS.md | .* | C: Google Play listing copy; the founder changes the listing in Play Console
 docs/PLAY_STORE_CHECKLIST.md | .* | C: Google Play Console values; the founder changes them in Play Console
 docs/FIREBASE_SETUP_CHECKLIST.md | App nickname\**: ClientHunter | C: Firebase console app nickname
 SECURITY.md | revoke ClientHunter access | C: names the Google OAuth consent-screen app as it is configured today
 sdk/pyproject.toml | authors = [^\n]* | C: PyPI author name and contact mailbox
 CLAUDE.md | "LeadPilot Production Readiness" Claude Project | C: name of the founders' Claude Project (claude.ai)
-status-page/lib/config.ts | "Vectorae - [^"]+" | B: UptimeRobot monitor names, matched by exact string against the external account
-status-page/tests/snapshot.test.ts | "Vectorae - App login" | B: UptimeRobot monitor name the test matches
 * | products named LeadPilot or Lead Pilot | C: disambiguation from other companies' products named LeadPilot (third-party names)
 alembic/versions/* | .* | B: shipped Alembic migrations are never edited (docstrings only)
-docs/program/STATUS_PAGE.md | `Vectorae - [^`]+` | B: UptimeRobot monitor names, matched by exact string against the external account
-tests/test_crm_ecosystem.py | "Unknown", "Vectorae"\) | B: asserts the Salesforce LeadSource value the app keeps
-tests/test_meeting_recording.py | bot_name="Vectorae Notetaker" | C: mirrors the meeting-bot name the app keeps (founder decision)
-tests/test_voice_twin.py | "Vectorae - Rehan" | C: mirrors the ElevenLabs voice name the app keeps (consent text)
 tests/* | \bClientHunterError\b | B: internal exception class name
 tests/test_regression.py | \bClientHunter\b(?=[(` ]|$)|import ClientHunter | B: SDK public class name (sdk/ keeps it, VIC-KEEP)
 app/services/displacement_monitor.py | "client hunter"\) | B: continuation of the FORBIDDEN_MENTIONS guard list
-app/services/billing.py | .* | C: billing code; out of scope for this program (STAR_VICTORAE working rules: do not touch billing or Stripe)
-app/core/billing_catalog.py | .* | C: billing catalogue (plan names, tagline shown on pricing); out of scope for this program (do not touch billing)
-app/services/voice_twin.py | \\"Vectorae - <your name>\\" | C: tells the owner the ElevenLabs voice name, which stays as created (consent text)
 frontend/src/app/about/page.tsx | formerly called LeadPilot | C: "formerly" line on the About page, founder decision VIC-NAME
-render.yaml | value: Vectorae | C: EMAIL_FROM_NAME (Resend sender display name) on Render; founder action
-.env.production.example | "Vectorae User, 123 Main St|SENDER_IDENTITY=Vectorae | C: CAN-SPAM postal identity placeholder; founders supply the real identity
-.claude-plugin/marketplace.json | "name": "Vectorae" | C: marketplace owner (publisher) name shown in Claude Code; founder decision
-plugins/*/plugin.json | "name": "Vectorae" | C: plugin author (publisher) name shown in Claude Code; founder decision
 claude/STATUS_2026-09-29_LEADPILOT_GATE_LIVE_ROLLOUT_COMPLETE.md | .* | C: dated status record of 2026-09-29 (VIC-KEEP)
-DEPLOY_RENDER_FREE.md | <title>Vectorae</title>`, manifest name `Vectorae` | C: dated record of an observed build output
 tests/test_website_builder.py | OUR_MARKERS = [^\n]* | B: guard test: the list of our names a customer's page prompt must never contain
 frontend/src/tests/templateEditor.test.tsx | victorae\|vectorae\|lead \?pilot\|client \?hunter | B: guard test: the names a customer-voice sample must never contain
+
+# --- Victorae -> Vectorae reversal (VEC-NAME, 2026-10-28) ----------------------
+* | STAR_VICTORAE\.md | B: path of an allowlisted program record (file not renamed: dated record)
+tests/test_verification_oscillation_guards.py | Victorae is priced | C: sealed compliance test fixture; changes only via a gate/ PR
+evals/ai/golden/T23_displacement_dm.yaml | - victorae | B: guard: an earlier product name a first-touch DM must never contain
+tests/test_displacement_alerts.py | "Victorae", "VICTORAE", "victorae" | B: guard test: earlier product names a first-touch DM must never contain
 
 # --- The check itself ----------------------------------------------------------
 scripts/gate/brand_lint.py | .* | B: the brand lint defines and documents every old-name variant it blocks

@@ -1,4 +1,4 @@
-# Victorae connector tools
+# Vectorae connector tools
 
 Server: `https://api.calendarharvest.com/mcp` (remote MCP, OAuth). Every
 tool acts on the signed-in user's own account. Lists: `limit` 1–50 (default
@@ -34,7 +34,7 @@ There is no tool that sends, schedules or approves a message.
 
 ## Errors
 
-A tool error names the problem: a malformed id ("… must be a Victorae id"),
+A tool error names the problem: a malformed id ("… must be a Vectorae id"),
 an id that is not the user's ("lead not found"), a missing permission ("needs
 the 'leadpilot:write' permission" — the user reconnects and approves it), or
 a business refusal copied from the web app (plan limit, spend cap, rate
@@ -43,7 +43,7 @@ limit, deliverability). Relay it; do not retry with guessed values.
 ## Connecting
 
 - claude.ai / Desktop / mobile: Settings → Connectors → Add custom connector →
-  `https://api.calendarharvest.com/mcp`, then sign in to Victorae and Allow.
+  `https://api.calendarharvest.com/mcp`, then sign in to Vectorae and Allow.
 - Claude Code: install the `leadpilot` plugin, or
   `claude mcp add --transport http leadpilot https://api.calendarharvest.com/mcp`.
 - ChatGPT: Settings → Apps → Developer Mode → create an app with the same URL.

@@ -79,7 +79,7 @@ _ACRONYMS = {"NFPA", "HVAC", "SAAS", "HIPAA", "GDPR", "ASAP", "HTML", "PECR", "C
 _PLACEHOLDER_IDENTITY = ("123 main st", "<street>", "city, country")
 
 RED_TEAM_SYSTEM = (
-    "You are Victorae's pre-send red-team auditor. You attack an outreach sequence before "
+    "You are Vectorae's pre-send red-team auditor. You attack an outreach sequence before "
     "it launches and report only real problems: spammy or tone-deaf language, compliance "
     "risk (CAN-SPAM, GDPR/PECR, CASL, WhatsApp Business policy: cold WhatsApp only via "
     "approved templates to opted-in contacts), and claims about the prospect that could be "

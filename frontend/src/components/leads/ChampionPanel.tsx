@@ -4,7 +4,7 @@
  *
  *  Answers: does this person still hold the role we are writing to, will the
  *  next message go out (and if not, why), and — if they moved — where they
- *  went and what Victorae did about it. The actions are the only ways past a
+ *  went and what Vectorae did about it. The actions are the only ways past a
  *  hold: re-verify now, or (owner/manager) confirm the role with a reason
  *  that goes into the compliance audit log. A recorded departure cannot be
  *  confirmed away here; it is dismissed from the move itself. */

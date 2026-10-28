@@ -33,7 +33,7 @@
  *
  * ─────────────────────────────────────────────────────────────────────
  *
- * mobile.spec.ts — Victorae (M7 Chunk 4)
+ * mobile.spec.ts — Vectorae (M7 Chunk 4)
  *
  * Playwright E2E smoke tests for the mobile/web app.
  * Backend and Firebase are mocked via Playwright's route interception.

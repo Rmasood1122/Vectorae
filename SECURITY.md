@@ -1,4 +1,4 @@
-# SECURITY.md — Victorae
+# SECURITY.md — Vectorae
 
 This document covers every secret the system holds, where it is stored, how to rotate it, what to do if it is compromised, and the recommended rotation schedule.
 

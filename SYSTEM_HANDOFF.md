@@ -1,4 +1,4 @@
-# Victorae — System Handoff
+# Vectorae — System Handoff
 
 *Last updated: M9 (native CRM + real-time). All 9 milestones complete.*
 
@@ -123,7 +123,7 @@ These are out of scope and would be next-phase work:
 - **Self-hosted email deliverability.** The system uses Gmail OAuth per user. A dedicated SMTP warm-up infrastructure (Mailgun/Postmark with domain authentication) is not built but is the right production path for high volume.
 - **iOS/App Store app.** The Capacitor wrapper targets Android (Google Play). A separate Xcode build + provisioning profile is needed for iOS.
 - **Multi-tenant team accounts.** All objects are user-scoped (user_id). Team-level sharing, role-based access within an org, and white-labeling are not built.
-- **HubSpot / Salesforce CRM sync.** M9 built Victorae's OWN CRM (dashboard + data grid, `/crm`); this entry is about syncing to a THIRD-PARTY one. The outbound webhook system (M8-C5) lets you push events to any CRM via webhook, but there are no native HubSpot/Salesforce adapters.
+- **HubSpot / Salesforce CRM sync.** M9 built Vectorae's OWN CRM (dashboard + data grid, `/crm`); this entry is about syncing to a THIRD-PARTY one. The outbound webhook system (M8-C5) lets you push events to any CRM via webhook, but there are no native HubSpot/Salesforce adapters.
 
 ---
 

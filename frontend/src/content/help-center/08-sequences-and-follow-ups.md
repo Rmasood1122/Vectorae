@@ -41,13 +41,13 @@ sources:
 
 # Sequences and follow-ups
 
-A sequence is the series of messages Victorae sends to each lead in a strategy. This article covers how sequences are built and launched, when each step goes out, what stops or pauses a sequence, how automatic follow-ups work, and the step limits on each plan.
+A sequence is the series of messages Vectorae sends to each lead in a strategy. This article covers how sequences are built and launched, when each step goes out, what stops or pauses a sequence, how automatic follow-ups work, and the step limits on each plan.
 
 ## What is a sequence?
 
 A sequence belongs to one strategy and has numbered steps. Each step holds:
 
-- a **brief**: what the message should say. It is not the final text; Victorae writes the final message for each lead at send time.
+- a **brief**: what the message should say. It is not the final text; Vectorae writes the final message for each lead at send time.
 - a **delay**: how many days to wait after the previous step is sent (0 to 60).
 - a **channel**: email by default. Steps can also use WhatsApp, LinkedIn or phone, if your plan includes them. A step without its own channel uses the sequence's channel.
 - optionally a **variant** label, for testing different versions of a step.
@@ -59,10 +59,10 @@ On a verified strategy's page, after finding leads, use the **2. Write the email
 1. Enter a **Sequence name**.
 2. Under **First email: what should it say?**, describe the first email: who you are, why you are writing, one clear ask.
 3. Optionally add a **Follow-up email** and the **Days to wait before the follow-up** (the form starts at 3).
-4. Tick the box confirming you may lawfully contact each person on the list. Victorae records who confirmed, when, and the exact wording; the launch is refused without it.
+4. Tick the box confirming you may lawfully contact each person on the list. Vectorae records who confirmed, when, and the exact wording; the launch is refused without it.
 5. Press **Launch to N lead(s)**.
 
-In the app today, this creates an email-only sequence with one or two steps. Longer sequences, and steps on other channels, are created through the Victorae API, which accepts up to 20 steps numbered 1, 2, 3 and so on with no gaps. A launch through the API must also confirm the lawful basis: send `lawful_basis_confirmed: true` and the current `lawful_basis_text_version` (the wording and its version are at `GET /launch/lawful-basis`). Without them the launch is refused with a 422 that says so.
+In the app today, this creates an email-only sequence with one or two steps. Longer sequences, and steps on other channels, are created through the Vectorae API, which accepts up to 20 steps numbered 1, 2, 3 and so on with no gaps. A launch through the API must also confirm the lawful basis: send `lawful_basis_confirmed: true` and the current `lawful_basis_text_version` (the wording and its version are at `GET /launch/lawful-basis`). Without them the launch is refused with a 422 that says so.
 
 ## How many steps can I put in a sequence?
 
@@ -77,7 +77,7 @@ In the app today, this creates an email-only sequence with one or two steps. Lon
 
 These are checked when the sequence is created and again at every launch, so a sequence built on a higher plan cannot be launched after a downgrade. A sequence over the limit is refused with an upgrade message. For sequences enrolled from 12 October 2026 on, messages are also checked when they come due: after a downgrade, a step on a channel your current plan does not include, or a step past your plan's step limit, is held instead of sent. The Campaigns page says how many messages are on hold and why, and the lead's message shows the reason (it starts with "plan_limit:"). Steps your plan still covers keep sending, and the sequence is not stopped. When your plan covers a held step again, for example after an upgrade, it is released automatically within about 30 minutes and goes out through the usual checks. Enrollments from before 12 October 2026, administrator accounts and Reply Copilot answers a person approved are not held this way.
 
-## What does Victorae check when I launch?
+## What does Vectorae check when I launch?
 
 In order, a launch is refused if:
 
@@ -90,18 +90,18 @@ The **pre-launch review** scans the sequence for spam and pressure phrases, comp
 
 If you are an SDR in a workspace that requires approval, your first launch is sent to a manager instead: "Sent to a manager for approval. Nothing is sent until they approve."
 
-On launch, Victorae enrolls the strategy's `verified` leads that have the address the first step needs: an email address for an email first step, a LinkedIn profile for a LinkedIn first step, and a phone number for a WhatsApp (or AI call) first step. It skips anyone suppressed or already enrolled, and schedules step 1. Only `verified` leads can be enrolled. If your sending domain has deliverability problems, the launch still goes ahead but shows a warning.
+On launch, Vectorae enrolls the strategy's `verified` leads that have the address the first step needs: an email address for an email first step, a LinkedIn profile for a LinkedIn first step, and a phone number for a WhatsApp (or AI call) first step. It skips anyone suppressed or already enrolled, and schedules step 1. Only `verified` leads can be enrolled. If your sending domain has deliverability problems, the launch still goes ahead but shows a warning.
 
 ## When does each step go out?
 
 - **Step 1** is scheduled for the best time to send at or after the moment you launch, inside the send window.
 - **Each later step** is scheduled when the previous step is actually sent: its delay in days is added, then the time is moved to the best time to send inside the send window.
-- The send window is business hours in the lead's own time zone, 09:00 to 17:00 by default, with weekends skipped. Victorae works out each lead's time zone from the location found for them: the country, and for the United States, Canada, Australia and Brazil the state or province. A lead with no known location uses the time zone of the strategy's target region, then your account's time zone (from your calendar settings), then the deployment's fallback zone (UTC by default). The **Why isn't this sending?** panel says how many leads use a fallback.
-- **Best time to send** picks a slot within the next 72 hours (by default) in the prospect's local time. It starts from published industry patterns, which are starting assumptions, not promises: business email Tuesday to Thursday 09:00 to 11:00; LinkedIn weekday mornings and lunchtime; WhatsApp late morning or mid-afternoon. Some industries get their own window, for example restaurants and cafés 14:30 to 16:30 (between lunch and dinner service) and clinics 09:00 to 11:00. When a strategy's research finishes, Victorae adjusts these windows to that strategy's ideal customer. Once your account has sent 30 messages on a channel, your own reply rates by day and hour are blended in.
+- The send window is business hours in the lead's own time zone, 09:00 to 17:00 by default, with weekends skipped. Vectorae works out each lead's time zone from the location found for them: the country, and for the United States, Canada, Australia and Brazil the state or province. A lead with no known location uses the time zone of the strategy's target region, then your account's time zone (from your calendar settings), then the deployment's fallback zone (UTC by default). The **Why isn't this sending?** panel says how many leads use a fallback.
+- **Best time to send** picks a slot within the next 72 hours (by default) in the prospect's local time. It starts from published industry patterns, which are starting assumptions, not promises: business email Tuesday to Thursday 09:00 to 11:00; LinkedIn weekday mornings and lunchtime; WhatsApp late morning or mid-afternoon. Some industries get their own window, for example restaurants and cafés 14:30 to 16:30 (between lunch and dinner service) and clinics 09:00 to 11:00. When a strategy's research finishes, Vectorae adjusts these windows to that strategy's ideal customer. Once your account has sent 30 messages on a channel, your own reply rates by day and hour are blended in.
 - The strategy page shows **Best time to send**: "Messages go out …" for each channel, and why. Press **Choose my own window** to set your own days and hours (only the account owner or a workspace manager can, signed in). Messages are then only ever placed inside your window, never outside it; messages already scheduled are moved into it in the background over the next few minutes. A window that never overlaps the permitted sending hours for the strategy's leads (for example a compliance rule's hours) is refused, because those messages could never be sent.
 - If smart send time is turned on for the campaign, a step may be held for the campaign's best engagement window, for up to 72 hours by default. Your own window wins over it.
 
-## Can Victorae find leads and start sending automatically when the research finishes?
+## Can Vectorae find leads and start sending automatically when the research finishes?
 
 Yes, if you turn on **Autopilot** for the strategy: "When research finishes, find leads, write the sequence and start outreach automatically". You can tick it on the last step of **New strategy** or later in the **Autopilot** card on the strategy page. It is never on unless you turn it on, and turning it on needs you to confirm that you have a lawful basis to contact the people it finds. Only the account owner or a workspace manager can turn it on.
 
@@ -126,7 +126,7 @@ Every send also passes the daily cap, the suppression check and, where triggered
 | The lead unsubscribes or asks to stop | Suppressed everywhere; all sequences stop immediately. |
 | An email bounces | The lead is dropped and their sequences stop. |
 | An out-of-office reply | Sequences pause for 7 days by default, then continue. |
-| A meeting is booked on Victorae's own calendar | Sequences pause. If the meeting is cancelled they resume; otherwise they resume a day after the meeting ends unless something else stopped them. |
+| A meeting is booked on Vectorae's own calendar | Sequences pause. If the meeting is cancelled they resume; otherwise they resume a day after the meeting ends unless something else stopped them. |
 | A meeting is booked through Calendly | Sequences stop. (The Calendly integration has not yet been verified against the live service.) |
 | The lead is suppressed by the time a message is due | That message is cancelled and the sequence stops. |
 | You remove the lead (**Remove**, which marks it `dropped`) | The sequence stops straight away; a removed lead is never sent to. |
@@ -135,7 +135,7 @@ Every send also passes the daily cap, the suppression check and, where triggered
 | A step's channel has no address for the lead (for example a WhatsApp step and no phone number) | That message is cancelled and the sequence stops, with the reason "no address for the step's channel" (not counted as a compliance stop). |
 | An automated reply (ticket receipts, no-reply bots) | Nothing changes; it is stored but not treated as a reply. |
 
-Victorae also keeps a live estimate of each lead's chance of booking. After a lead has had 4 unanswered sends (the default), a lead judged to have gone cold may have its sequence paused ("cooling") or stopped ("archived").
+Vectorae also keeps a live estimate of each lead's chance of booking. After a lead has had 4 unanswered sends (the default), a lead judged to have gone cold may have its sequence paused ("cooling") or stopped ("archived").
 
 A stopped sequence can never send to that lead again.
 
@@ -143,15 +143,15 @@ A stopped sequence can never send to that lead again.
 
 Automatic follow-ups are separate from step delays. They catch a lead whose sequence is still active but has nothing queued, for example because a send failed permanently, a WhatsApp step needed a template, or a step was deleted.
 
-Every 30 minutes, Victorae looks for active sequences where the last message has had no reply for longer than that step's follow-up delay (72 hours by default; you can set 1 to 2,160 hours). A sequence with a message still queued, waiting in the send-review queue, or held by a safety check is left alone. If the sequence has a next step, that step is sent. A step a reviewer rejected is never sent again; the follow-up moves on to the step after it. If it does not, Victorae writes a follow-up from the lead's own message history and your product description, on the same channel as the last message, and sends it through the normal checks. It does not write automatic follow-ups for WhatsApp, because a WhatsApp first contact needs an approved template.
+Every 30 minutes, Vectorae looks for active sequences where the last message has had no reply for longer than that step's follow-up delay (72 hours by default; you can set 1 to 2,160 hours). A sequence with a message still queued, waiting in the send-review queue, or held by a safety check is left alone. If the sequence has a next step, that step is sent. A step a reviewer rejected is never sent again; the follow-up moves on to the step after it. If it does not, Vectorae writes a follow-up from the lead's own message history and your product description, on the same channel as the last message, and sends it through the normal checks. It does not write automatic follow-ups for WhatsApp, because a WhatsApp first contact needs an approved template.
 
 No follow-up goes to a lead who has replied, or from a paused campaign. To change the setting, go to **Campaigns**, choose the strategy, open the **Sequences** tab, and use **Auto follow-up** and **after N hours of silence** under each step.
 
 ## When is a sequence complete?
 
-When every step has been sent to a lead, their sequence is marked completed. Victorae does not keep following up after that. A separate re-engagement feature can send one more email to leads who finished without replying, but it is off for every campaign until an owner or manager turns it on.
+When every step has been sent to a lead, their sequence is marked completed. Vectorae does not keep following up after that. A separate re-engagement feature can send one more email to leads who finished without replying, but it is off for every campaign until an owner or manager turns it on.
 
-Victorae also reports a completion rate, and lists each reason a sequence ended early. A sequence where every step was skipped (for example, an all-WhatsApp sequence to a lead without opt-in) is flagged for your attention. Skipped steps do not count as sent.
+Vectorae also reports a completion rate, and lists each reason a sequence ended early. A sequence where every step was skipped (for example, an all-WhatsApp sequence to a lead without opt-in) is flagged for your attention. Skipped steps do not count as sent.
 
 ## Related
 - [Personalization and claim verification](07-personalization-and-claim-verification.md)

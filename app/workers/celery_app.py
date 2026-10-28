@@ -389,7 +389,7 @@ celery_app.conf.beat_schedule = {
         "schedule": _sweep(4),
     },
     # F05 Guardrails Studio: customers / open deals / churned from the CRM
-    # (and Victorae's own deals) into each account's exclusion lists. Daily:
+    # (and Vectorae's own deals) into each account's exclusion lists. Daily:
     # a customer list changes slowly, and the send-time check reads whatever
     # is there. A no-op while guardrails_enabled is off.
     "guardrails-crm-sync": {

@@ -28,17 +28,17 @@ sources:
 
 # Security FAQ for buyers
 
-This article answers the security questions a buyer or security reviewer usually asks before choosing Victorae: how passwords, keys and secrets are stored, how webhooks are signed and kept away from internal systems, what audit records exist, and where the service runs. It describes what the code does today, including what is not in place yet. For the sign-in rules an everyday user needs, see [Account security](23-account-security.md).
+This article answers the security questions a buyer or security reviewer usually asks before choosing Vectorae: how passwords, keys and secrets are stored, how webhooks are signed and kept away from internal systems, what audit records exist, and where the service runs. It describes what the code does today, including what is not in place yet. For the sign-in rules an everyday user needs, see [Account security](23-account-security.md).
 
-## How does Victorae store passwords and handle sign-in sessions?
+## How does Vectorae store passwords and handle sign-in sessions?
 
-Victorae never stores your password. It stores a one-way hash made with PBKDF2-HMAC-SHA256 at 600,000 iterations, with a random 16-byte salt for each password. When you sign in, the hash is recomputed and compared in constant time, so the comparison itself does not leak timing information. Passwords must be at least 8 characters.
+Vectorae never stores your password. It stores a one-way hash made with PBKDF2-HMAC-SHA256 at 600,000 iterations, with a random 16-byte salt for each password. When you sign in, the hash is recomputed and compared in constant time, so the comparison itself does not leak timing information. Passwords must be at least 8 characters.
 
 Sign-in uses signed tokens (JWT, HS256). A short-lived access token is used for each request, and a longer-lived refresh token renews it. Refresh tokens are tied to a session record on the server, so signing out really ends the session, and each refresh token can be used only once. If an already-used refresh token turns up again, which suggests it was copied, the whole session is signed out and the event is written to the security log. In the web app the refresh token is kept in an HttpOnly cookie, which page scripts cannot read. How long sessions last, and the sign-in attempt limits, are in [Account security](23-account-security.md).
 
 ## How are API keys and connection tokens protected?
 
-**Personal API keys.** Victorae keeps only a SHA-256 fingerprint of each key, plus its first few characters so you can recognise it in the list. The full key is shown once when it is created and cannot be shown again, because Victorae does not have it.
+**Personal API keys.** Vectorae keeps only a SHA-256 fingerprint of each key, plus its first few characters so you can recognise it in the list. The full key is shown once when it is created and cannot be shown again, because Vectorae does not have it.
 
 **Connections to other services.** Access tokens for connected services (for example Gmail, WhatsApp, Calendly, and Apollo or Hunter keys) are encrypted before they are written to the database, using Fernet symmetric encryption with a key that is set on the server and never stored in the code. The encryption key can be rotated: during a rotation the previous key is used only to read old values, and can be removed afterwards.
 
@@ -46,7 +46,7 @@ Sign-in uses signed tokens (JWT, HS256). A short-lived access token is used for 
 
 Your data export leaves all of these out on purpose: it contains no password hash, no key fingerprints, no encrypted tokens and no webhook secrets.
 
-## How can my endpoint check that a webhook really came from Victorae?
+## How can my endpoint check that a webhook really came from Vectorae?
 
 Every webhook delivery is signed with the webhook's own signing secret. The request carries these headers:
 
@@ -58,9 +58,9 @@ To verify a delivery, recompute the HMAC with your secret and compare it with `v
 
 A delivery that fails is retried, up to 6 attempts in all. You create webhooks and copy the secret in **Settings**, **Integrations** tab, **Webhooks (Zapier, Make)** card. For the events and payloads, see [Webhook events, signatures and Slack alerts](37-webhooks-and-slack-events.md).
 
-## Can a webhook or website address be used to reach Victorae's internal network?
+## Can a webhook or website address be used to reach Vectorae's internal network?
 
-Two features make Victorae call an address you give it: outgoing webhooks, and **Quickstart** (off by default), which reads your company's website. Both are guarded against being pointed at internal systems (known as SSRF).
+Two features make Vectorae call an address you give it: outgoing webhooks, and **Quickstart** (off by default), which reads your company's website. Both are guarded against being pointed at internal systems (known as SSRF).
 
 For **webhooks**:
 
@@ -73,7 +73,7 @@ For **webhooks**:
 
 For the **Quickstart** website reader, the same rules apply, plus: only port 443, at most 3 redirects (each one checked like the first address), an 8-second time limit and at most 512,000 bytes read. A plain `http://` address is upgraded to `https://`.
 
-One gap remains and is documented in the code: there is a short window between Victorae's address check and the actual connection in which a hostile DNS server could change its answer ("DNS rebinding"). Closing it fully needs an outbound proxy, which is not in place.
+One gap remains and is documented in the code: there is a short window between Vectorae's address check and the actual connection in which a hostile DNS server could change its answer ("DNS rebinding"). Closing it fully needs an outbound proxy, which is not in place.
 
 ## Is there an audit trail of what happened in an account?
 
@@ -85,17 +85,17 @@ There are two records.
 
 Neither record logs every field edit (for example a changed lead title), so there is no full per-field change history.
 
-## Where does Victorae run, and are customers kept apart?
+## Where does Vectorae run, and are customers kept apart?
 
 The deployment configuration in the code runs the API and the background worker on Render (region: Oregon, in the United States), the database on Neon (PostgreSQL), the job queue and cache on Upstash (Redis) and the web app on Vercel. The deployment settings call for encrypted connections to both: `sslmode=require` for the database and `rediss://` (TLS) for Redis. See [Data processing and subprocessors](43-data-processing-and-subprocessors.md) for what each provider receives.
 
 The founders' design decision is that one deployment serves one customer organisation. The production deployment keeps public sign-up open, so in practice accounts from different customers share one database there. Each account's data is kept apart by ownership checks in the code, which the automated tests check. Those tests run on a lightweight test database; the same checks have not yet been proven on PostgreSQL (see [Known limitations](29-known-limitations.md)).
 
-## What security features does Victorae not have today?
+## What security features does Vectorae not have today?
 
 Be aware of these before you buy:
 
-- **No security certification.** Victorae does not claim SOC 2, ISO 27001 or any other certification.
+- **No security certification.** Vectorae does not claim SOC 2, ISO 27001 or any other certification.
 - **No two-factor sign-in**, and no single sign-on.
 - **No list of active sessions.** Changing or resetting the password signs out everywhere and revokes API keys.
 - **No per-field change history**, as described above.

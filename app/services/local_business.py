@@ -8,7 +8,7 @@ Its strategies can carry a service area and an offer. That context is added to
 prompts that ALREADY run (pipeline steps, ICP extraction, personalization) and
 narrows lead sourcing to the service area. Targets are BUSINESS buyers only --
 offices that order catering, employers that buy screenings, property managers
-that buy in bulk. Victorae has no consumer prospecting and this module adds
+that buy in bulk. Vectorae has no consumer prospecting and this module adds
 none.
 
 PART B -- CUSTOMER WIN-BACK (flag `customer_winback_enabled`, default OFF).
@@ -539,9 +539,9 @@ ALLOWED_COLUMNS = ("name", "email", "phone", "linkedin", "consent_channels", "co
                    "consent_source", "consent_text", "country", "timezone")
 CHANNELS_ALLOWED = ("email", "whatsapp")
 CHANNELS_REFUSED = {
-    "sms": "SMS is not offered: Victorae has no SMS channel, and marketing texts "
+    "sms": "SMS is not offered: Vectorae has no SMS channel, and marketing texts "
            "to consumers need prior express written consent under the US TCPA",
-    "text": "SMS is not offered: Victorae has no SMS channel",
+    "text": "SMS is not offered: Vectorae has no SMS channel",
     "phone": "calls are not offered for customers (TCPA: prior express written "
              "consent for marketing calls with an artificial voice)",
     "call": "calls are not offered for customers",

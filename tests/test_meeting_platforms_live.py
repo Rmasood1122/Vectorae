@@ -43,7 +43,7 @@ def test_google_creates_a_meet_event_and_deletes_it():
     adapter = LiveGoogle(None, None, redis=fakeredis.FakeRedis(decode_responses=True))
     assert adapter.health_check()
     start = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(days=7)
-    event = adapter.create_event(summary="Victorae live test (auto-deleted)", description=None,
+    event = adapter.create_event(summary="Vectorae live test (auto-deleted)", description=None,
                                  start_at=start, end_at=start + timedelta(hours=1))
     try:
         assert google_meet.meet_link(event).startswith("https://meet.google.com/")
@@ -57,7 +57,7 @@ def test_zoom_creates_a_meeting_and_deletes_it():
     adapter = zoom.ZoomAdapter(credentials=ZOOM_CREDS,
                                redis=fakeredis.FakeRedis(decode_responses=True))
     start = datetime.now(timezone.utc) + timedelta(days=7)
-    meeting = adapter.create_meeting(topic="Victorae live test (auto-deleted)",
+    meeting = adapter.create_meeting(topic="Vectorae live test (auto-deleted)",
                                      start_at=start, duration_minutes=30)
     try:
         assert str(meeting.get("join_url", "")).startswith("https://")

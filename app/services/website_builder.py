@@ -192,9 +192,9 @@ PAGE_SCHEMA = {
 # Only our own pages may carry our brand, founder and ICP; a customer's pages
 # are written for the customer's business, named by the caller, and must
 # never name us as their author or provider.
-OWN_SITE_BRAND = "Victorae"
+OWN_SITE_BRAND = "Vectorae"
 OWN_SITE_AUTHOR = "Rehan Masood"
-_OWN_SITE_CONTEXT = """Product: Victorae, made by Calendarharvest
+_OWN_SITE_CONTEXT = """Product: Vectorae, built by Rehan Masood and Ahmad Shahid
 Founder: Rehan Masood
 ICP: Boutique agency founders, 3-30 staff
 Markets: US, UK, Canada, Australia, New Zealand, Ireland, Singapore

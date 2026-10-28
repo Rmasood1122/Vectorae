@@ -1,5 +1,5 @@
 /**
- * OfflineBanner.test.tsx — Victorae (M7 Chunk 4)
+ * OfflineBanner.test.tsx — Vectorae (M7 Chunk 4)
  *
  * Tests for src/components/ui/OfflineBanner.tsx
  *

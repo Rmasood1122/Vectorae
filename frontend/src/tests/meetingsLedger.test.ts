@@ -30,9 +30,9 @@ describe("query and export URLs", () => {
     expect(ledgerExportPath(query, "pdf", "events")).not.toContain("view=");
   });
   it("names files after the period", () => {
-    expect(exportFilename(query, "pdf")).toBe("victorae-meetings-ledger-2026-09-01-2026-09-30.pdf");
+    expect(exportFilename(query, "pdf")).toBe("vectorae-meetings-ledger-2026-09-01-2026-09-30.pdf");
     expect(exportFilename(query, "csv", "events"))
-      .toBe("victorae-meetings-ledger-2026-09-01-2026-09-30-events.csv");
+      .toBe("vectorae-meetings-ledger-2026-09-01-2026-09-30-events.csv");
   });
 });
 

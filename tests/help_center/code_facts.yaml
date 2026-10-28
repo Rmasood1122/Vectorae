@@ -186,7 +186,7 @@ facts:
   phrase: Sequences pause for 7 days by default
   expr: app.config.Settings.model_fields['ooo_reschedule_days'].default
 - article: 08
-  phrase: Every 30 minutes, Victorae looks
+  phrase: Every 30 minutes, Vectorae looks
   expr: sorted(app.workers.celery_app.celery_app.conf.beat_schedule['check-followup-due']['schedule'].minute)[1] - sorted(app.workers.celery_app.celery_app.conf.beat_schedule['check-followup-due']['schedule'].minute)[0]
 - article: 08
   phrase: (72 hours by default; you can set 1 to 2,160 hours)
@@ -797,11 +797,11 @@ facts:
   expr: app.core.rate_limiting.AUTH_WINDOW_SECONDS // 60
   shows: '{v} minutes'
 - article: '27'
-  phrase: 20 support chat messages per day (Victorae's hosted service raises this to 30)
+  phrase: 20 support chat messages per day (Vectorae's hosted service raises this to 30)
   expr: app.core.config.Settings.model_fields['RATE_LIMIT_SUPPORT_CHAT'].default
   shows: '{v} support chat'
 - article: '27'
-  phrase: 20 support chat messages per day (Victorae's hosted service raises this to 30)
+  phrase: 20 support chat messages per day (Vectorae's hosted service raises this to 30)
   expr: int([e['value'] for e in __import__('yaml').safe_load((__import__('pathlib').Path(app.__file__).parents[1] / 'render.yaml').read_text())['services'][0]['envVars'] if e.get('key') == 'RATE_LIMIT_SUPPORT_CHAT'][0])
   shows: to {v})
 - article: '27'
@@ -892,11 +892,11 @@ facts:
   expr: app.services.pipeline_health.WEIGHTS['conversations']
   shows: conversations ({v:.0%})
 - article: '29'
-  phrase: limited to 30 messages per person per day on Victorae's hosted service (a deployment setting; the built-in default is 20)
+  phrase: limited to 30 messages per person per day on Vectorae's hosted service (a deployment setting; the built-in default is 20)
   expr: int([e['value'] for e in __import__('yaml').safe_load((__import__('pathlib').Path(app.__file__).parents[1] / 'render.yaml').read_text())['services'][0]['envVars'] if e.get('key') == 'RATE_LIMIT_SUPPORT_CHAT'][0])
   shows: to {v} messages
 - article: '29'
-  phrase: limited to 30 messages per person per day on Victorae's hosted service (a deployment setting; the built-in default is 20)
+  phrase: limited to 30 messages per person per day on Vectorae's hosted service (a deployment setting; the built-in default is 20)
   expr: app.core.config.Settings.model_fields['RATE_LIMIT_SUPPORT_CHAT'].default
   shows: default is {v})
 - article: '30'
@@ -933,11 +933,11 @@ facts:
   phrase: tries again after 2 minutes
   expr: int(__import__('re').search(r'RATE_LIMITED_RETRY_MS = (\d+)_000', (__import__('pathlib').Path(app.__file__).parents[1] / 'frontend/src/lib/statusBoard.ts').read_text()).group(1)) // 60
 - article: '30'
-  phrase: 'You can send 30 chat messages per day on Victorae''s hosted service. This is a deployment setting: the hosted service sets 30, and the built-in default is 20.'
+  phrase: 'You can send 30 chat messages per day on Vectorae''s hosted service. This is a deployment setting: the hosted service sets 30, and the built-in default is 20.'
   expr: int([e['value'] for e in __import__('yaml').safe_load((__import__('pathlib').Path(app.__file__).parents[1] / 'render.yaml').read_text())['services'][0]['envVars'] if e.get('key') == 'RATE_LIMIT_SUPPORT_CHAT'][0])
   shows: send {v} chat
 - article: '30'
-  phrase: 'You can send 30 chat messages per day on Victorae''s hosted service. This is a deployment setting: the hosted service sets 30, and the built-in default is 20.'
+  phrase: 'You can send 30 chat messages per day on Vectorae''s hosted service. This is a deployment setting: the hosted service sets 30, and the built-in default is 20.'
   expr: app.core.config.Settings.model_fields['RATE_LIMIT_SUPPORT_CHAT'].default
   shows: default is {v}.
 - article: '40'
@@ -1167,7 +1167,7 @@ facts:
   expr: int(__import__('re').search(r'port not in \(None, (\d+)\)', (__import__('pathlib').Path(app.__file__).parents[1] / 'app/services/safe_fetch.py').read_text()).group(1))
 - article: '36'
   phrase: '`Name` (up to 120 characters)'
-  expr: int(__import__('re').search(r'"Victorae deal"\)\[:(\d+)\]', (__import__('pathlib').Path(app.__file__).parents[1] / 'app/services/crm_sync.py').read_text()).group(1))
+  expr: int(__import__('re').search(r'"Vectorae deal"\)\[:(\d+)\]', (__import__('pathlib').Path(app.__file__).parents[1] / 'app/services/crm_sync.py').read_text()).group(1))
 - article: '36'
   phrase: gets a date 30 days out
   expr: int(__import__('re').search(r'date\.today\(\) \+ timedelta\(days=(\d+)\)', (__import__('pathlib').Path(app.__file__).parents[1] / 'app/services/crm_sync.py').read_text()).group(1))

@@ -50,7 +50,7 @@ EMPTY_SUMMARY: dict[str, Any] = {
 }
 
 _SYSTEM = (
-    "You are Victorae's meeting analyst. You read the transcript of one "
+    "You are Vectorae's meeting analyst. You read the transcript of one "
     "sales call plus the seller's own live notes, and you return a factual "
     "record of what was said. Respond with ONLY a JSON object, no prose and "
     "no markdown fences:\n"

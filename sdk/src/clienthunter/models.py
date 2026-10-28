@@ -1,4 +1,4 @@
-"""Typed response models for the Victorae SDK.
+"""Typed response models for the Vectorae SDK.
 
 These Pydantic models mirror the backend's response schemas exactly.
 Field names, types, and optionality are derived directly from the backend's

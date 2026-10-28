@@ -31,13 +31,13 @@ sources:
 
 # The learning loop and A/B tests
 
-Victorae records what happens to every message it sends (sent, replied, booked and so on) and uses those records to inform future work. This article explains what the learning loop looks at, how A/B variants are compared and when a winner is "promoted", and the limits you should know about. Nothing in the learning loop rewrites a live campaign on its own.
+Vectorae records what happens to every message it sends (sent, replied, booked and so on) and uses those records to inform future work. This article explains what the learning loop looks at, how A/B variants are compared and when a winner is "promoted", and the limits you should know about. Nothing in the learning loop rewrites a live campaign on its own.
 
-## What does Victorae learn from?
+## What does Vectorae learn from?
 
-Every send, reply, booking and similar event is stored as an outcome record, tagged with its strategy and, when the event is linked to a specific message, with that message's variant. An event that is not linked to a message (for example a reply matched only by the sender's address) counts for the strategy but not for any variant. Every night (by default at 02:05 UTC, configurable by your deployment), Victorae rolls these records up into scores for each strategy pattern: reply rate and booking rate, per variant.
+Every send, reply, booking and similar event is stored as an outcome record, tagged with its strategy and, when the event is linked to a specific message, with that message's variant. An event that is not linked to a message (for example a reply matched only by the sender's address) counts for the strategy but not for any variant. Every night (by default at 02:05 UTC, configurable by your deployment), Vectorae rolls these records up into scores for each strategy pattern: reply rate and booking rate, per variant.
 
-Older results count for less. A result from 90 days ago counts half as much as one from today (the default half-life, configurable). Victorae also counts how much recent evidence there is, so a pattern with many old results can still count as "not enough data".
+Older results count for less. A result from 90 days ago counts half as much as one from today (the default half-life, configurable). Vectorae also counts how much recent evidence there is, so a pattern with many old results can still count as "not enough data".
 
 ## How is what it learns used in new strategies?
 
@@ -47,7 +47,7 @@ On a new account there is no data yet. In that case the pipeline is told plainly
 
 ## How do A/B variants work?
 
-Each sequence step carries a variant label (the default is "A"). Within one sequence each step number appears only once, so a step has exactly one variant. To compare variants you run sequences whose steps carry different labels within the same strategy. The sequence form in the app does not set variant labels, so steps created there are all variant "A"; labels can be set when a sequence is created through the Victorae API.
+Each sequence step carries a variant label (the default is "A"). Within one sequence each step number appears only once, so a step has exactly one variant. To compare variants you run sequences whose steps carry different labels within the same strategy. The sequence form in the app does not set variant labels, so steps created there are all variant "A"; labels can be set when a sequence is created through the Vectorae API.
 
 The **A/B variants** table on the CRM campaigns dashboard shows each variant's sends, reply rate and booking rate, counted from messages actually sent. A variant with under 30 sends is flagged as below the sample size the promotion check needs, so read it as an early signal only.
 
@@ -72,19 +72,19 @@ If any check fails, nothing is promoted. Each strategy is promoted at most once.
 
 ## What happens when a campaign gets no replies?
 
-If a campaign has been sending for 7 days (the default, set by your administrator) with **zero** replies, counted from its first sent message, Victorae reviews it. AI looks at the strategy, the target customer, the step briefs and the numbers, and proposes a diagnosis and three changes: a new messaging angle, a channel recommendation, and target refinements, plus rewritten messaging.
+If a campaign has been sending for 7 days (the default, set by your administrator) with **zero** replies, counted from its first sent message, Vectorae reviews it. AI looks at the strategy, the target customer, the step briefs and the numbers, and proposes a diagnosis and three changes: a new messaging angle, a channel recommendation, and target refinements, plus rewritten messaging.
 
 This is saved as a **proposed** new version of the strategy and you are notified. It is never applied automatically; applying it is your decision. At most one automatic proposal is made per idle period.
 
 ## What is smart send time?
 
-**Smart send time** is a per-campaign switch. Victorae scores each day-and-hour slot in the lead's own time zone by opens plus three times replies. Once a campaign has 50 opens (the default), it works out its top windows, using only hours inside your allowed send window.
+**Smart send time** is a per-campaign switch. Vectorae scores each day-and-hour slot in the lead's own time zone by opens plus three times replies. Once a campaign has 50 opens (the default), it works out its top windows, using only hours inside your allowed send window.
 
 With it on, a step is moved to the next of the top 3 windows at or after its normal time, never earlier and never more than 72 hours later (the default). If no window fits, it sends at its normal time. Turning it on also moves steps already scheduled but not yet sent; turning it off leaves them where they are.
 
 ## Which plans include these features?
 
-The learning-loop insights pages (send-time recommendations, subject-line patterns and playbook scores) need a plan with **playbook access**, included in Starter, Growth, Scale, Pay per meeting, Pro and Enterprise, and not in Free. Multi-variant results (three or more variants compared at once) are shown on the **Analytics** page, in the **Multi-variate test results** card under the variant comparison, and are also available through the Victorae API. They need a plan with **multi-variate testing**: Growth, Scale, Pro and Enterprise. On other plans the card says "Multi-variate test results are included from the Growth plan." (the API answers HTTP 402).
+The learning-loop insights pages (send-time recommendations, subject-line patterns and playbook scores) need a plan with **playbook access**, included in Starter, Growth, Scale, Pay per meeting, Pro and Enterprise, and not in Free. Multi-variant results (three or more variants compared at once) are shown on the **Analytics** page, in the **Multi-variate test results** card under the variant comparison, and are also available through the Vectorae API. They need a plan with **multi-variate testing**: Growth, Scale, Pro and Enterprise. On other plans the card says "Multi-variate test results are included from the Growth plan." (the API answers HTTP 402).
 
 ## Related
 - [The research pipeline](04-research-pipeline.md)

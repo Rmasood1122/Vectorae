@@ -2,7 +2,7 @@
 
 /** How you actually get into the call.
  *
- * VICTORAE IS PLATFORM-AGNOSTIC, and this component is where that promise is
+ * VECTORAE IS PLATFORM-AGNOSTIC, and this component is where that promise is
  * kept. Google Meet, Zoom and Teams all send `X-Frame-Options: DENY` (or the
  * CSP equivalent) on their join pages, so an iframe embed renders a blank box
  * — which is worse than no embed at all, because it looks broken rather than
@@ -92,7 +92,7 @@ export function PlatformLauncher({
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Your client can join from any device — Victorae does not require them
+        Your client can join from any device — Vectorae does not require them
         to install anything.
       </p>
     </div>

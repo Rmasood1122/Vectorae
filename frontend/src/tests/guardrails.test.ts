@@ -29,7 +29,7 @@ describe("labels", () => {
     expect(reasonLabel("open_deal")).toBe("Open deal");
     expect(reasonLabel("brand_new")).toBe("brand new");
     expect(sourceLabel("crm_hubspot")).toBe("HubSpot");
-    expect(sourceLabel("crm_local")).toBe("Victorae CRM");
+    expect(sourceLabel("crm_local")).toBe("Vectorae CRM");
   });
 
   it("labels sender claims in the claim-check panel", () => {
@@ -57,7 +57,7 @@ describe("syncSummary", () => {
       hubspot: { status: "error", error: "HTTP 401" },
       salesforce: { status: "ok", added: 0, reactivated: 1, exists: 3 },
     })).toEqual([
-      "Victorae CRM: 2 added, 1 already listed",
+      "Vectorae CRM: 2 added, 1 already listed",
       "HubSpot: failed — HTTP 401",
       "Salesforce: 0 added, 1 re-activated, 3 already listed",
     ]);

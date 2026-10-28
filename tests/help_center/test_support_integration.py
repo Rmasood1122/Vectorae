@@ -163,12 +163,12 @@ class TestCitations:
 
 class TestApi:
     def test_chat_returns_sources_without_changing_existing_fields(self, client, fake_claude):
-        body = _ask(client, "What is Victorae?").json()
+        body = _ask(client, "What is Vectorae?").json()
         target = help_center.LEGACY_FAQ_ALIASES["what-is-leadpilot"]
         for payload in (body["answer"], body["message"]):
             assert payload["faq_ids"] == [target]
             assert payload["sources"] == [{"id": target, "article_id": "what-is-leadpilot",
-                                           "title": "What is Victorae?"}]
+                                           "title": "What is Vectorae?"}]
         assert {"text", "on_topic", "confidence", "faq_ids", "suggest_ticket",
                 "reason"} <= set(body["answer"])
         assert {"id", "role", "content", "reason", "confidence", "faq_ids",
@@ -208,8 +208,8 @@ class TestApi:
 
 class TestMockFromCorpus:
     @pytest.mark.parametrize("question,chunk_id,starts", [
-        ("What is Victorae?", "what-is-leadpilot#what-does-victorae-do-start-to-finish",
-         "Victorae is an outbound sales system."),
+        ("What is Vectorae?", "what-is-leadpilot#what-does-vectorae-do-start-to-finish",
+         "Vectorae is an outbound sales system."),
         ("How do I connect Gmail?", "email-sending-gmail#how-do-i-connect-gmail",
          "1. Go to Settings"),
         ("What does a 429 error mean?", "troubleshooting#what-do-error-codes-402-429-and-503-mean",
@@ -229,10 +229,10 @@ class TestMockFromCorpus:
             assert result.text.startswith(starts)
 
     def test_a_merged_chunk_answers_from_the_matching_section(self, mock_mode):
-        """'What is Victorae?' lives in a chunk merged with 'What does
-        Victorae do, start to finish?' -- the intro paragraph must answer,
+        """'What is Vectorae?' lives in a chunk merged with 'What does
+        Vectorae do, start to finish?' -- the intro paragraph must answer,
         not the numbered list of the other section."""
-        result = support_chat.answer_question("What is Victorae?")
+        result = support_chat.answer_question("What is Vectorae?")
         assert not result.text.startswith("The work happens")
 
     def test_no_match_offers_a_ticket(self, mock_mode):

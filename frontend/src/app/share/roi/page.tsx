@@ -129,7 +129,7 @@ function Dashboard() {
         </div>
 
         <footer className="text-center text-xs text-muted-foreground">
-          Generated {new Date(d.generated_at).toLocaleString()} · Powered by Victorae
+          Generated {new Date(d.generated_at).toLocaleString()} · Powered by Vectorae
         </footer>
       </div>
     </main>

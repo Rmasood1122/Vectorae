@@ -10,7 +10,7 @@ namespace py = pybind11;
 using namespace vectorae;
 
 PYBIND11_MODULE(vectorae_native_cpp, m) {
-    m.doc() = "Victorae agents, C++ core: deliverability guard, reply triage, claim check";
+    m.doc() = "Vectorae agents, C++ core: deliverability guard, reply triage, claim check";
     m.attr("__version__") = "0.1.0";
 
     m.def("assess_mailbox", [](long sent, long bounced, long unsubscribed, long replies,

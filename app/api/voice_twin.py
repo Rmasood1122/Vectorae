@@ -230,7 +230,7 @@ def use_my_voice(body: UseIn, request: Request, db: Session = Depends(get_db),
     if body.enabled:
         if not voice_twin.enabled(db):
             raise HTTPException(status_code=409,
-                                detail="Voice cloning is not enabled on this Victorae.")
+                                detail="Voice cloning is not enabled on this Vectorae.")
         if voice_twin.ready_clone(db, current_user.id) is None:
             raise HTTPException(status_code=409, detail="Your voice clone is not ready yet.")
     row = voice_twin.settings_for(db, current_user.id, create=True)
@@ -320,13 +320,13 @@ def put_settings(body: SettingsIn, request: Request, db: Session = Depends(get_d
         if body.answer_inbound:
             if not voice_twin.enabled(db):
                 raise HTTPException(status_code=409, detail="AI answering is not enabled on "
-                                                            "this Victorae.")
+                                                            "this Vectorae.")
             number_id = voice_twin.own_number(db, current_user.id)   # M4: no shared fallback
             if not number_id:
                 raise HTTPException(
                     status_code=409,
                     detail="This account has no phone number of its own to answer on. Ask "
-                           "your Victorae administrator to assign one to your account "
+                           "your Vectorae administrator to assign one to your account "
                            "(the deployment's shared number cannot answer for one account).")
             from sqlalchemy import select  # noqa: PLC0415
 

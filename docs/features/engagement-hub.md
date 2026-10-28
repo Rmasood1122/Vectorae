@@ -342,7 +342,7 @@ change needed.
    other provider.
 
 5. **Meetings are hosted by one Zoom account.** Zoom server-to-server OAuth
-   means the Victorae operator authorises once and every meeting is created
+   means the Vectorae operator authorises once and every meeting is created
    under that account. Correct for the current audience (solo founders,
    boutique agency owners — the operator *is* the host); wrong for a future
    team plan, and `app/integrations/zoom.py` is the module that would change.

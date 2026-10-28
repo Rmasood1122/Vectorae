@@ -1,4 +1,4 @@
-"""Victorae database models — Milestone 1 / Chunk 2.
+"""Vectorae database models — Milestone 1 / Chunk 2.
 
 Implements every table from project knowledge section G:
 users, products, past_clients, strategies, research_steps, leads,
@@ -208,7 +208,7 @@ class WhatsAppTemplateStatus(str, enum.Enum):
 class WhatsAppTemplateCategory(str, enum.Enum):
     """Meta template categories relevant to outreach.
     # TODO: verify against current WhatsApp docs (exact category values;
-    Meta also has AUTHENTICATION, which Victorae deliberately never uses)."""
+    Meta also has AUTHENTICATION, which Vectorae deliberately never uses)."""
     MARKETING = "marketing"
     UTILITY = "utility"
 
@@ -310,7 +310,7 @@ class MeetingPlatform(str, enum.Enum):
 
     CUSTOM is not a fallback for "we could not integrate" -- it is the
     platform-agnostic path the product promises: paste any join URL (Whereby,
-    a phone bridge, the client's own Webex) and Victorae still runs the
+    a phone bridge, the client's own Webex) and Vectorae still runs the
     notes, transcript and summary around it.
     """
     GOOGLE_MEET = "google_meet"
@@ -1807,7 +1807,7 @@ class SuppressionEntry(Base):
 
 class InboundReply(TimestampMixin, Base):
     """An inbound message matched (or attempted) to a lead, with its
-    classification. Stored for the user to act on — Victorae never
+    classification. Stored for the user to act on — Vectorae never
     auto-replies to humans in M3."""
 
     __tablename__ = "inbound_replies"
@@ -1886,7 +1886,7 @@ class InboundReply(TimestampMixin, Base):
     # week has one thread and two things to answer, and a per-prospect flag
     # would let the second be cleared by a decision made about the first.
     # It exists at all because the two cases that matter most -- a reply
-    # answered OUTSIDE Victorae, and a reply that needs no answer -- produce
+    # answered OUTSIDE Vectorae, and a reply that needs no answer -- produce
     # no outbound row, so "latest inbound is newer than latest outbound"
     # alone would show them as outstanding forever.
     handled_at: Mapped[datetime | None] = mapped_column(
@@ -3207,7 +3207,7 @@ class StrategyVersion(TimestampMixin, Base):
 class LinkedInAccount(TimestampMixin, Base):
     """One LinkedIn account a user connected through Unipile.
 
-    The user signs in on Unipile's hosted page; Victorae stores only the
+    The user signs in on Unipile's hosted page; Vectorae stores only the
     Unipile account id, never a LinkedIn credential. Several per user is the
     point: sends rotate across them (linkedin_limits.pick_account) so no one
     account exceeds its daily ceiling.
@@ -3522,7 +3522,7 @@ class CrmConnection(TimestampMixin, Base):
 
 
 class CrmSyncLink(TimestampMixin, Base):
-    """A Victorae record <-> the CRM record it is synced with.
+    """A Vectorae record <-> the CRM record it is synced with.
 
     Both directions are unique: one lead is one HubSpot contact, and one
     HubSpot contact is one lead, per user. That is what makes sync
@@ -3849,7 +3849,7 @@ class MailboxHealth(TimestampMixin, Base):
 
 
 class ComplianceAuditLog(Base):
-    """What Victorae knew and decided, per send, about the rules that apply
+    """What Vectorae knew and decided, per send, about the rules that apply
     to its recipient -- region, regime, the checks made and the outcome.
     Append-only. Survives a GDPR erase with the lead reference nulled, so the
     fact that a lawful decision was made outlives the personal data."""
@@ -6083,7 +6083,7 @@ class VoiceClone(TimestampMixin, Base):
 
     A voiceprint is biometric data (BIPA 740 ILCS 14, GDPR Art. 9): the row
     holds the exact consent text the person signed, who (user_id + typed
-    signature) and when, BEFORE any recording leaves their browser. Victorae
+    signature) and when, BEFORE any recording leaves their browser. Vectorae
     never stores the recordings themselves -- they are streamed to the
     provider and dropped (voice_twin.upload_sample).
 
@@ -6208,7 +6208,7 @@ class VoiceTwinSettings(TimestampMixin, Base):
 
 
 class AgentRun(Base):
-    """One run of a Victorae agent (app/agents/), written by the master
+    """One run of a Vectorae agent (app/agents/), written by the master
     supervisor (app/agents/supervisor.py).
 
     The supervisor is stateless: API and Celery processes share nothing in

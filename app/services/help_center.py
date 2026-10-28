@@ -31,7 +31,7 @@ relevant to one question:
                 distance 1-2 (Corpus._correct);
               - word pairs from headings, stopwords kept, as extra BM25
                 terms (Corpus._heading_terms) -- without them "What is
-                Victorae?" reduces to "victorae", which is in every chunk.
+                Vectorae?" reduces to "vectorae", which is in every chunk.
             All three are deterministic and dependency-free.
 
 WHY LEXICAL AND NOT EMBEDDINGS
@@ -153,7 +153,7 @@ HELP_CENTER_DIR_ENV = "HELP_CENTER_DIR"
 #     10.0                               55       4          0
 #
 # With 14 more articles the nearest must-refuse item is "How much will
-# Victorae cost next year?" at coverage 0.552 (it matches the plan-price
+# Vectorae cost next year?" at coverage 0.552 (it matches the plan-price
 # heading), so the old 0.55 floor answered it with a price paragraph. 0.60 is
 # the lowest tested floor that answers no must-refuse item, keeps a ~0.05
 # margin above it, and has the lowest wrong-answer rate (5 of 62 answers) --
@@ -173,21 +173,21 @@ MOCK_MIN_HEADING_COVERAGE = 0.60
 # whose articles restate those topics with facts verified against the code
 # (several old answers were wrong: "draft messages only, a human clicks send
 # every time" is contradicted by the send path; "72-step pipeline" omits the
-# 144-step one; booking is Victorae's own calendar, not only Calendly). So an
+# 144-step one; booking is Vectorae's own calendar, not only Calendly). So an
 # old id now resolves to the chunk that answers the same question. Rows
 # already stored keep their old ids; resolve_citation() maps them. Never
 # delete an entry; if a target heading is renamed, point the entry at the new
 # chunk id (tests/help_center/test_corpus.py fails until you do).
 LEGACY_FAQ_ALIASES: dict[str, str] = {
-    "what-is-leadpilot": "what-is-leadpilot#what-does-victorae-do-start-to-finish",
-    "what-does-it-replace": "what-is-leadpilot#what-does-victorae-do-start-to-finish",
-    "who-is-it-for": "who-its-for-and-not-for#who-is-victorae-designed-for",
+    "what-is-leadpilot": "what-is-leadpilot#what-does-vectorae-do-start-to-finish",
+    "what-does-it-replace": "what-is-leadpilot#what-does-vectorae-do-start-to-finish",
+    "who-is-it-for": "who-its-for-and-not-for#who-is-vectorae-designed-for",
     "how-outreach-works": "what-is-leadpilot#do-i-have-to-send-the-messages-myself",
-    "learning-loop": "learning-loop-and-ab-tests#what-does-victorae-learn-from",
+    "learning-loop": "learning-loop-and-ab-tests#what-does-vectorae-learn-from",
     "first-campaign": "getting-started#how-do-i-create-my-first-product-and-strategy",
     "tutorial-section": "learn-tab-and-tutorials#where-do-i-find-the-training-videos",
     "contact-support": "contact-support-and-status#where-do-i-find-support-in-the-app",
-    "data-storage": "privacy-data-retention-deletion#what-does-victorae-store-about-me",
+    "data-storage": "privacy-data-retention-deletion#what-does-vectorae-store-about-me",
 }
 
 
@@ -561,10 +561,10 @@ class Corpus:
         """Phrase terms from the chunk's section headings, STOPWORDS KEPT:
         every adjacent word pair, plus the whole heading as one term.
 
-        Unigram BM25 cannot see "What is Victorae?": once "what" and "is"
-        are dropped only "victorae" is left, and it occurs in nearly every
-        chunk. A pair ("is_victorae") narrows that to a few headings; the
-        whole-heading term ("=what_is_victorae") to exactly one, so a user
+        Unigram BM25 cannot see "What is Vectorae?": once "what" and "is"
+        are dropped only "vectorae" is left, and it occurs in nearly every
+        chunk. A pair ("is_vectorae") narrows that to a few headings; the
+        whole-heading term ("=what_is_vectorae") to exactly one, so a user
         who types -- or clicks -- a question the help center literally asks
         gets that section. Only the chunk's OWN section headings count (the
         article title enters through the intro section, whose heading it
@@ -750,7 +750,7 @@ def _is_phrase(term: str) -> bool:
 
 
 def _bigrams(tokens: list[str]) -> list[str]:
-    """Adjacent pairs with at least one content word: "is_victorae" is a
+    """Adjacent pairs with at least one content word: "is_vectorae" is a
     signal, "how_do" is in half the headings and only adds noise."""
     return [f"{a}_{b}" for a, b in pairwise(tokens)
             if a not in STOPWORDS or b not in STOPWORDS]

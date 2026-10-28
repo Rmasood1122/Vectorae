@@ -15,7 +15,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "Book a call about Victorae | Calendarharvest",
+  title: "Book a call about Vectorae",
   description:
     `Talk to Rehan directly about ${PRODUCT_FULL_NAME}. If it is a fit, we will tell you honestly. If it is not, we will tell you that too.`,
   ...canonicalMeta("/contact/"),
@@ -32,7 +32,7 @@ const WHATSAPP = [
 
 const FOR_YOU = [
   // Who it is for: product-facts.json, the same list as the home page and /about.
-  `You are in one of the groups Victorae is built for: ${PRODUCT_FACTS.fit.map((a) => a.name).join(", ")}.`,
+  `You are in one of the groups Vectorae is built for: ${PRODUCT_FACTS.fit.map((a) => a.name).join(", ")}.`,
   "You are doing all sales personally and your pipeline stops every time a client project gets heavy.",
   "You have tried cold email or LinkedIn outreach and it has not produced consistent results.",
   "You are open to a done-with-you system rather than a tool you configure yourself.",
@@ -42,7 +42,7 @@ const FOR_YOU = [
 const NOT_FOR_YOU = [
   "You have a dedicated SDR team and a working outbound system.",
   // Where it is offered: Terms of Service ("currently available only to clients based in ...").
-  "You are based outside the countries Victorae is currently offered in: the United States, the United Kingdom, Canada, Australia, New Zealand, Ireland and Singapore (see the Terms of Service).",
+  "You are based outside the countries Vectorae is currently offered in: the United States, the United Kingdom, Canada, Australia, New Zealand, Ireland and Singapore (see the Terms of Service).",
   // Not a fit: product-facts.json, the same list as the home page.
   ...PRODUCT_FACTS.not_fit,
   "You need clients in the next 7 days. Research comes first and new mailboxes warm up gradually, so this is not a quick fix.",
@@ -59,7 +59,7 @@ const FAQ = [
   {
     // Code truth (platform-gaps item 8): prices are public on /pricing, read
     // from GET /billing/catalog (app/core/billing_catalog.py).
-    q: "What does Victorae cost?",
+    q: "What does Vectorae cost?",
     a: CHECKOUT_LIVE
       ? "Every plan and price is published on the Pricing page: monthly plans with a free trial, and a pay-per-booked-meeting plan. On the call we can help you choose between them."
       : "Every plan and price is published on the Pricing page: monthly plans and a pay-per-booked-meeting plan. Online checkout opens soon; until then, book a call to start, and we can help you choose a plan.",
@@ -101,7 +101,7 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold">Book a call</h2>
               <p className="mt-4 leading-relaxed text-gray-300">
                 30 minutes. We will look at your current pipeline, understand what you have tried, and tell
-                you whether Victorae makes sense for your situation.
+                you whether Vectorae makes sense for your situation.
               </p>
               <a
                 href={CALENDLY_URL}
@@ -133,7 +133,7 @@ export default function ContactPage() {
                       rel="noopener noreferrer"
                       className="text-lg font-medium text-blue-500 hover:text-blue-400"
                     >
-                      Victorae on LinkedIn
+                      Vectorae on LinkedIn
                     </a>
                   </dd>
                 </div>
@@ -209,7 +209,7 @@ function SiteNav() {
     <header className="border-b border-white/10 px-6 py-5">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3">
         <Link href="/" className="text-lg font-bold text-white">
-          Victorae
+          Vectorae
         </Link>
         <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
           <li><Link href="/how-it-works" className="hover:text-white">How it Works</Link></li>

@@ -118,7 +118,7 @@ FALLBACK_DRAFT = {
 }
 
 _SYSTEM = (
-    "You are Victorae's reply intelligence engine. You read ONE inbound "
+    "You are Vectorae's reply intelligence engine. You read ONE inbound "
     "reply to a cold outreach message and decide what the human sender does "
     "next. Respond with ONLY a JSON object, no prose and no markdown fences:\n"
     '{"category": "BUYING_SIGNAL|OBJECTION|NOT_NOW|WRONG_PERSON", '

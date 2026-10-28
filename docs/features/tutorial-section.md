@@ -1,4 +1,4 @@
-# Learn Victorae — Tutorial Section (Feature 2)
+# Learn Vectorae — Tutorial Section (Feature 2)
 
 Status: **implemented and verified locally.** All nine videos are
 **placeholders** — the platform is complete, the content is not. See
@@ -17,7 +17,7 @@ Intermediate / Advanced, each tracking progress per user.
 - **Video player** — YouTube embed (`youtube-nocookie.com`) driven by the
   IFrame API so playback position records itself.
 - **Progress per user per video** — resume point, percent watched, completion.
-- **Completion badges** — one per level plus "Victorae Certified" for all nine.
+- **Completion badges** — one per level plus "Vectorae Certified" for all nine.
 - **Search** — case-insensitive, over titles *and* descriptions.
 - **Level sections** — with per-level counts and an overall progress header.
 
@@ -108,7 +108,7 @@ having put that check in one dependency rather than per router.
    ```python
    Tutorial(
        slug="getting-started-with-leadpilot",   # <- DO NOT CHANGE
-       title="Getting Started with Victorae",
+       title="Getting Started with Vectorae",
        ...
        youtube_id="AbCdEfGhIjK",                # <- was None
        duration_seconds=424,                    # <- optional

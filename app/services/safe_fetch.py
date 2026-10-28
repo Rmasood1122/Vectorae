@@ -55,7 +55,7 @@ MAX_REDIRECTS = 3
 MAX_BYTES = 512_000
 TIMEOUT_SECONDS = 8.0
 MAX_TEXT_CHARS = 20_000
-USER_AGENT = "Victorae/1.0 quickstart (+https://calendarharvest.com)"
+USER_AGENT = "Vectorae/1.0 quickstart (+https://calendarharvest.com)"
 _ALLOWED_TYPES = ("text/html", "text/plain", "application/xhtml+xml")
 
 

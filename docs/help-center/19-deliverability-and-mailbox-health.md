@@ -22,7 +22,7 @@ sources:
 
 # Deliverability and mailbox health
 
-Deliverability is whether your emails reach the inbox. Victorae checks two things: the health of each **sending domain** (DNS records, bounces, blocklists) and the health of each **mailbox** you send from. A mailbox in trouble is slowed down or paused automatically, and paused messages wait rather than being dropped. You find both under **Settings**, on the **Deliverability** tab.
+Deliverability is whether your emails reach the inbox. Vectorae checks two things: the health of each **sending domain** (DNS records, bounces, blocklists) and the health of each **mailbox** you send from. A mailbox in trouble is slowed down or paused automatically, and paused messages wait rather than being dropped. You find both under **Settings**, on the **Deliverability** tab.
 
 ## What are SPF, DKIM and DMARC, and why do they matter?
 
@@ -32,7 +32,7 @@ They are DNS records on your domain that tell receiving mail servers your emails
 - **DKIM** adds a signature to each email.
 - **DMARC** tells receivers what to do with mail that fails those checks. A DMARC policy of `p=none` only monitors; `quarantine` or `reject` give stronger protection.
 
-Missing records make your mail more likely to land in spam. You or whoever manages your domain adds them at your DNS provider. Victorae only reads them; it cannot change them.
+Missing records make your mail more likely to land in spam. You or whoever manages your domain adds them at your DNS provider. Vectorae only reads them; it cannot change them.
 
 ## How is my domain's email health scored?
 
@@ -52,13 +52,13 @@ Below 70 (the default threshold), you get a one-time warning, and launching a ca
 
 ## What happens if my domain is blocklisted?
 
-Domains are checked against blocklists daily at 06:10 UTC and on demand. Without an MXToolbox key, Victorae queries Spamhaus DBL, SURBL and URIBL directly. Spamhaus refuses queries from public DNS servers; when that happens the list is shown as "could not be queried", never as listed.
+Domains are checked against blocklists daily at 06:10 UTC and on demand. Without an MXToolbox key, Vectorae queries Spamhaus DBL, SURBL and URIBL directly. Spamhaus refuses queries from public DNS servers; when that happens the list is shown as "could not be queried", never as listed.
 
 When a domain is **newly** listed, every active campaign on your account is paused, and an urgent alert goes out by push notification and Slack. Being removed from the list does **not** restart anything; you resume campaigns yourself.
 
 ## What is mailbox health?
 
-Two mailboxes on the same domain can have very different reputations, so Victorae also scores each **mailbox** and acts only on the one in trouble. The **Mailbox health** card shows each mailbox's score out of 100, its state, the reasons, its complaint and bounce rates, and how much it sent today. Scores refresh every 4 hours; **Check now** refreshes them immediately. A mailbox that has not been checked yet is shown as unchecked.
+Two mailboxes on the same domain can have very different reputations, so Vectorae also scores each **mailbox** and acts only on the one in trouble. The **Mailbox health** card shows each mailbox's score out of 100, its state, the reasons, its complaint and bounce rates, and how much it sent today. Scores refresh every 4 hours; **Check now** refreshes them immediately. A mailbox that has not been checked yet is shown as unchecked.
 
 The score starts at 100 and loses points for:
 
@@ -71,7 +71,7 @@ A brand-new mailbox with no history is not penalised for missing rates. A mailbo
 
 ## Why does it say the complaint rate is a "proxy"?
 
-Victorae has no connection to Gmail's spam-report data (a feedback loop or Google Postmaster Tools), so it cannot see when someone clicks "report spam". Instead, the complaint rate counts **unsubscribes plus replies asking you to stop**, divided by sends. The card labels it "(proxy)". It is a stand-in for the real spam-complaint rate, not the same thing.
+Vectorae has no connection to Gmail's spam-report data (a feedback loop or Google Postmaster Tools), so it cannot see when someone clicks "report spam". Instead, the complaint rate counts **unsubscribes plus replies asking you to stop**, divided by sends. The card labels it "(proxy)". It is a stand-in for the real spam-complaint rate, not the same thing.
 
 ## What do "throttled" and "paused" mean?
 

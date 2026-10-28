@@ -1,4 +1,4 @@
-# Victorae glossary
+# Vectorae glossary
 
 **Product** — something the user sells (a product or a skill). Strategies
 are created for a product. *Past clients* on a product anchor the

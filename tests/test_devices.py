@@ -1,5 +1,5 @@
 """
-test_devices.py — Victorae (M7 Chunk 4)
+test_devices.py — Vectorae (M7 Chunk 4)
 
 Tests for app/api/devices.py (POST /devices/register, DELETE /devices/{token}).
 Uses the existing test client and db_session fixtures from conftest.py.

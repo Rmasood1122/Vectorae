@@ -14,7 +14,7 @@ import { canonicalMeta } from "@/lib/seo/pageMeta";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "Victorae FAQ: 30 questions answered | Calendarharvest",
+  title: "Vectorae FAQ: 30 questions answered",
   description: `Straight answers about ${PRODUCT_FULL_NAME}: what it is, how it works, what is live, how it compares with Apollo, Instantly and Clay, and what it costs.`,
   ...canonicalMeta("/faq/"),
 };
@@ -33,9 +33,9 @@ export default function FaqPage() {
       lastChecked={FACTS_CHECKED}
       sections={FAQ_SECTIONS}
       related={[
-        { href: "/what-is-leadpilot", label: "What is Victorae?" },
+        { href: "/what-is-leadpilot", label: "What is Vectorae?" },
         { href: "/help", label: "Help center" },
-        { href: "/compare", label: "Compare Victorae" },
+        { href: "/compare", label: "Compare Vectorae" },
       ]}
     />
   );

@@ -1,6 +1,6 @@
 "use client";
 
-/** Feature Group 4: connect Slack and choose the channel Victorae posts to. */
+/** Feature Group 4: connect Slack and choose the channel Vectorae posts to. */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -99,7 +99,7 @@ export function SlackCard() {
                     ))}
                   </select>
                   <span className="text-[11px] text-muted-foreground">
-                    Private channels need the Victorae bot invited first.
+                    Private channels need the Vectorae bot invited first.
                   </span>
                 </div>
               )}

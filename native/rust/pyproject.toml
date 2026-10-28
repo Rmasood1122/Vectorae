@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "vectorae-native-rs"
 version = "0.1.0"
-description = "Victorae agents, Rust core (lead priority, follow-up timing, supervisor)"
+description = "Vectorae agents, Rust core (lead priority, follow-up timing, supervisor)"
 requires-python = ">=3.11"
 
 [tool.maturin]

@@ -623,7 +623,7 @@ cases:
     brand_name: Northwind Studio
   expect:
     prompt_forbidden: &id001
-    - Victorae
+    - Vectorae
     - Rehan Masood
     - Calendarharvest
     - Boutique agency founders
@@ -687,7 +687,7 @@ cases:
       '
     prompt_forbidden:
     - AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    - Victorae
+    - Vectorae
     - Rehan Masood
     - Calendarharvest
     - Boutique agency founders
@@ -724,7 +724,7 @@ cases:
   input: {}
   expect:
     prompt_include:
-    - 'Product: Victorae'
+    - 'Product: Vectorae'
     - author Rehan Masood
   recorded:
     html_content: <!DOCTYPE html><html><head><title>T</title></head><body><h1>Agency pipeline</h1><p>one two three</p></body></html>

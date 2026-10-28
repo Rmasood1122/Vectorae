@@ -685,7 +685,7 @@ def _lead_entries(lead: Lead, reason: str, ref: str) -> list[_Entry]:
 
 
 def _local_entries(session: Session, user_id) -> list[_Entry]:
-    """From Victorae's own CRM: won leads, and leads with an open or won deal.
+    """From Vectorae's own CRM: won leads, and leads with an open or won deal.
     Ownership: the lead -> strategy -> product chain, filtered by user_id."""
     owned = (select(Lead).join(Strategy, Strategy.id == Lead.strategy_id)
              .join(Product, Product.id == Strategy.product_id)

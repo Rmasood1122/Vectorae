@@ -53,7 +53,7 @@ def _google(db, email: str, execute: bool) -> bool:
     adapter = google_meet.GoogleMeetAdapter(db, account)
     print(f"[google] health_check={adapter.health_check()}")
     start = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(days=7)
-    event = adapter.create_event(summary="Victorae adapter verification (auto-deleted)",
+    event = adapter.create_event(summary="Vectorae adapter verification (auto-deleted)",
                                  description=None, start_at=start,
                                  end_at=start + timedelta(hours=1))
     link = google_meet.meet_link(event)
@@ -79,7 +79,7 @@ def _zoom(db, execute: bool) -> bool:
 
     print(f"[zoom] health_check={adapter.health_check()}")
     start = datetime.now(timezone.utc) + timedelta(days=7)
-    meeting = adapter.create_meeting(topic="Victorae adapter verification (auto-deleted)",
+    meeting = adapter.create_meeting(topic="Vectorae adapter verification (auto-deleted)",
                                      start_at=start, duration_minutes=30)
     print(f"[zoom] created meeting {meeting.get('id')} join_url={meeting.get('join_url')}")
     if meeting.get("id"):
@@ -92,7 +92,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--google", action="store_true")
     parser.add_argument("--zoom", action="store_true")
-    parser.add_argument("--user-email", help="Victorae user whose Google account to use")
+    parser.add_argument("--user-email", help="Vectorae user whose Google account to use")
     parser.add_argument("--execute", action="store_true",
                         help="actually create and delete test objects")
     args = parser.parse_args()

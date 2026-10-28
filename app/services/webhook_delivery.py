@@ -61,7 +61,7 @@ from app.db.models import WebhookDelivery, WebhookTarget
 logger = logging.getLogger(__name__)
 
 EVENT_DESCRIPTIONS: dict[str, str] = {
-    "meeting_booked": "A lead booked a meeting (Calendly or the Victorae calendar).",
+    "meeting_booked": "A lead booked a meeting (Calendly or the Vectorae calendar).",
     "reply_received": "A lead replied on any channel, with the reply's classification.",
     "reply_interested": "A reply was classified as interested.",
     "lead_sourced": "A sourcing batch finished; carries its verified leads.",

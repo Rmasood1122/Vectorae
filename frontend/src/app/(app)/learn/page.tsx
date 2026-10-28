@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Learn Victorae — the tutorial section (Feature 2).
+ * Learn Vectorae — the tutorial section (Feature 2).
  *
  * One page, three regions: an overall progress header, the badge shelf, and
  * the categorised catalogue with a search box. Selecting a tutorial opens the
@@ -103,7 +103,7 @@ export default function LearnPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">Learn Victorae</h1>
+        <h1 className="text-2xl font-semibold">Learn Vectorae</h1>
         <p className="text-sm text-muted-foreground">
           Short lessons that take you from first login to a running pipeline.
         </p>

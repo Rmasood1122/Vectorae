@@ -1,4 +1,4 @@
-"""One command that takes Victorae from "keys missing" to "production ready".
+"""One command that takes Vectorae from "keys missing" to "production ready".
 
     python scripts/activate_with_keys.py
 
@@ -425,7 +425,7 @@ def check_test_email(ctx: dict) -> CheckResult:
 
     from app.services.email_sender import EmailSendError, send_email
 
-    subject = "Victorae activation test"
+    subject = "Vectorae activation test"
     body = ("This is the activation test email from "
             "scripts/activate_with_keys.py.\n\n"
             "If you are reading this in a real inbox, Resend delivery works.")
@@ -584,7 +584,7 @@ def run_checks(checks=None, *, ctx=None, dry_run=False, out=print) -> int:
     ctx.setdefault("confirm", input)
 
     out("=" * 72)
-    out("VICTORAE ACTIVATION")
+    out("VECTORAE ACTIVATION")
     if dry_run:
         out("DRY RUN - no network call, no email, no migration.")
     out("=" * 72)
@@ -629,7 +629,7 @@ def run_checks(checks=None, *, ctx=None, dry_run=False, out=print) -> int:
     out(" Email:    LIVE via Resend")
     out(" AI Chat:  LIVE via Anthropic")
     out(f" Database: LIVE on Neon at migration {ctx.get('db_revision', TARGET_REVISION)}")
-    out(" Victorae is production-ready.")
+    out(" Vectorae is production-ready.")
     return EXIT_OK
 
 

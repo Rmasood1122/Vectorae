@@ -1,4 +1,4 @@
-"""Migration 0092 (Victorae agents): agent_runs matches the model, chains after
+"""Migration 0092 (Vectorae agents): agent_runs matches the model, chains after
 0091, names fit PostgreSQL, no JSONB, the downgrade removes exactly the table,
 one head (which the activation script targets), and the table belongs to the
 account for export and erasure."""

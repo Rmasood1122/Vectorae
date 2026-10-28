@@ -173,7 +173,7 @@ export function OutreachPanel({ strategy }: { strategy: StrategyOut }) {
             ) : (
               <>
                 <p className="text-muted-foreground">
-                  Describe what the first email should say. Victorae writes each
+                  Describe what the first email should say. Vectorae writes each
                   email for the person it is going to. Only the {contactable.length} verified
                   lead(s) above with an email address will be contacted. Remove
                   anyone you do not want to email before you launch.

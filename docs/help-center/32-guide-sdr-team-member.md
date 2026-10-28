@@ -37,7 +37,7 @@ sources:
 
 # Working as an SDR in someone else's workspace
 
-This guide is for someone invited into another person's Victorae workspace with the SDR role (and, briefly, the viewer role). It covers getting into the workspace, which screens you can use, what will be refused and the exact message you will see, and how your campaign launches are approved. For the overview of all four roles, see [Workspaces, team roles and agency mode](24-workspaces-and-agency-mode.md).
+This guide is for someone invited into another person's Vectorae workspace with the SDR role (and, briefly, the viewer role). It covers getting into the workspace, which screens you can use, what will be refused and the exact message you will see, and how your campaign launches are approved. For the overview of all four roles, see [Workspaces, team roles and agency mode](24-workspaces-and-agency-mode.md).
 
 ## How do I get into the workspace I was invited to?
 

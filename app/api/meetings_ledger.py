@@ -80,7 +80,7 @@ def export_meetings_ledger(
     TOTAL row; `view=events`: one row per counted event, lead id and company
     only) or a PDF summary. Private, never cached."""
     ledger = _ledger(db, current_user, date_from, date_to, strategy_id)
-    stem = f"victorae-meetings-ledger-{ledger['date_from']}-{ledger['date_to']}"
+    stem = f"vectorae-meetings-ledger-{ledger['date_from']}-{ledger['date_to']}"
     headers = {"Cache-Control": "private, no-store"}
     if format == "pdf":
         headers["Content-Disposition"] = f'attachment; filename="{stem}.pdf"'

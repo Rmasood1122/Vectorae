@@ -201,7 +201,7 @@ function SetupCard({ onStarted }: { onStarted: () => void }) {
       <CardHeader>
         <CardTitle className="text-sm">Day 1: set your success criteria</CardTitle>
         <p className="text-xs text-muted-foreground">
-          Tick what you will judge Victorae on and type your own target. Nothing is pre-filled.
+          Tick what you will judge Vectorae on and type your own target. Nothing is pre-filled.
           The criteria are <strong>locked once the pilot starts</strong>.
         </p>
       </CardHeader>

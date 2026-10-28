@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * OfflineBanner — Victorae
+ * OfflineBanner — Vectorae
  *
  * Non-blocking persistent banner shown when connectivity is degraded.
  * Never blocks the UI — users can still read cached React Query data.
@@ -13,7 +13,7 @@
  * Honesty rule (platform-gaps item 5): the banner states only what this
  * device can know.
  *   OFFLINE — losing THIS device's connection does not stop anything:
- *     scheduled sends run on Victorae's servers, not in the app. True by
+ *     scheduled sends run on Vectorae's servers, not in the app. True by
  *     construction, so it may be said.
  *   BACKEND_UNREACHABLE — the server did not answer, so the app cannot know
  *     whether sends are going out. It used to say "Your campaigns are still
@@ -39,13 +39,13 @@ export const MESSAGES: Record<Exclude<BannerState, 'ok'>, { title: string; body:
   offline: {
     title: 'No connection',
     body:
-      'Scheduled sends run on Victorae\'s servers, not on this device, so losing your ' +
+      'Scheduled sends run on Vectorae\'s servers, not on this device, so losing your ' +
       'connection does not stop them. You\'ll be back in sync when connected.',
   },
   backend_unreachable: {
     title: 'Server temporarily unreachable',
     body:
-      'We can\'t reach Victorae\'s server right now, so we can\'t confirm whether ' +
+      'We can\'t reach Vectorae\'s server right now, so we can\'t confirm whether ' +
       'scheduled sends are going out. We\'ll reconnect automatically.',
   },
 };

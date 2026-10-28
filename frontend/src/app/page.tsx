@@ -22,7 +22,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { pageGraph } from "@/lib/seo/structuredData";
 
 export const metadata: Metadata = {
-  title: "Victorae: from what you sell to meetings on your calendar | Calendarharvest",
+  title: "Vectorae: from what you sell to meetings on your calendar",
   description: HOME_DESCRIPTION,
   ...canonicalMeta("/", {
     title: HOME_TITLE,

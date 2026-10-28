@@ -25,7 +25,7 @@ out at the end, and (4) nothing converts on its own when the 30 days end.
 |---|---|---|
 | Per-campaign cost, qualified conversations, meetings booked/held, cost per stage, reconciliation, CSV/PDF | `app/services/meetings_ledger.py` (F08: `build_ledger`, `to_csv`, `to_pdf`) | **Every number in a scorecard and a verdict.** F09 never recomputes a count or a cost; it calls `build_ledger` for the pilot's period and compares the totals to the criteria. The PDF body is F08's (its line builder is now public as `pdf_lines`; `to_pdf` is unchanged byte-for-byte). |
 | Full account export (every owned table, credentials redacted, password-confirmed, audited) | `app/services/account_export.py`, `POST /me/data-export` (PR #57) | **The end-of-pilot "full data export".** The verdict page offers it as is (same password re-check, API-key refusal, rate limit and security audit). The two new tables are added to `OWNERSHIP`, so the pilot itself is in that export. |
-| Transactional (system) email | `app/services/email_sender.py::send_email` | The weekly scorecard and the verdict notice. This is Victorae's own account mail (verification, invitations, booking confirmations), **not** the outreach send path. |
+| Transactional (system) email | `app/services/email_sender.py::send_email` | The weekly scorecard and the verdict notice. This is Vectorae's own account mail (verification, invitations, booking confirmations), **not** the outreach send path. |
 | Periodic work | `app/workers/celery_app.py` beat schedule + `task_routes` | One hourly sweep, routed to `default`. |
 | Workspaces / agency mode | `docs/features/workspaces.md`, `agency-mode.md` | Tenancy: a pilot belongs to the workspace owner's account (`current_user` is the owner when a member works in the workspace). An agency piloting for one client scopes the pilot to that client's campaigns (`strategy_ids`). |
 | Plans and billing | `app/core/plans.py`, `app/core/billing_catalog.py`, `app/services/billing.py`, `app/integrations/stripe_billing.py` | Read only, to state the truth below. F09 adds no PLANS key and touches no billing code. |
@@ -61,7 +61,7 @@ verdict export, and the page.
   a pilot, sending scorecards, and ending it leave both exactly as they were,
   and that the monthly checkout still bills monthly. The verdict records the
   plan at start and at end and says in words that the pilot changed neither
-  (the statement no longer says "Victorae has no annual plan" — verdicts
+  (the statement no longer says "Vectorae has no annual plan" — verdicts
   stored before 2026-10-11 keep the old sentence, which was true then).
 
 ## Behavior
@@ -124,7 +124,7 @@ the pilot page. It says "so far" — no projection, no forecast.
 * The pilot's status is re-read from the database before and after the claim,
   so a pilot another request has just ended gets no scorecard (a claim made
   for a pilot that ended in between is released, unsent).
-* The copy says "a 30-day pilot is running on your Victorae account" — not
+* The copy says "a 30-day pilot is running on your Vectorae account" — not
   "you started", because a manager may have started it.
 
 ### Day 30 — the verdict
@@ -334,7 +334,7 @@ tests.
 ## Compliance review (CAN-SPAM / GDPR / CASL / PDPA)
 
 * **No send path to prospects.** Scorecards and verdict notices go through
-  `email_sender.send_email` (Victorae's transactional gateway) to the account
+  `email_sender.send_email` (Vectorae's transactional gateway) to the account
   owner's own login address. They never touch `outreach_tasks.send_message_impl`,
   Gmail, sequences or `messages`, so the outreach gate, suppression and send
   review are neither bypassed nor needed. A test asserts the only recipient is
@@ -344,7 +344,7 @@ tests.
   message"; CASL s.6(6) exemption for messages about an ongoing
   subscription/use). Even so, the weekly scorecard can be switched off
   (`scorecard_emails`) and the email says how. Sender is the configured
-  Victorae from-address; no misleading subject lines (the subject states the
+  Vectorae from-address; no misleading subject lines (the subject states the
   week and the count of criteria met).
 * **GDPR / PDPA data minimisation:** scorecards, verdicts and verdict exports
   hold aggregates and campaign names only — no prospect names, emails, lead
@@ -450,7 +450,7 @@ STAR row: **"Every pilot ends with a verdict page and export."** Measured:
   SPF/DKIM is the open GAP-007 founder check — until then scorecards may land
   in spam. Not tested against a live provider.
 * Numbers inherit F08's unverified points (admin-set AI/call prices and
-  infrastructure rate; held meetings only when tracked in Victorae;
+  infrastructure rate; held meetings only when tracked in Vectorae;
   production-scale performance not measured).
 * Sweep latency: a verdict lands within about an hour of `ends_at + grace`
   (default 24h), or at once when an owner/manager ends the pilot by hand. If

@@ -99,7 +99,7 @@ def test_create_strategy_creates_and_enqueues(world, pipelines, db_session):
 
 
 def test_create_strategy_invalid_input(world, pipelines):
-    assert "product_id must be a Victorae id" in error_text(
+    assert "product_id must be a Vectorae id" in error_text(
         call_tool(world.me, "create_strategy", {"product_id": "x"}, scope=WRITE))
     assert "flow_type" in error_text(call_tool(
         world.me, "create_strategy",

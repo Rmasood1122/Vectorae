@@ -77,7 +77,7 @@ def register(server) -> None:
         name="list_products",
         title="List products",
         description=(
-            "Lists the signed-in user's Victorae products and skills (what a "
+            "Lists the signed-in user's Vectorae products and skills (what a "
             "strategy is created for), with how many past clients and strategies "
             "each has. Use offset/limit (limit 1-50) to page."),
         annotations=read_only("List products"),

@@ -309,7 +309,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <p className="mt-4 text-center text-xs text-muted-foreground">
-        Scheduling by Victorae
+        Scheduling by Vectorae
       </p>
     </main>
   );

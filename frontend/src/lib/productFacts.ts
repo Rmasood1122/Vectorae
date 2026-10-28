@@ -2,7 +2,8 @@
  * The one source of product facts for the public site (pages, JSON-LD and,
  * later, llms.txt): src/content/product-facts.json.
  *
- * The brand is defined once there (brand.product_name, brand.company_name).
+ * The brand is defined once there (brand.product_name; brand.company_name is
+ * the operator, Rehan Masood: no company is registered yet, VEC-NAME).
  * Titles are literal strings in each page.tsx (src/tests/websiteClaims.test.ts
  * reads them from source), so after a rename scripts/seo/check_static_seo.mjs
  * fails every title that lacks the new PRODUCT_FULL_NAME until it is updated.
@@ -19,10 +20,10 @@ export type CapabilityId = (typeof facts.capabilities)[number]["id"];
 export const PRODUCT_FACTS = facts;
 export const PRODUCT_NAME = facts.brand.product_name;
 export const COMPANY_NAME = facts.brand.company_name;
-/** "Victorae": how the product is named in titles and first mentions. The
- *  "by Calendarharvest" suffix was dropped with the Victorae rename
- *  (docs/program/DECISIONS.md VIC-NAME); the company stays in each title's
- *  "| Calendarharvest" site name and in the organisation JSON-LD. */
+/** "Vectorae": how the product is named in titles and first mentions. The
+ *  "by Calendarharvest" suffix and the "| Calendarharvest" title site name
+ *  were dropped (docs/program/DECISIONS.md VIC-NAME, VEC-NAME): Vectorae is
+ *  operated by Rehan Masood, an individual; no company is registered yet. */
 export const PRODUCT_FULL_NAME = PRODUCT_NAME;
 
 export function capability(id: CapabilityId) {

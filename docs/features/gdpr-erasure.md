@@ -175,7 +175,7 @@ cookie and returns `{deleted, deleted_at, kept, billing_retention_years}`.
   account) — CAN-SPAM 15 U.S.C. §7704(a)(4) and CASL require the request to be
   honoured. **Limit:** a token minted before this change carries no address;
   if its lead row is gone, nothing can be recorded (the page still confirms,
-  truthfully, that nothing more can be sent through Victorae). The stored
+  truthfully, that nothing more can be sent through Vectorae). The stored
   copy `messages.unsubscribe_token` is cleared on lead erasure.
 
 ### Outside the database (review fix 3)

@@ -1,6 +1,6 @@
 ---
 id: what-is-leadpilot
-title: What is Victorae?
+title: What is Vectorae?
 audience: prospect
 last_verified: 2026-10-10
 owner: help-center
@@ -36,57 +36,57 @@ sources:
   - app/api/auth.py
 ---
 
-# What is Victorae?
+# What is Vectorae?
 
-Victorae is an outbound sales system. You describe a product or a service you sell, and Victorae researches the market, writes a go-to-market strategy, checks that strategy, finds and checks contacts, and then sends personalized outreach by email (and, where set up, WhatsApp) automatically, within compliance limits you can see.
+Vectorae is an outbound sales system. You describe a product or a service you sell, and Vectorae researches the market, writes a go-to-market strategy, checks that strategy, finds and checks contacts, and then sends personalized outreach by email (and, where set up, WhatsApp) automatically, within compliance limits you can see.
 
-## What does Victorae do, start to finish?
+## What does Vectorae do, start to finish?
 
 The work happens in a fixed order. Each stage has its own help article.
 
-1. **Intake.** You give Victorae a name and a plain-language description of your product or service. Optionally, you describe past clients and how you won them.
-2. **Research.** Victorae runs a research pipeline for that strategy: 72 steps if you described past clients, or 144 steps if you did not. It runs once per strategy, not once per prospect.
+1. **Intake.** You give Vectorae a name and a plain-language description of your product or service. Optionally, you describe past clients and how you won them.
+2. **Research.** Vectorae runs a research pipeline for that strategy: 72 steps if you described past clients, or 144 steps if you did not. It runs once per strategy, not once per prospect.
 3. **Verification.** The finished strategy is checked against 10 criteria, including a legal and compliance check. Leads cannot be sourced and outreach cannot start until the strategy is verified.
-4. **Lead sourcing.** Victorae searches for people who match the strategy, adds details about them, finds and checks their email address, and removes anyone on the suppression list.
+4. **Lead sourcing.** Vectorae searches for people who match the strategy, adds details about them, finds and checks their email address, and removes anyone on the suppression list.
 5. **Writing and sending.** Each email is written for one specific person at the moment it is sent (a WhatsApp template's wording is fixed; only its variables are filled per person). Messages are then sent automatically from your connected Gmail account (or the deployment's WhatsApp Business number), inside send windows and daily limits.
 6. **Follow-up.** Later steps go out after the delay you set. When someone replies, their sequence stops.
-7. **Booking and meetings.** Victorae has its own booking pages and a meeting room for notes and an AI summary.
+7. **Booking and meetings.** Vectorae has its own booking pages and a meeting room for notes and an AI summary.
 8. **Learning.** Results are rolled up every night and fed into the starting point for new strategies.
 
 ## Do I have to send the messages myself?
 
-No. Once you launch a sequence, Victorae sends the messages automatically. Before every single send it re-checks the suppression list, the campaign and contact state, the send window, and the daily allowance. Some messages can be held for a person to approve first (see the send-review queue article). Victorae does not reply to people on your behalf: when a prospect replies, the reply is classified and routed to you, and you write the answer.
+No. Once you launch a sequence, Vectorae sends the messages automatically. Before every single send it re-checks the suppression list, the campaign and contact state, the send window, and the daily allowance. Some messages can be held for a person to approve first (see the send-review queue article). Vectorae does not reply to people on your behalf: when a prospect replies, the reply is classified and routed to you, and you write the answer.
 
 ## Does the research run for every prospect?
 
-No. The research pipeline runs once for each strategy you create. Messages to individual prospects are written separately, at send time, from that strategy's messaging research plus what Victorae has stored about the person.
+No. The research pipeline runs once for each strategy you create. Messages to individual prospects are written separately, at send time, from that strategy's messaging research plus what Vectorae has stored about the person.
 
-## How does Victorae avoid making things up?
+## How does Vectorae avoid making things up?
 
 There are several guards in the code:
 
 - The research instructions tell the model never to invent statistics and to label estimates as assumptions. Verification check #1 then tests for this.
-- Every AI-written message is checked before it is sent. Any claim about the prospect or their company (for example funding, headcount, hiring, news, or "your recent post") must be backed by data Victorae actually stored for that lead. Unsupported claims are removed or replaced with a neutral line.
+- Every AI-written message is checked before it is sent. Any claim about the prospect or their company (for example funding, headcount, hiring, news, or "your recent post") must be backed by data Vectorae actually stored for that lead. Unsupported claims are removed or replaced with a neutral line.
 - The legal and compliance verification check can never be passed manually by a person. It has to pass on its own.
 
 ## What compliance protections are built in?
 
-Every outreach email carries a footer with the sender identity and an unsubscribe link, plus one-click unsubscribe headers. An unsubscribe, or a reply asking to stop, suppresses the person and stops all of their sequences immediately. WhatsApp messages only go to contacts with a recorded opt-in, and a first WhatsApp touch must use a Meta-approved template. If a campaign's bounce rate goes above the threshold (3% by default, after at least 10 sends), the whole campaign pauses until a person resumes it. Victorae gives no legal advice; you remain responsible for having a lawful basis to contact each person.
+Every outreach email carries a footer with the sender identity and an unsubscribe link, plus one-click unsubscribe headers. An unsubscribe, or a reply asking to stop, suppresses the person and stops all of their sequences immediately. WhatsApp messages only go to contacts with a recorded opt-in, and a first WhatsApp touch must use a Meta-approved template. If a campaign's bounce rate goes above the threshold (3% by default, after at least 10 sends), the whole campaign pauses until a person resumes it. Vectorae gives no legal advice; you remain responsible for having a lawful basis to contact each person.
 
 ## What do the plans limit?
 
 Each plan sets how many strategies you can have, how many leads one strategy can hold, how many steps a sequence can have, which channels you can use, and a daily AI spending limit. When the daily AI limit is used up, new strategies and resumes are refused until it resets at 00:00 UTC. See the plans article for the numbers.
 
-## Where does Victorae run?
+## Where does Vectorae run?
 
-Victorae runs on a server, so sequences keep sending and follow-ups keep firing when your computer is off. Each deployment (database, workers and app) is intended to serve one customer organization. Public sign-up is open to any email address by default, so a deployment stays limited to one organization only if its administrator closes sign-up or limits it to the organization's email domains. You use it through the web app; there is also an Android app.
+Vectorae runs on a server, so sequences keep sending and follow-ups keep firing when your computer is off. Each deployment (database, workers and app) is intended to serve one customer organization. Public sign-up is open to any email address by default, so a deployment stays limited to one organization only if its administrator closes sign-up or limits it to the organization's email domains. You use it through the web app; there is also an Android app.
 
 ## Which parts are not yet verified against live services?
 
-Victorae connects to outside services such as Apollo, Hunter, Gmail, Meta's WhatsApp Cloud API, Calendly, Stripe and Recall.ai. These integrations were built and tested against simulated responses. They have not yet been verified end to end against the live services.
+Vectorae connects to outside services such as Apollo, Hunter, Gmail, Meta's WhatsApp Cloud API, Calendly, Stripe and Recall.ai. These integrations were built and tested against simulated responses. They have not yet been verified end to end against the live services.
 
 ## Related
-- [Who Victorae is for, and who it is not for](02-who-its-for-and-not-for.md)
+- [Who Vectorae is for, and who it is not for](02-who-its-for-and-not-for.md)
 - [Getting started](03-getting-started.md)
 - [The research pipeline](04-research-pipeline.md)
 - [Strategy verification](05-strategy-verification.md)

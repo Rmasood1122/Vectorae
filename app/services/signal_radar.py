@@ -1,7 +1,7 @@
 """F02 Signal Radar -- dated "why now" signals with a verifiable source.
 
 WHAT IT IS
-A normalising layer over data Victorae ALREADY stores. Nothing here fetches:
+A normalising layer over data Vectorae ALREADY stores. Nothing here fetches:
   newsapi        leads.company_news_json      (personalization_context, NewsAPI)
   linkedin_post  leads.linkedin_posts_json    (personalization_context, Unipile/RapidAPI)
   apollo         the organisation record in leads.enrichment_json

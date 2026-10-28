@@ -244,12 +244,12 @@ use it is not measured here.
 * Not run against production PostgreSQL data; per-row positive-reply checks
   could be slow for an account with tens of thousands of replies in a period
   (UNVERIFIED — no production-scale measurement).
-* "Meetings held" depends on the meeting being started/ended in Victorae or
+* "Meetings held" depends on the meeting being started/ended in Vectorae or
   an outcome being logged; a meeting held entirely in an external calendar
   with neither is not counted (undercount, by design — no guessing).
 * AI and call costs are the admin's configured price estimates, not vendor
   invoices (inherited from revenue analytics; UNVERIFIED against invoices).
-* The infrastructure rate is whatever the admin enters; Victorae does not
+* The infrastructure rate is whatever the admin enters; Vectorae does not
   verify it against a hosting bill.
 * Help-center article: `docs/help-center/` does not exist on this branch
   (Phase 2 not merged here); the article must be added when it lands.

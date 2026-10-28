@@ -1,4 +1,4 @@
-# Victorae gates — what is enforced, where, and what is not
+# Vectorae gates — what is enforced, where, and what is not
 
 Phase 1 exit-gate record. Last updated 2026-10-10. Repo: private, GitHub Free
 (no branch protection or rulesets: `DECISIONS.md` GH-PRO). Merge policy:
@@ -22,7 +22,7 @@ reaching production, and layer 6 makes it visible. Rule for humans: merge only
 with `scripts/gate/safe_merge.sh <PR>` (ask a Claude Code cloud session to run
 it if your machine has no `gh`).
 
-## 1b. Brand lint (added 2026-10-20, Victorae program Phase 1)
+## 1b. Brand lint (added 2026-10-20, Vectorae program Phase 1)
 
 `scripts/gate/brand_lint.py` fails on any previous product name (the
 three it blocks are listed in the script; any case, with or without a

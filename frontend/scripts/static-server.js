@@ -2,7 +2,7 @@
  * static-server.js — serves the Next.js static export in ./out
  *
  * WHY THIS EXISTS
- * Victorae's frontend ships as `output: 'export'` (see next.config.js) —
+ * Vectorae's frontend ships as `output: 'export'` (see next.config.js) —
  * a pile of static HTML/JS that Capacitor bundles into the APK. There is no
  * Node server in production. Running the E2E suite against `next dev`
  * therefore tested an artifact that never ships, and did so unreliably:

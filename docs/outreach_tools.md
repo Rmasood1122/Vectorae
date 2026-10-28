@@ -6,7 +6,7 @@ same (small marketing/web-dev/design agency owners, USA, ~8–25 employees) and
 Section 6's messaging angles are reused below rather than reinvented.
 
 **Why this document exists:** the founder cannot currently afford the
-Anthropic API costs to run Victorae on their own behalf, so this is a manual,
+Anthropic API costs to run Vectorae on their own behalf, so this is a manual,
 zero-paid-API prospecting toolkit — free or genuinely-free-tier tools only,
 used by hand.
 
@@ -65,7 +65,7 @@ determines both opportunity and ban risk.
 - **Cost:** Free.
 - **Buyer concentration:** High but broader than agency-owners specifically. <cite index="68-1">Over 35,000 accepted members and 3M+ messages sent, with VPs, CMOs, freelancers, and agency owners</cite> — agency owners are present but the community isn't agency-owner-exclusive the way Grow Your Agency is, so buyer density per message is lower even though raw size is much larger.
 - **Competitor/noise concentration:** Not directly sourced. At 35,000+ members with broad marketing-professional membership, it plausibly has higher outbound-pitch traffic than a smaller, curated, paid-filter community like Grow Your Agency — **(assumption, unverified)**: large free communities generally attract more self-promotion than small paid ones, but no specific measurement of Online Geniuses' pitch volume was found.
-- **First action this week:** Use Slack's search within the workspace for recent threads mentioning "new clients," "pipeline," or "lead gen" — these threads surface agency owners actively discussing the exact problem Victorae solves, giving you a warm, on-topic way to reply helpfully before ever DMing anyone.
+- **First action this week:** Use Slack's search within the workspace for recent threads mentioning "new clients," "pipeline," or "lead gen" — these threads surface agency owners actively discussing the exact problem Vectorae solves, giving you a warm, on-topic way to reply helpfully before ever DMing anyone.
 
 ### r/marketing (Reddit)
 - **Link:** https://reddit.com/r/marketing
@@ -129,7 +129,7 @@ Not a separate tool — flagged only to say explicitly that Section 3's free-tie
 - **Cost:** Free.
 - **Buyer concentration: Low for this specific ICP**, despite being a default recommendation in most "build in public" advice. <cite index="96-1">Indie Hacker communities in 2026 skew toward developers, solo SaaS founders, and technical builders</cite> rather than non-technical service-business owners — small marketing/web-dev/design agency owners are a minority presence there relative to SaaS founders. This is exactly the mismatch the task asked to watch for: high founder-community relevance in general "startup" advice, but not necessarily high target-buyer density for *this specific* ICP.
 - **Competitor/noise concentration:** High, for the same reason — a disproportionate share of Indie Hackers' active posters are people building and marketing SaaS tools (including, plausibly, other lead-gen/outreach tools), meaning any post here competes for attention with a lot of structurally similar founder content.
-- **Verdict:** **Not recommended as a primary channel for this ICP.** Included here only to explain why it's excluded despite being a common default suggestion — worth reconsidering later if Victorae ever targets developer-tool or SaaS-founder buyers directly, but not for the current marketing-agency-owner ICP.
+- **Verdict:** **Not recommended as a primary channel for this ICP.** Included here only to explain why it's excluded despite being a common default suggestion — worth reconsidering later if Vectorae ever targets developer-tool or SaaS-founder buyers directly, but not for the current marketing-agency-owner ICP.
 
 ### r/smallbusiness / r/Entrepreneur (Reddit)
 - No independent verification of these subreddits' current self-promotion rules or agency-owner density was completed in this research pass — **flagged as an open gap.** Both are large, general-purpose business subreddits (not agency-specific), so buyer density is plausibly lower than r/marketing per the general-vs-niche pattern seen elsewhere in this document — check their current pinned rules directly before relying on them.

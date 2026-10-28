@@ -76,7 +76,7 @@ def _process(token: str, db: Session) -> HTMLResponse:
         engine.unsubscribe_lead(db, lead, source="link")
     # else: a token minted before the address was carried, whose lead is gone.
     # Nothing can be recorded; the account that sent it no longer exists and
-    # can send nothing more through Victorae.
+    # can send nothing more through Vectorae.
     return HTMLResponse(_CONFIRM_HTML, status_code=200)
 
 

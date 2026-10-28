@@ -1,7 +1,7 @@
 # Feature 5 — Opt-in post-sequence re-engagement
 
 ## What it does
-When a campaign turns it on, Victorae sends **one** email to each lead who
+When a campaign turns it on, Vectorae sends **one** email to each lead who
 finished that campaign's sequence without replying, unsubscribing or bouncing,
 once a delay has passed. It is off for every campaign until an owner or manager
 turns it on in **Campaigns › Re-engagement**.

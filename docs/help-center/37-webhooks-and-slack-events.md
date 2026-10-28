@@ -33,7 +33,7 @@ sources:
 
 # Webhook events, signatures and Slack alerts
 
-This is the technical reference for Victorae's outbound webhooks and its Slack alerts: every event you can subscribe to, what each delivery contains, how to check its signature, how retries work, and which events reach Slack. Adding a webhook or connecting Slack is covered in [CRM and integrations](16-crm-and-integrations.md).
+This is the technical reference for Vectorae's outbound webhooks and its Slack alerts: every event you can subscribe to, what each delivery contains, how to check its signature, how retries work, and which events reach Slack. Adding a webhook or connecting Slack is covered in [CRM and integrations](16-crm-and-integrations.md).
 
 ## Which events can a webhook subscribe to?
 
@@ -41,7 +41,7 @@ These are the events offered under **Events** when you click **Add webhook**:
 
 | Event | Sent when |
 |---|---|
-| `meeting_booked` | A lead books a meeting (Calendly or the Victorae calendar) |
+| `meeting_booked` | A lead books a meeting (Calendly or the Vectorae calendar) |
 | `reply_received` | A lead replies on any channel |
 | `reply_interested` | A reply, or an AI phone call, is classified as interested |
 | `lead_sourced` | A sourcing batch finishes with at least one verified lead |
@@ -89,7 +89,7 @@ A "lead" object has `lead_id`, `strategy_id`, `full_name`, `email`, `company`, `
 
 **Send test** queues a sample of one of the webhook's events with `"test": true` in `data`. The samples for `meeting_booked`, `deal_won` and `strategy_mutated` (no `version_id` or `changes`) do not match the live payloads exactly, so build on the fields listed above.
 
-## How do I confirm a delivery really came from Victorae?
+## How do I confirm a delivery really came from Vectorae?
 
 Use the signing secret shown once when you added the webhook (it starts with `whsec_`). The header looks like:
 
@@ -106,7 +106,7 @@ To check it:
 ```python
 import hashlib, hmac, time
 
-def is_from_victorae(secret: str, body: bytes, header: str) -> bool:
+def is_from_vectorae(secret: str, body: bytes, header: str) -> bool:
     parts = dict(p.split("=", 1) for p in header.split(",") if "=" in p)
     ts = int(parts.get("t", "0"))
     if abs(time.time() - ts) > 300:
@@ -119,7 +119,7 @@ The timestamp is signed fresh on every attempt, so a retry carries a new signatu
 
 ## What happens if my endpoint is down or returns an error?
 
-Any 2xx response counts as delivered. Victorae waits up to 10 seconds for an answer. A timeout, a connection error or any other status (apart from 410) is a failure, and the delivery is retried:
+Any 2xx response counts as delivered. Vectorae waits up to 10 seconds for an answer. A timeout, a connection error or any other status (apart from 410) is a failure, and the delivery is retried:
 
 | Attempt | When |
 |---|---|
@@ -142,7 +142,7 @@ Check **Recent deliveries** on the webhook card for each delivery's status, atte
 
 ## Which events are posted to Slack?
 
-Slack has no per-event settings: once connected with a **Channel** chosen, Victorae posts these to that one channel:
+Slack has no per-event settings: once connected with a **Channel** chosen, Vectorae posts these to that one channel:
 
 - Meeting booked, meeting prep brief ready, and meeting reminders a day and an hour before.
 - Interested reply (email, other channels and AI phone calls).
@@ -154,7 +154,7 @@ Slack has no per-event settings: once connected with a **Channel** chosen, Victo
 - Daily send approval needed, Autopilot updates, personal video suggested.
 - AI call in progress, AI call paused for a disclosure incident, message taken by your AI assistant.
 
-Every reply (`reply_received`) and leads sourced (`lead_sourced`) go to webhooks only, never to Slack. Each post has a title, a short text and, when there is a screen to open, an "Open in Victorae" button. If Slack is not connected, no channel is chosen, or Slack fails, the post is skipped and nothing else is affected. The Slack connection has not been tested against a live Slack workspace.
+Every reply (`reply_received`) and leads sourced (`lead_sourced`) go to webhooks only, never to Slack. Each post has a title, a short text and, when there is a screen to open, an "Open in Vectorae" button. If Slack is not connected, no channel is chosen, or Slack fails, the post is skipped and nothing else is affected. The Slack connection has not been tested against a live Slack workspace.
 
 ## Related
 - [CRM and integrations](16-crm-and-integrations.md)

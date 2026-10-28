@@ -3,7 +3,7 @@
 ## What it does
 **Analytics › How you compare** shows your reply rate, meeting-booked rate and
 bounce rate for each channel, next to the spread of the same rates across other
-Victorae accounts on this deployment. Where possible the comparison uses your
+Vectorae accounts on this deployment. Where possible the comparison uses your
 campaign's industry, and otherwise all industries.
 
 It is an observation about this deployment's accounts over a trailing window.

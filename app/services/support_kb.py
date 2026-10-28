@@ -23,7 +23,7 @@ The text below describes the original design.
 WHY A CURATED FAQ AND NOT RAG OR "THE MODEL JUST KNOWS"
 ------------------------------------------------------
 A support bot that answers from the model's own knowledge invents features.
-It will confidently describe a LinkedIn automation Victorae does not have, or
+It will confidently describe a LinkedIn automation Vectorae does not have, or
 quote a price nobody set, and the user believes it because it sounds like the
 product's own voice. That is worse than no chat at all: it generates support
 load instead of absorbing it, and it can make promises the product cannot keep.
@@ -74,9 +74,9 @@ class FaqEntry:
 FAQ: tuple[FaqEntry, ...] = (
     FaqEntry(
         id="what-is-leadpilot",
-        question="What is Victorae?",
+        question="What is Vectorae?",
         answer=(
-            "Victorae is an AI-powered client acquisition system "
+            "Vectorae is an AI-powered client acquisition system "
             "that replaces manual outbound prospecting. It runs a 72-step "
             "research pipeline, sources leads via Apollo.io, verifies emails "
             "via Hunter.io, sends outreach via Gmail and WhatsApp, and books "
@@ -87,7 +87,7 @@ FAQ: tuple[FaqEntry, ...] = (
     ),
     FaqEntry(
         id="what-does-it-replace",
-        question="What does Victorae replace?",
+        question="What does Vectorae replace?",
         answer=(
             "It replaces Apollo.io + Hunter.io + Instantly + spreadsheets — "
             "all in one system with a learning loop."
@@ -97,7 +97,7 @@ FAQ: tuple[FaqEntry, ...] = (
     ),
     FaqEntry(
         id="who-is-it-for",
-        question="Who is Victorae for?",
+        question="Who is Vectorae for?",
         answer=(
             "Boutique agency owners (3-30 staff), independent consultants and "
             "coaches, early-stage B2B SaaS founders doing founder-led sales, "
@@ -111,7 +111,7 @@ FAQ: tuple[FaqEntry, ...] = (
         id="how-outreach-works",
         question="How does outreach work?",
         answer=(
-            "Once you launch a campaign, Victorae sends its sequences "
+            "Once you launch a campaign, Vectorae sends its sequences "
             "automatically from the Gmail, LinkedIn and WhatsApp accounts you "
             "connect, within compliance limits: only in permitted sending "
             "hours in the prospect's time zone, within daily per-account "
@@ -139,7 +139,7 @@ FAQ: tuple[FaqEntry, ...] = (
         question="How do I set up my first campaign?",
         answer=(
             "Go to Pipeline tab, enter your product or service description, "
-            "and Victorae runs the 72-step research pipeline to build your "
+            "and Vectorae runs the 72-step research pipeline to build your "
             "ICP, find leads, and create outreach messages."
         ),
         keywords=("setup", "set up", "start", "first campaign", "get started",
@@ -192,7 +192,7 @@ assert len(_BY_ID) == len(FAQ), "duplicate FAQ id"
 # topic. A constant cannot drift.
 
 REFUSAL_MESSAGE = (
-    "I can only help with questions about Victorae — how it works, setting up "
+    "I can only help with questions about Vectorae — how it works, setting up "
     "campaigns, outreach, the learning loop, tutorials, your data, and getting "
     "support. Ask me anything about the product and I'll do my best."
 )

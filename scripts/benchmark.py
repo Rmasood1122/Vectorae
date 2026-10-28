@@ -1,5 +1,5 @@
 """
-Victorae — Performance Benchmark Script
+Vectorae — Performance Benchmark Script
 
 Runs against a local Docker stack with mocked external APIs.
 Measures and prints: pipeline throughput, aggregation time, API latency (p50/p95/p99).
@@ -204,7 +204,7 @@ def _markdown_table(results: list[dict]) -> str:
 
 
 async def main(dry_run: bool = False, json_output: bool = False) -> int:
-    print(f"\n{'[DRY-RUN] ' if dry_run else ''}Victorae — Performance Benchmark\n")
+    print(f"\n{'[DRY-RUN] ' if dry_run else ''}Vectorae — Performance Benchmark\n")
 
     results: list[dict] = []
     results.append(bench_pipeline_step(dry_run))
@@ -231,7 +231,7 @@ async def main(dry_run: bool = False, json_output: bool = False) -> int:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Victorae benchmark")
+    parser = argparse.ArgumentParser(description="Vectorae benchmark")
     parser.add_argument("--dry-run", action="store_true", help="Validate harness only")
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()

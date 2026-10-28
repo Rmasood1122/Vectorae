@@ -1,5 +1,5 @@
 /**
- * Everything the status page knows about Victorae's shape. The UptimeRobot
+ * Everything the status page knows about Vectorae's shape. The UptimeRobot
  * monitor names below are a contract with the founders' account: they must
  * match the friendly names in docs/program/STATUS_PAGE.md exactly (case is
  * ignored). The backend component ids are a contract with
@@ -26,7 +26,7 @@ export const COMPONENTS: readonly ComponentDef[] = [
   {
     id: "website",
     name: "Website & app",
-    description: "calendarharvest.com and the Victorae web app",
+    description: "calendarharvest.com and the Vectorae web app",
   },
   {
     id: "api",

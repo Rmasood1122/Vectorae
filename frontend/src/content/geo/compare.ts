@@ -26,8 +26,8 @@ export interface Comparison {
 
 const LP_PRICE = `${tierList()} per month (flat per account, not per seat), or Pay per meeting: $0 a month and ${MEETING_PRICE} per prospect who books`;
 
-const whenVictorae = (extra: string[]): Section => ({
-  heading: "When to choose Victorae",
+const whenVectorae = (extra: string[]): Section => ({
+  heading: "When to choose Vectorae",
   blocks: [
     {
       kind: "ul",
@@ -48,7 +48,7 @@ const sourcesSection = (sources: PageLink[]): Section => ({
       kind: "ul",
       items: [
         ...sources.map((s) => `[${s.label}](${s.href})`),
-        "Victorae facts: the [pricing page](/pricing), [how it works](/how-it-works) and the [help center](/help).",
+        "Vectorae facts: the [pricing page](/pricing), [how it works](/how-it-works) and the [help center](/help).",
       ],
     },
     { kind: "note", text: DISAMBIGUATION },
@@ -58,15 +58,15 @@ const sourcesSection = (sources: PageLink[]): Section => ({
 const APOLLO: Comparison = {
   slug: "apollo",
   competitor: "Apollo.io",
-  title: "Victorae vs Apollo.io: which fits a small agency? | Calendarharvest",
+  title: "Vectorae vs Apollo.io: which fits a small agency?",
   description:
-    "Victorae vs Apollo.io for agencies and B2B service firms: a contact database you operate, or research, contacts and one-to-one emails done for you. Features, pricing and when to choose each.",
-  h1: "Victorae vs Apollo.io",
+    "Vectorae vs Apollo.io for agencies and B2B service firms: a contact database you operate, or research, contacts and one-to-one emails done for you. Features, pricing and when to choose each.",
+  h1: "Vectorae vs Apollo.io",
   shortAnswer:
-    `Apollo.io is a sales platform built around a large B2B contact database with sequencing: you search its contacts, build a list, write a sequence and run it. ${CANONICAL} Choose Apollo if you want data and control at a low per-seat price. Choose Victorae if you run a founder-led firm with no time to run outbound yourself.`,
+    `Apollo.io is a sales platform built around a large B2B contact database with sequencing: you search its contacts, build a list, write a sequence and run it. ${CANONICAL} Choose Apollo if you want data and control at a low per-seat price. Choose Vectorae if you run a founder-led firm with no time to run outbound yourself.`,
   bestFor: "Teams who want a large searchable database plus sequences, dialer and CRM sync, and will operate them",
   sections: [
-    whenVictorae([`You would rather pay per result: ${MEETING_PRICE} per booked meeting, no monthly fee.`]),
+    whenVectorae([`You would rather pay per result: ${MEETING_PRICE} per booked meeting, no monthly fee.`]),
     {
       heading: "When to choose Apollo.io",
       blocks: [
@@ -75,9 +75,9 @@ const APOLLO: Comparison = {
           items: [
             "You want to search and export from a large B2B contact database yourself.",
             "You (or an SDR) will build lists and run sequences.",
-            "You need LinkedIn task steps, a built-in dialer or deep CRM sync today. Victorae's LinkedIn steps are not live yet, and its phone channel is switched off by default.",
+            "You need LinkedIn task steps, a built-in dialer or deep CRM sync today. Vectorae's LinkedIn steps are not live yet, and its phone channel is switched off by default.",
             "You want a free plan or the lowest per-seat entry price.",
-            "You want a mature product with many public reviews. Victorae is new and has none yet.",
+            "You want a mature product with many public reviews. Vectorae is new and has none yet.",
           ],
         },
       ],
@@ -87,7 +87,7 @@ const APOLLO: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["Feature", "Victorae", "Apollo.io"],
+          head: ["Feature", "Vectorae", "Apollo.io"],
           rows: [
             ["Starting point", "Describe what you sell", "Search the contact database"],
             ["Market research and strategy", "72-step research pipeline (144 with no past clients), then 10 verification checks", "Not a research product; you choose the market"],
@@ -108,13 +108,13 @@ const APOLLO: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["", "Victorae", "Apollo.io"],
+          head: ["", "Vectorae", "Apollo.io"],
           rows: [
             ["Plans", LP_PRICE, "Free plan; Basic $49, Professional $79, Organization $119 per user per month billed annually (Organization needs at least 3 users); monthly billing costs more"],
             ["Pay per result", `${MEETING_PRICE} per booked meeting, charged after 48 hours and waived if the meeting is cancelled`, "None"],
           ],
         },
-        { kind: "p", text: `For one person who already knows their market and will write their own sequences, Apollo costs far less. Victorae costs more per month because it does the research and writing Apollo leaves to you. ${checkoutSentence()}` },
+        { kind: "p", text: `For one person who already knows their market and will write their own sequences, Apollo costs far less. Vectorae costs more per month because it does the research and writing Apollo leaves to you. ${checkoutSentence()}` },
       ],
     },
     {
@@ -124,12 +124,12 @@ const APOLLO: Comparison = {
           kind: "table",
           head: ["Use case", "Better choice"],
           rows: [
-            ["Agency founder with no sales team and no time to prospect", "Victorae"],
+            ["Agency founder with no sales team and no time to prospect", "Vectorae"],
             ["SDR team that needs data, a dialer and LinkedIn", "Apollo.io"],
             ["Solo founder on a tight budget who enjoys writing outreach", "Apollo.io (free or Basic)"],
-            ["Firm that wants to pay only for booked meetings", "Victorae"],
-            ["Anyone who needs to email or upload their own list", "Apollo.io (Victorae cannot import leads)"],
-            ["Firm worried about compliance mistakes in cold email", "Victorae (compliance enforced by default)"],
+            ["Firm that wants to pay only for booked meetings", "Vectorae"],
+            ["Anyone who needs to email or upload their own list", "Apollo.io (Vectorae cannot import leads)"],
+            ["Firm worried about compliance mistakes in cold email", "Vectorae (compliance enforced by default)"],
           ],
         },
       ],
@@ -144,15 +144,15 @@ const APOLLO: Comparison = {
 const INSTANTLY: Comparison = {
   slug: "instantly",
   competitor: "Instantly",
-  title: "Victorae vs Instantly: one-to-one outreach or cold email at scale? | Calendarharvest",
+  title: "Vectorae vs Instantly: one-to-one outreach or cold email at scale?",
   description:
-    "Victorae vs Instantly: researched, one-to-one emails sent from your Gmail after daily approval, or high-volume cold email across many inboxes. Features, pricing and when to choose each.",
-  h1: "Victorae vs Instantly",
+    "Vectorae vs Instantly: researched, one-to-one emails sent from your Gmail after daily approval, or high-volume cold email across many inboxes. Features, pricing and when to choose each.",
+  h1: "Vectorae vs Instantly",
   shortAnswer:
-    `Instantly is cold-email software for scaling outreach across many email accounts, with built-in warmup; you bring the strategy, the list (or buy lead credits) and the copy. ${CANONICAL} Instantly is built for volume. Victorae is built for a founder who wants fewer, researched emails written for them.`,
+    `Instantly is cold-email software for scaling outreach across many email accounts, with built-in warmup; you bring the strategy, the list (or buy lead credits) and the copy. ${CANONICAL} Instantly is built for volume. Vectorae is built for a founder who wants fewer, researched emails written for them.`,
   bestFor: "Agencies and senders running high-volume cold email across many inboxes",
   sections: [
-    whenVictorae(["You want to send from your own Gmail at low volume: at most 100 emails a day per mailbox by default.", `You would like to pay per booked meeting (${MEETING_PRICE}) instead of per month.`]),
+    whenVectorae(["You want to send from your own Gmail at low volume: at most 100 emails a day per mailbox by default.", `You would like to pay per booked meeting (${MEETING_PRICE}) instead of per month.`]),
     {
       heading: "When to choose Instantly",
       blocks: [
@@ -173,7 +173,7 @@ const INSTANTLY: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["Feature", "Victorae", "Instantly"],
+          head: ["Feature", "Vectorae", "Instantly"],
           rows: [
             ["Starting point", "Describe what you sell", "Connect mailboxes, upload or find leads"],
             ["Research and strategy", "72/144-step pipeline and 10 verification checks", "Not included"],
@@ -193,7 +193,7 @@ const INSTANTLY: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["", "Victorae", "Instantly"],
+          head: ["", "Vectorae", "Instantly"],
           rows: [
             ["Plans", LP_PRICE, "Outreach plans: Growth $47, Hypergrowth $97, Light Speed $358 per month, flat (about 20% less billed annually)"],
             ["Leads and CRM", "Included", "Lead credits and the CRM are separate subscriptions"],
@@ -211,10 +211,10 @@ const INSTANTLY: Comparison = {
           head: ["Use case", "Better choice"],
           rows: [
             ["Agency running high-volume campaigns for clients", "Instantly"],
-            ["Founder with no list, no copy and no time", "Victorae"],
+            ["Founder with no list, no copy and no time", "Vectorae"],
             ["Team with proven copy that wants cheap sending at scale", "Instantly"],
-            ["Firm that wants every day's sending approved and no AI replying", "Victorae"],
-            ["Firm that wants to pay only when a meeting is booked", "Victorae"],
+            ["Firm that wants every day's sending approved and no AI replying", "Vectorae"],
+            ["Firm that wants to pay only when a meeting is booked", "Vectorae"],
           ],
         },
       ],
@@ -229,15 +229,15 @@ const INSTANTLY: Comparison = {
 const SMARTLEAD: Comparison = {
   slug: "smartlead",
   competitor: "Smartlead",
-  title: "Victorae vs Smartlead: for the founder who sells or the agency that sends | Calendarharvest",
+  title: "Vectorae vs Smartlead: for the founder who sells or the agency that sends",
   description:
-    "Victorae vs Smartlead: an AI outbound tool for a founder selling their own services, or cold-email infrastructure for agencies sending for many clients. Features, pricing and when to choose each.",
-  h1: "Victorae vs Smartlead",
+    "Vectorae vs Smartlead: an AI outbound tool for a founder selling their own services, or cold-email infrastructure for agencies sending for many clients. Features, pricing and when to choose each.",
+  h1: "Vectorae vs Smartlead",
   shortAnswer:
-    `Smartlead is cold-email sending infrastructure popular with lead-generation agencies: unlimited mailboxes, warmup, client workspaces and an API. ${CANONICAL} If you run outbound as a service for many clients, Smartlead fits better. If you sell your own services and the founder does the selling, Victorae fits better.`,
+    `Smartlead is cold-email sending infrastructure popular with lead-generation agencies: unlimited mailboxes, warmup, client workspaces and an API. ${CANONICAL} If you run outbound as a service for many clients, Smartlead fits better. If you sell your own services and the founder does the selling, Vectorae fits better.`,
   bestFor: "Lead-generation agencies sending at volume for many clients",
   sections: [
-    whenVictorae(["You want compliance defaults enforced in code: unsubscribe headers and a suppression re-check before every send.", "You want booking pages included, and the option to pay per booked meeting."]),
+    whenVectorae(["You want compliance defaults enforced in code: unsubscribe headers and a suppression re-check before every send.", "You want booking pages included, and the option to pay per booked meeting."]),
     {
       heading: "When to choose Smartlead",
       blocks: [
@@ -257,7 +257,7 @@ const SMARTLEAD: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["Feature", "Victorae", "Smartlead"],
+          head: ["Feature", "Vectorae", "Smartlead"],
           rows: [
             ["Built for", "Founder-led firms selling their own services", "Agencies and teams sending at volume"],
             ["Research and strategy", "Included", "Not included"],
@@ -276,7 +276,7 @@ const SMARTLEAD: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["", "Victorae", "Smartlead"],
+          head: ["", "Vectorae", "Smartlead"],
           rows: [
             ["Plans", LP_PRICE, "Base $39 and Pro $94 per month, flat (about 17% less billed annually); higher-volume plans and client workspaces cost more"],
             ["Pay per result", `${MEETING_PRICE} per booked meeting`, "None"],
@@ -293,9 +293,9 @@ const SMARTLEAD: Comparison = {
           head: ["Use case", "Better choice"],
           rows: [
             ["Lead-generation agency sending for 10 or more clients", "Smartlead"],
-            ["Web or marketing agency that needs its own new clients", "Victorae"],
+            ["Web or marketing agency that needs its own new clients", "Vectorae"],
             ["Team with proven copy that wants cheap sending", "Smartlead"],
-            ["Founder who wants research and writing done, and approves sending", "Victorae"],
+            ["Founder who wants research and writing done, and approves sending", "Vectorae"],
           ],
         },
       ],
@@ -310,15 +310,15 @@ const SMARTLEAD: Comparison = {
 const CLAY: Comparison = {
   slug: "clay",
   competitor: "Clay",
-  title: "Victorae vs Clay: an outbound outcome or a data workbench? | Calendarharvest",
+  title: "Vectorae vs Clay: an outbound outcome or a data workbench?",
   description:
-    "Victorae vs Clay: a fixed flow from what you sell to booked meetings, or a flexible enrichment and workflow platform you build yourself. Features, pricing and when to choose each.",
-  h1: "Victorae vs Clay",
+    "Vectorae vs Clay: a fixed flow from what you sell to booked meetings, or a flexible enrichment and workflow platform you build yourself. Features, pricing and when to choose each.",
+  h1: "Vectorae vs Clay",
   shortAnswer:
-    `Clay is a data enrichment and workflow platform: it pulls from many data providers, runs AI research per row, and you design and maintain the workflow. ${CANONICAL} Clay gives skilled operators a powerful workbench; Victorae gives a busy owner a fixed flow that ends in booked meetings.`,
+    `Clay is a data enrichment and workflow platform: it pulls from many data providers, runs AI research per row, and you design and maintain the workflow. ${CANONICAL} Clay gives skilled operators a powerful workbench; Vectorae gives a busy owner a fixed flow that ends in booked meetings.`,
   bestFor: "GTM engineers and ops teams who want full control over data and workflows",
   sections: [
-    whenVictorae(["Nobody on your team wants to build or maintain enrichment tables and workflows.", "You want flat monthly pricing or pay per booked meeting rather than credits."]),
+    whenVectorae(["Nobody on your team wants to build or maintain enrichment tables and workflows.", "You want flat monthly pricing or pay per booked meeting rather than credits."]),
     {
       heading: "When to choose Clay",
       blocks: [
@@ -338,7 +338,7 @@ const CLAY: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["Feature", "Victorae", "Clay"],
+          head: ["Feature", "Vectorae", "Clay"],
           rows: [
             ["Model", "Fixed end-to-end flow", "Build-your-own tables and workflows"],
             ["Setup", "Describe what you sell", "Design tables, prompts and integrations"],
@@ -356,7 +356,7 @@ const CLAY: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["", "Victorae", "Clay"],
+          head: ["", "Vectorae", "Clay"],
           rows: [
             ["Plans", LP_PRICE, "Free plan; paid plans are priced by credits and actions. Published figures differ by billing period, so check [Clay's pricing page](https://www.clay.com/pricing)"],
             ["Pay per result", `${MEETING_PRICE} per booked meeting`, "None"],
@@ -373,9 +373,9 @@ const CLAY: Comparison = {
           head: ["Use case", "Better choice"],
           rows: [
             ["Growth team with a GTM engineer", "Clay"],
-            ["Agency owner with no ops person", "Victorae"],
+            ["Agency owner with no ops person", "Vectorae"],
             ["Complex, signal-driven targeting across many data sources", "Clay"],
-            ["A simple path from what you sell to booked meetings", "Victorae"],
+            ["A simple path from what you sell to booked meetings", "Vectorae"],
           ],
         },
       ],
@@ -390,15 +390,15 @@ const CLAY: Comparison = {
 const ARTISAN: Comparison = {
   slug: "artisan",
   competitor: "Artisan",
-  title: "Victorae vs Artisan (Ava) and hiring an SDR | Calendarharvest",
+  title: "Vectorae vs Artisan (Ava) and hiring an SDR",
   description:
-    "Victorae vs Artisan's AI BDR Ava, and vs hiring an SDR: approve-first AI outbound with human replies, an autonomous AI BDR, or a person. When to choose each, with SDR cost data.",
-  h1: "Victorae vs Artisan, and vs hiring an SDR",
+    "Vectorae vs Artisan's AI BDR Ava, and vs hiring an SDR: approve-first AI outbound with human replies, an autonomous AI BDR, or a person. When to choose each, with SDR cost data.",
+  h1: "Vectorae vs Artisan, and vs hiring an SDR",
   shortAnswer:
-    `Artisan sells Ava, an autonomous AI BDR that sources, writes, follows up and handles replies on its own. ${CANONICAL} The real difference is control: Victorae waits for your approval every day and never replies to prospects for you, while Ava is designed to run without you.`,
+    `Artisan sells Ava, an autonomous AI BDR that sources, writes, follows up and handles replies on its own. ${CANONICAL} The real difference is control: Vectorae waits for your approval every day and never replies to prospects for you, while Ava is designed to run without you.`,
   bestFor: "Teams that want an autonomous AI BDR, including AI-handled replies",
   sections: [
-    whenVictorae([
+    whenVectorae([
       "Your firm's reputation depends on a human voice in conversations: agencies, consultancies, professional services.",
       `You want to pay only for booked meetings (${MEETING_PRICE} each) or a flat monthly price per account.`,
     ]),
@@ -429,7 +429,7 @@ const ARTISAN: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["Feature", "Victorae", "Artisan (Ava)"],
+          head: ["Feature", "Vectorae", "Artisan (Ava)"],
           rows: [
             ["Positioning", "Approve-first AI outbound", "Autonomous AI BDR"],
             ["Research", "72/144-step strategy pipeline and 10 verification checks", "Prospect research and personalization"],
@@ -447,7 +447,7 @@ const ARTISAN: Comparison = {
       blocks: [
         {
           kind: "table",
-          head: ["", "Victorae", "Artisan", "Human SDR"],
+          head: ["", "Vectorae", "Artisan", "Human SDR"],
           rows: [
             ["Model", LP_PRICE, "Plans through its sales team; see [Artisan's pricing page](https://www.artisan.co/pricing)", "Salary plus variable pay"],
             ["Typical cost", `${tierRange()} a month, or ${MEETING_PRICE} per booked meeting`, "Quoted", "Median OTE $80K a year (Bridge Group, 2025)"],
@@ -464,9 +464,9 @@ const ARTISAN: Comparison = {
           head: ["Use case", "Better choice"],
           rows: [
             ["AI that runs outbound and replies with minimal oversight", "Artisan"],
-            ["AI research and writing, with a human gate and a human voice in replies", "Victorae"],
+            ["AI research and writing, with a human gate and a human voice in replies", "Vectorae"],
             ["Proven segment, budget for a hire, and someone to manage it", "Human SDR"],
-            ["Firm that wants to pay only for booked meetings", "Victorae"],
+            ["Firm that wants to pay only for booked meetings", "Vectorae"],
           ],
         },
       ],

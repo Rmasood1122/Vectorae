@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  file_paths.xml — FileProvider paths for Victorae.
+  file_paths.xml — FileProvider paths for Vectorae.
   Required by the FileProvider declared in AndroidManifest.xml.
   Capacitor plugins (Camera, Filesystem) use this when added in Chunk 2.
 -->

@@ -199,7 +199,7 @@ function CloneCard({ state, onState, fail }: {
 
         {step === "disabled" && (
           <p className="text-muted-foreground">
-            Voice cloning is not enabled on this Victorae. An administrator turns it on (it needs
+            Voice cloning is not enabled on this Vectorae. An administrator turns it on (it needs
             AI calling on too).
           </p>
         )}
@@ -377,7 +377,7 @@ function AccountCard({ fail }: { fail: (e: unknown) => void }) {
         <p className="text-muted-foreground">
           Only calls to your own configured AI-calling number. The assistant says it is an AI, can
           book a meeting, take a message, or put the caller through to you.
-          {!data.own_number_configured && " Your account has no number of its own yet — ask your Victorae administrator to assign one."}
+          {!data.own_number_configured && " Your account has no number of its own yet — ask your Vectorae administrator to assign one."}
         </p>
         <div className="space-y-1">
           <Label htmlFor="vt-transfer">Your phone number (for take-over and transfers)</Label>

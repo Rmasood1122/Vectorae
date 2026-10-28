@@ -205,7 +205,7 @@ def _register_provider_routes(provider: str) -> None:
             bad = set((changes.get(key) or {})) - allowed
             if bad:
                 raise HTTPException(status_code=422,
-                                    detail=f"{key}: unknown Victorae values {sorted(bad)}")
+                                    detail=f"{key}: unknown Vectorae values {sorted(bad)}")
         for key, value in changes.items():
             if value is None:
                 current.pop(key, None)

@@ -57,7 +57,7 @@ describe("StatusBoard", () => {
     });
     render(<StatusBoard endpoint={ENDPOINT} fetchImpl={fetchImpl} incidents={[]} />);
     await waitFor(() =>
-      expect(screen.getByTestId("status-overall").textContent).toBe("Victorae API unreachable — major outage"),
+      expect(screen.getByTestId("status-overall").textContent).toBe("Vectorae API unreachable — major outage"),
     );
     expect(screen.getByTestId("status-reason").textContent).toMatch(/could not be reached/);
     expect(screen.getByTestId("status-component-api").dataset.status).toBe("major_outage");

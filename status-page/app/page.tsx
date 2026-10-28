@@ -87,7 +87,7 @@ export default async function Home() {
               {c.uptime ? (
                 <UptimeBars name={c.name} uptime={c.uptime} />
               ) : c.id === "ai-features" ? (
-                <p className="note">No external uptime history: this is checked by Victorae itself.</p>
+                <p className="note">No external uptime history: this is checked by Vectorae itself.</p>
               ) : null}
             </li>
           ))}

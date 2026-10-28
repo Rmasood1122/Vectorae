@@ -141,7 +141,7 @@ def test_service_submit_uses_the_variable_descriptions_as_examples(
     t = tmpl_svc.create_draft(
         db_session, name="intro_v2", language="en_US",
         category=m.WhatsAppTemplateCategory.MARKETING,
-        body="Hi {{1}}, Sam from Victorae about {{2}}. Reply STOP to opt out.",
+        body="Hi {{1}}, Sam from Vectorae about {{2}}. Reply STOP to opt out.",
         variable_descriptions={"1": "first name", "2": "pain point"})
     fake_graph_http.queue.append((200, {"id": "tpl-3"}))
     tmpl_svc.submit_template(db_session, t, wa_channel)

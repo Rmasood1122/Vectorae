@@ -1,4 +1,4 @@
-# BACKUP.md — Victorae Backup & Restore
+# BACKUP.md — Vectorae Backup & Restore
 
 All business-critical data lives in PostgreSQL. Redis is cache/queue — it is NOT backed up (Celery will replay pending tasks on restart; cache repopulates automatically).
 
@@ -26,7 +26,7 @@ nano /usr/local/bin/clienthunter-backup.sh
 
 ```bash
 #!/bin/bash
-# Automated PostgreSQL backup for Victorae
+# Automated PostgreSQL backup for Vectorae
 # Run nightly: 0 2 * * * /usr/local/bin/clienthunter-backup.sh
 
 set -e

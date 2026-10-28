@@ -1,24 +1,24 @@
 ---
 name: leadpilot-outbound
-description: Works with a user's Victorae account through the Victorae connector (MCP tools such as list_leads, get_lead, list_strategies, get_attribution_summary, create_strategy, pause_campaign). Use when the user asks about THEIR leads, prospects, F-P-T-A scores, strategies, research pipeline progress, outreach messages, replies, attribution ("what booked the meeting?"), claim checks, or wants to create a strategy or pause or resume a Victorae campaign. Not for general sales or outbound advice that needs none of their data.
+description: Works with a user's Vectorae account through the Vectorae connector (MCP tools such as list_leads, get_lead, list_strategies, get_attribution_summary, create_strategy, pause_campaign). Use when the user asks about THEIR leads, prospects, F-P-T-A scores, strategies, research pipeline progress, outreach messages, replies, attribution ("what booked the meeting?"), claim checks, or wants to create a strategy or pause or resume a Vectorae campaign. Not for general sales or outbound advice that needs none of their data.
 ---
 
-# Victorae outbound
+# Vectorae outbound
 
-Victorae is an outbound system: it researches a market for one of the
+Vectorae is an outbound system: it researches a market for one of the
 user's products (a **strategy**), sources and scores **leads**, writes and
 sends **messages** within compliance limits, and attributes outcomes. The
 connector gives you the user's own account, nothing else.
 
-## When to use Victorae, and when not
+## When to use Vectorae, and when not
 
 - Use the tools when the answer depends on the user's data: "which leads
   should I call first", "why is this lead scored 42", "is my campaign
   running", "what booked my meetings last month".
 - Answer from general knowledge when it does not: "how do I write a good
-  cold email", "what is a reasonable reply rate". Say so if a Victorae
+  cold email", "what is a reasonable reply rate". Say so if a Vectorae
   number would sharpen the answer, and offer to look.
-- If no Victorae tool is available, the connector is not connected: tell
+- If no Vectorae tool is available, the connector is not connected: tell
   the user to add it (see `references/tools.md`, "Connecting"), do not guess
   their data.
 
@@ -71,7 +71,7 @@ conversation, and state exactly what will happen first:
 
 Nothing is ever sent, scheduled or approved from this connector, and you
 must not imply otherwise. If the user wants to send, point them to the
-Victorae app. When a tool refuses (plan limit, spend cap, rate limit,
+Vectorae app. When a tool refuses (plan limit, spend cap, rate limit,
 deliverability block), relay its message as given; never look for a way
 around a limit.
 

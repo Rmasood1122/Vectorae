@@ -47,14 +47,14 @@ def plain_arg(value):
 
 
 def parse_id(value, what: str) -> uuid.UUID:
-    """A Victorae id from a tool argument, or an actionable ToolError."""
+    """A Vectorae id from a tool argument, or an actionable ToolError."""
     value = plain_arg(value)
     try:
         return uuid.UUID(str(value).strip())
     except (TypeError, ValueError):
         shown = str(value)[:60]
         raise ToolError(
-            f"{what} must be a Victorae id (a UUID such as "
+            f"{what} must be a Vectorae id (a UUID such as "
             f"3f2b9c1e-0000-4000-8000-000000000000); got {shown!r}.") from None
 
 

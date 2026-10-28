@@ -24,7 +24,7 @@ from app.services import help_center  # noqa: E402
 INDEX_NAME = "00-index.md"
 
 
-# A scope shorter than this ("Victorae has an Android app.") says too little,
+# A scope shorter than this ("Vectorae has an Android app.") says too little,
 # so the next sentence is added until the line is at least this long.
 MIN_SCOPE_CHARS = 80
 

@@ -7,7 +7,7 @@
     {
       "name": "leadpilot",
       "source": "./plugins/leadpilot",
-      "description": "The Victorae connector (remote MCP) and the leadpilot-outbound skill."
+      "description": "The Vectorae connector (remote MCP) and the leadpilot-outbound skill."
     }
   ]
 }

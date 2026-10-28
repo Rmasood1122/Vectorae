@@ -4,7 +4,7 @@ WHAT ONE SUBMISSION DOES, IN ORDER
   1. Moves the lead to the post-meeting status for the outcome, records a
      MeetingOutcome row with the before/after, and writes the CRM activity and
      a note carrying the user's meeting notes.
-  2. Stops every live enrollment for the lead. A meeting on Victorae's own
+  2. Stops every live enrollment for the lead. A meeting on Vectorae's own
      calendar only PAUSED the cold sequence (sequence_engine.pause_for_meeting)
      so a cancellation could resume it; once a human has logged how the call
      went, resuming cold outreach a day later would be absurd whatever the
@@ -113,7 +113,7 @@ _GUIDANCE = {
 }
 
 SYSTEM = (
-    "You are Victorae's post-meeting follow-up writer. You write the one "
+    "You are Vectorae's post-meeting follow-up writer. You write the one "
     "email a seller sends a prospect after a sales call. Respond with ONLY a "
     'JSON object: {"subject": "...", "body": "..."}. RULES. Plain text body, '
     "under 180 words, no subject line inside the body, no placeholders like "

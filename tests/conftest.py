@@ -338,7 +338,7 @@ class FakeClaude:
             return {"body": "Thanks Sara - happy to walk you through it. "
                             "Would a short call this week suit?",
                     "meeting_time_request": False}
-        if "Victorae in-app support assistant" in system:  # Feature 3
+        if "Vectorae in-app support assistant" in system:  # Feature 3
             self.support_prompts.append(prompt)
             if isinstance(self.support_response, Exception):
                 raise self.support_response
@@ -346,7 +346,7 @@ class FakeClaude:
                 return self.support_response
             # Default: a confident, on-topic, grounded answer.
             return {"on_topic": True, "confidence": 0.9,
-                    "answer": "Victorae runs a 72-step research pipeline.",
+                    "answer": "Vectorae runs a 72-step research pipeline.",
                     "faq_ids": ["what-is-leadpilot"]}
         if "meeting analyst" in system:  # Engagement Hub, Feature 3
             self.meeting_prompts.append(prompt)
@@ -590,7 +590,7 @@ class FakeClaude:
                 "name": "generated_intro",
                 "language": "en_US",
                 "category": "marketing",
-                "body": "Hi {{1}}, this is Sam from Victorae about {{2}}. "
+                "body": "Hi {{1}}, this is Sam from Vectorae about {{2}}. "
                         "Reply STOP to opt out.",
                 "variable_descriptions": {"1": "first name", "2": "pain point"},
             }]}
@@ -1596,7 +1596,7 @@ def approved_template(db_session):
         db_session,
         name="intro_v1", language="en_US",
         category=m.WhatsAppTemplateCategory.MARKETING,
-        body="Hi {{1}}, Sam from Victorae about {{2}}. Reply STOP to opt out.",
+        body="Hi {{1}}, Sam from Vectorae about {{2}}. Reply STOP to opt out.",
         variable_descriptions={"1": "first name", "2": "pain point"},
     )
     t.status = m.WhatsAppTemplateStatus.SUBMITTED

@@ -32,7 +32,7 @@ MIN_SAMPLE_CHARS = 40
 MAX_SAMPLE_CHARS = 4000
 
 SYSTEM = (
-    "You are Victorae's writing style analyst. From samples of ONE person's "
+    "You are Vectorae's writing style analyst. From samples of ONE person's "
     "writing, describe how they write so another writer can match their "
     "voice. Respond with ONLY a JSON object: "
     '{"tone": "...", "formality": 1-5, "vocabulary_level": "plain"|"conversational"|'

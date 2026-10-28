@@ -178,7 +178,7 @@ rendering the dashboard.
 
 ---
 
-## Learn Victorae — tutorials 🔒 (Feature 2)
+## Learn Vectorae — tutorials 🔒 (Feature 2)
 
 The video catalogue is **not** a database table — it lives in
 `app/services/tutorials.py`. Endpoints therefore address tutorials by **slug**,
@@ -322,7 +322,7 @@ answer can be explained later without reproducing it:
 | `reason` | Meaning | What `text` contains |
 |---|---|---|
 | `answered` | Grounded, above the confidence floor | the model's answer |
-| `off_topic` | Not about Victorae | the **refusal constant** |
+| `off_topic` | Not about Vectorae | the **refusal constant** |
 | `low_confidence` | On topic, model unsure | the ticket suggestion |
 | `model_error` | API unreachable or failed | the ticket suggestion |
 | `malformed_response`, `empty_answer` | Unusable response | the ticket suggestion |

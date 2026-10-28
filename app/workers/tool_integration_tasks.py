@@ -8,7 +8,7 @@ Task 2: signalforge_research_lead
   On demand — run research for a prospect that ALREADY exists in the user's
   SIGNALFORGE instance (research also writes a REVIEW_REQUIRED draft), and
   return the ICP score and that draft. It never creates the prospect (that
-  would need the WRITE scope, which Victorae's key does not hold) and never
+  would need the WRITE scope, which Vectorae's key does not hold) and never
   generates a second draft: research already made one.
 
 There is no PostIQ task: PostIQ exposes no API to read or trigger its drafts
@@ -76,7 +76,7 @@ def audit_draft_with_aegisaudit(self, *, prompt: str, answer: str) -> dict:
                  name="tool_integrations.signalforge_research")
 def signalforge_research_lead(self, *, lead_id: str, prospect_id: int | None = None,
                               tone: str = "PROFESSIONAL") -> dict:
-    """Research an existing SIGNALFORGE prospect on behalf of a Victorae lead.
+    """Research an existing SIGNALFORGE prospect on behalf of a Vectorae lead.
 
     Returns {"lead_id", "prospect_id", "research_job_id", "final_status",
     "icp_score", "icp_breakdown", "draft_id", "draft_subject", "draft_body",

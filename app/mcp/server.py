@@ -64,15 +64,15 @@ def protected_resource_metadata() -> dict:
         resource=settings.mcp_resource,
         authorization_servers=[settings.mcp_issuer],
         scopes_supported=list(scopes.SUPPORTED),
-        resource_name="Victorae",
+        resource_name="Vectorae",
     ).model_dump(mode="json", exclude_none=True)
 
 
 def build_server() -> MCPServer:
     server = MCPServer(
         name=SERVER_NAME,
-        title="Victorae",
-        description=("Read the Victorae account (leads, strategies, outreach, attribution) "
+        title="Vectorae",
+        description=("Read the Vectorae account (leads, strategies, outreach, attribution) "
                      "and create strategies or pause and resume campaigns."),
         website_url=settings.frontend_url,
         token_verifier=McpTokenVerifier(lambda: context.session_factory()),

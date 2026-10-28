@@ -34,12 +34,12 @@ def register(server) -> None:
 
     @server.tool(
         name="search",
-        title="Search Victorae",
+        title="Search Vectorae",
         description=(
-            "Searches the signed-in user's Victorae leads by name, company, email "
+            "Searches the signed-in user's Vectorae leads by name, company, email "
             "or title. Returns up to 10 results, each with an id for fetch, a title "
             "and a link."),
-        annotations=read_only("Search Victorae"),
+        annotations=read_only("Search Vectorae"),
     )
     def search(query: str) -> dict[str, Any]:
         needle = str(plain_arg(query) or "").strip()[:200]
@@ -58,11 +58,11 @@ def register(server) -> None:
 
     @server.tool(
         name="fetch",
-        title="Fetch Victorae record",
+        title="Fetch Vectorae record",
         description=(
             "Returns the full record for one id from search: the lead's status, "
             "F-P-T-A score and research as text, plus a link and metadata."),
-        annotations=read_only("Fetch Victorae record"),
+        annotations=read_only("Fetch Vectorae record"),
     )
     def fetch(id: str) -> dict[str, Any]:  # noqa: A002 -- the name OpenAI requires
         raw = str(plain_arg(id) or "").strip()

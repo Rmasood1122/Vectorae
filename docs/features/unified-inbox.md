@@ -34,7 +34,7 @@ one prospect, and the lead page and the inbox must show the same conversation.
 reply usually looks like, but it cannot represent the two cases that matter
 most:
 
-- a reply answered **outside Victorae** — someone picked up the phone, or
+- a reply answered **outside Vectorae** — someone picked up the phone, or
   replied from Gmail directly;
 - a reply that **needs no answer**.
 

@@ -63,5 +63,5 @@ recipients never get an open-tracking pixel.
 | SG | PDPA | business contact information; DNC registry **not** checked |
 | AU / NZ | Spam Act / UEMA | inferred consent |
 
-Victorae does not check national Do-Not-Call registries and cannot verify
+Vectorae does not check national Do-Not-Call registries and cannot verify
 implied consent; the audit log records that. None of this is legal advice.

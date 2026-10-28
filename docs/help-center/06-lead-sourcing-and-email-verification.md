@@ -45,15 +45,15 @@ sources:
 
 # Lead sourcing and email verification
 
-Once a strategy is verified, Victorae can find people who match it, look up their email addresses and check that those addresses accept mail. This article explains each stage, what "verified" means for a lead, how the suppression list protects people who opted out, and the limits your plan sets.
+Once a strategy is verified, Vectorae can find people who match it, look up their email addresses and check that those addresses accept mail. This article explains each stage, what "verified" means for a lead, how the suppression list protects people who opted out, and the limits your plan sets.
 
 ## How do I find leads?
 
-Open the verified strategy's page. In the **1. Find leads** card, enter **How many leads** (1 to 25 per click; the form starts at 5) and press **Find leads**. Victorae shows "Finding leads. This takes a few minutes." and the list fills in as leads move through the stages.
+Open the verified strategy's page. In the **1. Find leads** card, enter **How many leads** (1 to 25 per click; the form starts at 5) and press **Find leads**. Vectorae shows "Finding leads. This takes a few minutes." and the list fills in as leads move through the stages.
 
 Sourcing is refused for a strategy whose status is not `verified`.
 
-Victorae builds the search from the strategy's research: job titles, industries, locations, company size ranges and keywords from the ideal customer profile. For a local business with a service area, the location is your city or postcode instead (the radius is not sent to the lead provider). Through the API a request can ask for up to 1,000 leads, but one sourcing run is capped at 200 by default.
+Vectorae builds the search from the strategy's research: job titles, industries, locations, company size ranges and keywords from the ideal customer profile. For a local business with a service area, the location is your city or postcode instead (the radius is not sent to the lead provider). Through the API a request can ask for up to 1,000 leads, but one sourcing run is capped at 200 by default.
 
 By default you can start 5 sourcing requests per hour. Each lead uses paid Apollo and Hunter credits, so the screen suggests starting small.
 
@@ -61,7 +61,7 @@ By default you can start 5 sourcing requests per hour. Each lead uses paid Apoll
 
 Those of the Apollo and Hunter accounts whose API keys your administrator set on the server; you do not enter keys in the app. In **Settings**, on the **Integrations** tab, the **Apollo.io** and **Hunter.io** cards show the key masked, or "Key not set"; **Test** checks the connection.
 
-Victorae counts as paid: Apollo searches (one credit per person requested; Apollo's current people search is itself free, so this count errs toward your cap), each Apollo enrichment, and each Hunter email search and email check. Search results are cached for 1 day, and enrichment, email-finding and email-check results for 30 days; a cached repeat costs nothing (a repeated email check returns the earlier result). If your administrator turned on Spend Guard, the **Usage & spend** page (from **Analytics**) shows these as **Data credits**, in dollars only once an administrator sets a price per credit. There an owner or manager can set a **Monthly spend cap**: a run that does not fit is refused before it starts, and one that reaches it stops before its next paid call.
+Vectorae counts as paid: Apollo searches (one credit per person requested; Apollo's current people search is itself free, so this count errs toward your cap), each Apollo enrichment, and each Hunter email search and email check. Search results are cached for 1 day, and enrichment, email-finding and email-check results for 30 days; a cached repeat costs nothing (a repeated email check returns the earlier result). If your administrator turned on Spend Guard, the **Usage & spend** page (from **Analytics**) shows these as **Data credits**, in dollars only once an administrator sets a price per credit. There an owner or manager can set a **Monthly spend cap**: a run that does not fit is refused before it starts, and one that reaches it stops before its next paid call.
 
 ## What happens to each lead?
 
@@ -97,7 +97,7 @@ Later stages, after a meeting, are covered in the meetings and CRM articles.
 
 Hunter's check returned "deliverable" for the address. It is the provider's verdict at the time of the check, not a guarantee that a future email will arrive. Apollo's own label on an email is never the verdict: every address goes through Hunter, whoever found it.
 
-- **Risky** addresses, and addresses Hunter could not judge, become `flagged` for you to decide on. Victorae stores Hunter's verdict and confidence score, not its reason, so it cannot tell you why an address is risky. With the email waterfall turned on by your administrator, an address on a server that accepts every address (catch-all) is also `flagged`, even if Hunter called it valid. If you have checked a flagged address yourself, move the lead to `verified` (or back to `flagged`) on the **Pipeline** board.
+- **Risky** addresses, and addresses Hunter could not judge, become `flagged` for you to decide on. Vectorae stores Hunter's verdict and confidence score, not its reason, so it cannot tell you why an address is risky. With the email waterfall turned on by your administrator, an address on a server that accepts every address (catch-all) is also `flagged`, even if Hunter called it valid. If you have checked a flagged address yourself, move the lead to `verified` (or back to `flagged`) on the **Pipeline** board.
 - **Personal mailboxes** (webmail, such as Gmail or Outlook addresses) cannot be checked by Hunter over the mail server, so they are treated as risky and become `flagged`, whatever score Hunter gives them.
 - If Hunter reports that a person has asked it not to process their personal data, the lead is `dropped` and the person's email address, phone number and LinkedIn profile are added to the suppression list, so they are never sourced or contacted.
 - **Undeliverable** addresses become `dropped` and are never enrolled. Only `verified` leads can be enrolled, from the app or the API; an API request naming any other status (for example `flagged`) is refused.
@@ -109,7 +109,7 @@ Launching a sequence enrolls only `verified` leads with an email address; the la
 
 The suppression list holds people who must not be contacted. A person is added when they unsubscribe, reply asking to stop, send STOP on WhatsApp, or when you erase their lead. It covers their email address, phone number and LinkedIn profile, so opting out on one channel stops all of them.
 
-Victorae checks the list when a lead is first found, whenever a new email or phone number is discovered for them, at enrollment, and immediately before every message is sent. A suppressed lead is skipped or dropped, never contacted. The list applies across your whole Victorae deployment. Administrators can view it in **Settings** under the **Suppression** tab; other users do not see that tab.
+Vectorae checks the list when a lead is first found, whenever a new email or phone number is discovered for them, at enrollment, and immediately before every message is sent. A suppressed lead is skipped or dropped, never contacted. The list applies across your whole Vectorae deployment. Administrators can view it in **Settings** under the **Suppression** tab; other users do not see that tab.
 
 ## How many leads can a strategy hold?
 
@@ -124,7 +124,7 @@ Your plan limits the number of leads per strategy. Dropped leads do not count.
 | Scale | 10,000 |
 | Pro, Enterprise | No limit |
 
-When a strategy is full, a new sourcing request is refused with an upgrade message. When it is nearly full, Victorae asks for no more leads than the room left, and checks again for each lead it adds.
+When a strategy is full, a new sourcing request is refused with an upgrade message. When it is nearly full, Vectorae asks for no more leads than the room left, and checks again for each lead it adds.
 
 ## Can I remove a lead or erase their data?
 

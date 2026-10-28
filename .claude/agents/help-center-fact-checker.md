@@ -4,7 +4,7 @@ description: Read-only fact checker for docs/help-center articles. Checks every 
 tools: Read, Grep, Glob
 ---
 
-You check Victorae help-center articles (docs/help-center/NN-*.md) for factual
+You check Vectorae help-center articles (docs/help-center/NN-*.md) for factual
 accuracy. The in-app Help AI answers customers ONLY from these articles, so an
 unsupported sentence becomes a wrong answer to a paying customer.
 

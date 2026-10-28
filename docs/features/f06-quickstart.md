@@ -16,7 +16,7 @@ Competitor complaint (STAR A.6, F06): **weeks-long onboarding** — Clay takes
 that follows when a buyer sees a demo but never sees *their own* first useful
 output.
 
-Victorae's own path to a first message is long by design: product intake →
+Vectorae's own path to a first message is long by design: product intake →
 a 72/144-step research pipeline → 10 verification passes → lead sourcing →
 sequence → send. That path is the product's quality guarantee and it stays.
 What a new account lacks is something reviewable *while it runs*.
@@ -196,7 +196,7 @@ new sidebar item, so nothing changes for a deployment with the flag off).
   sourcing; drafts are erased with the lead; both tables are in the account
   export; drafts are deleted with the account (FK CASCADE).
 - **The fetched website** is a public business page the user names as their
-  own; one GET, identified by `User-Agent: Victorae/1.0 quickstart`. Its text
+  own; one GET, identified by `User-Agent: Vectorae/1.0 quickstart`. Its text
   is stored (≤ 20 000 chars) so the derived ICP stays explainable. It is never
   placed into a draft prompt — drafts are written from the offer (the user's
   own words) and the lead's stored data only, so nothing from an unverified

@@ -1,4 +1,4 @@
-"""What every Victorae agent shares: its spec and the ownership query.
+"""What every Vectorae agent shares: its spec and the ownership query.
 
 Every agent is ADVISORY. It reads one account's data and returns findings and
 recommendations; it never sends, schedules, pauses, suppresses or edits

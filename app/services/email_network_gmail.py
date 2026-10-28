@@ -87,7 +87,7 @@ def _now() -> datetime:
 
 def account_for(db: Session, user_id) -> GmailAccount | None:
     """The scanning account's OWN connected Gmail. Never another account's.
-    Victorae stores one Gmail connection per account
+    Vectorae stores one Gmail connection per account
     (integrations/gmail.store_tokens); should there ever be several, the
     oldest connection is used -- a deterministic, documented choice."""
     return db.execute(select(GmailAccount).where(GmailAccount.user_id == user_id)

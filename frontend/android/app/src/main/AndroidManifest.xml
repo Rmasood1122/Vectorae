@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  AndroidManifest.xml — Victorae
+  AndroidManifest.xml — Vectorae
   M7 Chunk 4: Play Store release audit.
 
   PERMISSIONS AUDIT (Play Store rejects apps that declare unused permissions):

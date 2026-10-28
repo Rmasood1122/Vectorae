@@ -34,7 +34,7 @@ foreign key: not every sending identity lives in one table.
 
 ### Honesty about the complaint rate
 
-Victorae has **no feedback-loop (FBL) or Postmaster Tools integration**, so a
+Vectorae has **no feedback-loop (FBL) or Postmaster Tools integration**, so a
 true "marked as spam" signal is not available. `complaint_rate` is a
 **proxy**: unsubscribes plus replies the classifier read as a request to stop,
 over sends in the window.

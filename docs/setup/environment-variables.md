@@ -1,6 +1,6 @@
 # Environment Variables
 
-Canonical reference for every variable the Victorae backend reads. Templates
+Canonical reference for every variable the Vectorae backend reads. Templates
 live at `.env.example` (development) and `.env.production.example`.
 
 **Never commit a real `.env`.** `.gitignore` excludes `.env` and `.env.*`, with
@@ -24,7 +24,7 @@ Owner: `app/config.py`. See
 |---|---|---|---|
 | `EMAIL_PROVIDER` | **yes in production** | `console` | Which transport delivers mail. One of `resend`, `smtp`, `console`, `memory`. **Explicit on purpose** — never inferred from which keys happen to be set, so a misspelled key name fails loudly instead of silently logging every verification link. |
 | `EMAIL_FROM` | **yes in production** | `noreply@calendarharvest.com` | From address. Must be on a domain **verified in Resend** (SPF + DKIM published) or messages are accepted and then dropped/spam-foldered. |
-| `EMAIL_FROM_NAME` | no | `Victorae` | Display name in the From header |
+| `EMAIL_FROM_NAME` | no | `Vectorae` | Display name in the From header |
 | `RESEND_API_KEY` | when `EMAIL_PROVIDER=resend` | *(empty)* | **Secret.** From the Resend dashboard. |
 | `RESEND_API_URL` | no | `https://api.resend.com/emails` | Override only for testing against a mock |
 | `SMTP_HOST` | when `EMAIL_PROVIDER=smtp` | *(empty)* | Mailtrap sandbox: `sandbox.smtp.mailtrap.io` |

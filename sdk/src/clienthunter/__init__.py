@@ -1,4 +1,4 @@
-"""Victorae Python SDK.
+"""Vectorae Python SDK.
 
 Quickstart::
 

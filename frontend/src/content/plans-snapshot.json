@@ -117,7 +117,7 @@
       "monthly_fee_cents": 0,
       "price_per_meeting_cents": 17900,
       "grace_hours": 48,
-      "tagline": "Pay only when a prospect books a meeting through Victorae.",
+      "tagline": "Pay only when a prospect books a meeting through Vectorae.",
       "plan": "pay_per_meeting",
       "recommended": false,
       "limits": {

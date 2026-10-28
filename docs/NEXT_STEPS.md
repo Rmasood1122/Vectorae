@@ -1,4 +1,4 @@
-# Victorae — Recommended Next Steps (Actionable Roadmap)
+# Vectorae — Recommended Next Steps (Actionable Roadmap)
 
 Supporting detail for `docs/FULL_PRODUCT_AUDIT.md`. Audit date 2026-10-01.
 Each item: **problem → reason → action → dependency → verification method.**

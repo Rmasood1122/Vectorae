@@ -658,7 +658,7 @@ def test_exports(client, db_session, world):
     assert resp.status_code == 200
     assert resp.headers["content-type"].startswith("text/csv")
     assert resp.headers["cache-control"] == "private, no-store"
-    assert 'filename="victorae-meetings-ledger-2026-09-01-2026-09-30.csv"' \
+    assert 'filename="vectorae-meetings-ledger-2026-09-01-2026-09-30.csv"' \
         in resp.headers["content-disposition"]
     assert resp.text.splitlines()[0].startswith("campaign,strategy_id,currency")
 

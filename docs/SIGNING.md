@@ -1,4 +1,4 @@
-# SIGNING.md — Victorae Android Signing
+# SIGNING.md — Vectorae Android Signing
 
 > **This file documents a ONE-TIME manual step you must perform before the first Play Store release.**
 > The keystore you create here is the PERMANENT identity of your app on the Play Store.
@@ -52,7 +52,7 @@ Parameters explained:
 - ❌ A shared Slack/Teams channel or email attachment
 
 ### DO put the keystore in:
-- ✅ **Primary:** A password manager that supports file attachments (1Password, Bitwarden, KeePass). Store the keystore file AND both passwords as a single vault entry named "Victorae Android Release Keystore".
+- ✅ **Primary:** A password manager that supports file attachments (1Password, Bitwarden, KeePass). Store the keystore file AND both passwords as a single vault entry named "Vectorae Android Release Keystore".
 - ✅ **Backup:** An encrypted offline backup. Recommended approach:
   - Create a VeraCrypt container (https://www.veracrypt.fr) on a USB drive
   - Copy the keystore into the container

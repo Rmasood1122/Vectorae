@@ -46,7 +46,7 @@ export default function SignupPage() {
         <div className="relative">
           <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-extrabold tracking-tight">
             <span aria-hidden className="h-3 w-3 rounded-[3px] bg-[#f2b544]" />
-            Victorae
+            Vectorae
           </Link>
           <p className="mt-6 max-w-[22ch] text-2xl font-extrabold leading-tight tracking-[-0.03em] sm:text-3xl lg:mt-16 lg:text-[2.6rem] lg:leading-[1.05]">
             {CLOSING.title}

@@ -196,7 +196,7 @@ export function LeadCalls({ lead }: { lead: LeadOut & { phone_consent_at?: strin
           <p className="text-muted-foreground">
             An AI voice call to {lead.phone ?? "(no phone number)"}. Calls open by saying they are an AI
             assistant calling for you. AI-voice calls to US numbers need the person&apos;s prior consent,
-            so Victorae only calls leads with consent recorded.
+            so Vectorae only calls leads with consent recorded.
           </p>
           {hasConsent ? (
             <div className="flex flex-wrap items-center gap-2">

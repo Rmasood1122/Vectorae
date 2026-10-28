@@ -1,4 +1,4 @@
-# Victorae
+# Vectorae
 
 **End-to-end AI-powered client acquisition.** Takes a product or skill as input and carries it all the way from strategy → research → outreach → booked meeting. Runs 24/7 on a cloud backend — campaigns continue when your device is off.
 

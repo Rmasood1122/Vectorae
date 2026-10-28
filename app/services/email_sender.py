@@ -1,10 +1,10 @@
-"""The single gateway for every transactional email Victorae sends.
+"""The single gateway for every transactional email Vectorae sends.
 
 Before Feature 1 this codebase had NO way to send a system email at all.
 app/integrations/gmail.py sends on behalf of a *customer's* connected Gmail
 account as part of outreach; it is not, and must not become, the transport for
 "here is your verification link" — that mail has to go out before the user has
-connected anything, and it must come from Victorae's own domain.
+connected anything, and it must come from Vectorae's own domain.
 
 So: one function, `send_email`, and four interchangeable transports selected by
 the EMAIL_PROVIDER setting.

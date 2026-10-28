@@ -31,7 +31,7 @@ expected close date has passed is the same fact, already recorded.
 ## Every trigger is separately switchable
 
 `system_settings`: `send_review_enabled`, plus one key per trigger. This is not
-decoration. **If the people you sell to *are* founders and owners — Victorae's
+decoration. **If the people you sell to *are* founders and owners — Vectorae's
 own ICP is boutique agency owners — leaving `send_review_vip_titles` on puts
 every message in the queue, and a queue nobody can finish is a queue nobody
 reads.** Turn it off for that ICP.
