@@ -110,7 +110,7 @@ Your voice sounds like you, but the assistant never pretends to be you or a huma
 
 Yes. **Answer my calls with my AI assistant** (off by default; the account owner or a manager can turn it on) lets the assistant answer people who call your own AI-calling number. It says it is an AI assistant and that the call is recorded, and it can book a meeting on your booking page, take a message, or put the caller through to your phone. If a caller asks not to be called again, their number is added to the suppression list.
 
-When any AI call is live you get a notification and a banner in the app. Press **Take over** to have the call put through to the phone number you saved under **Settings**, **Voice**. You cannot listen in to a live call from the app. Victorae asks Vapi to accept the take-over link only together with Victorae's own Vapi key, so the link alone is not enough to redirect a call.
+When any AI call is live you get a notification and a banner in the app. Press **Take over** to have the call put through to the phone number you saved under **Settings**, **Voice**. You cannot listen in to a live call from the app. Vectorae asks Vapi to accept the take-over link only together with Vectorae's own Vapi key, so the link alone is not enough to redirect a call.
 
 ## What is the consent ledger and the compliance audit log?
 

@@ -51,7 +51,7 @@ All three vendor connections also need your Vectorae administrator to register t
 
 Go to **Settings**, open the **Integrations** tab, and click **Connect** on the HubSpot or Salesforce card. You sign in on the vendor's site. Once connected, the card shows the account, how many leads and deals are linked, when data was last pushed and pulled, **Sync now** and **Disconnect** buttons, and the last error if a sync failed ("reconnect to restore the sync").
 
-Victorae now also asks HubSpot for permission to read **companies**, which the do-not-contact check (**Sync from CRM** in **Guardrails Studio**) uses to find your customers and open deals. A HubSpot connection made before this change does not have that permission: the check then says "HubSpot did not allow reading companies", and customers and open deals from HubSpot are not excluded until you disconnect and connect HubSpot again. Disconnecting removes the links between your Victorae leads and HubSpot records and any custom lifecycle-stage settings for this check; connecting again starts a full sync.
+Vectorae now also asks HubSpot for permission to read **companies**, which the do-not-contact check (**Sync from CRM** in **Guardrails Studio**) uses to find your customers and open deals. A HubSpot connection made before this change does not have that permission: the check then says "HubSpot did not allow reading companies", and customers and open deals from HubSpot are not excluded until you disconnect and connect HubSpot again. Disconnecting removes the links between your Vectorae leads and HubSpot records and any custom lifecycle-stage settings for this check; connecting again starts a full sync.
 
 ## What does the CRM sync send and receive?
 

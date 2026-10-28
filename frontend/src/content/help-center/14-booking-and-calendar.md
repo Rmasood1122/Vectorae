@@ -37,7 +37,7 @@ Prospects can book a meeting with you in two ways: through a booking page on Vec
 claude/epic-fermi-rmnw4c
 The Calendly connection uses one API token for the whole deployment, set by whoever runs your Vectorae. In **Settings**, on the **Integrations** tab, the Calendly card shows either "API token configured" or "Not configured". Several parts of the Calendly code are marked as not yet checked against Calendly's current documentation (the sign-in method, the webhook signature header and the booking data it reads), so treat the Calendly integration as not yet verified against the live service.
 =======
-The Calendly connection uses one API token for the whole deployment, set by whoever runs your Victorae. In **Settings**, on the **Integrations** tab, the Calendly card shows either "API token configured" or "Not configured". The Calendly code was checked against Calendly's public documentation in October 2026, without a Calendly account; it has not been tested against the live service.
+The Calendly connection uses one API token for the whole deployment, set by whoever runs your Vectorae. In **Settings**, on the **Integrations** tab, the Calendly card shows either "API token configured" or "Not configured". The Calendly code was checked against Calendly's public documentation in October 2026, without a Calendly account; it has not been tested against the live service.
 master
 
 ## How do I set my availability?
@@ -100,7 +100,7 @@ On Vectorae's calendar you can cancel a booking from the calendar ("Cancel booki
 
 When a Calendly booking is cancelled outright, the lead goes back to **Replied**. Its sequences were already stopped and are not restarted.
 
-If the prospect **reschedules** through Calendly instead, the lead stays **Meeting booked**: Calendly reports a reschedule as a cancellation of the old time plus a new booking, and Victorae recognises it. The reminders for the old time stop, and the new time gets its own prep brief (when meeting prep is turned on).
+If the prospect **reschedules** through Calendly instead, the lead stays **Meeting booked**: Calendly reports a reschedule as a cancellation of the old time plus a new booking, and Vectorae recognises it. The reminders for the old time stop, and the new time gets its own prep brief (when meeting prep is turned on).
 
 ## Related
 - [Sequences and follow-ups](08-sequences-and-follow-ups.md)
