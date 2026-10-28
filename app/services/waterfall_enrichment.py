@@ -142,7 +142,8 @@ def classify(result: VerificationResult) -> str:
         verdict = INVALID
     elif status == "accept_all":
         verdict = CATCH_ALL
-    elif status == "unknown":
+    elif status in ("unknown", "webmail"):
+        # webmail: no SMTP proof, an arbitrary score -- risky, flagged.
         verdict = UNKNOWN
     elif result.status is EmailVerificationStatus.UNDELIVERABLE:
         verdict = INVALID

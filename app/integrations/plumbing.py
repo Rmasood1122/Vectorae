@@ -294,9 +294,12 @@ class BaseHttpAdapter:
             # status code, not by inspecting the body: callers and test fakes
             # are only guaranteed status_code and json().
             data = {} if resp.status_code == 204 else resp.json()
-            if cache_ttl:
+            # Only a plain 200 is a final answer worth caching: 202 ("still in
+            # progress") and other 2xx variants are asked again next time.
+            if cache_ttl and resp.status_code == 200:
                 self.cache.set(endpoint, cache_payload, data, cache_ttl)
-            self.last_call = {"cached": False, "cost_units": cost_units}
+            self.last_call = {"cached": False, "cost_units": cost_units,
+                              "status": resp.status_code}
             spend_guard.after_data_call(self.provider, endpoint, cost_units)  # F07 meter
             return data
 
