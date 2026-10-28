@@ -2,6 +2,12 @@
 
 Resume from this file, `status.json`, `DECISIONS.md` and `git log`.
 
+- 2026-10-28 — **Calendly reschedules keep the meeting** (founder choice in session: "Calendly reschedule fix"; reported under the previous entry).
+  - Calendly reports a reschedule as `invitee.canceled` for the old event with `rescheduled: true` plus `invitee.created` for the new one, in either order (developer.calendly.com, "Webhook Payloads for Rescheduled Events", read 2026-10-28, no account used). The handler ignored the flag: the lead went back to Replied and a "replied" outcome was written, and when the new booking arrived first the lead stayed Replied.
+  - Now a cancel with `rescheduled` exactly `true` stops the old event's prep reminders, leaves the lead's status alone and writes no outcome (`action: "rescheduled"`). A plain cancel, `false`, or a non-boolean value still reverts as before.
+  - Pre-fix: 2 of the 6 tests in `tests/test_calendly_reschedule.py` fail (both reschedule orders); the other 4 pin kept behaviour.
+  - Help article 14 updated in both copies and fact-checked (12 supported; two sentences narrowed). Its stale line saying the Calendly code was "marked as not yet checked" (the markers were removed in the previous entry) now says it was checked against the docs, not the live service.
+  - Not covered: a lead with two separate Calendly bookings who cancels one goes back to Replied (unchanged; there is no per-booking state on the lead).
 - 2026-10-28 — **F-QA-02, Hunter, Calendly and Zoom checked against their public docs** (founder choices in session: "Risky -> flagged" for webmail, "Suppress the person" on Hunter 451, "Require a host email" for Zoom). No account used.
   - Hunter: `result` is deprecated; the adapter reads `status` first (webmail = risky, flagged in the waterfall). 202/222 are not final answers: VerificationPending, and BaseHttpAdapter now caches only a 200. 451 (the person objected at Hunter) raises DataSubjectOptedOut; every find/verify loop drops the lead and suppresses the person (`consent.suppress_everywhere`). Key moved to the X-API-KEY header. Pre-fix: webmail+"deliverable" verified; a status-only "valid" was UNKNOWN; a 451 was retried.
   - Zoom: no default host ("me" is documented for user-level apps only); an unset host_user refuses before any call. Duration capped at 1440. Calendly: event_types paged (default page was 20); the signature is computed over bytes (a non-UTF-8 body was a 500). Pre-fix: 7 of 9 tests fail.

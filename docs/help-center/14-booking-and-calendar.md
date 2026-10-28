@@ -2,7 +2,7 @@
 id: booking-and-calendar
 title: Booking meetings and your calendar
 audience: customer
-last_verified: 2026-10-11
+last_verified: 2026-10-28
 owner: help-center
 sources:
   - app/api/calendar.py
@@ -34,7 +34,11 @@ Prospects can book a meeting with you in two ways: through a booking page on Vec
 - **Vectorae's own calendar:** you set your weekly availability and create booking pages inside Vectorae. Each booking is tied to your page, so Vectorae always knows whose booking it is. When a booking is cancelled, the prospect goes back into their sequence.
 - **Calendly:** a scheduling link can be attached to a sequence, and Vectorae asks the writer to include it in the call to action of the emails it writes, tagged with your account. Calendly reports bookings back to Vectorae through a webhook. A Calendly booking stops the prospect's sequences for good. In the current app, the sequence form does not have a field for this link; it can be set when a sequence is created through the Vectorae API.
 
+claude/epic-fermi-rmnw4c
 The Calendly connection uses one API token for the whole deployment, set by whoever runs your Vectorae. In **Settings**, on the **Integrations** tab, the Calendly card shows either "API token configured" or "Not configured". Several parts of the Calendly code are marked as not yet checked against Calendly's current documentation (the sign-in method, the webhook signature header and the booking data it reads), so treat the Calendly integration as not yet verified against the live service.
+=======
+The Calendly connection uses one API token for the whole deployment, set by whoever runs your Victorae. In **Settings**, on the **Integrations** tab, the Calendly card shows either "API token configured" or "Not configured". The Calendly code was checked against Calendly's public documentation in October 2026, without a Calendly account; it has not been tested against the live service.
+master
 
 ## How do I set my availability?
 
@@ -94,7 +98,9 @@ When a booking comes in through Calendly, the matching lead is marked **Meeting 
 
 On Vectorae's calendar you can cancel a booking from the calendar ("Cancel booking"). The time is freed, a cancellation email goes to the invitee and to you, any meeting prep reminders for it are cancelled, a lead marked **Meeting booked** goes back to **Replied**, and the sequence pause made by the booking is lifted. Cancelling a meeting never lifts a different pause, such as an out-of-office hold.
 
-When a Calendly booking is cancelled, the lead goes back to **Replied**. Its sequences were already stopped and are not restarted.
+When a Calendly booking is cancelled outright, the lead goes back to **Replied**. Its sequences were already stopped and are not restarted.
+
+If the prospect **reschedules** through Calendly instead, the lead stays **Meeting booked**: Calendly reports a reschedule as a cancellation of the old time plus a new booking, and Victorae recognises it. The reminders for the old time stop, and the new time gets its own prep brief (when meeting prep is turned on).
 
 ## Related
 - [Sequences and follow-ups](08-sequences-and-follow-ups.md)
