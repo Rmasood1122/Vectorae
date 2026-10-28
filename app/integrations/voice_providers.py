@@ -52,12 +52,16 @@ ELEVEN_BASE = "https://api.elevenlabs.io"
 
 
 class VoiceProviderError(Exception):
-    def __init__(self, message: str, status: int | None = None):
+    def __init__(self, message: str, status: int | None = None, *,
+                 permanent: bool | None = None):
         super().__init__(message)
         self.status = status
+        self._permanent = permanent
 
     @property
     def permanent(self) -> bool:
+        if self._permanent is not None:
+            return self._permanent
         return self.status is not None and 400 <= self.status < 500 and self.status != 429
 
 
@@ -136,9 +140,11 @@ BACKCHANNELING_FIELD = {"backchannelingEnabled": True}          # UNVERIFIED aga
 FILLER_INJECTION_FIELD = {"fillerInjectionEnabled": True}       # UNVERIFIED against docs (voice.*)
 BACKGROUND_DENOISING_FIELD = {                                   # UNVERIFIED against docs (inner shape)
     "backgroundSpeechDenoisingPlan": {"smartDenoisingPlan": {"enabled": True}}}
-# Live-control endpoint auth: the docs show controlUrl requests with only a
-# content-type header and a monitorPlan.controlAuthenticationEnabled switch we
-# leave off. We still send the API key as a bearer token. # UNVERIFIED against docs
+# Live-control endpoint auth: monitorPlan.controlAuthenticationEnabled makes
+# the controlUrl require "Authorization: Bearer <api key>" (Vapi MonitorPlan
+# schema). It is switched ON: without it anyone holding a call's control URL
+# could transfer that live call to any number. Founder choice 2026-10-28
+# ("Require auth"). Not yet exercised on a live account.
 CONTROL_SENDS_API_KEY = True
 # Only Vapi's own hosts may be driven through a control URL (it arrives on a
 # webhook; never let it point anywhere else).
@@ -175,9 +181,13 @@ def vapi_assistant(*, first_message: str, system_prompt: str, server_url: str,
                   "tools": model_tools},
         "startSpeakingPlan": dict(START_SPEAKING_PLAN),
         "stopSpeakingPlan": dict(STOP_SPEAKING_PLAN),
-        "voicemailDetection": {"provider": "twilio"},   # TODO: verify provider value
+        # Vapi's docs list vapi (default), google (recommended), openai and
+        # twilio; twilio is the legacy beep detector with more false
+        # positives. Founder choice 2026-10-28 ("Google").
+        "voicemailDetection": {"provider": "google"},
         "artifactPlan": {"recordingEnabled": True},
-        "monitorPlan": {"listenEnabled": False, "controlEnabled": True},
+        "monitorPlan": {"listenEnabled": False, "controlEnabled": True,
+                        "controlAuthenticationEnabled": True},
         "maxDurationSeconds": MAX_CALL_SECONDS,
         "server": {"url": server_url},
         "metadata": metadata or {},
@@ -407,7 +417,15 @@ class ElevenLabsClient:
                     first_message: str, voicemail_message: str | None, server_url: str,
                     server_secret: str | None, metadata: dict, voice_id: str | None = None,
                     voice_is_clone: bool = False, transfer_number: str | None = None) -> dict:
-        """# TODO: verify against current ElevenLabs docs (convai outbound call)
+        """POST /v1/convai/twilio/outbound-call (ElevenLabs API reference,
+        checked 2026-10-28): agent_id, agent_phone_number_id, to_number
+        required; the answer is {success, message, conversation_id, callSid}
+        and either id may be null.
+
+        A 200 with success false, or without a conversation_id, is a call
+        that did not start: the post-call webhook is matched by
+        conversation_id, so a callSid stand-in would never be matched and the
+        transcript (and any opt-out spoken on it) would be dropped.
 
         Voice twin: `voice_id` (the owner's clone) is sent as a TTS override.
         # UNVERIFIED against docs: conversation_config_override.tts.voice_id
@@ -432,8 +450,16 @@ class ElevenLabsClient:
                                headers={"xi-api-key": self.api_key})
         _check(resp, "elevenlabs outbound call")
         data = resp.json() or {}
-        return {"id": data.get("conversation_id") or data.get("callSid"),
-                "status": "queued"}
+        if not data.get("success") or not data.get("conversation_id"):
+            logger.warning("elevenlabs outbound call not started (success=%s, "
+                           "conversation_id present=%s)", data.get("success"),
+                           bool(data.get("conversation_id")))
+            # A callSid means Twilio may already be ringing the person: never
+            # dial again automatically. Without one nothing was placed, and
+            # the normal retry applies.
+            raise VoiceProviderError("ElevenLabs did not start the call",
+                                     permanent=bool(data.get("callSid")) or None)
+        return {"id": data["conversation_id"], "status": "queued"}
 
 
 def get_clients(db, user_id=None) -> tuple[VapiClient | None, ElevenLabsClient | None]:

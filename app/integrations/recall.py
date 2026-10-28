@@ -146,8 +146,9 @@ class RecallAdapter(BaseHttpAdapter):
         super().__init__(**kwargs)
 
     def _auth(self) -> dict:
-        # The quickstart's examples use "Token"; the API reference's auth
-        # scheme reads as bearer. TODO: verify against current Recall docs.
+        # "All requests must be authenticated via token in the HTTP
+        # Authorization header ... Authorization: Token {YOUR_API_KEY}"
+        # (Recall API reference, checked 2026-10-28).
         return {"headers": {"Authorization": f"Token {self.api_key}"}}
 
     def create_bot(self, meeting_url: str, *, join_at: datetime | None,
@@ -156,7 +157,12 @@ class RecallAdapter(BaseHttpAdapter):
             "meeting_url": meeting_url,
             "bot_name": bot_name,
             "metadata": metadata,
-            "recording_config": {"transcript": {"provider": {"recallai_streaming": {}}}},
+            # Only the end-of-call transcript is used, so ask for Recall's
+            # accuracy mode rather than leave the mode to its default
+            # ("prioritize_accuracy" / "prioritize_low_latency", Recall
+            # transcription docs, checked 2026-10-28).
+            "recording_config": {"transcript": {"provider": {
+                "recallai_streaming": {"mode": "prioritize_accuracy"}}}},
         }
         if join_at is not None and join_at > datetime.now(timezone.utc):
             body["join_at"] = join_at.astimezone(timezone.utc).isoformat()

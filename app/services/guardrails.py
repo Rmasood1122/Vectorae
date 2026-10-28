@@ -723,6 +723,11 @@ def _settings_list(conn, key: str, default: tuple) -> list[str]:
     return list(default)
 
 
+HUBSPOT_RECONNECT_MESSAGE = ("HubSpot did not allow reading companies. Reconnect HubSpot in "
+                             "Settings > Integrations to grant it; until then customers and "
+                             "open deals from HubSpot are not excluded.")
+
+
 def _hubspot_entries(session: Session, conn) -> list[_Entry]:
     """Companies by lifecycle stage and open-deal count.
     UNVERIFIED against a live portal -- see the spec."""
@@ -828,6 +833,12 @@ def sync_from_crm(session: Session, user_id, *, actor_user_id=None,
             session.rollback()
             logger.warning("guardrails CRM sync (%s) failed for %s: %s",
                            conn.provider, user_id, exc)
+            if conn.provider == "hubspot" and getattr(exc, "status", None) == 403:
+                # A grant made before crm.objects.companies.read was requested
+                # cannot read companies. Say what to do, not HubSpot's text.
+                result[conn.provider] = {"status": "error", "reconnect": True,
+                                         "error": HUBSPOT_RECONNECT_MESSAGE}
+                continue
             result[conn.provider] = {"status": "error", "error": str(exc)[:300]}
     _audit(session, AUDIT_CRM_SYNCED, actor_user_id=actor_user_id, owner_user_id=user_id,
            details={source: {k: v for k, v in res.items() if k != "error"}

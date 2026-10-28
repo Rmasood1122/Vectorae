@@ -21,17 +21,29 @@ import httpx
 
 AUTH_URL = "https://app.hubspot.com/oauth/authorize"
 API_BASE = "https://api.hubapi.com"
-TOKEN_URL = f"{API_BASE}/oauth/v1/token"
+# HubSpot's dated OAuth API (2026-03). The v1 token and token-metadata
+# endpoints are deprecated; v1 put the access token in the URL path, where
+# proxy and debug logs can keep it. Same form fields as v1.
+TOKEN_URL = f"{API_BASE}/oauth/2026-03/token"
+INTROSPECT_URL = f"{API_BASE}/oauth/2026-03/token/introspect"
 SCOPES = (
     "oauth",
     "crm.objects.contacts.read",
     "crm.objects.contacts.write",
     "crm.objects.deals.read",
     "crm.objects.deals.write",
+    # Guardrails reads customer / open-deal companies (guardrails.py). A grant
+    # made before this scope was added gets a 403 there and must reconnect.
+    "crm.objects.companies.read",
 )
 PROVIDER = "hubspot"
 APP_PROVIDER = "hubspot_app"
 SIGNATURE_TOLERANCE_SECONDS = 300
+# Request validation v3: "In the request URI, decode any of the URL-encoded
+# characters listed" -- exactly these, nothing else.
+_V3_URI_DECODE = (("%3A", ":"), ("%2F", "/"), ("%3F", "?"), ("%40", "@"), ("%21", "!"),
+                  ("%24", "$"), ("%27", "'"), ("%28", "("), ("%29", ")"), ("%2A", "*"),
+                  ("%2C", ","), ("%3B", ";"))
 
 CONTACT_PROPERTIES = ["email", "firstname", "lastname", "company", "jobtitle", "phone",
                       "hs_lead_status", "lifecyclestage"]
@@ -71,7 +83,6 @@ def _token_request(data: dict) -> dict:
 
 
 def exchange_code(client_id: str, client_secret: str, code: str, redirect_uri: str) -> dict:
-    # TODO: verify against current HubSpot docs (OAuth v1 token endpoint)
     return _token_request({"grant_type": "authorization_code", "client_id": client_id,
                            "client_secret": client_secret, "redirect_uri": redirect_uri,
                            "code": code})
@@ -82,13 +93,22 @@ def refresh(client_id: str, client_secret: str, refresh_token: str) -> dict:
                            "client_secret": client_secret, "refresh_token": refresh_token})
 
 
-def token_info(access_token: str) -> dict:
-    """{hub_id, hub_domain, user, ...} for the portal the grant belongs to."""
+def token_info(access_token: str, client_id: str, client_secret: str) -> dict:
+    """Metadata ({active, hub_id, ...}) for the portal the grant belongs to.
+
+    POST /oauth/2026-03/token/introspect with the token in the form body,
+    never in the URL. Not every v1 field is promised here (hub_domain may be
+    absent), so callers read what they need defensively."""
     with _http() as client:
-        resp = client.get(f"{API_BASE}/oauth/v1/access-tokens/{access_token}")
+        resp = client.post(INTROSPECT_URL, data={
+            "client_id": client_id, "client_secret": client_secret,
+            "token": access_token, "token_type_hint": "access_token"})
     if resp.status_code >= 400:
         raise HubSpotError(f"token info: HTTP {resp.status_code}", resp.status_code)
-    return resp.json()
+    data = resp.json()
+    if not isinstance(data, dict) or data.get("active") is False:
+        raise HubSpotError("token info: token is not active", 401)
+    return data
 
 
 def verify_signature_v3(client_secret: str, method: str, uri: str, body: bytes,
@@ -106,6 +126,8 @@ def verify_signature_v3(client_secret: str, method: str, uri: str, body: bytes,
     now = time.time() if now is None else now
     if abs(now - ts_ms / 1000) > SIGNATURE_TOLERANCE_SECONDS:
         return False
+    for encoded, char in _V3_URI_DECODE:
+        uri = uri.replace(encoded, char).replace(encoded.lower(), char)
     message = method.upper().encode() + uri.encode() + body + timestamp.encode()
     expected = base64.b64encode(
         hmac.new(client_secret.encode(), message, hashlib.sha256).digest()).decode()
@@ -128,7 +150,6 @@ class HubSpotClient:
 
     # ---- contacts ---------------------------------------------------------
     def find_contact_by_email(self, email: str) -> str | None:
-        # TODO: verify against current HubSpot docs (CRM v3 search)
         data = self._req("POST", "/crm/v3/objects/contacts/search", json={
             "filterGroups": [{"filters": [
                 {"propertyName": "email", "operator": "EQ", "value": email}]}],
@@ -154,7 +175,6 @@ class HubSpotClient:
         self._req("PATCH", f"/crm/v3/objects/deals/{deal_id}", json={"properties": properties})
 
     def associate_deal_contact(self, deal_id: str, contact_id: str) -> None:
-        # TODO: verify against current HubSpot docs (associations v4 default)
         self._req("PUT", f"/crm/v4/objects/deals/{deal_id}/associations/default/"
                          f"contacts/{contact_id}")
 
@@ -167,9 +187,9 @@ class HubSpotClient:
     def search(self, object_type: str, filter_groups: list[dict], properties: list[str],
                *, max_pages: int = 50) -> list[dict]:
         """[{id, properties}] matching `filter_groups`, following the `after`
-        cursor 100 at a time, at most `max_pages` pages.
-        # TODO: verify against current HubSpot docs (CRM v3 search: paging,
-        # the 10,000-result ceiling, and the companies read scope)"""
+        cursor 100 at a time, at most `max_pages` pages (HubSpot's search
+        stops at 10,000 results per query, so 50 pages stays under it).
+        Companies need the crm.objects.companies.read scope."""
         out: list[dict] = []
         after: str | None = None
         for _ in range(max_pages):
