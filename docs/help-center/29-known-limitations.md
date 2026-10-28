@@ -73,13 +73,13 @@ This is an honest list of what Victorae does not do, does not do yet, or has not
 
 ## Which integrations have not been verified against the live services?
 
-Victorae's automated tests run against simulated versions of outside services. Parts of these integrations are marked in the code as not yet verified against the live service: Gmail, WhatsApp Business, Apollo, Hunter, Calendly, LinkedIn (through Unipile), HubSpot, Zoom, Recall.ai and the AI phone-call providers.
+Victorae's automated tests run against simulated versions of outside services. Gmail, WhatsApp Business, Apollo, Hunter, Calendly, LinkedIn (through Unipile) and Zoom were checked against each provider's public documentation on 2026-10-27, and the differences found were fixed, but none of them has been checked against the live service from these tests. Parts of HubSpot, Recall.ai and the AI phone-call providers are still marked in the code as not yet checked against the provider's documentation.
 
 In particular:
 
 - **Google Meet and Zoom** meeting creation has not been verified against the live services. Creating a meeting with your own custom link is the only verified path. If Meet or Zoom fails, the meeting is still created, without the video link.
 - **Recall.ai** (the bot that records and transcribes a call) has been built and tested with simulations only and has never been called live.
-- **Zoom meetings** are all hosted by one Zoom account configured for the deployment.
+- **Zoom meetings** are all hosted by one Zoom user, which your administrator sets as the host user under Admin > Integrations > Zoom. Until it is set, Victorae does not create Zoom links.
 - **AI calls in your own voice** (ElevenLabs voice cloning, AI answering of your calls and Take over through Vapi) have been built and tested with simulations only. Some of the settings that make the assistant sound natural are switched off until they are checked against the live service.
 
 ## What are the sending limitations?

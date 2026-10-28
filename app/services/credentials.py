@@ -129,10 +129,10 @@ CATALOGUE: tuple[ProviderSpec, ...] = (
                  ("client_id", "client_secret", "account_id"),
                  "Creates Zoom meetings (with join links) when a meeting is "
                  "scheduled on Zoom. Needs a Server-to-Server OAuth app with "
-                 "meeting write scope. `host_user` (optional) is the email or "
-                 "user id meetings are created under (default: the app's own "
-                 "account, \"me\"). Falls back to the ZOOM_* environment "
-                 "variables when unset.", "system",
+                 "meeting write scope. `host_user` is the email or user id "
+                 "meetings are created under; it is needed to create a meeting "
+                 "(a Server-to-Server app has no \"me\"). Falls back to the "
+                 "ZOOM_* environment variables when unset.", "system",
                  optional=("host_user",)),
     ProviderSpec("recall", "Recall.ai", ("api_key", "region"),
                  "Meeting recording bots: a bot joins Meet/Zoom/Teams calls and "

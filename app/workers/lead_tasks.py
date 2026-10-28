@@ -41,6 +41,7 @@ from app.integrations.base import (
 # Importing the adapter modules registers them.
 import app.integrations.apollo  # noqa: F401
 import app.integrations.hunter  # noqa: F401
+from app.integrations.hunter import DataSubjectOptedOut
 
 from app.workers.celery_app import celery_app
 
@@ -273,6 +274,22 @@ def source_leads_impl(session: Session, batch_id: uuid.UUID, source: LeadSource 
     return counts
 
 
+def _opted_out_at_provider(session: Session, lead: Lead) -> None:
+    """The email provider (Hunter, HTTP 451) says this person asked it not to
+    process their personal data: drop the lead and suppress the person on
+    every channel, so they are never sourced or contacted (founder choice,
+    2026-10-27)."""
+    from app.services import consent  # noqa: PLC0415
+
+    lead.status = LeadStatus.DROPPED
+    lead.enrichment_json = {**(lead.enrichment_json or {}),
+                            "dropped_reason": "opted_out_at_data_provider"}
+    consent.suppress_everywhere(session, lead, source="data_provider",
+                                reason="opted_out_at_data_provider",
+                                detail="the email provider reported a data-processing objection (HTTP 451)")
+    session.commit()
+
+
 def enrich_leads_impl(session: Session, batch_id: uuid.UUID, source: LeadSource | None = None) -> int:
     batch = session.get(LeadBatch, batch_id)
     _set_stage(session, batch, BatchStage.ENRICHING)
@@ -390,7 +407,12 @@ def find_missing_emails_impl(
             continue
 
         domain = (lead.enrichment_json or {}).get("company_domain")
-        email = verifier.find_email(lead.full_name or "", domain or "") if domain else None
+        try:
+            email = verifier.find_email(lead.full_name or "", domain or "") if domain else None
+        except DataSubjectOptedOut:
+            _opted_out_at_provider(session, lead)
+            dropped += 1
+            continue
 
         if not email or is_suppressed(session, email=email):
             lead.status = LeadStatus.DROPPED
@@ -455,7 +477,12 @@ def verify_emails_impl(
 
     counts = {"verified": 0, "flagged": 0, "dropped": 0}
     for lead in leads:
-        result = verifier.verify(lead.email)
+        try:
+            result = verifier.verify(lead.email)
+        except DataSubjectOptedOut:
+            _opted_out_at_provider(session, lead)
+            counts["dropped"] += 1
+            continue
         lead.status = result.lead_status
         lead.enrichment_json = {
             **(lead.enrichment_json or {}),
@@ -502,7 +529,12 @@ def _find_emails_waterfall(session: Session, batch: LeadBatch,
     for lead in leads:
         ctx = wf.context_for_lead(session, lead, batch)
         original = (lead.email or "").strip().lower()
-        result = wf.run_for_lead(session, lead, verifier, ctx, steps)
+        try:
+            result = wf.run_for_lead(session, lead, verifier, ctx, steps)
+        except DataSubjectOptedOut:
+            _opted_out_at_provider(session, lead)
+            dropped += 1
+            continue
 
         if result.verdict in (wf.NOT_FOUND, wf.SUPPRESSED):
             lead.status = LeadStatus.DROPPED
@@ -569,8 +601,13 @@ def _verify_emails_waterfall(session: Session, batch: LeadBatch,
                 counts["dropped"] += 1
                 continue
             ctx = wf.context_for_lead(session, lead, batch)
-            verified = wf.verify_address(session, lead, lead.email, verifier, ctx,
-                                         step="verify")
+            try:
+                verified = wf.verify_address(session, lead, lead.email, verifier, ctx,
+                                             step="verify")
+            except DataSubjectOptedOut:
+                _opted_out_at_provider(session, lead)
+                counts["dropped"] += 1
+                continue
             record = wf.store_verdict(
                 lead, verdict=verified.verdict, email=lead.email,
                 provider=lead.source, verifier=verified.verifier, score=verified.score,

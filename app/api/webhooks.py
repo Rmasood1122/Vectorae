@@ -52,7 +52,8 @@ def _calendly_event_ref(invitee: dict, fallback: str) -> str:
     The SCHEDULED EVENT's URI, not the delivery's event_id: the created and
     canceled deliveries are two different events about the same meeting, and
     the brief they both address has to be found by the thing they share.
-    # TODO: verify against current Calendly docs (payload.scheduled_event.uri)
+    payload.scheduled_event is an object with `uri` (Calendly webhook
+    payload reference).
     """
     scheduled = invitee.get("scheduled_event") or {}
     ref = scheduled.get("uri") or invitee.get("event") or invitee.get("uri") or fallback
@@ -113,7 +114,7 @@ def _already_recorded(db: Session, lead: Lead, event: OutcomeEvent, event_id: st
 
 
 def _process_calendly_event(db: Session, payload: dict, event_id: str) -> dict:
-    event_type = payload.get("event")  # TODO: verify against current Calendly docs
+    event_type = payload.get("event")  # "invitee.created" | "invitee.canceled"
     invitee = payload.get("payload") or {}
     email = (invitee.get("email") or "").lower().strip()
     if not email:

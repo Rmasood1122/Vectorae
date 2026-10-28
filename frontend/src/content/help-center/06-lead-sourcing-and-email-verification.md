@@ -98,6 +98,8 @@ Later stages, after a meeting, are covered in the meetings and CRM articles.
 Hunter's check returned "deliverable" for the address. It is the provider's verdict at the time of the check, not a guarantee that a future email will arrive. Apollo's own label on an email is never the verdict: every address goes through Hunter, whoever found it.
 
 - **Risky** addresses, and addresses Hunter could not judge, become `flagged` for you to decide on. Victorae stores Hunter's verdict and confidence score, not its reason, so it cannot tell you why an address is risky. With the email waterfall turned on by your administrator, an address on a server that accepts every address (catch-all) is also `flagged`, even if Hunter called it valid. If you have checked a flagged address yourself, move the lead to `verified` (or back to `flagged`) on the **Pipeline** board.
+- **Personal mailboxes** (webmail, such as Gmail or Outlook addresses) cannot be checked by Hunter over the mail server, so they are treated as risky and become `flagged`, whatever score Hunter gives them.
+- If Hunter reports that a person has asked it not to process their personal data, the lead is `dropped` and the person's email address, phone number and LinkedIn profile are added to the suppression list, so they are never sourced or contacted.
 - **Undeliverable** addresses become `dropped` and are never enrolled. Only `verified` leads can be enrolled, from the app or the API; an API request naming any other status (for example `flagged`) is refused.
 - An address Hunter built from a name and company domain is recorded as found that way, separately from one a provider confirmed.
 

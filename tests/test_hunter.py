@@ -39,13 +39,17 @@ class TestHunterFinder:
         seen = {}
 
         def handler(request):
-            seen["api_key"] = request.url.params.get("api_key")
+            # The documented X-API-KEY header, never the query string (which
+            # ends up in proxy and access logs).
+            seen["api_key"] = request.headers.get("X-API-KEY")
+            seen["key_in_url"] = "api_key" in request.url.params
             seen["domain"] = request.url.params.get("domain")
             return httpx.Response(200, json={"data": {"email": "jane.doe@acme.com", "score": 92}})
 
         email = make_hunter(fake_redis, handler).find_email("Jane Doe", "acme.com")
         assert email == "jane.doe@acme.com"
         assert seen["api_key"] == "test-hunter-key"
+        assert seen["key_in_url"] is False
         assert seen["domain"] == "acme.com"
 
     def test_find_email_none_when_not_found(self, fake_redis):

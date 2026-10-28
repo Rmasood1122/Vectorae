@@ -18,14 +18,17 @@ environment variables this adapter originally shipped with, so an existing
 deployment keeps working and a new one follows the codebase rule that API
 keys live in the encrypted store, not the environment.
 
-VERIFIED AGAINST CURRENT DOCS (2026-09-13), NEVER CALLED LIVE
+VERIFIED AGAINST CURRENT DOCS (2026-09-13, re-read 2026-10-27), NEVER CALLED LIVE
 developers.zoom.us/docs/internal-apps/s2s-oauth: POST https://zoom.us/oauth/token
 with grant_type=account_credentials and account_id in the form body, Basic
-auth of client_id:client_secret, one-hour tokens. The create-meeting reference
-page could not be retrieved; `POST /users/me/meetings`, type 2 and the settings
-field names carry `# TODO: verify`. Whether `me` resolves for a server-to-server
-app is not stated in Zoom's docs, so the host is configurable (`host_user`, an
-email or user id; default "me").
+auth of client_id:client_secret, one-hour tokens. developers.zoom.us/docs/api/
+meetings: POST /users/{userId}/meetings; type 2 = scheduled; duration 1-1440;
+agenda up to 2,000 characters; settings.join_before_host / waiting_room
+(a waiting room disables join-before-host). userId is "the user's user ID or
+email address. For user-level apps, pass the `me` value" -- a Server-to-Server
+app is account-level, so there is NO default host: `host_user` (an email or
+user id) must be configured, and an unset one refuses with ZoomNotConfigured
+(founder choice, 2026-10-27).
 Live verification needs credentials: scripts/verify_meeting_platforms.py.
 
 THE TOKEN IS CACHED IN REDIS, keyed per client id, so rotating credentials
@@ -53,7 +56,8 @@ ZOOM_TOKEN_ENDPOINT = "https://zoom.us/oauth/token"
 PROVIDER = "zoom"
 CONFIGURE_ACTION = "configure_zoom"
 
-_SCHEDULED = 2  # TODO: verify against the Zoom "Create a meeting" reference
+_SCHEDULED = 2
+_DURATION_MAX = 1440
 _TOKEN_CACHE_SECONDS = 3000  # one-hour tokens, expired early
 
 
@@ -80,7 +84,7 @@ def zoom_credentials(db: Session | None) -> dict:
         "client_id": stored.get("client_id") or settings.zoom_oauth_client_id,
         "client_secret": stored.get("client_secret") or settings.zoom_oauth_client_secret,
         "account_id": stored.get("account_id") or settings.zoom_account_id,
-        "host_user": stored.get("host_user") or "me",
+        "host_user": stored.get("host_user") or "",
     }
 
 
@@ -148,6 +152,15 @@ class ZoomAdapter(BaseHttpAdapter):
     def _auth(self) -> dict:
         return {"headers": {"Authorization": f"Bearer {self._access_token()}"}}
 
+    def _host(self) -> str:
+        host = str(self.creds.get("host_user") or "").strip()
+        if not host:
+            raise ZoomNotConfigured(
+                "Zoom has no host user. An admin sets `host_user` (the email or "
+                "user id meetings are created under) under Admin > Integrations > "
+                "Zoom; a Server-to-Server app has no \"me\".")
+        return quote(host, safe="@.")
+
     def create_meeting(self, *, topic: str, start_at, duration_minutes: int,
                        agenda: str | None = None) -> dict:
         """Schedule a meeting on the configured host. Returns the resource.
@@ -159,27 +172,25 @@ class ZoomAdapter(BaseHttpAdapter):
             "topic": topic[:200],
             "type": _SCHEDULED,
             "start_time": start_at.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "duration": max(1, int(duration_minutes)),
+            "duration": min(_DURATION_MAX, max(1, int(duration_minutes))),
             "timezone": "UTC",
             "agenda": (agenda or "")[:2000] or None,
             "settings": {
                 # A prospect on a "waiting for host" screen is a lost call.
-                "join_before_host": True,  # TODO: verify field names
-                "waiting_room": False,
+                "join_before_host": True,
+                "waiting_room": False,  # a waiting room disables join-before-host
             },
         }
-        host = quote(str(self.creds.get("host_user") or "me"), safe="@.")
-        return self.call("POST", f"/users/{host}/meetings", json_body=body)  # TODO: verify
+        return self.call("POST", f"/users/{self._host()}/meetings", json_body=body)
 
     def delete_meeting(self, meeting_id: str) -> None:
-        self.call("DELETE", f"/meetings/{quote(str(meeting_id), safe='')}")  # TODO: verify
+        self.call("DELETE", f"/meetings/{quote(str(meeting_id), safe='')}")
 
     def health_check(self) -> bool:
         if self.breaker.is_open() or not self.configured():
             return False
         try:
-            host = quote(str(self.creds.get("host_user") or "me"), safe="@.")
-            self.call("GET", f"/users/{host}")
+            self.call("GET", f"/users/{self._host()}")
             return True
         except Exception:  # noqa: BLE001
             return False
