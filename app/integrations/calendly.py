@@ -1,11 +1,16 @@
 """Calendly adapter — booking links + webhook handling (M3 Chunk 5).
 
-Auth: personal access token from CALENDLY_API_TOKEN.
-# TODO: verify current Calendly auth options (PAT vs OAuth) against docs.
+Auth: personal access token from CALENDLY_API_TOKEN, sent as a Bearer token
+(the API takes OAuth and personal access tokens the same way).
 
 Webhook signature: Calendly sends a `Calendly-Webhook-Signature` header of
 the form "t=<timestamp>,v1=<hex hmac-sha256 of '<t>.<raw body>' with the
-signing key>". # TODO: verify exact header name/scheme against current docs.
+signing key>" (developer.calendly.com, webhook-signatures; their examples
+use a 3-minute tolerance). A webhook subscription created without a signing
+key cannot be verified, and its deliveries are refused.
+
+Checked against developer.calendly.com on 2026-10-27;
+tests/test_calendly_zoom_contract.py pins what was checked.
 """
 
 import hashlib
@@ -18,8 +23,11 @@ from app.integrations.plumbing import BaseHttpAdapter
 
 logger = logging.getLogger(__name__)
 
-CALENDLY_API_BASE = "https://api.calendly.com"  # TODO: verify against current Calendly docs
-SIGNATURE_HEADER = "Calendly-Webhook-Signature"  # TODO: verify against current Calendly docs
+CALENDLY_API_BASE = "https://api.calendly.com"
+SIGNATURE_HEADER = "Calendly-Webhook-Signature"
+#: event_types pages (count up to 100; pagination.next_page_token).
+_EVENT_TYPE_PAGE = 100
+_EVENT_TYPE_PAGES_MAX = 10
 #: How far AHEAD of our clock a delivery's timestamp may be (clock drift).
 FUTURE_SKEW_SECONDS = 300
 
@@ -41,7 +49,7 @@ class CalendlyAdapter(BaseHttpAdapter):
         return {"headers": {"Authorization": f"Bearer {self.api_token}"}}
 
     def current_user(self) -> dict:
-        # TODO: verify against current Calendly docs (GET /users/me)
+        # GET /users/me -> {"resource": {"uri", ...}}
         return self.call("GET", "/users/me").get("resource", {})
 
     def event_types(self) -> list[dict]:
@@ -49,8 +57,17 @@ class CalendlyAdapter(BaseHttpAdapter):
         user_uri = self.current_user().get("uri")
         if not user_uri:
             return []
-        data = self.call("GET", "/event_types", params={"user": user_uri})
-        # TODO: verify against current Calendly docs (collection shape)
+        # {"collection": [...], "pagination": {"next_page_token"}}; the default
+        # page is 20, so a user with more event types lost the rest.
+        items: list[dict] = []
+        params: dict = {"user": user_uri, "count": _EVENT_TYPE_PAGE}
+        for _ in range(_EVENT_TYPE_PAGES_MAX):
+            data = self.call("GET", "/event_types", params=params)
+            items.extend(data.get("collection", []))
+            token = (data.get("pagination") or {}).get("next_page_token")
+            if not token:
+                break
+            params = {**params, "page_token": token}
         return [
             {
                 "name": item.get("name"),
@@ -58,7 +75,7 @@ class CalendlyAdapter(BaseHttpAdapter):
                 "uri": item.get("uri"),
                 "active": item.get("active"),
             }
-            for item in data.get("collection", [])
+            for item in items
         ]
 
     def health_check(self) -> bool:
@@ -92,9 +109,10 @@ def verify_webhook_signature(raw_body: bytes, signature_header: str | None,
         timestamp, given = parts["t"], parts["v1"]
     except (ValueError, KeyError):
         return False
+    # Signed over bytes: a body that is not UTF-8 is refused, not a 500.
     expected = hmac.new(
         signing_key.encode(),
-        f"{timestamp}.{raw_body.decode()}".encode(),
+        f"{timestamp}.".encode() + raw_body,
         hashlib.sha256,
     ).hexdigest()
     if not hmac.compare_digest(expected, given):
