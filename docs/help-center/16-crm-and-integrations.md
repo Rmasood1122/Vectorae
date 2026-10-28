@@ -2,10 +2,11 @@
 id: crm-and-integrations
 title: CRM and integrations
 audience: customer
-last_verified: 2026-10-11
+last_verified: 2026-10-28
 owner: help-center
 sources:
   - app/integrations/hubspot.py
+  - app/services/guardrails.py
   - app/integrations/salesforce.py
   - app/integrations/slack.py
   - app/workers/crm_tasks.py
@@ -39,7 +40,7 @@ You can download your leads with **Export CSV**. Export is one-way: there is no 
 
 Be aware of this before you rely on any of them:
 
-- **HubSpot:** several parts of the code (the sign-in token exchange, the contact search, and linking deals to contacts) are marked as not yet checked against HubSpot's current documentation. This integration has not yet been verified against the live service.
+- **HubSpot:** the sign-in, contact search, linking deals to contacts and webhook signature were checked against HubSpot's public documentation on 2026-10-28, without a HubSpot account. Sign-in uses HubSpot's dated 2026-03 OAuth endpoints, which replace the deprecated v1 ones. This integration has not yet been verified against the live service.
 - **Salesforce:** there is no record of a test against a live Salesforce account. Treat it as not yet verified against the live service.
 - **Slack:** there is no record of a test against a live Slack workspace. Treat it as not yet verified against the live service.
 - **Outbound webhooks and API keys** are Victorae's own features and do not depend on a vendor.
@@ -49,6 +50,8 @@ All three vendor connections also need your Victorae administrator to register t
 ## How do I connect HubSpot or Salesforce?
 
 Go to **Settings**, open the **Integrations** tab, and click **Connect** on the HubSpot or Salesforce card. You sign in on the vendor's site. Once connected, the card shows the account, how many leads and deals are linked, when data was last pushed and pulled, **Sync now** and **Disconnect** buttons, and the last error if a sync failed ("reconnect to restore the sync").
+
+Victorae now also asks HubSpot for permission to read **companies**, which the do-not-contact check (**Sync from CRM** in **Guardrails Studio**) uses to find your customers and open deals. A HubSpot connection made before this change does not have that permission: the check then says "HubSpot did not allow reading companies", and customers and open deals from HubSpot are not excluded until you disconnect and connect HubSpot again. Disconnecting removes the links between your Victorae leads and HubSpot records and any custom lifecycle-stage settings for this check; connecting again starts a full sync.
 
 ## What does the CRM sync send and receive?
 
