@@ -23,6 +23,23 @@
     "benchmarks-what-good-looks-like#is-there-a-reply-rate-vectorae-considers-good": "fe5bfa99839c0f194221d28539067c33ab6c64ebd206e5c9a8e2801263c7509b",
     "benchmarks-what-good-looks-like#what-health-score-should-i-aim-for": "feb97de4df6e49125f1c581eb4e9e89e7e2470523c874803f4612b8a688d9dd2",
     "benchmarks-what-good-looks-like#when-does-vectorae-warn-me-that-replies-are-turning-negative": "4dad733c6f4e29333ccf7d4e1b3ef4935c0c3b885a38591725bd95066d344790",
+claude/bold-heisenberg-58xvzj
+    "booking-and-calendar#how-do-i-create-a-booking-page": "be74ec444bf4c0ada9e27e5a798e41dc6d6823521e51486fe6c342a7f383c15c",
+    "booking-and-calendar#how-do-i-set-my-availability": "c05b8df97cb6accb03e8fad03158e86438127c25ba0b77cf2fc81f96fe3fb4cd",
+    "booking-and-calendar#how-does-vectorae-prevent-double-booking": "b814e9aa38016c365603ad48e029053c2cf71b3a5885f2fd488613cb9a8876ae",
+    "booking-and-calendar#what-does-a-prospect-see-when-they-book": "60aab01f86489382c75ff6df71d1a4631cb5ed11bb17be1dc8b658210ab83f90",
+    "booking-and-calendar#what-happens-after-someone-books": "00faf53581abd100f068c776660889f6b1dc3644d0c39827c64c39edbd0666cd",
+    "booking-and-calendar#what-happens-if-a-booking-is-cancelled": "c8e37db991cb3f645e21a5a913b1336dae42dab4d1c2593e14e9a1cb85fc5ccf",
+    "booking-and-calendar#what-is-the-difference-between-vectoraes-calendar-and-calendly": "a0cb12b22c4f8a7f1a8f758b7efa9dc9a0776a8dcab0d6e5c78f67d38a1d3b03",
+    "compliance#can-my-ai-assistant-answer-my-calls-and-can-i-take-over-a-live-call": "067ac89ebb97f97cea037fc86e2ec99491f57e0480ab3d02aaaaeb4f6b0633fa",
+    "compliance#can-the-ai-call-people-in-my-own-voice": "f8be7f062f328db2a14d786b9ec0a27287cd15fd9c92e7cf2aa090ee34901ae2",
+    "compliance#how-does-vectorae-decide-which-regions-rules-apply": "43da0e29f8a5c373dbdef93dc59021a1b5e2a37ea43fdb5ebf4ad1340db260e9",
+    "compliance#what-does-every-outreach-email-include": "cdb810c2ed93935d5949110aaa746822ce68c38b2e936bc167407895b1e4dd06",
+    "compliance#what-happens-when-someone-unsubscribes": "6139bf004b11c61c74d7d973611c5855dddb53b90ad5e8e3dd9ac724b17faf55",
+    "compliance#what-is-the-consent-ledger-and-the-compliance-audit-log": "22fe23cbf869012b158505536d11ddf28a3bf68672224809f9ab574ae2c519ef",
+    "compliance#what-other-rules-apply-to-sending": "5288fe10cd42c3c67165487135072f5f0b9d17a841d82e3f9cfc3382db84bce7",
+    "compliance#when-is-the-suppression-list-checked": "a7c97da21958556e0a17e0f58f7b2d48aedf60c66be91ba5c6d159501e97dc7d",
+
     "booking-and-calendar#how-do-i-create-a-booking-page": "289e473a7f08ddddc3d59659ab9e4f848efdb3f0b0d6aa3efbf999ab0981d3e8",
     "booking-and-calendar#how-do-i-set-my-availability": "262d4ad64fe46a4efd4149ca9071a11e6ce4d09e2ffdd6f5658a362e442ee866",
     "booking-and-calendar#how-does-vectorae-prevent-double-booking": "e7c87d8f0cae20d9b0b33d874fa31667733d0e45189704ae9d88efca26feb3ef",
@@ -38,17 +55,19 @@
     "compliance#what-is-the-consent-ledger-and-the-compliance-audit-log": "ca8ea6b0e5b061d7b347ede829ff0378ef8eccd19de610a2f289eb2c6e5b5a87",
     "compliance#what-other-rules-apply-to-sending": "58db463b471d21404f3e13d454141f6d881fed73996807af43887a21af69960f",
     "compliance#when-is-the-suppression-list-checked": "d8dd77b0287d126a7652b3e150e04df57646746dab92f802a38442b89203497f",
+master
     "contact-support-and-status#how-many-chat-messages-can-i-send": "449cecc185421d8a411c98f1cd488a3d86c1c36d2f17925e28b27f0c6f9080bd",
     "contact-support-and-status#how-quickly-will-the-team-respond": "a16535b7a7f676c47193c4bb2d5b41a646fac13a2df0f0efdc143998334b05b7",
     "contact-support-and-status#is-there-a-status-page": "3d5c2b51128ce6850984ac4e3660acee095424ba547cbad3e14a65790dd4a9c6",
     "contact-support-and-status#what-can-the-support-assistant-answer": "52437273e99e20752aad086b7346b24ac951f3a19ca608510ff7bb89fc46f340",
     "contact-support-and-status#what-happens-to-my-chat-history": "f4cde9b8de84efe3330e765f72fd523540ceae6d572d8bc85c09dd1a0784f465",
     "contact-support-and-status#where-do-i-find-support-in-the-app": "434c5abecc7a749dbd219738cecc01add46f53ab09fb780fcac00a244da59083",
-    "crm-and-integrations#does-vectorae-have-its-own-crm": "1d155886e2e2e1a41bc7059021af2638da9a31ebe27b24f8cd8fa9d6f52f3112",
-    "crm-and-integrations#how-do-i-connect-zapier-make-or-my-own-system-with-webhooks": "9d922cd3ee9eb358b9bc82a8388606bab45e15f388552ffd8a148646490d3c4e",
-    "crm-and-integrations#how-do-i-get-slack-notifications": "7c3d0843096388c5137c8e9a9fbc16f171b8dea68a22b7541a5e6953bdd4da4a",
-    "crm-and-integrations#what-does-the-crm-sync-send-and-receive": "9c590c8dd3c11a2107ce6f78f1d51cba9e6694490f145f0ced7fc43d2ede4023",
-    "crm-and-integrations#which-integrations-have-been-verified-against-the-live-service": "40d96a35178a320d3ae1c350786cbf8b8265e97dc9d2e12d54153be3d31fbd83",
+    "crm-and-integrations#does-vectorae-have-its-own-crm": "43301152bd6be90c7b7f474f0769b41698c8b2bc0fcf1c697f0c065aaa45b24d",
+    "crm-and-integrations#how-do-i-connect-hubspot-or-salesforce": "cd23de7b9d1f385e2721f4bd31a1f98f375ee972a4121ed4f2e0d10cf4b87d32",
+    "crm-and-integrations#how-do-i-connect-zapier-make-or-my-own-system-with-webhooks": "9faf9f123aa98a1e1976ca0e4a10cf6488fb820e03da412dd2eadba0dcddc509",
+    "crm-and-integrations#how-do-i-get-slack-notifications": "35682e9a0c2d88d5e7051fd2f90ba6ab51e0e7f3a1be5a01169f0d2afef03802",
+    "crm-and-integrations#what-does-the-crm-sync-send-and-receive": "988b9e957f73631895b0719340bc5ac2fdb59f43edf02b6afe334707474c3a4a",
+    "crm-and-integrations#which-integrations-have-been-verified-against-the-live-service": "6b68049e93a5f9ea35a412f1df86298f7ac46360176ca02bbe19aaf37c658da9",
     "crm-sync-field-mapping#can-i-change-the-status-mapping-for-custom-picklists": "22cf56a3a6f96f9d422ee17c50cfb962244e93f7e5b1a21385398ac6a5ae2989",
     "crm-sync-field-mapping#do-changes-made-in-hubspot-or-salesforce-come-back-into-vectorae": "1eb71df8f9db5e22153c5a056b8480c549d6e9394e9097ba369ae8baadca734b",
     "crm-sync-field-mapping#has-the-sync-been-tested-against-real-hubspot-and-salesforce-accounts": "6f9664a259c84068572da7b46c9210063aea8b22a80cb2c3d04a2941f6265d42",
@@ -112,13 +131,13 @@
     "guide-solo-founder#how-should-i-set-up-vectorae-for-a-single-offer": "501586ae872812e4daa28ce899efb1f307e9950b7efc5239dc716b825dc7e5ea",
     "guide-solo-founder#what-should-i-look-at-once-a-week": "e81c08fa0025ab610a11a9c625f71378121486e1382d0c526fa7f3ab93cd684e",
     "guide-solo-founder#which-screens-do-i-check-each-day-and-in-what-order": "b41ee55e569d00cbde4489c9fe761c71058a5d8c7b836210d28da62c7c443b77",
-    "known-limitations#what-are-the-billing-limitations": "ee294825ef20394925853b56834dbdd611bbda928610f860db65e3491ab5bbf5",
-    "known-limitations#what-are-the-sending-limitations": "11a49bea025503888e2d1e3088e221ed647ca7f10c5ece462c84238b8c8d0caa",
-    "known-limitations#what-are-the-support-status-and-mobile-limitations": "dea4db5ef899881b580b41211c751073c8972c94e21aaeaeab17fe54f8a89313",
-    "known-limitations#what-cant-i-do-with-my-account-and-data-yet": "2d0f0177a3a777ac66a8563dd5067f8d667b1370c5ac6f102579034ed4cf3aae",
-    "known-limitations#what-does-vectorae-deliberately-not-do": "bd8a533cb4153da54ad47ca8c0775351965b9af2c848058ee9fedd5d1e4dd49b",
-    "known-limitations#what-else-should-i-know-about-reporting-and-testing": "39818c174ecc7bd9dc3f8dee57568e5f739d5a1491bd5cffc4355f6659f05372",
-    "known-limitations#which-integrations-have-not-been-verified-against-the-live-services": "fa6f158111deba628b93e48e4c3f4be31d5eda8b2d452224bd4f80261421ad3e",
+    "known-limitations#what-are-the-billing-limitations": "ffa33e69e5d807a8bb53ec8575e0a5d912e478810439e2b23c163e79f9c5fcdf",
+    "known-limitations#what-are-the-sending-limitations": "39c0ac56c77fa12ec1969dc1625cfe4c94067b5b9843ef519fc97b11ae24282c",
+    "known-limitations#what-are-the-support-status-and-mobile-limitations": "4f253a7a3844a793a15f998915b0498911136bcd733769ca3e1bc1f39bf0d6f9",
+    "known-limitations#what-cant-i-do-with-my-account-and-data-yet": "27f485278c04a810929ece78f3ff94b5a74d3be849bd26e690141f0309a408a9",
+    "known-limitations#what-does-vectorae-deliberately-not-do": "e0e9736f59dedc43a94ed6f59d4275762661e6c1e4a25000069d8927e57d349e",
+    "known-limitations#what-else-should-i-know-about-reporting-and-testing": "6fa5606ceac125809395f8365cc6a99ffb6717d2f7308e1ba502a4cc5e624745",
+    "known-limitations#which-integrations-have-not-been-verified-against-the-live-services": "ee6673b6a1ad382349446aa3e8a4fd7b8e525326e7245b271dddef3c530d0aed",
     "lead-sourcing-and-email-verification#are-apollo-and-hunter-verified-against-the-live-services": "e3115018a9c4f9d52cc65bcd8e5327c2490c4935ce2c663e3bfbf11caf65ef4e",
     "lead-sourcing-and-email-verification#can-i-remove-a-lead-or-erase-their-data": "aa5645112dcb611cd16088fb27811500b2b2b4f76900830a0d5ce12a5f6dad90",
     "lead-sourcing-and-email-verification#how-do-i-find-leads": "243a5dcead4e0c960f6ca933594d0233268a1c4b67431fd3ee1165daeb682829",
@@ -298,6 +317,8 @@
     "workspaces-and-agency-mode#what-is-a-workspace": "614018e2d9f16856546bcffd0fd2d2815eb89cc385277bcba260f01aa9083285",
     "workspaces-and-agency-mode#what-is-agency-mode-clients": "6aca9fc0452bc2d77820e84c264376592712ca46395f5c37b35d39b884d59b7a",
     "workspaces-and-agency-mode#what-is-white-label": "4349bdf66c30434a531a079ce99320dfc7ec7921f5585ed6809b22541ccc7201"
+claude/bold-heisenberg-58xvzj
+
 claude/epic-fermi-rmnw4c
 
 
@@ -600,6 +621,7 @@ claude/epic-fermi-rmnw4c
     "workspaces-and-agency-mode#what-is-a-workspace": "b0f2f3c389aa9383a8536bf4f0a5dc64ead379182bf824223142a7bb5a345bc6",
     "workspaces-and-agency-mode#what-is-agency-mode-clients": "56c7125c0bc1f934b050a2092bc31bac22ea8ee76b4662248732d98d2a8d4174",
     "workspaces-and-agency-mode#what-is-white-label": "4ca5614471e7f69635ceabaf1aecea6f9c76075c020adf00b63769ea3d509a5e"
+master
 master
 master
   },
