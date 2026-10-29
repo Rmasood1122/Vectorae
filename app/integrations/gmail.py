@@ -15,6 +15,7 @@ breaker) for all Gmail API calls via BaseHttpAdapter.
 
 import base64
 import logging
+import re
 import uuid
 from email.message import EmailMessage
 from email.utils import parseaddr
@@ -22,10 +23,11 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
 
 import httpx
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.db.models import GmailAccount, User
+from app.db.models import ChannelType, GmailAccount, Lead, Message, Product, Strategy, User
 from app.integrations.outreach_base import (
     InboundMessage,
     OutboundMessage,
@@ -73,6 +75,9 @@ _GMAIL_RETRY_LATER_REASONS = {"rateLimitExceeded", "userRateLimitExceeded",
 # users.messages.list: maxResults up to 500; pages followed per poll.
 _INBOX_PAGE_SIZE = 100
 _INBOX_PAGES_MAX = 10
+# Prospect addresses per `{from:a from:b ...}` search (Gmail's OR group).
+_FROM_CHUNK = 25
+_PLAIN_ADDRESS = re.compile(r"^[^\s\"'(){}<>,;:\[\]]+@[^\s\"'(){}<>,;:\[\]]+$")
 
 
 class GmailNotConnected(Exception):
@@ -376,23 +381,81 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
         `after:<epoch seconds>` is not in Google's current search docs (they
         show dates such as after:2004/04/16) but is the exact cut-off this
         poll needs: a date would re-read up to a day of mail, and replies
-        are not de-duplicated downstream."""
+        are not de-duplicated downstream.
+
+        Only two kinds of message are fetched (the privacy policy, section
+        3: "We do not read, store or use other email in your mailbox"):
+          * a message in a Gmail thread that holds an email Vectorae sent for
+            this account's owner -- the list call returns each message's id
+            and threadId, so the thread decides before anything is fetched;
+          * a new email FROM a prospect Vectorae has emailed for this owner
+            (a reply written as a fresh message, e.g. "please stop") -- found
+            by a Gmail search on `from:` those addresses, so Gmail filters
+            and other senders' mail is never listed.
+        Other mail is never downloaded, stored or sent to a model. Threads
+        are matched by threadId: sent rows keep Gmail's threadId
+        (Message.thread_ref) but not their own Message-ID, so In-Reply-To /
+        References cannot be matched yet."""
         query = "in:inbox -from:me"
         if since is not None:
             query += f" after:{int(since.timestamp())}"
+        wanted: list[str] = []
+        for stubs in self._listed(query):
+            ours = self._vectorae_threads({s.get("threadId") for s in stubs} - {None})
+            wanted += [s["id"] for s in stubs if s.get("threadId") in ours]
+        addresses = self._emailed_lead_addresses()
+        for i in range(0, len(addresses), _FROM_CHUNK):
+            senders = " ".join(f"from:{a}" for a in addresses[i:i + _FROM_CHUNK])
+            for stubs in self._listed(f"{query} {{{senders}}}"):
+                wanted += [s["id"] for s in stubs]
         out: list[InboundMessage] = []
+        for msg_id in dict.fromkeys(wanted):   # de-duplicated, order kept
+            data = self.call("GET", f"/users/me/messages/{msg_id}",
+                             params={"format": "full"})
+            out.append(self._parse_inbound(data))
+        return out
+
+    def _listed(self, query: str):
+        """users.messages.list pages for `query`: lists of {id, threadId}."""
         params: dict = {"q": query, "maxResults": _INBOX_PAGE_SIZE}
         for _ in range(_INBOX_PAGES_MAX):
             listing = self.call("GET", "/users/me/messages", params=params)
-            for stub in listing.get("messages") or []:
-                data = self.call("GET", f"/users/me/messages/{stub['id']}",
-                                 params={"format": "full"})
-                out.append(self._parse_inbound(data))
+            yield [s for s in listing.get("messages") or [] if s.get("id")]
             token = listing.get("nextPageToken")
             if not token:
-                break
+                return
             params = {**params, "pageToken": token}
-        return out
+
+    def _owned_lead_ids(self):
+        """Leads this account's owner owns (the same ownership join as
+        outreach_tasks._route_inbound)."""
+        return (
+            select(Lead.id)
+            .join(Strategy, Strategy.id == Lead.strategy_id)
+            .join(Product, Product.id == Strategy.product_id)
+            .where(Product.user_id == self.account.user_id)
+        )
+
+    def _emailed_lead_addresses(self) -> list[str]:
+        """Addresses of the owner's leads that Vectorae has sent an email to.
+        Only plain addresses go into a Gmail query; anything with a space,
+        quote, brace or parenthesis is left out rather than escaped."""
+        rows = self.session.execute(
+            select(Lead.email).join(Message, Message.lead_id == Lead.id)
+            .where(Lead.id.in_(self._owned_lead_ids()), Lead.email.isnot(None),
+                   Message.channel == ChannelType.EMAIL, Message.sent_at.isnot(None))
+        ).scalars()
+        return sorted({e.strip().lower() for e in rows if _PLAIN_ADDRESS.match(e.strip())})
+
+    def _vectorae_threads(self, thread_ids: set[str]) -> set[str]:
+        """The threads among `thread_ids` that hold a message Vectorae sent to
+        a lead this account's owner owns."""
+        if not thread_ids:
+            return set()
+        return set(self.session.execute(
+            select(Message.thread_ref).where(Message.thread_ref.in_(thread_ids),
+                                             Message.lead_id.in_(self._owned_lead_ids()))
+        ).scalars())
 
     def status(self, provider_message_id: str) -> dict:
         data = self.call("GET", f"/users/me/messages/{provider_message_id}",

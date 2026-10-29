@@ -418,13 +418,17 @@ DEFAULTS: dict[str, tuple[Any, str]] = {
                                     "sending for that channel. Approval is "
                                     "valid until the end of the account's "
                                     "local day. Held messages wait; they are "
-                                    "never dropped."),
+                                    "never dropped. LOCKED ON outside the test "
+                                    "environment (Terms and Privacy Policy): "
+                                    "turning it off has no effect there."),
     "daily_send_approval_channels": ("email,linkedin,whatsapp,phone",
                                      "Comma-separated channels whose automatic "
                                      "sends need today's approval (email, "
                                      "linkedin, whatsapp, phone). A value with "
                                      "no valid channel name gates every "
-                                     "channel."),
+                                     "channel. Outside the test environment "
+                                     "every channel is gated, whatever this "
+                                     "says."),
     # Autopilot launch + best time to send (docs/features/autopilot-launch.md).
     # Founder report 2026-10-11 ("when Pipeline is done it doesn't send"): the
     # OPTION is offered by default; each strategy's own opt-in stays OFF until

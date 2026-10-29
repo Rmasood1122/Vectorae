@@ -141,7 +141,25 @@ def _uuid(value) -> uuid_module.UUID:
     return value if isinstance(value, uuid_module.UUID) else uuid_module.UUID(str(value))
 
 
+#: Founder decision (2026-10-29): the gate is LOCKED ON, for every channel,
+#: in every APP_ENV except the offline test suite -- the Terms (section 3)
+#: and the Privacy Policy (section 3) say Vectorae sends "only after you
+#: approve each day's sending". The admin settings FLAG and CHANNELS_SETTING
+#: are honoured only under test (where the gate's own on/off behaviour is
+#: tested); a missing or misspelt APP_ENV is locked too. Unlocking is a code
+#: change plus a change to both legal pages.
+UNLOCKED_ENVS = frozenset({"test", "testing"})
+
+
+def locked_on() -> bool:
+    from app.config import settings  # noqa: PLC0415
+
+    return (settings.app_env or "").strip().lower() not in UNLOCKED_ENVS
+
+
 def enabled(db: Session) -> bool:
+    if locked_on():
+        return True
     from app.services import system_settings  # noqa: PLC0415
 
     return bool(system_settings.get(db, FLAG))
@@ -149,7 +167,10 @@ def enabled(db: Session) -> bool:
 
 def gated_channels(db: Session) -> tuple[str, ...]:
     """The channels whose automatic sends need today's approval. Unknown
-    names are ignored; a value with no valid name gates EVERY channel."""
+    names are ignored; a value with no valid name gates EVERY channel.
+    Locked on (locked_on()): every channel, whatever the setting says."""
+    if locked_on():
+        return ALL_CHANNELS
     from app.services import system_settings  # noqa: PLC0415
 
     raw = str(system_settings.get(db, CHANNELS_SETTING) or "")

@@ -20,13 +20,9 @@ export const metadata: Metadata = {
   ...canonicalMeta("/terms/"),
 };
 
-const EMAIL = "ahmadshahid@calendarharvest.com";
+const EMAIL = "rehanmasood@calendarharvest.com";
 
-// DRAFT for legal review (founders, 2026-10-14). Open questions for counsel, not rendered:
-//  - No legal entity yet: "Calendarharvest" is a trading name. Who is the contracting party?
-//  - Governing law England and Wales, arbitration in London, while the founder is in
-//    Astoria, New York: confirm the choice of law and forum.
-//  - No postal address for notices.
+// Body text: TERMS.md as approved by the founder (2026-10-29), word for word.
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -36,155 +32,167 @@ export default function TermsPage() {
       <main className="px-6 py-24">
         <article className="mx-auto max-w-3xl">
           <h1 className="text-4xl font-bold tracking-tight">Vectorae Terms of Service</h1>
-          <p className="mt-4 text-sm text-gray-400">Effective date: September 13, 2026</p>
+          <p className="mt-4 text-sm text-gray-400">Effective date: October 29, 2026</p>
 
-          <Section title="1. Acceptance of terms">
+          <Section title="1. Who we are">
             <p>
-              These Terms of Service (&quot;Terms&quot;) form a binding agreement between you and
-              Calendarharvest, which operates Vectorae Enterprise (&quot;Vectorae&quot;, &quot;we&quot;,
-              &quot;us&quot;, or &quot;our&quot;). By signing an engagement with us, creating an account, or
-              otherwise using Vectorae, you agree to these Terms. If you are accepting on behalf of a
-              business, you confirm that you have authority to bind that business, and &quot;you&quot;
-              refers to it. If you do not agree, do not use the service.
+              Vectorae (calendarharvest.com) is a software product operated by Rehan Masood, an individual
+              based in New York, USA. Vectorae was built by Rehan Masood and Ahmad Shahid. No company has
+              been registered for Vectorae yet. In these Terms, &quot;we&quot;, &quot;us&quot; and
+              &quot;Vectorae&quot; mean Rehan Masood. Vectorae is not affiliated with LeadPilot AB
+              (leadpilot.com) or any other product named LeadPilot. Contact: <EmailLink />.
             </p>
           </Section>
 
-          <Section title="2. Description of service">
+          <Section title="2. Accepting these Terms">
             <p>
-              {/* DRAFT for legal review (founders, 2026-10-14): LinkedIn sending is not live yet;
-                  email (Gmail) is the main channel, with WhatsApp on plans that include it. */}
-              Vectorae Enterprise is a done-with-you outbound pipeline system. We research prospects
-              who match your ideal client profile, write personalised outreach, and manage email sequences
-              (and WhatsApp messages, on plans that include WhatsApp) on your behalf. These sequences are
-              sent automatically by our software, after you approve each day&apos;s sending, through the
-              accounts you connect. LinkedIn steps are not yet available. The specific scope, volumes,
-              and deliverables for your account are set out in your client engagement, which forms part of
-              these Terms. Where the engagement and these Terms conflict, the engagement prevails for that
-              point only.
+              These Terms are a binding agreement between you and Rehan Masood. If you accept them for a
+              business, you confirm you have authority to bind that business. By using Vectorae you agree to
+              these Terms. If a signed agreement with you conflicts with these Terms, the signed agreement
+              controls on that point.
             </p>
           </Section>
 
-          <Section title="3. Eligibility">
+          <Section title="3. The service">
             <p>
-              To use Vectorae you must be at least 18 years old and legally able to enter into contracts.
-              The service is offered only to business entities and sole traders; it is not a consumer
-              service. Vectorae is currently available only to clients based in the United States, the
-              United Kingdom, Canada, Australia, New Zealand, Ireland, and Singapore. We may decline or end
-              an engagement where these conditions are not met.
+              Vectorae is an outbound sales tool. It researches your market, finds and verifies business
+              contacts at matching companies, and writes each email for one person. It sends from your own
+              Gmail account, connected through Google sign-in (OAuth), only after you approve each day&apos;s
+              sending. Some features are switched off by default or are not available yet; the FAQ lists
+              what is live. LinkedIn steps are not available.
             </p>
           </Section>
 
-          <Section title="4. Client responsibilities">
+          <Section title="4. Who can use Vectorae">
             <p>
-              You agree to give us accurate, complete information about your business, your offer, and your
-              ideal client profile, and to tell us promptly when any of it changes. You must keep the email
-              account you connect for sending active and in good standing for the duration of your
-              engagement.
-            </p>
-            <p>
-              You must not use Vectorae for illegal outreach, spam, or any communication you would not be
-              entitled to send yourself. You remain responsible for complying with the laws that apply to
-              your outreach, including the CAN-SPAM Act, the GDPR and UK GDPR, Canada&apos;s Anti-Spam
-              Legislation (CASL), and any other relevant local laws in the places where your prospects are
-              located.
+              You must be at least 18 and able to enter a contract. Vectorae is for businesses and sole
+              traders only, not consumers. It is offered to clients in the United States, United Kingdom,
+              Canada, Australia, New Zealand, Ireland and Singapore. We may decline or end an engagement that
+              does not meet these conditions.
             </p>
           </Section>
 
-          <Section title="5. Our responsibilities">
+          <Section title="5. Your responsibilities">
+            <ul className="list-disc space-y-2 pl-6">
+              <li>You are the sender of every email sent from your mailbox, and you are responsible for it.</li>
+              <li>
+                You must comply with the laws that apply to your outreach, including the US CAN-SPAM Act,
+                Canada&apos;s CASL, the GDPR, the UK GDPR and PECR.
+              </li>
+              <li>
+                Before launch you confirm that you have a lawful basis to contact each person. Vectorae does
+                not give legal advice.
+              </li>
+              <li>
+                You must give accurate information, keep it up to date, and keep your sending mailbox in good
+                standing with Google.
+              </li>
+              <li>You must not use Vectorae to send anything you could not lawfully send yourself.</li>
+            </ul>
+          </Section>
+
+          <Section title="6. Our responsibilities">
             <p>
-              We will deliver the research and outreach sequences agreed in your engagement with reasonable
-              skill and care. LinkedIn connection requests and messages are sent automatically through the
-              LinkedIn accounts you connect, and we operate within per-account daily activity limits designed
-              to reduce the risk of restrictions on your account. We will keep
-              your business information and client data confidential and use it only to deliver the service.
-              We will provide regular campaign performance reporting so you can see what is being sent and
-              how prospects are responding.
+              We will provide the service with reasonable skill and care. We will honour every opt-out and
+              keep suppressed people suppressed across all channels. We keep your data confidential and use it
+              only to provide the service, as described in our Privacy Policy.
             </p>
           </Section>
 
-          <Section title="6. Prohibited uses">
+          <Section title="7. Prohibited uses">
+            <p>You may not use Vectorae to:</p>
+            <ul className="list-disc space-y-2 pl-6">
+              <li>
+                contact people in healthcare, legal, government, non-profit, real estate or other industries
+                excluded by our ideal-client policy;
+              </li>
+              <li>send deceptive content, impersonate anyone, or make claims you cannot support;</li>
+              <li>contact anyone who has opted out;</li>
+              <li>send to consumers or to purchased or uploaded lists.</li>
+            </ul>
+          </Section>
+
+          <Section title="8. Fees and payment">
+            <ul className="list-disc space-y-2 pl-6">
+              <li>Plans and prices are shown on the pricing page or in your signed agreement.</li>
+              <li>
+                <strong className="text-white">Pay per meeting:</strong> $0 a month and $179 for each meeting
+                a prospect books through Vectorae. We charge no earlier than 48 hours after the booking. If
+                the meeting is cancelled within those 48 hours, there is no charge. Each prospect is charged
+                at most once.
+              </li>
+              <li><strong className="text-white">Monthly plans</strong> are billed in advance.</li>
+              <li>
+                Payments are made to Rehan Masood by the method on your invoice. Online checkout is not
+                available yet.
+              </li>
+              <li>Fees are non-refundable once a campaign launches, except where the law requires a refund.</li>
+              <li>You may cancel with 30 days&apos; written notice. Fees for the notice period remain payable.</li>
+              <li>Prices exclude any taxes that apply.</li>
+            </ul>
+          </Section>
+
+          <Section title="9. Intellectual property">
             <p>
-              Vectorae may not be used to run outreach in or targeting the healthcare, legal, government,
-              non-profit, or real estate sectors, or in any other industry excluded under our ideal client
-              profile policy as communicated to you. You may not ask us to send outreach that is deceptive
-              or misleading, that impersonates another person or business, or that makes claims you cannot
-              substantiate. You may not ask us to contact any individual who has opted out of communication
-              from you or from us, and we will honour every opt-out we receive.
+              You own your business data, prospect lists and materials. You give us a limited licence to use
+              them only to provide the service. We keep all rights in the Vectorae software, methods and
+              technology, including improvements made during your engagement.
             </p>
           </Section>
 
-          <Section title="7. Payment terms">
+          <Section title="10. No guarantee">
             <p>
-              Fees are as agreed in your client engagement and are processed through Stripe. Unless your
-              engagement states otherwise, subscription fees are billed in advance for each billing period.
-              Because research and outreach work begins as soon as a campaign launches, fees are
-              non-refundable once your campaign has launched. You may cancel a subscription by giving us 30
-              days&apos; written notice; you will remain responsible for fees covering that notice period.
+              Vectorae does not guarantee meetings, replies, revenue or deliverability. To the extent the law
+              allows, the service is provided &quot;as is&quot; without any implied warranties.
             </p>
           </Section>
 
-          <Section title="8. Intellectual property">
+          <Section title="11. Limitation of liability">
             <p>
-              You own your prospect lists, your business data, and the materials you provide to us. You
-              grant us a limited licence to use them solely to deliver the service to you. Calendarharvest
-              retains all rights in the Vectorae system, its research methodology, its software, and all
-              underlying technology, including improvements made while delivering your engagement. Nothing
-              in these Terms transfers ownership of that technology to you.
+              To the extent the law allows, our total liability for any claim is limited to the fees you paid
+              us in the three months before the event that caused the claim. We are not liable for indirect or
+              consequential losses, lost profits, or mailbox or account restrictions caused by sending you
+              chose to do outside our recommended limits. Nothing in these Terms limits liability that cannot
+              legally be limited.
             </p>
           </Section>
 
-          <Section title="9. Limitation of liability">
+          <Section title="12. Indemnity">
             <p>
-              Outbound results depend on many factors outside our control, including your offer, your market,
-              and how prospects choose to respond. We therefore do not guarantee any specific result, such as
-              a number of meetings booked or an amount of revenue generated.
-            </p>
-            <p>
-              To the fullest extent permitted by law, our total liability arising out of or relating to these
-              Terms or the service is limited to the fees you paid us in the three months before the event
-              giving rise to the claim. We are not liable for indirect or consequential losses, including lost
-              profits or lost opportunities. We are not liable for restrictions placed on your LinkedIn
-              account that arise from actions you requested outside our recommended limits. Nothing in these
-              Terms limits liability that cannot be limited by law.
+              You will defend and indemnify us against third-party claims arising from the content of your
+              outreach, your breach of these Terms, or your breach of the law.
             </p>
           </Section>
 
-          <Section title="10. Termination">
+          <Section title="13. Ending the service">
             <p>
-              Either party may terminate the engagement by giving 30 days&apos; written notice to the other.
-              We may terminate immediately by written notice if you materially breach these Terms, including
-              the prohibited uses above, or fail to pay fees when due. On termination, outreach on your behalf
-              will stop, and on request we will return or delete your prospect lists and business data in line
-              with our Privacy Policy. Sections that by their nature should survive termination, including
-              payment obligations, intellectual property, and limitation of liability, will survive.
+              Either party may end the service with 30 days&apos; written notice. We may end it immediately
+              for a material breach, including a prohibited use, or for non-payment. When the service ends,
+              sending stops and we return or delete your data on request, as our Privacy Policy describes.
+              Sections 8 to 12 and 14 survive termination.
             </p>
           </Section>
 
-          <Section title="11. Governing law">
+          <Section title="14. Governing law and disputes">
             <p>
-              These Terms are governed by the laws of England and Wales. If a dispute arises, both parties
-              agree first to try in good faith to resolve it through negotiation. If the dispute is not
-              resolved within 30 days of written notice, it will be referred to and finally resolved by
-              arbitration, seated in London and conducted in English.
+              These Terms are governed by the laws of the State of New York, USA, without regard to its
+              conflict-of-law rules. Before starting a court case, each party will try in good faith for 30
+              days to settle the dispute after written notice. Disputes that are not settled go exclusively to
+              the state courts in Queens County, New York, or the US District Court for the Eastern District
+              of New York.
             </p>
           </Section>
 
-          <Section title="12. Changes to terms">
+          <Section title="15. Changes to these Terms">
             <p>
-              We may update these Terms from time to time. We will notify active clients by email at least 30
-              days before any material change takes effect. Continuing to use Vectorae after that date means
-              you accept the updated Terms. The effective date at the top of this page shows the current
-              version.
+              We may update these Terms. Active clients get at least 30 days&apos; email notice before a
+              material change takes effect. The effective date at the top shows the current version.
             </p>
           </Section>
 
-          <Section title="13. Contact">
+          <Section title="16. Contact">
             <p>
-              Questions about these Terms can be sent to{" "}
-              <a href={`mailto:${EMAIL}`} className="text-blue-500 hover:text-blue-400">
-                {EMAIL}
-              </a>
-              .
+              Rehan Masood, operator of Vectorae · <EmailLink />
             </p>
           </Section>
         </article>
@@ -192,6 +200,14 @@ export default function TermsPage() {
 
       <Footer />
     </div>
+  );
+}
+
+function EmailLink() {
+  return (
+    <a href={`mailto:${EMAIL}`} className="text-blue-500 hover:text-blue-400">
+      {EMAIL}
+    </a>
   );
 }
 

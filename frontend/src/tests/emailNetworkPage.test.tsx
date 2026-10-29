@@ -50,7 +50,7 @@ import NetworkPage from "@/app/(app)/network/page";
 const STATUS = {
   eligible: true, plan: "growth", upgrade_to: null, feature_enabled: true, contact_count: 0,
   last_import: null, needs_new_import: true,
-  gmail: { connected: false, address: null, can_scan: false, reconnect_required: false, scan: null },
+  gmail: { connected: false, address: null, locked: false, can_scan: false, reconnect_required: false, scan: null },
   attestation: { version: "1", text: "These are my own business contacts." },
   limits: { ...LIMITS, max_messages: 50000, max_contact_rows: 50000, gmail_max_messages: 5000 },
 };
@@ -95,6 +95,15 @@ describe("Network page: Email contacts tab", () => {
     // the confirm says what happens to first emails already attached to a campaign
     expect(vi.mocked(window.confirm).mock.calls[0][0]).toMatch(/review queue/);
     expect(screen.queryByLabelText("Contacts or mailbox file")).toBeNull();
+  });
+
+  it("never offers the Gmail scan while it is locked, even with Gmail connected", async () => {
+    vi.mocked(emailApi.getEmailNetworkStatus).mockResolvedValue({ ...STATUS, gmail: {
+      ...STATUS.gmail, connected: true, address: "me@acme.test", locked: true } } as never);
+    renderPage();
+    await userEvent.click(screen.getByRole("tab", { name: "Email contacts" }));
+    expect(await screen.findByText(/Scanning Gmail is switched off/)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /scan my connected gmail/i })).toBeNull();
   });
 
   it("says when the feature is switched off", async () => {
