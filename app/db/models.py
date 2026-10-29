@@ -1617,6 +1617,14 @@ class Message(TimestampMixin, Base):
     )
     provider_message_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
     thread_ref: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    # Migration 0096: the sent email's own Message-ID and References chain as
+    # Gmail recorded them (sanitised by email_threading). The next email in
+    # the conversation sets In-Reply-To / References from them so it threads
+    # in the prospect's client. NULL for other channels, for emails sent
+    # before 0096, and when Gmail's copy could not be read. Erased with the
+    # lead (account_erasure).
+    rfc_message_id: Mapped[str | None] = mapped_column(String(502), nullable=True)
+    rfc_references: Mapped[str | None] = mapped_column(Text, nullable=True)
     unsubscribe_token: Mapped[str | None] = mapped_column(Text, nullable=True)
     sender_ref: Mapped[str | None] = mapped_column(String(64), nullable=True)  # gmail account id
     error: Mapped[str | None] = mapped_column(Text, nullable=True)

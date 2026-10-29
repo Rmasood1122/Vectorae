@@ -1008,6 +1008,8 @@ def send_message_impl(session: Session, message_id: uuid.UUID,
     message.sent_at = now
     message.provider_message_id = result.provider_message_id
     message.thread_ref = result.thread_ref
+    message.rfc_message_id = result.rfc_message_id
+    message.rfc_references = result.rfc_references
     if li_account is not None:
         from app.services import linkedin_outreach  # noqa: PLC0415
 
@@ -1154,7 +1156,7 @@ def _render_email_outbound(session: Session, strategy: Strategy, lead: Lead,
         subject=subject,
         body=body,
         headers=headers,
-        thread_ref=_thread_ref_for_followup(session, message),
+        thread_ref=_thread_ref_for_followup(session, message, headers),
         metadata=metadata,
     )
 
@@ -1252,7 +1254,7 @@ def _render_customer_email_outbound(session: Session, strategy: Strategy, lead: 
         subject=subject,
         body=body,
         headers=headers,
-        thread_ref=_thread_ref_for_followup(session, message),
+        thread_ref=_thread_ref_for_followup(session, message, headers),
     )
 
 
@@ -1584,17 +1586,33 @@ def _phone_send_failed(session: Session, strategy: Strategy, message: Message,
                                  error, notifications.owner_of_strategy(session, strategy), now)
 
 
-def _thread_ref_for_followup(session: Session, message: Message) -> str | None:
+def _thread_ref_for_followup(session: Session, message: Message,
+                             headers: dict | None = None) -> str | None:
+    """Gmail threadId of the previous email in this sequence, and -- into
+    `headers` -- In-Reply-To / References to that email's own Message-ID
+    (migration 0096). Gmail threads on threadId AND those headers (and a
+    matching Subject); other clients thread on the headers alone. A previous
+    email sent before 0096 has no stored Message-ID: threadId only, as before."""
     if message.step_no <= 1:
         return None
     prev = session.execute(
         select(Message).where(Message.sequence_id == message.sequence_id,
                               Message.lead_id == message.lead_id,
                               Message.step_no < message.step_no,
+                              # Only an email: a LinkedIn chat id or a WhatsApp
+                              # number is not a Gmail threadId.
+                              Message.channel == ChannelType.EMAIL,
                               Message.thread_ref.isnot(None))
         .order_by(Message.step_no.desc())
     ).scalars().first()
-    return prev.thread_ref if prev else None
+    if prev is None:
+        return None
+    if headers is not None:
+        from app.services import email_threading  # noqa: PLC0415
+
+        headers.update(email_threading.reply_headers(prev.rfc_message_id,
+                                                     prev.rfc_references))
+    return prev.thread_ref
 
 
 # --------------------------------------------------------------------------

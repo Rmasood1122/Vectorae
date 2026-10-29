@@ -2,10 +2,12 @@
 id: sequences-and-follow-ups
 title: Sequences and follow-ups
 audience: customer
-last_verified: 2026-10-11
+last_verified: 2026-10-28
 owner: help-center
 sources:
   - app/services/send_holds.py
+  - app/integrations/gmail.py
+  - app/services/email_threading.py
   - app/services/plan_holds.py
   - app/api/sequences.py
   - app/api/sequence_reviews.py
@@ -146,6 +148,12 @@ Automatic follow-ups are separate from step delays. They catch a lead whose sequ
 Every 30 minutes, Vectorae looks for active sequences where the last message has had no reply for longer than that step's follow-up delay (72 hours by default; you can set 1 to 2,160 hours). A sequence with a message still queued, waiting in the send-review queue, or held by a safety check is left alone. If the sequence has a next step, that step is sent. A step a reviewer rejected is never sent again; the follow-up moves on to the step after it. If it does not, Vectorae writes a follow-up from the lead's own message history and your product description, on the same channel as the last message, and sends it through the normal checks. It does not write automatic follow-ups for WhatsApp, because a WhatsApp first contact needs an approved template.
 
 No follow-up goes to a lead who has replied, or from a paused campaign. To change the setting, go to **Campaigns**, choose the strategy, open the **Sequences** tab, and use **Auto follow-up** and **after N hours of silence** under each step.
+
+## Do follow-up emails land in the same conversation?
+
+Yes, for emails sent through Gmail. After each email goes out, Vectorae reads back from Gmail the email's own Message-ID and keeps it. The next email in the sequence, including an automatic follow-up, is sent as a reply to the previous email in that sequence: it carries Gmail's thread and the standard reply headers (In-Reply-To and References), so most mail clients show it under the earlier email, not only your Gmail. LinkedIn and WhatsApp steps in between are skipped over; the email replies to the last email. Gmail (yours, and the prospect's if they use Gmail) also needs a matching subject to group them.
+
+An email sent before Vectorae began storing these IDs has no stored Message-ID, so the email after it is grouped in your Gmail only, as before. The same happens if Gmail's copy of a sent email could not be read back; the send itself is not affected. These IDs are erased with the rest of a prospect's messages when you delete the lead.
 
 ## When is a sequence complete?
 

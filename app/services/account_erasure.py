@@ -748,7 +748,9 @@ def erase_lead_correspondence(db: Session, lead_id: uuid.UUID,
         update(Message).where(Message.lead_id == lead_id)
         # unsubscribe_token: since 2026-10-11 it carries the address
         # (encrypted). The copy in the sent email keeps working without it.
-        .values(subject=None, body=None, personalization_json=None, unsubscribe_token=None)
+        # rfc_*: a References chain can name the prospect's host or address.
+        .values(subject=None, body=None, personalization_json=None, unsubscribe_token=None,
+                rfc_message_id=None, rfc_references=None)
         .execution_options(synchronize_session=False)).rowcount or 0
     db.execute(
         update(Message).where(Message.lead_id == lead_id,

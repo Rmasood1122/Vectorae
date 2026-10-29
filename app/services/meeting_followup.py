@@ -48,6 +48,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db.models import (
+    ChannelType,
     CrmActivityKind,
     CrmNote,
     Deal,
@@ -254,13 +255,16 @@ def _announce_won(db: Session, user: User, lead: Lead, row: MeetingOutcome) -> N
 # ---------------------------------------------------------------------------
 
 
-def _latest_thread_ref(db: Session, lead: Lead) -> str | None:
-    msg = db.execute(
+def _latest_sent(db: Session, lead: Lead) -> Message | None:
+    """The lead's most recent email we sent that Gmail gave a thread to.
+    Email only: a LinkedIn chat id or a WhatsApp number is not a threadId."""
+    return db.execute(
         select(Message).where(Message.lead_id == lead.id,
+                              Message.channel == ChannelType.EMAIL,
                               Message.thread_ref.isnot(None))
         .order_by(Message.sent_at.desc())
     ).scalars().first()
-    return msg.thread_ref if msg else None
+
 
 
 def build_prompt(db: Session, row: MeetingOutcome, lead: Lead, user: User) -> str:
@@ -402,9 +406,15 @@ def save_gmail_draft(db: Session, row: MeetingOutcome, *, user: User) -> Meeting
             row.draft_error = "connect Gmail in Settings to save this as a draft"
         else:
             try:
+                from app.services import email_threading  # noqa: PLC0415
+
+                parent = _latest_sent(db, lead)
                 kwargs = dict(to=lead.email, subject=row.followup_subject,
                               body=row.followup_body,
-                              thread_ref=_latest_thread_ref(db, lead))
+                              thread_ref=parent.thread_ref if parent else None,
+                              reply_headers=(email_threading.reply_headers(
+                                  parent.rfc_message_id, parent.rfc_references)
+                                  if parent else {}))
                 draft = (gmail.update_draft(db, account, row.gmail_draft_id, **kwargs)
                          if row.gmail_draft_id else
                          gmail.create_draft(db, account, **kwargs))

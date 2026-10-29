@@ -2,10 +2,12 @@
 id: meetings-prep-room-transcripts
 title: Meetings, prep briefs, the meeting room and transcripts
 audience: customer
-last_verified: 2026-10-11
+last_verified: 2026-10-28
 owner: help-center
 sources:
   - app/services/recipient_guards.py
+  - app/services/meeting_followup.py
+  - app/integrations/gmail.py
   - app/workers/calendar_tasks.py
   - app/api/meetings.py
   - app/db/models.py
@@ -95,7 +97,7 @@ Vectorae does **not** collect recording consent. The bot records everyone on the
 
 On the lead's page, use **Log meeting outcome**. Pick an outcome, add notes, and for a closed-won outcome optionally a deal value. Vectorae records the outcome first: it updates the lead's status, adds a CRM activity and note, records the result for reporting, creates a won deal for closed-won, and stops every live sequence for that lead.
 
-It then writes a follow-up email and saves it as a **Gmail draft**. It is never sent automatically. You edit it and send it yourself, from Vectorae or from Gmail. Both when drafting and when sending from Vectorae, the same contact checks as every outreach message apply: the lead must not have been removed, and the suppression list (email, phone and LinkedIn profile), your exclusion lists when Guardrails is on, a recorded job change (the person has left the company), and an opt-out on the person's earlier record are all checked. Customer and open-deal exclusion entries, which the meeting itself creates, do not block the follow-up, but every other entry for the person does, including a do-not-contact entry on their company, domain or address. A blocked follow-up shows the reason and cannot be sent. Once the cause is gone (for example you removed the exclusion), click **Check again**; if the checks pass, the draft is saved to Gmail. If the checks cannot run, nothing is sent and you can try again. Saving drafts needs Gmail's compose permission; if you connected Gmail before this feature existed, reconnect it. Until then the draft text is kept so you can copy it.
+It then writes a follow-up email and saves it as a **Gmail draft**. It is never sent automatically. You edit it and send it yourself, from Vectorae or from Gmail. Both when drafting and when sending from Vectorae, the same contact checks as every outreach message apply: the lead must not have been removed, and the suppression list (email, phone and LinkedIn profile), your exclusion lists when Guardrails is on, a recorded job change (the person has left the company), and an opt-out on the person's earlier record are all checked. Customer and open-deal exclusion entries, which the meeting itself creates, do not block the follow-up, but every other entry for the person does, including a do-not-contact entry on their company, domain or address. A blocked follow-up shows the reason and cannot be sent. Once the cause is gone (for example you removed the exclusion), click **Check again**; if the checks pass, the draft is saved to Gmail. If the checks cannot run, nothing is sent and you can try again. Saving drafts needs Gmail's compose permission; if you connected Gmail before this feature existed, reconnect it. Until then the draft text is kept so you can copy it. The draft is written as a reply to the last email Vectorae sent the lead (messages on other channels are skipped), so most mail clients show it in that conversation; Gmail groups it there only if the subject matches. If that email was sent before Vectorae began storing email IDs, the draft is grouped in your Gmail only.
 
 ## Related
 - [Booking meetings and your calendar](14-booking-and-calendar.md)
