@@ -32,6 +32,8 @@ export interface EmailImport {
 export interface GmailState {
   connected: boolean;
   address: string | null;
+  /** Scanning Gmail is switched off on every deployment (privacy policy section 3). */
+  locked: boolean;
   can_scan: boolean;
   reconnect_required: boolean;
   scan: EmailImport | null;

@@ -10,9 +10,10 @@ WHY
     them. It deletes nothing and has no option to.
 
 WHAT COUNTS AS UNRELATED
-    An email InboundReply whose thread_ref is empty, or is not the thread of
-    any Message sent to a lead owned by the user of the Gmail account it
-    arrived in (InboundReply.account_ref = GmailAccount.id) -- the same test
+    An email InboundReply that is neither in the thread of a Message sent to
+    a lead owned by the user of the Gmail account it arrived in
+    (InboundReply.account_ref = GmailAccount.id), nor from the address of a
+    lead of that user Vectorae has emailed -- the same two tests
     GmailChannel.fetch_replies now applies before downloading anything.
 
 USAGE
@@ -23,11 +24,13 @@ from __future__ import annotations
 
 import uuid
 from collections import Counter
+from email.utils import parseaddr
 
 from sqlalchemy import select
 
 from app.db.base import SessionLocal
-from app.db.models import GmailAccount, InboundReply, Lead, Message, Product, Strategy
+from app.db.models import (ChannelType, GmailAccount, InboundReply, Lead, Message, Product,
+                           Strategy)
 
 NO_ACCOUNT = "(gmail account no longer exists)"
 
@@ -45,6 +48,24 @@ def _owned_threads(session, user_id) -> set[str]:
     ).scalars())
 
 
+def _emailed_addresses(session, user_id) -> set[str]:
+    owned_lead_ids = (
+        select(Lead.id)
+        .join(Strategy, Strategy.id == Lead.strategy_id)
+        .join(Product, Product.id == Strategy.product_id)
+        .where(Product.user_id == user_id)
+    )
+    return {e.strip().lower() for e in session.execute(
+        select(Lead.email).join(Message, Message.lead_id == Lead.id)
+        .where(Lead.id.in_(owned_lead_ids), Lead.email.isnot(None),
+               Message.channel == ChannelType.EMAIL, Message.sent_at.isnot(None))
+    ).scalars()}
+
+
+def _sender(address: str | None) -> str:
+    return (parseaddr(address or "")[1] or address or "").strip().lower()
+
+
 def _account(session, account_ref):
     try:
         return session.get(GmailAccount, uuid.UUID(str(account_ref)))
@@ -56,6 +77,7 @@ def count_unrelated(session) -> Counter:
     """{account email or NO_ACCOUNT: number of unrelated stored emails}."""
     counts: Counter = Counter()
     threads_by_user: dict = {}
+    senders_by_user: dict = {}
     for reply in session.execute(
         select(InboundReply).where(InboundReply.channel == "email")
     ).scalars():
@@ -65,7 +87,10 @@ def count_unrelated(session) -> Counter:
             continue
         if account.user_id not in threads_by_user:
             threads_by_user[account.user_id] = _owned_threads(session, account.user_id)
-        if not reply.thread_ref or reply.thread_ref not in threads_by_user[account.user_id]:
+            senders_by_user[account.user_id] = _emailed_addresses(session, account.user_id)
+        in_thread = bool(reply.thread_ref) and reply.thread_ref in threads_by_user[account.user_id]
+        from_lead = _sender(reply.from_address) in senders_by_user[account.user_id]
+        if not (in_thread or from_lead):
             counts[account.email_address or str(account.id)] += 1
     return counts
 

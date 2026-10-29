@@ -32,7 +32,7 @@ const GMAIL_SCOPES: { scope: string; use: string }[] = [
   { scope: "https://www.googleapis.com/auth/gmail.send",
     use: "sends the emails you approved, from your Gmail address." },
   { scope: "https://www.googleapis.com/auth/gmail.readonly",
-    use: "reads new messages in the email threads Vectorae started for you, to find replies, bounces and out-of-office messages." },
+    use: "reads new messages in the email threads Vectorae started for you, and new emails from prospects Vectorae has emailed for you, to find replies, bounces and out-of-office messages." },
   { scope: "https://www.googleapis.com/auth/gmail.compose",
     use: "saves the follow-up email after a meeting as a draft in your Gmail, for you to review and send." },
   { scope: "https://www.googleapis.com/auth/calendar.events",

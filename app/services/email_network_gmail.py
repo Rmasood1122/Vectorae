@@ -40,6 +40,7 @@ from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.db.models import EmailNetworkImport, GmailAccount, User
 from app.services import email_network as en
 from app.services import email_network_filter as flt
@@ -65,6 +66,21 @@ READONLY_SCOPES = ("https://www.googleapis.com/auth/gmail.readonly",
 QUEUED, RUNNING, DONE, FAILED, RECONNECT = ("queued", "running", "done", "failed",
                                             "reconnect_required")
 ACTIVE = (QUEUED, RUNNING)
+
+
+#: Founder decision (2026-10-29): the Gmail scan is LOCKED OFF. It reads the
+#: From/To/Cc lines of mail Vectorae never sent, and the privacy policy
+#: (section 3) says "We do not read, store or use other email in your mailbox".
+#: Only the offline test suite may run it (the code is kept tested); every
+#: other APP_ENV, including a missing or misspelt one, refuses. No admin
+#: setting unlocks it -- re-enabling is a code change plus a policy change.
+SCAN_ENVS = frozenset({"test", "testing"})
+LOCKED_MESSAGE = ("Scanning Gmail is switched off. Upload a contacts file or a "
+                  "Google Takeout .mbox instead.")
+
+
+def scan_locked() -> bool:
+    return (settings.app_env or "").strip().lower() not in SCAN_ENVS
 
 
 class ScanError(Exception):
@@ -117,9 +133,11 @@ def scan_out(row: EmailNetworkImport | None) -> dict | None:
 
 def gmail_state(db: Session, user: User) -> dict:
     account = account_for(db, user.id)
+    locked = scan_locked()
     return {"connected": account is not None,
             "address": account.email_address if account else None,
-            "can_scan": bool(account and scope_ok(account)),
+            "locked": locked,
+            "can_scan": bool(account and scope_ok(account)) and not locked,
             "reconnect_required": bool(account and not scope_ok(account)),
             "scan": scan_out(latest_scan(db, user.id))}
 
@@ -129,6 +147,8 @@ def start_scan(db: Session, user: User, *, attested: bool, own_extra=(),
     """(scan row, True when a NEW scan must be enqueued). Idempotent: a scan
     already queued or running is returned as it is."""
     now = now or _now()
+    if scan_locked():
+        raise ScanError(403, LOCKED_MESSAGE, code="gmail_scan_locked")
     if not attested:
         raise ScanError(422, "Confirm that these are your own business contacts first.")
     account = account_for(db, user.id)
@@ -249,6 +269,10 @@ def run_chunk(db: Session, scan_id, expected_seq: int, now: datetime | None = No
         return "stopped"
     if row.chunk_seq != expected_seq:
         return "stale"
+    if scan_locked():
+        # A scan queued before the lock shipped must not read another page.
+        _mark(db, row, FAILED, LOCKED_MESSAGE)
+        return "stopped"
     user = db.get(User, row.user_id)
     account = account_for(db, row.user_id)
     if user is None or account is None or not scope_ok(account):

@@ -25,7 +25,7 @@ We do not use Google Analytics or any other analytics or advertising trackers to
 When you connect Gmail, Vectorae asks Google for these permissions:
 
 - `https://www.googleapis.com/auth/gmail.send`: sends the emails you approved, from your Gmail address.
-- `https://www.googleapis.com/auth/gmail.readonly`: reads new messages in the email threads Vectorae started for you, to find replies, bounces and out-of-office messages.
+- `https://www.googleapis.com/auth/gmail.readonly`: reads new messages in the email threads Vectorae started for you, and new emails from prospects Vectorae has emailed for you, to find replies, bounces and out-of-office messages.
 - `https://www.googleapis.com/auth/gmail.compose`: saves the follow-up email after a meeting as a draft in your Gmail, for you to review and send.
 - `https://www.googleapis.com/auth/calendar.events`: creates the calendar event and Google Meet link for a meeting booked with a prospect.
 
@@ -104,7 +104,7 @@ tests/test_privacy_docs_truth.py reads this section.
 
 **Retention (§7).** Support chat conversations are deleted by a nightly job 30 days after their last message. Billing records (amounts, dates, payment-provider references; no name or email in our copy) are kept 7 years. Stripe keeps its own customer record of you under its own privacy policy; Vectorae does not ask Stripe to delete it. The consent ledger keeps opt-ins (with a short note on how consent was given), opt-outs, suppressions and erasures without a time limit, with the do-not-contact list. Contact-finding and verification responses are cached for up to 30 days (search results for 1 day) and expire on their own.
 
-**Gmail inbox (§3).** The reply poll lists inbox message ids and Gmail thread ids, and downloads only messages in a thread that holds an email Vectorae sent for the account's owner (`app/integrations/gmail.py`, `fetch_replies`; `tests/test_gmail_inbox_scope.py`).
+**Gmail inbox (§3).** The reply poll lists inbox message ids and Gmail thread ids, and downloads only (a) messages in a thread that holds an email Vectorae sent for the account's owner and (b) new emails from prospects Vectorae has emailed for that owner, found by a Gmail `from:` search so other senders' mail is never listed (`app/integrations/gmail.py`, `fetch_replies`; `tests/test_gmail_inbox_scope.py`). The "scan my connected Gmail" contacts feature, which read the From/To/Cc lines of other mail, is locked off in every deployment (`app/services/email_network_gmail.py`, `scan_locked`); no setting turns it back on.
 
 **Providers named in §5, by integration.** Gmail API, Calendar / Meet and Postmaster Tools (Google); Firebase Cloud Messaging; Unipile (LinkedIn); RapidAPI (LinkedIn posts fallback: a prospect's public LinkedIn profile address); WhatsApp Business Cloud API (Meta); Apollo; Hunter; NewsAPI (a prospect's company name); Mailreach (your sending mailbox address); OpenAI (strategy synthesis only, when an administrator enables it; never Gmail data); Vapi; ElevenLabs; Twilio; Recall.ai; Zoom; Calendly; HubSpot; Salesforce; Slack; Stripe. "IP-check services" are ipapi.co and ipinfo.io (country at the identity step) and IPQualityScore and proxycheck.io (VPN check at sign-up and sign-in).
 

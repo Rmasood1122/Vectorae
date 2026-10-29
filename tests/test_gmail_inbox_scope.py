@@ -113,11 +113,16 @@ def test_the_one_off_counter_finds_stored_unrelated_email_and_deletes_nothing(
         db_session, enrolled, verified_leads, gmail_account):
     from scripts.count_unrelated_inbox_replies import count_unrelated
 
-    _first_message(db_session, verified_leads[0]).thread_ref = "t-ours"
+    sent = _first_message(db_session, verified_leads[0])
+    sent.thread_ref, sent.sent_at = "t-ours", NOW
     for thread in ("t-ours", "t-family", None):
         db_session.add(m.InboundReply(account_ref=str(gmail_account.id), channel="email",
                                       thread_ref=thread, from_address="a@b.test",
                                       body="x", classification="question"))
+    # A new email from the emailed lead counts as related.
+    db_session.add(m.InboundReply(account_ref=str(gmail_account.id), channel="email",
+                                  thread_ref="t-new", from_address="Lead 0 <LEAD0@co0.com>",
+                                  body="x", classification="question"))
     db_session.add(m.InboundReply(account_ref="not-a-uuid", channel="email",
                                   thread_ref="t-ours", from_address="a@b.test", body="x"))
     db_session.commit()
@@ -126,4 +131,110 @@ def test_the_one_off_counter_finds_stored_unrelated_email_and_deletes_nothing(
 
     assert counts[gmail_account.email_address] == 2
     assert sum(counts.values()) == 3
-    assert len(db_session.execute(select(m.InboundReply)).scalars().all()) == 4
+    assert len(db_session.execute(select(m.InboundReply)).scalars().all()) == 5
+
+
+# -- a prospect who writes a NEW email (founder decision 2026-10-29) ----------
+
+def _searching_inbox(fetched, queries):
+    """Gmail's search: the `from:` group returns only that sender's mail."""
+    def handler(request):
+        path = request.url.path
+        if path.endswith("/users/me/messages"):
+            q = request.url.params.get("q")
+            queries.append(q)
+            if "from:lead0@co0.com" in q:
+                return httpx.Response(200, json={"messages": [{"id": "fresh", "threadId": "t-new"}]})
+            return httpx.Response(200, json={"messages": [
+                {"id": "fresh", "threadId": "t-new"}, {"id": "private", "threadId": "t-family"}]})
+        msg_id = path.rsplit("/", 1)[-1]
+        fetched.append(msg_id)
+        sender = "Lead 0 <lead0@co0.com>" if msg_id == "fresh" else "friend@elsewhere.com"
+        return httpx.Response(200, json={
+            "id": msg_id, "threadId": "t-new",
+            "payload": {"mimeType": "text/plain",
+                        "headers": [{"name": "From", "value": sender},
+                                    {"name": "Subject", "value": "Your emails"}],
+                        "body": {"data": "cGxlYXNlIHN0b3AgZW1haWxpbmcgbWU="}}})  # "please stop emailing me"
+    return handler
+
+
+class TestANewEmailFromAnEmailedProspect:
+    def test_is_read_and_its_opt_out_is_honoured_while_a_stranger_is_not_read(
+            self, db_session, enrolled, verified_leads, gmail_account, fake_claude, fake_redis):
+        lead = verified_leads[0]
+        _first_message(db_session, lead).sent_at = NOW
+        db_session.commit()
+        fetched, queries = [], []
+        channel = _channel(db_session, gmail_account, fake_redis,
+                           _searching_inbox(fetched, queries))
+
+        poll_account_replies_impl(db_session, gmail_account, channel=channel, now=NOW)
+
+        assert fetched == ["fresh"], "the stranger's message must never be downloaded"
+        assert any(q.endswith("{from:lead0@co0.com}") for q in queries)
+        reply = db_session.execute(select(m.InboundReply)).scalar_one()
+        assert reply.lead_id == lead.id
+        assert reply.classification == "unsubscribe_request"
+        assert db_session.execute(select(m.SuppressionEntry).where(
+            m.SuppressionEntry.email == lead.email)).scalars().first() is not None
+
+    def test_only_prospects_already_emailed_are_searched_for(
+            self, db_session, enrolled, verified_leads, gmail_account, fake_redis):
+        # Enrolled but not yet sent: nobody is searched for by address.
+        fetched, queries = [], []
+        _channel(db_session, gmail_account, fake_redis,
+                 _searching_inbox(fetched, queries)).fetch_replies()
+        assert all("from:" not in q.replace("-from:me", "") for q in queries)
+        assert fetched == []
+
+    def test_an_address_unsafe_for_a_gmail_query_is_left_out(
+            self, db_session, enrolled, verified_leads, gmail_account, fake_redis):
+        lead = verified_leads[0]
+        lead.email = "odd}name@co0.com"
+        _first_message(db_session, lead).sent_at = NOW
+        db_session.commit()
+        channel = _channel(db_session, gmail_account, fake_redis, _inbox([], []))
+        assert channel._emailed_lead_addresses() == []
+
+
+# -- the Gmail header scan is locked off (founder decision 2026-10-29) --------
+
+class TestGmailScanLockedOff:
+    def _deployed(self, monkeypatch, env="production"):
+        from app.config import settings
+        monkeypatch.setattr(settings, "app_env", env)
+
+    def test_no_deployed_environment_can_start_a_scan(self, db_session, test_user, monkeypatch):
+        import pytest
+        from app.services import email_network_gmail as eng
+
+        for env in ("production", "staging", "development", "", "Prod"):
+            self._deployed(monkeypatch, env)
+            assert eng.scan_locked(), env
+            with pytest.raises(eng.ScanError) as exc:
+                eng.start_scan(db_session, test_user, attested=True)
+            assert (exc.value.status, exc.value.code) == (403, "gmail_scan_locked")
+
+    def test_the_state_says_locked_and_offers_no_scan(self, db_session, test_user,
+                                                      gmail_account, monkeypatch):
+        from app.services import email_network_gmail as eng
+
+        self._deployed(monkeypatch)
+        state = eng.gmail_state(db_session, test_user)
+        assert state["connected"] and state["locked"] and state["can_scan"] is False
+
+    def test_a_scan_queued_before_the_lock_reads_no_page(self, db_session, test_user,
+                                                         gmail_account, monkeypatch):
+        from app.services import email_network_gmail as eng
+
+        gmail_account.scopes = "https://www.googleapis.com/auth/gmail.readonly"
+        db_session.commit()
+        row, new = eng.start_scan(db_session, test_user, attested=True)   # test env: allowed
+        assert new
+        self._deployed(monkeypatch)
+        monkeypatch.setattr(eng, "_gmail_http", lambda: (_ for _ in ()).throw(
+            AssertionError("a locked scan must not call Gmail")))
+        assert eng.run_chunk(db_session, row.id, 0) == "stopped"
+        db_session.refresh(row)
+        assert row.status == eng.FAILED and "switched off" in row.error
