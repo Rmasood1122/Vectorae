@@ -282,7 +282,9 @@ export function EmailNetworkPanel() {
                    aria-label="Contacts or mailbox file" onChange={(e) => onFile(e.target.files?.[0])} />
             {upload.isPending && <p>Importing…</p>}
             <div className="space-y-2 border-t pt-3">
-              {s.gmail.connected ? (
+              {s.gmail.locked ? (
+                <p className="text-muted-foreground">Scanning Gmail is switched off. Upload a contacts file or a Google Takeout .mbox instead.</p>
+              ) : s.gmail.connected ? (
                 s.gmail.reconnect_required ? (
                   <p className="text-amber-600">Your Gmail connection cannot read message headers. <a className="underline" href="/settings">Reconnect Gmail</a>.</p>
                 ) : (
