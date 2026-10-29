@@ -115,3 +115,6 @@ files:
   # messages in threads Vectorae sent mail in for this account's owner; other inbox
   # mail is never downloaded, stored or sent to a model
   - tests/test_gmail_inbox_scope.py
+  # Terms §3 / Privacy §3 (2026-10-29): daily send approval is locked ON for every
+  # channel outside the test environment; no admin setting turns it off
+  - tests/test_send_approval_locked_on.py
