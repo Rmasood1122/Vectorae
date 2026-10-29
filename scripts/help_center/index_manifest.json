@@ -1,6 +1,5 @@
 {
   "chunks": {
-claude/epic-fermi-rmnw4c
     "account-security#can-i-reset-a-forgotten-password-or-turn-on-two-factor-sign-in": "a49d7fb4e88e1a9ffd03f112daa5db923435e666f9d68aaa5b3474bd952061af",
     "account-security#how-do-i-sign-out-or-change-my-password": "9228850b74802106ff7d8dc341d0a99f8eade5b43f9b3dc32ab9c1c22c2c5a81",
     "account-security#how-do-personal-api-keys-work": "e66890faa917721db225acf2b53e6a1ed9cb1cca7aecbb55af8ad99f226b39d4",
@@ -24,13 +23,13 @@ claude/epic-fermi-rmnw4c
     "benchmarks-what-good-looks-like#is-there-a-reply-rate-vectorae-considers-good": "fe5bfa99839c0f194221d28539067c33ab6c64ebd206e5c9a8e2801263c7509b",
     "benchmarks-what-good-looks-like#what-health-score-should-i-aim-for": "feb97de4df6e49125f1c581eb4e9e89e7e2470523c874803f4612b8a688d9dd2",
     "benchmarks-what-good-looks-like#when-does-vectorae-warn-me-that-replies-are-turning-negative": "4dad733c6f4e29333ccf7d4e1b3ef4935c0c3b885a38591725bd95066d344790",
-    "booking-and-calendar#how-do-i-create-a-booking-page": "23a7d4fc5af71cd42ee4c864c618379f2c1a7a9a0f0dd6fafd6723b058f15e78",
-    "booking-and-calendar#how-do-i-set-my-availability": "daef9e54208cf2f0c9ec5f9e66e82ba50c6d38e61ae842d735759cf0e3c0a7de",
-    "booking-and-calendar#how-does-vectorae-prevent-double-booking": "10d0148332b0257d75ef06d91cf91c60419c7682bdb285e16cdaa808d0ad5cb1",
-    "booking-and-calendar#what-does-a-prospect-see-when-they-book": "f7e794665777638c28825eae3522d9bf996b649fd5211bc20b46e1cd4dd2a0ba",
-    "booking-and-calendar#what-happens-after-someone-books": "43661d5f2c036c6be92a1595d3ff2c1e516df831c6965456820bcd380ca315f2",
-    "booking-and-calendar#what-happens-if-a-booking-is-cancelled": "f23748ec97b0b6eb6544041db80eb466882f2b819970f8e2d0f8872424964863",
-    "booking-and-calendar#what-is-the-difference-between-vectoraes-calendar-and-calendly": "2b3ad82e59828ae3c6377f966faeaa630e61897c3f3260c278b884cc0baa03f1",
+    "booking-and-calendar#how-do-i-create-a-booking-page": "289e473a7f08ddddc3d59659ab9e4f848efdb3f0b0d6aa3efbf999ab0981d3e8",
+    "booking-and-calendar#how-do-i-set-my-availability": "262d4ad64fe46a4efd4149ca9071a11e6ce4d09e2ffdd6f5658a362e442ee866",
+    "booking-and-calendar#how-does-vectorae-prevent-double-booking": "e7c87d8f0cae20d9b0b33d874fa31667733d0e45189704ae9d88efca26feb3ef",
+    "booking-and-calendar#what-does-a-prospect-see-when-they-book": "9d40ac08b8335c6decd733a4603beb55570a9d63931da030de8253f26e3ef231",
+    "booking-and-calendar#what-happens-after-someone-books": "8dfa27ffd8b4ab46f3dd0bed2412c7bb31b35e2a3175075686e554826d96c486",
+    "booking-and-calendar#what-happens-if-a-booking-is-cancelled": "c4085a1ef7b3c35f49b281f8918f7eb20dff715e7a09998c04b722a61b241b5e",
+    "booking-and-calendar#what-is-the-difference-between-vectoraes-calendar-and-calendly": "a24210a0cc68215093b3487d051008943a1bcbd55ca9da82f4a712bf9bcdf758",
     "compliance#can-my-ai-assistant-answer-my-calls-and-can-i-take-over-a-live-call": "0ee508c7ab705787c8ffcdaee191e713524c41fd439115d86b8c73a0b7dd0b92",
     "compliance#can-the-ai-call-people-in-my-own-voice": "5adc87999e91fbdaf7b1a945c9815bcda3d0967521440a75bd8913698ff03ab8",
     "compliance#how-does-vectorae-decide-which-regions-rules-apply": "6baa3ee617194adfc263dd070a2f1594e6664ab97c60a81e10b74456416ff60f",
@@ -299,6 +298,8 @@ claude/epic-fermi-rmnw4c
     "workspaces-and-agency-mode#what-is-a-workspace": "614018e2d9f16856546bcffd0fd2d2815eb89cc385277bcba260f01aa9083285",
     "workspaces-and-agency-mode#what-is-agency-mode-clients": "6aca9fc0452bc2d77820e84c264376592712ca46395f5c37b35d39b884d59b7a",
     "workspaces-and-agency-mode#what-is-white-label": "4349bdf66c30434a531a079ce99320dfc7ec7921f5585ed6809b22541ccc7201"
+claude/epic-fermi-rmnw4c
+
 
     "account-security#can-i-reset-a-forgotten-password-or-turn-on-two-factor-sign-in": "c8fd9144e09b22c7bb1384a6c6ddf14444dff1aabbc42edc3bcb2e994dbfe608",
     "account-security#how-do-i-sign-out-or-change-my-password": "8a5d27b6c096b8e781bd665a7ddc27917074872e7e335e391d4f0a1fbeb55384",
@@ -599,6 +600,7 @@ claude/epic-fermi-rmnw4c
     "workspaces-and-agency-mode#what-is-a-workspace": "b0f2f3c389aa9383a8536bf4f0a5dc64ead379182bf824223142a7bb5a345bc6",
     "workspaces-and-agency-mode#what-is-agency-mode-clients": "56c7125c0bc1f934b050a2092bc31bac22ea8ee76b4662248732d98d2a8d4174",
     "workspaces-and-agency-mode#what-is-white-label": "4ca5614471e7f69635ceabaf1aecea6f9c76075c020adf00b63769ea3d509a5e"
+master
 master
   },
   "hash_version": 1
