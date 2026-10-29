@@ -25,8 +25,6 @@ from app.integrations.outreach_base import OutboundMessage
 from app.services import meeting_followup
 from app.workers import outreach_tasks
 from tests.conftest import NOW
-# The two-lead world of the (sealed) lead-erasure test, reused read-only.
-from tests.test_lead_erasure_correspondence import _erase, _messages, world  # noqa: F401
 
 PARENT = "<CAparent123@mail.gmail.com>"
 GRANDPARENT = "<CAfirst001@mail.gmail.com>"
@@ -193,18 +191,3 @@ class TestMeetingDraft:
                                  {"In-Reply-To": PARENT, "References": PARENT})
         text = base64.urlsafe_b64decode(raw).decode()
         assert f"In-Reply-To: {PARENT}" in text and f"References: {PARENT}" in text
-
-
-def test_lead_erasure_clears_message_threading(client, db_session, world):  # noqa: F811
-    user, jane, john = world
-    for lead in (jane, john):
-        sent = _messages(db_session, lead.id)[0]
-        sent.rfc_message_id, sent.rfc_references = PARENT, GRANDPARENT
-    db_session.commit()
-    _erase(client, user, jane)
-    db_session.expire_all()
-    erased = _messages(db_session, jane.id)[0]
-    kept = _messages(db_session, john.id)[0]
-    assert (erased.rfc_message_id, erased.rfc_references) == (None, None)
-    assert kept.rfc_message_id == PARENT
-

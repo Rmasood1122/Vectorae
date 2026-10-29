@@ -111,3 +111,15 @@ files:
   # built and served per account
   - tests/test_subject_patterns_no_example.py
   - tests/test_send_time_slots_per_account.py
+  # Vendor send/consent guards found by the F-QA-02 doc checks (2026-10-29 gate PR,
+  # justification in docs/program/plans/phase5-seal-vendor-guards.md): WhatsApp only
+  # to international numbers and never on a template Meta stopped; a Gmail send that
+  # may have gone out is never repeated; a Hunter 451 objection drops and suppresses
+  # the person; an AI call that may be ringing is never redialled, replayed call
+  # webhooks are refused and a live call cannot be taken over by its URL alone;
+  # erasing a lead erases its stored email Message-IDs
+  - tests/test_whatsapp_number_guards.py
+  - tests/test_gmail_send_once_guards.py
+  - tests/test_data_subject_objection_guards.py
+  - tests/test_voice_call_guards.py
+  - tests/test_lead_erasure_threading_guards.py
