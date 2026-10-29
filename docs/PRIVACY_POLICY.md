@@ -1,189 +1,113 @@
-# Privacy Policy — ClientHunter Enterprise (Vectorae)
+# Vectorae Privacy Policy
 
-**Last updated:** October 2026
+Effective date: October 29, 2026
 
-> ⚠️ **LEGAL NOTE:** This is a functional stub produced to satisfy Play Store submission requirements. It covers the material facts about data collection and processing accurately. **Have a qualified lawyer review it before publishing if you are targeting EU/UK users, handling personal data at scale, or operating in a regulated industry.** The author of this stub is not a lawyer and this document does not constitute legal advice.
->
-> **NEEDS FOUNDER/LEGAL REVIEW BEFORE MERGE (2026-10-11).** Sections 1, 2, 6, 7, 8 and 11 were rewritten to match the code (founder decision D1: the code is the truth). The retention periods in section 6 (billing records kept 7 years; consent and suppression records kept without a time limit) are defaults awaiting founder/legal confirmation — see `docs/features/gdpr-erasure.md`, decisions E1–E3. The public website policy is `frontend/src/app/privacy/page.tsx`; keep the two consistent.
+<!-- The published text is frontend/src/app/privacy/page.tsx; this file holds the
+same policy word for word, followed by a reviewer section that is not published.
+tests/test_privacy_docs_truth.py checks both files against the code. -->
 
----
+## 1. Who is responsible
 
-## 1. Who we are
+Vectorae (calendarharvest.com) is operated by Rehan Masood, an individual based in New York, USA. Co-founder Ahmad Shahid helps run the service. No company has been registered for Vectorae yet. This policy covers visits to calendarharvest.com, use of the Vectorae dashboard and mobile app, and outreach run for our clients, including data about the prospects they contact. For prospect data, our client decides who is contacted and why, and we process that data on the client's instructions. Contact: rehanmasood@calendarharvest.com.
 
-ClientHunter Enterprise, also sold as Vectorae ("we," "us," "our"), is a software service for B2B client acquisition automation. The service is operated by:
+## 2. Data we collect
 
-**Rehan Masood**, an individual based in New York (no company has been registered yet)
-[Postal address] — TODO (founders): fill in before publishing
-ahmadshahid@calendarharvest.com — the privacy contact used on the public website (`frontend/src/app/privacy/page.tsx`). Founders: confirm this is the right address for privacy requests.
+- **Account data:** name, email, company, and details about your business and ideal clients.
+- **Technical and security data:** IP address, browser and device type, sign-in and security logs, country and VPN checks, AI usage, tutorial progress, and a push-notification token in the mobile app.
+- **Prospect data:** public LinkedIn profile information and public posts, professional emails, job titles and company details, collected on our clients' instructions.
+- **Payment data:** invoices and payment records. We never see or store full card numbers.
+- **Communication data:** emails sent and received through the service, and your correspondence with us.
 
----
+We do not use Google Analytics or any other analytics or advertising trackers to record which pages you view.
 
-## 2. What data we collect
+## 3. Google user data (Gmail)
 
-We collect the following categories of personal data when you use ClientHunter Enterprise:
+When you connect Gmail, Vectorae asks Google for these permissions:
 
-### Data you provide directly
-- **Account information:** Email address, an optional display name, and your password (stored only as a one-way hash, never the password itself).
-- **Identity and risk information:** The country you are in, whether you sign up as an individual or a company, the company name and country, your verified phone number, and the IP address you signed up from with the country it appears to be in (used as a fraud and risk signal).
-- **Product or service description:** The product or skill you want to find clients for.
-- **Past client details:** Information you voluntarily enter about your previous clients to help the system identify patterns.
+- `https://www.googleapis.com/auth/gmail.send`: sends the emails you approved, from your Gmail address.
+- `https://www.googleapis.com/auth/gmail.readonly`: reads new messages in the email threads Vectorae started for you, to find replies, bounces and out-of-office messages.
+- `https://www.googleapis.com/auth/gmail.compose`: saves the follow-up email after a meeting as a draft in your Gmail, for you to review and send.
+- `https://www.googleapis.com/auth/calendar.events`: creates the calendar event and Google Meet link for a meeting booked with a prospect.
 
-### Data the system sources on your behalf
-When you run a campaign, the system sources information about prospective clients from third-party data providers (see Section 5). This data includes:
-- Business email addresses and phone numbers
-- Names and job titles
-- Company names, sizes, and industries
-- LinkedIn profile URLs, and public posts and company news used to personalise outreach
+We use them only to:
 
-This data is used solely to run the outreach campaigns you configure. It is not used for any purpose unrelated to your campaign.
+- send the emails you approved, from your own Gmail address;
+- detect replies, bounces and out-of-office messages to your Vectorae emails, so a reply stops the sequence;
+- classify those replies (interested, question, objection, not interested, unsubscribe, out of office, bounce, automated) and show them to you.
 
-### Outreach and replies
-The system stores the subject and body of every message it sends for you, and the replies prospects send back, including the reply text. Bookings, meetings, meeting notes and transcripts are stored too.
+We do not read, store or use other email in your mailbox for any other purpose. Reply text from Gmail is sent to one AI provider, Anthropic, and only to classify the reply, suggest a reply draft for you to review, prepare your brief before a booked meeting, note when a prospect asks to be contacted again later, and let you practise a sales call against the objections the prospect raised.
 
-### Device and usage data
-- **Device token:** A Firebase Cloud Messaging token tied to your device, used to send push notifications about your campaigns.
-- **Security records:** Sign-ins, refused attempts, data exports and deletions are recorded in your account's security log.
-- **Sessions:** For each signed-in session, the IP address and the browser/device description (user agent) your browser sends.
-- **Network check:** The country and VPN check made on the IP address you sign up or sign in from.
-- **AI usage:** How much AI processing your account uses, so plan limits can be applied. Your progress through the in-app tutorials.
-- **Request logs:** The server's request logs record the time, IP address and address requested for each request, for operation and security.
-- **No page tracking:** No analytics or tracking tool records which pages you view or how you move through the dashboard. (Corrected 2026-10-11, gaps-sweep-2 #13 -- NEEDS FOUNDER/LEGAL REVIEW, together with the website policy's section 2.)
+- We do not sell Google user data or use it for advertising.
+- We do not use Google user data to develop, improve or train generalized AI or machine-learning models.
+- No person reads your Gmail data unless you ask us to for support, it is needed for security or to comply with the law, or the data has been made anonymous.
+- You can disconnect Vectorae at any time at myaccount.google.com/permissions. You can also ask us to delete the Gmail data we hold (see section 8).
 
----
+Vectorae's use and transfer to any other app of information received from Google APIs will adhere to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements.
 
-## 3. How we use your data
+## 4. How we use data
 
-We use the data we collect to:
+We use data to provide the service, report results to you, keep the service secure, and improve how it performs. We do not sell your data or your prospects' data. We do not use your data to train AI models without your consent.
 
-- Operate the ClientHunter service on your behalf (research, outreach, meeting booking)
-- Send you push notifications about campaign events (replies, meetings booked, strategy ready)
-- Improve the product and the accuracy of AI-generated strategies
-- Comply with legal obligations
+## 5. Service providers
 
-We do not:
-- Sell your data to third parties
-- Use your data to build profiles for advertising
-- Share your data with parties not listed in Section 5 (the complete list of services the code sends data to)
+We share data only with providers that help run Vectorae, and only for that purpose.
 
----
+- **Always used:** Neon (database), Upstash, Render, Vercel (hosting), Anthropic (AI), Resend (transactional email).
+- **Used when a feature needs it:** Google (Gmail API, Calendar, Meet, Postmaster Tools, Firebase Cloud Messaging), Unipile, Meta, Apollo, Hunter, NewsAPI, RapidAPI, Mailreach, OpenAI, Vapi, ElevenLabs, Twilio, Recall.ai, Zoom, Calendly, HubSpot, Salesforce, Slack, Stripe, and IP-check services.
 
-## 4. Legal basis for processing (GDPR)
+Our primary database is managed by Neon in the EU and US. Transfers of UK or EU data rely on safeguards such as Standard Contractual Clauses.
 
-If you are in the European Economic Area, the United Kingdom, or Switzerland, our legal basis for processing your personal data is:
+## 6. Security
 
-- **Contract performance** (Article 6(1)(b)): processing necessary to provide the service you subscribed to.
-- **Legitimate interests** (Article 6(1)(f)): improving the product, fraud prevention, security.
-- **Consent** (Article 6(1)(a)): push notifications (you can withdraw by deregistering notifications in your device settings).
+Data is stored on encrypted servers and sent over encrypted connections. Passwords are stored only as one-way hashes (PBKDF2-HMAC-SHA256).
 
----
+## 7. How long we keep data
 
-## 5. Third-party services
+- Account and prospect data stays until you delete it.
+- Support chat is deleted 30 days after its last message.
+- Billing records are kept for 7 years.
+- The do-not-contact list and consent records are kept without a time limit, so opted-out people stay opted out.
+- Cached provider responses are kept for up to 30 days (search results for 1 day).
 
-We send data to the following services, only as far as each needs it. The list was checked against the code (`app/integrations/`, `app/services/`, `render.yaml`) on 2026-10-11. Each has its own privacy policy (URLs to be verified by the founders before publishing).
+## 8. Your rights
 
-**Always in use**
+You can access, correct, export or delete your data, and withdraw consent. You can erase a single prospect or delete your whole account yourself from your profile page. People in the UK or EEA have GDPR rights; California residents have CCPA rights. A prospect who asks to stop hearing from our clients is suppressed across all channels, and can ask us to delete their data. Email rehanmasood@calendarharvest.com. We may verify your identity and will answer within 30 days.
 
-| Service | What it receives |
-|---|---|
-| **Neon** (PostgreSQL) | Everything stored in the database |
-| **Upstash** (Redis) | Job queue payloads, rate-limit counters, cached provider responses |
-| **Render** | Hosts the application servers; sees every request, including IP addresses |
-| **Vercel** | Hosts the website and web app |
-| **Anthropic** | Prospect research, strategy inputs and message drafting prompts |
-| **Resend** | Account emails (for example sign-up verification): your email address |
-| **Stripe** | Payments: your email address and payment details |
+## 9. Cookies
 
-**Used when the feature is switched on or the connection is made**
+We use only essential cookies, for sign-in, security and the dashboard. We use no advertising cookies.
 
-| Service | What it receives |
-|---|---|
-| **Google** — Gmail API | Outreach email sent from the mailbox you connect, and replies read from it |
-| **Google** — Calendar / Meet | Meeting events and invitees |
-| **Google** — Postmaster Tools | Your sending domain (domain reputation) |
-| **Google** — Firebase Cloud Messaging | Device tokens and notification text |
-| **Unipile** | LinkedIn messages and profiles of prospects; your connected LinkedIn session |
-| **RapidAPI** (LinkedIn posts fallback) | A prospect's public LinkedIn profile address |
-| **Meta** — WhatsApp Business Cloud API | WhatsApp messages and phone numbers |
-| **Apollo.io**, **Hunter.io** | Search criteria; prospect names, company domains and email addresses to verify |
-| **NewsAPI** | A prospect's company name |
-| **OpenAI** | The same prompts as Anthropic, when an administrator enables the second model |
-| **Vapi**, **ElevenLabs** | AI phone calls (phone number, call script) and voicemail text-to-speech |
-| **Twilio** | Your phone number, for SMS verification codes |
-| **Recall.ai**, **Zoom** | Meeting recording bots and meeting links |
-| **Calendly** | Bookings made through your Calendly link |
-| **HubSpot**, **Salesforce** | Prospect and deal records synced to the CRM you connect |
-| **Slack** | Notifications to the channel you choose |
-| **Mailreach** | Your sending mailbox addresses (mailbox health) |
-| **ipapi.co**, **ipinfo.io**, **IPQualityScore**, **proxycheck.io** | The IP address you sign up or sign in from (country and VPN check) |
-| **AegisAudit**, **PostIQ**, **SIGNALFORGE** | The data you send to these tools when you connect them |
+## 10. Children
 
-We do not use Google Analytics or any other analytics or advertising tracker.
+Vectorae is for businesses. It is not meant for anyone under 18, and we do not knowingly collect their data.
 
----|---|---|
-| **Anthropic** | AI research, strategy generation, message personalisation | https://www.anthropic.com/privacy — TODO: verify URL is current |
-| **Apollo.io** | Lead sourcing and contact enrichment | https://www.apollo.io/privacy-policy — TODO: verify |
-| **Hunter.io** | Email address finding and verification | https://hunter.io/privacy-policy — TODO: verify |
-| **Google (Gmail API)** | Sending outreach emails on your behalf | https://policies.google.com/privacy — TODO: verify |
-| **Google (Firebase Cloud Messaging)** | Push notifications | https://policies.google.com/privacy — TODO: verify |
-| **Meta (WhatsApp Business Cloud API)** | WhatsApp outreach on your behalf | https://www.whatsapp.com/legal/privacy-policy — TODO: verify |
-| **Calendly** | Meeting booking and scheduling | https://calendly.com/privacy — TODO: verify |
+## 11. Changes
+
+We will email active clients before a material change takes effect. The effective date at the top shows the current version.
+
+## 12. Contact
+
+Rehan Masood, operator of Vectorae · rehanmasood@calendarharvest.com
 
 ---
 
-## 6. Data retention
+## Reviewer detail (not published)
 
-There is no automatic deletion schedule for account, campaign or prospect data, with one exception (support chat). What exists today:
+What the code does behind the policy's short statements, checked 2026-10-29.
+tests/test_privacy_docs_truth.py reads this section.
 
-- **Account, campaign and prospect data:** Kept while your account exists. When you delete your account (Section 7), it is erased immediately, except for the records listed below.
-- **Support chat conversations:** Deleted automatically 30 days after their last message, by a nightly job. Support tickets are kept.
-- **Billing records** (subscription status, amounts, dates and payment-provider reference numbers; our copy holds no name or email address): kept after account deletion for 7 years for tax and accounting record-keeping. No job deletes them automatically yet. Stripe keeps its own customer record of you (name, email and payment details) under its own privacy policy; Vectorae does not ask Stripe to delete it (founder decision pending).
-- **Consent ledger and do-not-contact records:** Every recorded consent event for your prospects — opt-ins (with a short note on how consent was given), opt-outs, suppressions and erasures — with the email address or phone number it concerns, its source and time, and the do-not-contact (suppression) list, are kept without a time limit, so that a person who asked not to be contacted is never contacted again — also after your account is deleted. An unsubscribe click that arrives after the prospect or your account was erased is still added to the do-not-contact list and the ledger.
-- **Security records:** The record of what happened to an account (for example "data exported", "account deleted") is kept after deletion, with IP addresses, device details, email addresses and free-form details removed — including refused sign-in attempts recorded only under your email address.
-- **Device tokens:** Deleted when you delete your account; a token Firebase invalidates is no longer used.
-- **Cached provider responses:** Answers from the contact-finding and verification providers are cached for up to 30 days (search results for 1 day) and expire on their own; they are not removed when an account is deleted.
-- **Server logs:** The hosting provider's request logs record the IP address of each request and are kept for the period the hosting provider sets (founders: state the period). Vectorae's own application log does not record IP addresses.
-- **Files:** Uploaded backgrounds and logos and generated voicemail audio are deleted with the account; voicemail audio is also deleted when the prospect is erased.
+**Passwords (§6).** PBKDF2-HMAC-SHA256 with 600,000 iterations and a random salt per user (`app/services/auth.py`). Gmail and other connection tokens are stored encrypted.
 
----
+**Communication data (§2).** The system stores the subject and body of every message it sends for you, and the replies prospects send back, including the reply text.
 
-## 7. Your rights
+**Export and deletion (§8).** Export: open **Profile** and confirm your password in **Download your data** (one JSON file). Account deletion: open **Profile**, then **Delete account**, confirm your password and type DELETE. Any paid plan is cancelled first; if that cannot be confirmed, nothing is deleted.
 
-Depending on your location, you have the following rights:
+**Retention (§7).** Support chat conversations are deleted by a nightly job 30 days after their last message. Billing records (amounts, dates, payment-provider references; no name or email in our copy) are kept 7 years. Stripe keeps its own customer record of you under its own privacy policy; Vectorae does not ask Stripe to delete it. The consent ledger keeps opt-ins (with a short note on how consent was given), opt-outs, suppressions and erasures without a time limit, with the do-not-contact list. Contact-finding and verification responses are cached for up to 30 days (search results for 1 day) and expire on their own.
 
-- **Access and portability:** Download a copy of everything your account holds as one JSON file: open **Profile** and confirm your password in **Download your data**.
-- **Rectification:** Correct inaccurate data.
-- **Erasure ("right to be forgotten"):** Delete your account yourself: open **Profile**, then **Delete account**, confirm your password and type DELETE. Any paid plan is cancelled with the payment provider first; if that cannot be confirmed, nothing is deleted and you are asked to try again. Your account and its data are then erased immediately and connected LinkedIn accounts are disconnected at Unipile, except the billing, consent, do-not-contact and security records described in Section 6. Access you gave Vectorae inside Google, HubSpot, Salesforce or Slack is removed from Vectorae but not revoked on the provider's side. You can also erase an individual prospect's data from the dashboard: their contact details and research, the messages written to them and the replies they sent, call transcripts and voicemail audio, booking details, meeting notes, transcripts and briefs, and notes, custom fields and deal notes about them are erased; the dates, statuses and counts reports are built from are kept; their email address, phone number and LinkedIn profile go on the do-not-contact list. Data already copied into a CRM you connected stays there.
-- **Objection:** Object to processing based on legitimate interests.
-- **Withdrawal of consent:** Disable push notifications in your device settings at any time.
+**Gmail inbox (§3).** The reply poll lists inbox message ids and Gmail thread ids, and downloads only messages in a thread that holds an email Vectorae sent for the account's owner (`app/integrations/gmail.py`, `fetch_replies`; `tests/test_gmail_inbox_scope.py`).
 
-**To exercise these rights by email:** write to the privacy contact in Section 11. We will respond within 30 days.
+**Providers named in §5, by integration.** Gmail API, Calendar / Meet and Postmaster Tools (Google); Firebase Cloud Messaging; Unipile (LinkedIn); RapidAPI (LinkedIn posts fallback: a prospect's public LinkedIn profile address); WhatsApp Business Cloud API (Meta); Apollo; Hunter; NewsAPI (a prospect's company name); Mailreach (your sending mailbox address); OpenAI (strategy synthesis only, when an administrator enables it; never Gmail data); Vapi; ElevenLabs; Twilio; Recall.ai; Zoom; Calendly; HubSpot; Salesforce; Slack; Stripe. "IP-check services" are ipapi.co and ipinfo.io (country at the identity step) and IPQualityScore and proxycheck.io (VPN check at sign-up and sign-in).
 
----
+**Not in §5, and why.** AegisAudit, PostIQ and SIGNALFORGE: separately run tools an administrator can connect. Today Vectorae only checks their health and, for PostIQ and SIGNALFORGE, the key; no draft or personal data is sent (`app/api/tool_integrations.py`; the tasks in `app/workers/tool_integration_tasks.py` are not called). If that changes, they must be added to §5.
 
-## 8. Data security
-
-All data is transmitted over HTTPS (TLS 1.2+). Passwords are stored as one-way hashes (PBKDF2-HMAC-SHA256 with 600,000 iterations and a random salt per user). Connection tokens for services such as Gmail are stored encrypted. Firebase Cloud Messaging tokens are stored in the database and used only to deliver notifications to the correct device. The content of the emails and messages sent through the system, and of the replies received, is stored so you can see your campaign history; it is erased when you erase the prospect or delete your account, as described in Section 7.
-
----
-
-## 9. Children
-
-ClientHunter Enterprise is a professional B2B tool intended for adults (18+). We do not knowingly collect data from anyone under 18. If you believe we have inadvertently collected data from a minor, contact us immediately.
-
----
-
-## 10. Changes to this policy
-
-We will notify you of material changes to this policy by email or via an in-app notification. The date at the top of this document reflects the most recent revision.
-
----
-
-## 11. Contact
-
-For privacy questions, data requests, or complaints:
-
-**Vectorae — privacy contact (Rehan Masood)**
-ahmadshahid@calendarharvest.com — founders: confirm before publishing (same address as the public website's privacy page)
-[Your country] — TODO (founders): fill in before publishing
-
-If you are in the EU and are not satisfied with our response, you have the right to lodge a complaint with your local supervisory authority.
+**Earlier contact.** The privacy contact used to be ahmadshahid@calendarharvest.com; it is now rehanmasood@calendarharvest.com.

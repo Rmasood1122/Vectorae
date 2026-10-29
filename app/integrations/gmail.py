@@ -22,10 +22,11 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
 
 import httpx
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.db.models import GmailAccount, User
+from app.db.models import GmailAccount, Lead, Message, Product, Strategy, User
 from app.integrations.outreach_base import (
     InboundMessage,
     OutboundMessage,
@@ -349,7 +350,15 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
         `after:<epoch seconds>` is not in Google's current search docs (they
         show dates such as after:2004/04/16) but is the exact cut-off this
         poll needs: a date would re-read up to a day of mail, and replies
-        are not de-duplicated downstream."""
+        are not de-duplicated downstream.
+
+        Only messages in a Gmail thread that holds an email Vectorae sent for
+        this account's owner are fetched (the privacy policy, section 3: "We
+        do not read, store or use other email in your mailbox"). The list
+        call returns each message's id and threadId only, so other mail is
+        never downloaded, stored or sent to a model. Matching is by threadId:
+        sent rows keep Gmail's threadId (Message.thread_ref) but not their
+        own Message-ID, so In-Reply-To / References cannot be matched yet."""
         query = "in:inbox -from:me"
         if since is not None:
             query += f" after:{int(since.timestamp())}"
@@ -357,7 +366,11 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
         params: dict = {"q": query, "maxResults": _INBOX_PAGE_SIZE}
         for _ in range(_INBOX_PAGES_MAX):
             listing = self.call("GET", "/users/me/messages", params=params)
-            for stub in listing.get("messages") or []:
+            stubs = listing.get("messages") or []
+            ours = self._vectorae_threads({s.get("threadId") for s in stubs} - {None})
+            for stub in stubs:
+                if stub.get("threadId") not in ours:
+                    continue
                 data = self.call("GET", f"/users/me/messages/{stub['id']}",
                                  params={"format": "full"})
                 out.append(self._parse_inbound(data))
@@ -366,6 +379,23 @@ class GmailChannel(BaseHttpAdapter, OutreachChannel):
                 break
             params = {**params, "pageToken": token}
         return out
+
+    def _vectorae_threads(self, thread_ids: set[str]) -> set[str]:
+        """The threads among `thread_ids` that hold a message Vectorae sent to
+        a lead this account's owner owns (the same ownership join as
+        outreach_tasks._route_inbound)."""
+        if not thread_ids:
+            return set()
+        owned_lead_ids = (
+            select(Lead.id)
+            .join(Strategy, Strategy.id == Lead.strategy_id)
+            .join(Product, Product.id == Strategy.product_id)
+            .where(Product.user_id == self.account.user_id)
+        )
+        return set(self.session.execute(
+            select(Message.thread_ref).where(Message.thread_ref.in_(thread_ids),
+                                             Message.lead_id.in_(owned_lead_ids))
+        ).scalars())
 
     def status(self, provider_message_id: str) -> dict:
         data = self.call("GET", f"/users/me/messages/{provider_message_id}",

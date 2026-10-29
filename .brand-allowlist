@@ -137,7 +137,7 @@ tests/integration/conftest.py | leadpilot role | B: local test database role nam
 tests/test_connector_skill.py | leadpilot | B: plugin, skill and MCP server names the test checks against the shipped manifests
 
 # --- Legal, consent and compliance text (C: founders + counsel, VIC-KEEP) ----
-docs/PRIVACY_POLICY.md | .* | C: privacy policy source; legal text; changes need counsel
+frontend/src/app/terms/page.tsx | LeadPilot AB|named LeadPilot | C: Terms section 1 (founder text, 2026-10-29): says Vectorae is not affiliated with LeadPilot AB or any product named LeadPilot
 
 # --- Names configured in third-party dashboards (C: founder-actions.md) ------
 docs/STORE_ASSETS.md | .* | C: Google Play listing copy; the founder changes the listing in Play Console

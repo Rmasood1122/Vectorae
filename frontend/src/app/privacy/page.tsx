@@ -5,19 +5,10 @@
  * Android build). Static server component: no API calls, no auth. Does NOT use
  * Shell.tsx (authenticated dashboard shell).
  *
- * NEEDS FOUNDER/LEGAL REVIEW BEFORE MERGE (2026-10-11): §5 (no analytics
- * provider -- none exists in the code) and §8 (self-serve account deletion and
- * what it keeps: docs/features/gdpr-erasure.md, decisions E1-E3) were
- * rewritten to match the code (founder decision D1). The retention periods in
- * §8 are defaults awaiting confirmation. Keep docs/PRIVACY_POLICY.md in step.
- *
- * NEEDS FOUNDER/LEGAL REVIEW (gaps-sweep-2 #13, 2026-10-11): §2 claimed usage
- * data on which pages and features are used. No page or feature tracking
- * exists in the code; §2 now lists what IS kept (auth_sessions ip +
- * user_agent, security_audit_events, the network_guard IP country/VPN check,
- * usage_meter AI spend, tutorial progress, device_tokens, host request logs).
- * Relied on: the GDPR Art. 13(1) information duty (say what is collected) --
- * a reading, not settled legal advice.
+ * Body text: PRIVACY.md as approved by the founder (2026-10-29). Section 3's
+ * scope list is app/integrations/gmail.py GMAIL_SCOPES; its claims are pinned
+ * by tests/test_gmail_inbox_scope.py. Keep docs/PRIVACY_POLICY.md in step
+ * (tests/test_privacy_docs_truth.py checks both).
  */
 
 import type { Metadata } from "next";
@@ -35,12 +26,19 @@ export const metadata: Metadata = {
   ...canonicalMeta("/privacy/"),
 };
 
-const EMAIL = "ahmadshahid@calendarharvest.com";
+const EMAIL = "rehanmasood@calendarharvest.com";
 
-// DRAFT for legal review (founders, 2026-10-14). Open questions for counsel, not rendered:
-//  - No legal entity, postal address or named data controller / EU-UK representative.
-//  - Unipile is listed for LinkedIn sending and receiving although LinkedIn steps are not live
-//    yet: keep (the integration exists) or narrow until launch?
+const GMAIL_SCOPES: { scope: string; use: string }[] = [
+  { scope: "https://www.googleapis.com/auth/gmail.send",
+    use: "sends the emails you approved, from your Gmail address." },
+  { scope: "https://www.googleapis.com/auth/gmail.readonly",
+    use: "reads new messages in the email threads Vectorae started for you, to find replies, bounces and out-of-office messages." },
+  { scope: "https://www.googleapis.com/auth/gmail.compose",
+    use: "saves the follow-up email after a meeting as a draft in your Gmail, for you to review and send." },
+  { scope: "https://www.googleapis.com/auth/calendar.events",
+    use: "creates the calendar event and Google Meet link for a meeting booked with a prospect." },
+];
+
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -50,194 +48,186 @@ export default function PrivacyPage() {
       <main className="px-6 py-24">
         <article className="mx-auto max-w-3xl">
           <h1 className="text-4xl font-bold tracking-tight">Vectorae Privacy Policy</h1>
-          <p className="mt-4 text-sm text-gray-400">Effective date: October 11, 2026</p>
+          <p className="mt-4 text-sm text-gray-400">Effective date: October 29, 2026</p>
 
-          <Section title="1. Who we are and what this policy covers">
+          <Section title="1. Who is responsible">
             <p>
-              Vectorae Enterprise is operated by Calendarharvest (&quot;we&quot;, &quot;us&quot;, or
-              &quot;our&quot;). We run done-with-you outbound pipeline campaigns for businesses. This policy
-              explains how we collect, use, store, and protect personal data when you visit
-              calendarharvest.com, use the Vectorae dashboard, or engage us to run outreach on your behalf.
-              It also covers the data we process about the prospects we contact for our clients.
+              Vectorae (calendarharvest.com) is operated by Rehan Masood, an individual based in New York,
+              USA. Co-founder Ahmad Shahid helps run the service. No company has been registered for Vectorae
+              yet. This policy covers visits to calendarharvest.com, use of the Vectorae dashboard and mobile
+              app, and outreach run for our clients, including data about the prospects they contact. For
+              prospect data, our client decides who is contacted and why, and we process that data on the
+              client&apos;s instructions. Contact: <EmailLink />.
             </p>
           </Section>
 
-          <Section title="2. What data we collect">
+          <Section title="2. Data we collect">
+            <ul className="list-disc space-y-2 pl-6">
+              <li>
+                <strong className="text-white">Account data:</strong> name, email, company, and details about
+                your business and ideal clients.
+              </li>
+              <li>
+                <strong className="text-white">Technical and security data:</strong> IP address, browser and
+                device type, sign-in and security logs, country and VPN checks, AI usage, tutorial progress,
+                and a push-notification token in the mobile app.
+              </li>
+              <li>
+                <strong className="text-white">Prospect data:</strong> public LinkedIn profile information and
+                public posts, professional emails, job titles and company details, collected on our
+                clients&apos; instructions.
+              </li>
+              <li>
+                <strong className="text-white">Payment data:</strong> invoices and payment records. We never
+                see or store full card numbers.
+              </li>
+              <li>
+                <strong className="text-white">Communication data:</strong> emails sent and received through
+                the service, and your correspondence with us.
+              </li>
+            </ul>
             <p>
-              When you become a client we collect <strong className="text-white">account data</strong>: your
-              name, email address, company name, and the details you share about your business and ideal
-              client profile. As you use the dashboard we keep <strong className="text-white">technical and
-              security data</strong>: for each signed-in session, the IP address and the browser and device
-              description your browser sends; a log of sign-ins, refused attempts, data exports, deletions and
-              other security-relevant account changes; the country and VPN check made on the IP address you
-              sign up or sign in from; how much AI processing your account uses, so plan limits can be
-              applied; your progress through the in-app tutorials; and, in the mobile app, a push-notification
-              token for your device. Our servers&apos; request logs record the time, IP address and address
-              requested for each request, for operation and security. We do not use analytics or tracking
-              tools to record which pages you view or how you move through the dashboard.
-            </p>
-            <p>
-              To run campaigns we collect <strong className="text-white">prospect data</strong> on behalf of
-              our clients. This includes publicly available LinkedIn profile information, professional email
-              addresses, job titles, company details, and public posts and activity used to personalise
-              outreach. For this data, our client decides who is targeted and why, and we process it on
-              their instructions.
-            </p>
-            <p>
-              <strong className="text-white">Payment data</strong> is processed by Stripe. We receive
-              confirmation of payment and limited billing details, but we never see or store your full card
-              number. Finally, we keep <strong className="text-white">communication data</strong>: the emails
-              and LinkedIn messages sent and received through the system, and any correspondence you have
-              with us directly.
-            </p>
-          </Section>
-
-          <Section title="3. How we use data">
-            <p>
-              We use personal data to deliver the Vectorae service: researching prospects, writing and
-              sending outreach, managing replies, and reporting results to you. We use campaign results to
-              improve performance, for example by learning which messages and audiences produce replies for
-              your account. We also use your contact details to communicate with you about your account,
-              billing, and material changes to the service.
-            </p>
-            <p>
-              We do not sell your data, or your prospects&apos; data, to third parties. We do not use your
-              data to train AI models without your consent. Where the UK or EU GDPR applies, we rely on
-              performance of our contract with you, our legitimate interests in running and improving the
-              service, and, where required, your consent.
+              We do not use Google Analytics or any other analytics or advertising trackers to record which
+              pages you view.
             </p>
           </Section>
 
-          <Section title="4. Data storage and security">
+          <Section title="3. Google user data (Gmail)">
+            <p>When you connect Gmail, Vectorae asks Google for these permissions:</p>
+            <ul className="list-disc space-y-2 pl-6">
+              {GMAIL_SCOPES.map(({ scope, use }) => (
+                <li key={scope}>
+                  <code className="break-all text-gray-200">{scope}</code>: {use}
+                </li>
+              ))}
+            </ul>
+            <p>We use them only to:</p>
+            <ul className="list-disc space-y-2 pl-6">
+              <li>send the emails you approved, from your own Gmail address;</li>
+              <li>
+                detect replies, bounces and out-of-office messages to your Vectorae emails, so a reply stops
+                the sequence;
+              </li>
+              <li>
+                classify those replies (interested, question, objection, not interested, unsubscribe, out of
+                office, bounce, automated) and show them to you.
+              </li>
+            </ul>
             <p>
-              Data is stored on encrypted servers and transmitted over encrypted connections. Our primary
-              database is a managed Neon PostgreSQL database hosted on servers in the European Union and the
-              United States. Access to personal data is limited to the personnel who need it to deliver the
-              service, and passwords are stored only as one-way hashes. No system is perfectly secure, but we
-              review our safeguards regularly and will notify affected users and regulators of a data breach
-              where the law requires it.
+              We do not read, store or use other email in your mailbox for any other purpose. Reply text from
+              Gmail is sent to one AI provider, Anthropic, and only to classify the reply, suggest a reply
+              draft for you to review, prepare your brief before a booked meeting, note when a prospect asks
+              to be contacted again later, and let you practise a sales call against the objections the
+              prospect raised.
             </p>
-          </Section>
-
-          <Section title="5. Third-party services we use">
+            <ul className="list-disc space-y-2 pl-6">
+              <li>We do not sell Google user data or use it for advertising.</li>
+              <li>
+                We do not use Google user data to develop, improve or train generalized AI or machine-learning
+                models.
+              </li>
+              <li>
+                No person reads your Gmail data unless you ask us to for support, it is needed for security or
+                to comply with the law, or the data has been made anonymous.
+              </li>
+              <li>
+                You can disconnect Vectorae at any time at myaccount.google.com/permissions. You can also ask
+                us to delete the Gmail data we hold (see section 8).
+              </li>
+            </ul>
             <p>
-              We share data with service providers only as far as each needs it to do its job. Always in use:
-              Neon (database), Upstash (Redis cache and job queue), Render (application servers) and Vercel
-              (this website); Anthropic (Claude models write research, strategies and message drafts from
-              prospect data); Resend (account emails such as sign-up verification); Stripe (payments).
-            </p>
-            <p>
-              Used when the feature is switched on or the connection is made: Google (Gmail API to send from
-              the mailboxes you connect, Google Calendar and Meet for meeting links, Postmaster Tools for
-              sending-domain reputation, Firebase Cloud Messaging for push notifications); Unipile (LinkedIn
-              sending and receiving), with RapidAPI as a fallback for reading public LinkedIn posts; Meta
-              (WhatsApp Business messages); Apollo and Hunter (finding and verifying prospects&apos; business
-              contact details); NewsAPI (news about a prospect&apos;s company); OpenAI (a second AI model, when an
-              administrator enables it); Vapi and ElevenLabs (AI phone calls and voicemail audio); Twilio (SMS
-              verification codes); Recall.ai and Zoom (meeting recording and meeting links); Calendly
-              (bookings); HubSpot, Salesforce and Slack (the CRM and chat tools you connect); Mailreach
-              (mailbox health checks); ipapi.co, ipinfo.io, IPQualityScore and proxycheck.io (the country and
-              VPN check on the IP address you sign up or sign in from); and the AegisAudit, PostIQ and
-              SIGNALFORGE tools when you connect them. We do not use Google Analytics or any other analytics or
-              advertising tracker on the website or in the dashboard.
-            </p>
-            <p>
-              Some of these providers are based outside your country, including in the United States. Where
-              we transfer data from the UK or EU, we rely on appropriate safeguards such as Standard
-              Contractual Clauses.
-            </p>
-          </Section>
-
-          <Section title="6. Your rights">
-            <p>
-              You can ask us to access, correct, or delete the personal data we hold about you, and you can
-              withdraw any consent you have given at any time. You can also ask for a copy of your data in a
-              portable, machine-readable format.
-            </p>
-            <p>
-              If you are in the UK or the European Economic Area, the GDPR gives you additional rights,
-              including the right to object to or restrict processing and the right to complain to your data
-              protection authority, such as the Information Commissioner&apos;s Office in the UK. If you are a
-              California resident, the CCPA gives you the right to know what personal information we collect
-              and how we use it, to request its deletion, and not to be discriminated against for exercising
-              these rights. As stated above, we do not sell personal information.
-            </p>
-            <p>
-              If you are a prospect we contacted on behalf of a client, you can ask us at any time to stop
-              contacting you and to delete your data, and we will honour that request.
-            </p>
-          </Section>
-
-          <Section title="7. Cookies">
-            <p>
-              We use essential cookies only: the cookies needed to keep you signed in, keep the site secure,
-              and make the dashboard work. We do not use advertising cookies, and we do not allow third
-              parties to track you across other websites for advertising purposes.
-            </p>
-          </Section>
-
-          <Section title="8. Data retention">
-            <p>
-              We keep account data for as long as your account exists. We do not run an automatic deletion
-              schedule for account or prospect data: it stays in your account until it is deleted. The one
-              exception is support chat: a conversation is deleted 30 days after its last message.
-            </p>
-            <p>
-              You can erase an individual prospect&apos;s personal data from the dashboard at any time. Erased:
-              their name, contact details, company, LinkedIn profile and research notes; the subject and text
-              of every message written to them (any message still waiting to be sent is cancelled) and of every
-              reply they sent; call transcripts, recording links and voicemail audio; booking details; meeting
-              notes, transcripts and summaries; meeting briefs and follow-up drafts; notes, custom fields and
-              deal notes about them; and the review, attribution and fact-check copies of their messages.
-              Kept, without those details: the dates, statuses and counts that campaign reports are built from.
-              Their email address, phone number and LinkedIn profile are added to a do-not-contact list that is
-              checked before every send, and a record that the erasure took place is kept. Data already copied
-              into a CRM you connected stays there. Deleting a campaign strategy deletes its research, prospects,
-              sequences, and messages with it. You can download a copy of the data in your account from your
-              profile page.
-            </p>
-            <p>
-              You can delete your whole account yourself from your profile page, after confirming your password.
-              Any paid plan is cancelled at once and nothing more is charged (if the cancellation cannot be
-              confirmed with the payment provider, nothing is deleted and you are asked to try again), and your
-              account and its data are erased immediately. Connected LinkedIn accounts are also disconnected at
-              Unipile. Kept after that: billing records (amounts, dates, and payment-provider reference numbers,
-              with no name or email address in our copy) for 7 years, for tax and accounting; the consent ledger
-              for your prospects, meaning every recorded opt-in, opt-out, suppression and erasure with the email
-              address or phone number it concerns, its source, its time and a short note on how it was given or
-              withdrawn, and the do-not-contact list, both without a time limit, so that anyone who asked not
-              to be contacted stays protected; and a security record that the account was deleted, without your
-              IP address, device or email address. Stripe, our payment provider, keeps its own customer record
-              of you (name, email and payment details) under its own privacy policy; we do not ask Stripe to
-              delete it.
-            </p>
-            <p>
-              Outside the database: provider responses used to find and verify contact details are cached for
-              up to 30 days (search results for 1 day) and expire on their own; they are not removed when an
-              account is deleted. Our hosting provider&apos;s request logs record the IP address of each request
-              and are kept for the period the hosting provider sets. Access Vectorae was given inside Google,
-              HubSpot, Salesforce or Slack is removed from Vectorae but not revoked on the provider&apos;s side;
-              you can remove it there. You can also ask us to delete your account or any other data at the
-              address below.
-            </p>
-          </Section>
-
-          <Section title="9. Contact for privacy requests">
-            <p>
-              To exercise any of your rights or ask a question about this policy, email{" "}
-              <a href={`mailto:${EMAIL}`} className="text-blue-500 hover:text-blue-400">
-                {EMAIL}
+              Vectorae&apos;s use and transfer to any other app of information received from Google APIs will
+              adhere to the{" "}
+              <a href="https://developers.google.com/terms/api-services-user-data-policy"
+                 className="text-blue-500 hover:text-blue-400">
+                Google API Services User Data Policy
               </a>
-              . We may need to verify your identity before acting on a request, and we will respond within 30
-              days.
+              , including the Limited Use requirements.
             </p>
           </Section>
 
-          <Section title="10. Changes to this policy">
+          <Section title="4. How we use data">
             <p>
-              We may update this policy as our service or the law changes. If we make a material change, we
-              will notify users by email before it takes effect. The effective date at the top of this page
-              shows the current version.
+              We use data to provide the service, report results to you, keep the service secure, and improve
+              how it performs. We do not sell your data or your prospects&apos; data. We do not use your data
+              to train AI models without your consent.
+            </p>
+          </Section>
+
+          <Section title="5. Service providers">
+            <p>We share data only with providers that help run Vectorae, and only for that purpose.</p>
+            <ul className="list-disc space-y-2 pl-6">
+              <li>
+                <strong className="text-white">Always used:</strong> Neon (database), Upstash, Render, Vercel
+                (hosting), Anthropic (AI), Resend (transactional email).
+              </li>
+              <li>
+                <strong className="text-white">Used when a feature needs it:</strong> Google (Gmail API,
+                Calendar, Meet, Postmaster Tools, Firebase Cloud Messaging), Unipile, Meta, Apollo, Hunter,
+                NewsAPI, RapidAPI, Mailreach, OpenAI, Vapi, ElevenLabs, Twilio, Recall.ai, Zoom, Calendly,
+                HubSpot, Salesforce, Slack, Stripe, and IP-check services.
+              </li>
+            </ul>
+            <p>
+              Our primary database is managed by Neon in the EU and US. Transfers of UK or EU data rely on
+              safeguards such as Standard Contractual Clauses.
+            </p>
+          </Section>
+
+          <Section title="6. Security">
+            <p>
+              Data is stored on encrypted servers and sent over encrypted connections. Passwords are stored
+              only as one-way hashes (PBKDF2-HMAC-SHA256).
+            </p>
+          </Section>
+
+          <Section title="7. How long we keep data">
+            <ul className="list-disc space-y-2 pl-6">
+              <li>Account and prospect data stays until you delete it.</li>
+              <li>Support chat is deleted 30 days after its last message.</li>
+              <li>Billing records are kept for 7 years.</li>
+              <li>
+                The do-not-contact list and consent records are kept without a time limit, so opted-out people
+                stay opted out.
+              </li>
+              <li>Cached provider responses are kept for up to 30 days (search results for 1 day).</li>
+            </ul>
+          </Section>
+
+          <Section title="8. Your rights">
+            <p>
+              You can access, correct, export or delete your data, and withdraw consent. You can erase a single
+              prospect or delete your whole account yourself from your profile page. People in the UK or EEA
+              have GDPR rights; California residents have CCPA rights. A prospect who asks to stop hearing from
+              our clients is suppressed across all channels, and can ask us to delete their data. Email{" "}
+              <EmailLink />. We may verify your identity and will answer within 30 days.
+            </p>
+          </Section>
+
+          <Section title="9. Cookies">
+            <p>
+              We use only essential cookies, for sign-in, security and the dashboard. We use no advertising
+              cookies.
+            </p>
+          </Section>
+
+          <Section title="10. Children">
+            <p>
+              Vectorae is for businesses. It is not meant for anyone under 18, and we do not knowingly collect
+              their data.
+            </p>
+          </Section>
+
+          <Section title="11. Changes">
+            <p>
+              We will email active clients before a material change takes effect. The effective date at the
+              top shows the current version.
+            </p>
+          </Section>
+
+          <Section title="12. Contact">
+            <p>
+              Rehan Masood, operator of Vectorae · <EmailLink />
             </p>
           </Section>
         </article>
@@ -245,6 +235,14 @@ export default function PrivacyPage() {
 
       <Footer />
     </div>
+  );
+}
+
+function EmailLink() {
+  return (
+    <a href={`mailto:${EMAIL}`} className="text-blue-500 hover:text-blue-400">
+      {EMAIL}
+    </a>
   );
 }
 

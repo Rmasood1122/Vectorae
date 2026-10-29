@@ -188,7 +188,14 @@ class TestGmailSend:
 # -- the inbox poll ------------------------------------------------------------
 
 class TestInboxPaging:
-    def test_every_page_is_read(self, db_session, gmail_account, fake_redis):
+    def test_every_page_is_read(self, db_session, gmail_account, fake_redis,
+                                enrolled, verified_leads):
+        # Only threads Vectorae sent in are read (tests/test_gmail_inbox_scope.py).
+        from sqlalchemy import select
+        from app.db import models as m
+        db_session.execute(select(m.Message).where(
+            m.Message.lead_id == verified_leads[0].id)).scalar_one().thread_ref = "t"
+        db_session.commit()
         listed = []
 
         def handler(request):
@@ -197,9 +204,10 @@ class TestInboxPaging:
                 token = request.url.params.get("pageToken")
                 listed.append(token)
                 if token is None:
-                    return httpx.Response(200, json={"messages": [{"id": "a"}, {"id": "b"}],
+                    return httpx.Response(200, json={"messages": [{"id": "a", "threadId": "t"},
+                                                                  {"id": "b", "threadId": "t"}],
                                                      "nextPageToken": "P2"})
-                return httpx.Response(200, json={"messages": [{"id": "c"}]})
+                return httpx.Response(200, json={"messages": [{"id": "c", "threadId": "t"}]})
             msg_id = path.rsplit("/", 1)[-1]
             return httpx.Response(200, json={"id": msg_id, "threadId": "t",
                                              "payload": {"headers": []}, "snippet": "hi"})
