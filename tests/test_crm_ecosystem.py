@@ -375,7 +375,7 @@ def test_hubspot_callback_connects_and_queues_full_sync(client, db_session, test
     monkeypatch.setattr(hubspot_mod, "exchange_code", lambda *a: {
         "access_token": "at", "refresh_token": "rt", "expires_in": 1800})
     monkeypatch.setattr(hubspot_mod, "token_info",
-                        lambda token: {"hub_id": 777, "hub_domain": "acme.hubspot.com"})
+                        lambda token, *creds: {"hub_id": 777, "hub_domain": "acme.hubspot.com"})
     done = client.get(f"/integrations/hubspot/callback?code=c&state={state}",
                       follow_redirects=False)
     assert "hubspot=connected" in done.headers["location"]

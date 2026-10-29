@@ -2,7 +2,7 @@
 id: known-limitations
 title: Known limitations
 audience: customer
-last_verified: 2026-10-20
+last_verified: 2026-10-28
 owner: help-center
 sources:
   - app/services/score_decay.py
@@ -73,7 +73,11 @@ This is an honest list of what Vectorae does not do, does not do yet, or has not
 
 ## Which integrations have not been verified against the live services?
 
+claude/bold-heisenberg-58xvzj
+Victorae's automated tests run against simulated versions of outside services. Gmail, WhatsApp Business, Apollo, Hunter, Calendly, LinkedIn (through Unipile) and Zoom were checked against each provider's public documentation on 2026-10-27, and the differences found were fixed, but none of them has been checked against the live service from these tests. HubSpot, Recall.ai, Vapi and ElevenLabs were checked on 2026-10-28 from search excerpts of their documentation (their documentation sites could not be opened from the checking session), and the differences found were fixed. Some Recall.ai, Vapi and ElevenLabs fields and calls are still marked in the code as not confirmed (for Recall.ai this includes the request that sends the note-taker into a meeting), and none of these four has been checked against the live service.
+
 Vectorae's automated tests run against simulated versions of outside services. Gmail, WhatsApp Business, Apollo, Hunter, Calendly, LinkedIn (through Unipile) and Zoom were checked against each provider's public documentation on 2026-10-27, and the differences found were fixed, but none of them has been checked against the live service from these tests. Parts of HubSpot, Recall.ai and the AI phone-call providers are still marked in the code as not yet checked against the provider's documentation.
+master
 
 In particular:
 

@@ -26,6 +26,7 @@ import hashlib
 import hmac
 import json
 import logging
+import time
 import uuid
 from datetime import datetime, timezone
 
@@ -297,15 +298,24 @@ def verify_vapi(raw: bytes, headers, secret: str | None) -> bool:
     return _hmac_ok(secret, raw, headers.get("X-LeadPilot-Signature"))
 
 
+ELEVENLABS_SIGNATURE_TOLERANCE_SECONDS = 30 * 60
+
+
 def verify_elevenlabs(raw: bytes, header: str | None, secret: str | None) -> bool:
     if not secret or not header:
         return False
     try:
         parts = dict(p.split("=", 1) for p in header.split(","))
         ts, given = parts["t"], parts["v0"]
+        age = abs(time.time() - int(ts))
     except (ValueError, KeyError):
         return False
-    expected = hmac.new(secret.encode(), f"{ts}.{raw.decode()}".encode(),
+    # ElevenLabs post-call webhooks: validate "both the hash and timestamp"
+    # and reject anything older than 30 minutes, so a captured delivery
+    # cannot be replayed later.
+    if age > ELEVENLABS_SIGNATURE_TOLERANCE_SECONDS:
+        return False
+    expected = hmac.new(secret.encode(), ts.encode() + b"." + raw,
                         hashlib.sha256).hexdigest()
     return hmac.compare_digest(expected, given)
 

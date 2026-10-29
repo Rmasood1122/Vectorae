@@ -112,12 +112,13 @@ def hubspot_callback(code: str | None = None, state: str | None = None,
         client_id, client_secret = _app_credentials(db, "hubspot")
         tokens = hubspot.exchange_code(client_id, client_secret, code, redirect_uri("hubspot"))
         crm_sync.store_hubspot_tokens(db, user_id, tokens)
-        info = hubspot.token_info(tokens["access_token"])
+        info = hubspot.token_info(tokens["access_token"], client_id, client_secret)
     except (HubSpotError, HTTPException, KeyError) as exc:
         logger.warning("hubspot connect failed for %s: %s", user_id, exc)
         return frontend_redirect("hubspot", "error", "HubSpot rejected the connection")
+    hub_id = info.get("hub_id") or tokens.get("hub_id")
     conn = crm_sync.upsert_connection(db, user_id, "hubspot",
-                                      account_id=str(info.get("hub_id") or ""),
+                                      account_id=str(hub_id or ""),
                                       account_name=info.get("hub_domain"))
     from app.workers import crm_tasks  # noqa: PLC0415
 
