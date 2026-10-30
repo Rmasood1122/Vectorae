@@ -49,6 +49,13 @@ class UserSummary(BaseModel):
     strategy_count: int
     active_campaign_count: int
     last_active_at: Optional[datetime]
+    # Where the account came from (app/services/signup_watch.py). None for
+    # accounts created before the identity step (migration 0039).
+    signup_ip: Optional[str] = None
+    signup_country: Optional[str] = None
+    declared_country: Optional[str] = None
+    company_name: Optional[str] = None
+    company_country: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -746,6 +753,29 @@ async def celery_stats(_admin=Depends(require_admin)) -> dict:
 class IdentityReviewDecision(BaseModel):
     decision: str = Field(pattern="^(cleared|confirmed_risk)$")
     note: str = Field(default="", max_length=500)
+
+
+class SignupRow(BaseModel):
+    ts: datetime
+    event: str
+    outcome: str
+    email: Optional[str]
+    ip: Optional[str]
+    country: Optional[str]
+    user_id: Optional[str]
+
+
+@router.get("/signups", response_model=list[SignupRow])
+def list_signups(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=200),
+    db: Session = Depends(get_db),
+    _admin=Depends(require_admin),
+) -> list[dict]:
+    """Every sign-up and refused sign-up attempt, newest first (admins only)."""
+    from app.services import signup_watch  # noqa: PLC0415
+
+    return signup_watch.list_signups(db, page=page, page_size=page_size)
 
 
 @router.get("/identity-reviews")

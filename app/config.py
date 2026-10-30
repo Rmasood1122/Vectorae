@@ -514,6 +514,10 @@ class Settings(BaseSettings):
     # can always log in.
     signup_enabled: bool = True
     signup_allowed_email_domains: str = ""
+    # Email + push every admin when an account is created (who, from which
+    # address and country). Off: sign-ups are still logged and listed under
+    # Admin > Sign-ups, nobody is messaged. app/services/signup_watch.py
+    signup_alerts_enabled: bool = True
 
     # --- Phone verification (SMS one-time code) ----------------------------
     #   twilio   Twilio Messages API (TWILIO_* below)

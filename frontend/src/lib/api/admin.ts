@@ -23,6 +23,36 @@ export interface IdentityReview {
   geo_review_note: string | null;
 }
 
+/** One account in GET /admin/users. The origin fields are null for accounts
+ *  created before the identity step (migration 0039). */
+export interface AdminUser {
+  id: string;
+  email: string;
+  is_admin: boolean;
+  is_suspended: boolean;
+  plan: string | null;
+  created_at: string | null;
+  strategy_count: number;
+  active_campaign_count: number;
+  last_active_at: string | null;
+  signup_ip: string | null;
+  signup_country: string | null;
+  declared_country: string | null;
+  company_name: string | null;
+  company_country: string | null;
+}
+
+/** One row of GET /admin/signups: an account created, or a refused attempt. */
+export interface SignupRow {
+  ts: string;
+  event: string;
+  outcome: string;
+  email: string | null;
+  ip: string | null;
+  country: string | null;
+  user_id: string | null;
+}
+
 export const adminApi = {
   listIdentityReviews: async (status = "pending") =>
     apiClient.get<{ pending_count: number; reviews: IdentityReview[] }>(
@@ -36,7 +66,10 @@ export const adminApi = {
   // Users
   // -------------------------------------------------------------------
   listUsers: async (page = 1, pageSize = 50) =>
-    apiClient.get(`/admin/users?page=${page}&page_size=${pageSize}`),
+    apiClient.get<AdminUser[]>(`/admin/users?page=${page}&page_size=${pageSize}`),
+
+  listSignups: async (page = 1, pageSize = 50) =>
+    apiClient.get<SignupRow[]>(`/admin/signups?page=${page}&page_size=${pageSize}`),
 
   getUserDetail: async (userId: string) =>
     apiClient.get(`/admin/users/${userId}`),

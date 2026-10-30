@@ -730,6 +730,15 @@ def queued_jobs(monkeypatch):
     monkeypatch.setattr("app.workers.meeting_prep_tasks.enqueue_generation", _prep)
     monkeypatch.setattr("app.workers.notification_tasks.enqueue_event", _event)
 
+    jobs["signup_alerts"] = []
+
+    def _signup_alert(event_id):
+        jobs["signup_alerts"].append(str(event_id))
+        return True
+
+    monkeypatch.setattr("app.workers.notification_tasks.enqueue_signup_alert",
+                        _signup_alert)
+
     jobs["intel"] = []
 
     def _intel(task, *args):

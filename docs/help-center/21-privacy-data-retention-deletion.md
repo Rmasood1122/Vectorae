@@ -2,7 +2,7 @@
 id: privacy-data-retention-deletion
 title: Privacy, data retention and deletion
 audience: customer
-last_verified: 2026-10-11
+last_verified: 2026-10-30
 owner: help-center
 sources:
   - app/db/models.py
@@ -48,7 +48,7 @@ For your own account, Vectorae stores:
 - your email address, your name if you add one, and a one-way hash of your password (never the password itself);
 - your plan and billing status;
 - what you enter during identity onboarding: the country you are in, whether you sign up as an individual or a company, the company name and country, and your verified phone number;
-- the IP address you signed up from and the country that address appears to be in, which is used as a risk signal;
+- the IP address you signed up from and, once it has been looked up, the country that address appears to be in. Your deployment's administrators can see both, and they are normally notified when an account is created;
 - your theme and writing-voice settings;
 - connections to Gmail, LinkedIn and other services. Their access tokens are stored encrypted.
 

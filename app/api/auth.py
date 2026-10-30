@@ -289,7 +289,14 @@ def signup(request: Request, response: Response, body: Credentials,
     # FALSE server default and are never forced through it.
     user.identity_required = True
     user.signup_ip = (client_ip(request) or "")[:64] or None
+    # Admins see who signed up and from where (Admin > Sign-ups); the row is
+    # part of this transaction, the alert is queued only once it is committed.
+    from app.services import signup_watch  # noqa: PLC0415
+    from app.workers import notification_tasks  # noqa: PLC0415
+
+    signup_event = signup_watch.record_signup(db, user, user.signup_ip)
     db.commit()
+    notification_tasks.enqueue_signup_alert(signup_event.id)
 
     # Tokens are still returned. The account cannot DO anything with them --
     # get_current_user rejects every authenticated route with 403

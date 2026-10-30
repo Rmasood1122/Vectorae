@@ -7,11 +7,13 @@ import { LogoMark } from "@/components/ui/Logo";
 import { ConfigWarningsBanner } from "@/components/admin/ConfigWarningsBanner";
 import {
   Users, AlertCircle, Shield, BookOpen, Heart, Zap, List,
-  GraduationCap, LifeBuoy, KeyRound, SlidersHorizontal, ShieldAlert, ShieldCheck
+  GraduationCap, LifeBuoy, KeyRound, SlidersHorizontal, ShieldAlert, ShieldCheck, UserPlus
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/admin/users",            label: "Users",             icon: Users      },
+  // Who signed up and from where, plus refused attempts (signup_watch.py).
+  { href: "/admin/signups",          label: "Sign-ups",          icon: UserPlus   },
   // Section B: onboarding location mismatches awaiting a human decision.
   { href: "/admin/identity-reviews", label: "Identity Reviews",  icon: ShieldAlert },
   { href: "/admin/task-errors",      label: "Task Errors",       icon: AlertCircle},
