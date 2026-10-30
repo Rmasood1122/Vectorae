@@ -12,19 +12,19 @@
       "band_2sigma": 0.0
     },
     "offline_test_count": {
-      "mean": 8185.0,
+      "mean": 8325.0,
       "sigma": 0.0,
       "band_2sigma": 0.0
     },
     "suite_runtime_s": {
-      "mean": 688.6120000000001,
-      "sigma": 2.4579031714044386,
-      "band_2sigma": 4.915806342808877
+      "mean": 845.2684999999999,
+      "sigma": 4.9660109242731405,
+      "band_2sigma": 9.932021848546281
     }
   },
   "manifest": {
     "schema": "candidate/v2",
     "registry_hash": "cf8c14a4a40b6228f907fcbee84ed393ac5053b05aa8e4f463883c9e09366282",
-    "dataset_hash": "ed30c042df773f5e8ecbb9c899dd2e83c0f68484e94e59594452fffbd5098e93"
+    "dataset_hash": "2ecd7b39f9e16f2eb1eaf71f617713c5ec892d6893012283301cd66ae881c339"
   }
 }
