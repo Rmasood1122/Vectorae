@@ -2,7 +2,7 @@
 id: account-security
 title: Account security, sign-in and API keys
 audience: customer
-last_verified: 2026-10-11
+last_verified: 2026-10-30
 owner: help-center
 sources:
   - app/api/auth.py
@@ -16,6 +16,8 @@ sources:
   - app/api/api_keys.py
   - app/services/admin_service.py
   - app/services/identity.py
+  - app/services/signup_watch.py
+  - app/api/admin.py
   - app/api/billing.py
   - frontend/src/app/(auth)/login/page.tsx
   - frontend/src/app/(auth)/forgot-password/page.tsx
@@ -94,6 +96,15 @@ Public sign-up can be closed or limited by your deployment:
 - If sign-up is limited to certain email domains, addresses from other domains see "Sign-up on this Vectorae deployment is limited to approved email domains. Ask your administrator for an account."
 
 By default sign-up is open to any email domain. Existing accounts can always sign in.
+
+## Can administrators see who signed up and from where?
+
+Yes. Only administrators can see other people's sign-ups; your own sign-up address is also in your account data download. Every sign-up is recorded with the email address, the time and the IP address it came from. Shortly afterwards Vectorae looks up the country of that address and emails every other administrator the new account's email, address and country; administrators using the Android app also get a push notification with the email and country. If the background job queue is unavailable at that moment, that sign-up gets no country lookup and no alert, but it is still listed under Admin › Sign-ups. Whoever runs your deployment can turn the messages off by setting `SIGNUP_ALERTS_ENABLED=false` and restarting; sign-ups are still recorded.
+
+- **Admin › Sign-ups** lists sign-ups newest first, 50 per page: accounts created and attempts that were refused (for example a sign-up blocked for coming through a VPN, where VPN blocking is on). Each row shows the email and address, and the country once it has been looked up. Refused attempts show no country.
+- **Admin › Users** shows, for each account, the address and country it signed up from, the country the person stated during onboarding, and their company and its country. For accounts created before sign-up recording began, the country shown is the one detected at the identity step; accounts created before identity onboarding existed show a dash.
+
+When an account is deleted, the email, address and country on its sign-up record are cleared.
 
 ## How do personal API keys work?
 

@@ -55,6 +55,8 @@ export default function AdminUsersPage() {
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Strategies</TableHead>
               <TableHead className="text-right">Active Campaigns</TableHead>
+              <TableHead>Signed up from</TableHead>
+              <TableHead>Country (stated / company)</TableHead>
               <TableHead className="text-right">Joined</TableHead>
               <TableHead />
             </TableRow>
@@ -75,6 +77,18 @@ export default function AdminUsersPage() {
                 </TableCell>
                 <TableCell className="text-right">{user.strategy_count}</TableCell>
                 <TableCell className="text-right">{user.active_campaign_count}</TableCell>
+                <TableCell className="text-sm">
+                  <div>{user.signup_country ?? "—"}</div>
+                  <div className="text-xs text-muted-foreground">{user.signup_ip ?? "—"}</div>
+                </TableCell>
+                <TableCell className="text-sm">
+                  <div>{user.declared_country ?? "—"}</div>
+                  {user.company_name && (
+                    <div className="text-xs text-muted-foreground">
+                      {user.company_name}{user.company_country ? ` (${user.company_country})` : ""}
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell className="text-right text-sm text-muted-foreground">
                   {user.created_at ? new Date(user.created_at).toLocaleDateString() : "—"}
                 </TableCell>

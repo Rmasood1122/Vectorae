@@ -43,6 +43,36 @@ def emit_event(self, user_id: str, event: str, kwargs: dict) -> dict:
         raise self.retry(exc=exc, countdown=30)
 
 
+@celery_app.task(name="app.workers.notification_tasks.signup_alert",
+                 bind=True, max_retries=2)
+def signup_alert(self, event_id: str) -> dict:
+    from app.services import signup_watch  # noqa: PLC0415
+
+    session = SessionLocal()
+    try:
+        return signup_watch.alert_admins(session, event_id)
+    except Exception as exc:
+        logger.exception("sign-up alert %s failed -- retrying", event_id)
+        raise self.retry(exc=exc, countdown=30)
+    finally:
+        session.close()
+
+
+def enqueue_signup_alert(event_id) -> bool:
+    """Queue the admin alert for one sign-up. Never raises; tests monkeypatch.
+
+    Broker down: nothing is sent inline. The country lookup and the mail
+    would then run on the sign-up request itself, and the sign-up is already
+    listed under Admin > Sign-ups whatever happens here."""
+    try:
+        signup_alert.apply_async(args=[str(event_id)], retry=False)
+        return True
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("could not queue the sign-up alert for %s: %s", event_id,
+                       type(exc).__name__)
+        return False
+
+
 def enqueue_event(user_id, event: str, **kwargs) -> bool:
     """Queue one event_bus.emit. Returns True when queued, False when it had
     to be delivered inline. Never raises. Tests monkeypatch this."""

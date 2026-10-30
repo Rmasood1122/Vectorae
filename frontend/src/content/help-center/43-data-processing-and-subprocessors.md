@@ -2,7 +2,7 @@
 id: data-processing-and-subprocessors
 title: Data processing and subprocessors
 audience: prospect
-last_verified: 2026-10-18
+last_verified: 2026-10-30
 owner: help-center
 sources:
   - app/services/network_guard.py
@@ -113,7 +113,7 @@ These receive data only when the feature is used or the account is connected.
 - **Firebase Cloud Messaging**: notification titles and text sent to the Android app.
 - **AegisAudit, PostIQ and SIGNALFORGE**: separate tools that can be connected; today Vectorae only checks the connection (and, for PostIQ and SIGNALFORGE, the key), and sends them no drafts or prospect data.
 
-**IP checking services:** ipapi.co or ipinfo.io receive your IP address at the onboarding identity step to find its country; proxycheck.io or IPQualityScore receive it at sign-up and sign-in on production deployments to spot VPNs.
+**IP checking services:** ipapi.co or ipinfo.io receive your IP address after sign-up and at the onboarding identity step to find its country; proxycheck.io or IPQualityScore receive it at sign-up and sign-in on production deployments to spot VPNs.
 
 The **Privacy** page also lists Calendly, Zoom, HubSpot, Salesforce and Slack, used when you connect them. See [CRM and integrations](16-crm-and-integrations.md) and [Known limitations](29-known-limitations.md).
 

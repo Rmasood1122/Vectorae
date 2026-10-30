@@ -7,6 +7,7 @@ or directly because SQLAlchemy is synchronous in this stack).
 from __future__ import annotations
 
 import datetime
+import uuid
 from typing import Any, Optional
 
 from sqlalchemy import func, desc
@@ -69,6 +70,23 @@ def _plan_of(user) -> str | None:
     return getattr(plan, "value", plan)
 
 
+def _origin_fields(user, origin: Optional[dict]) -> dict[str, Any]:
+    """Where an account came from, for admins (app/services/signup_watch.py).
+
+    signup_ip / signup_country come from the account's sign-up row; accounts
+    created before that row existed fall back to users.signup_ip and the
+    country the identity step detected. declared_country is what the person
+    typed. All None for accounts older than the identity step (0039)."""
+    origin = origin or {}
+    return {
+        "signup_ip": origin.get("ip") or getattr(user, "signup_ip", None),
+        "signup_country": origin.get("country") or getattr(user, "geo_detected_country", None),
+        "declared_country": getattr(user, "personal_country", None),
+        "company_name": getattr(user, "company_name", None),
+        "company_country": getattr(user, "company_country", None),
+    }
+
+
 class AdminService:
     # ---------------------------------------------------------------------------
     # User management
@@ -81,6 +99,9 @@ class AdminService:
         offset = (page - 1) * page_size
         users = db.query(User).order_by(desc(User.created_at)).offset(offset).limit(page_size).all()
 
+        from app.services import signup_watch  # noqa: PLC0415
+
+        origins = signup_watch.signup_origin(db, [u.id for u in users])
         result = []
         for user in users:
             strategy_count = _strategy_count(db, user.id)
@@ -99,6 +120,7 @@ class AdminService:
                 "strategy_count": strategy_count,
                 "active_campaign_count": active_campaign_count,
                 "last_active_at": getattr(user, "last_active_at", None),
+                **_origin_fields(user, origins.get(str(user.id))),
             })
         return result
 
@@ -106,11 +128,20 @@ class AdminService:
     def get_user_detail(db: Session, user_id: str) -> Optional[dict[str, Any]]:
         from app.models.user import User
 
-        user = db.query(User).filter_by(id=user_id).first()
+        try:
+            # A UUID, not the path string: SQLite's UUID column rejects a str
+            # (PostgreSQL casts it), and a malformed id is a 404, not a 500.
+            user_uuid = uuid.UUID(str(user_id))
+        except ValueError:
+            return None
+        user = db.query(User).filter_by(id=user_uuid).first()
         if not user:
             return None
         strategy_count = _strategy_count(db, user.id)
         active_campaign_count = _active_campaign_count(db, user.id)
+        from app.services import signup_watch  # noqa: PLC0415
+
+        origin = signup_watch.signup_origin(db, [user.id]).get(str(user.id))
         return {
             "id": str(user.id),
             "email": user.email,
@@ -121,6 +152,7 @@ class AdminService:
             "strategy_count": strategy_count,
             "active_campaign_count": active_campaign_count,
             "last_active_at": getattr(user, "last_active_at", None),
+            **_origin_fields(user, origin),
         }
 
     @staticmethod
