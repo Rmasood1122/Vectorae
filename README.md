@@ -1,161 +1,176 @@
 # Vectorae
 
-**End-to-end AI-powered client acquisition.** Takes a product or skill as input and carries it all the way from strategy → research → outreach → booked meeting. Runs 24/7 on a cloud backend — campaigns continue when your device is off.
+Vectorae is an AI outbound and go-to-market system. You describe a product or
+skill; it researches the market, writes and verifies a strategy, sources and
+verifies leads, runs compliant multi-channel outreach, and books meetings. It
+learns from every outcome.
+
+It is a revenue product with a **zero-tolerance legal-compliance posture**
+(CAN-SPAM, GDPR, CASL, PDPA): sending rules are enforced in code, at the moment
+of sending, and proven by a sealed test set that blocks any release that
+weakens them.
 
 ---
 
-## What It Does
+## How it works
 
-1. **Intake** — Describe your product or skill. Optionally provide past client details for pattern-anchored strategies.
-2. **Research** — The 72-step (or 144-step, for zero-history products) pipeline produces a full strategy document covering ICP, competitors, channels, messaging, objection handling, and execution plan.
-3. **Verification** — Every strategy passes 10 independent verification checks (factual accuracy, ICP fit, compliance, KPI realism, etc.) before any outreach begins.
-4. **Lead Sourcing** — Apollo.io sourced, Hunter.io email-verified, suppression-checked, enriched leads.
-5. **Outreach** — Multi-channel sequences (Gmail, WhatsApp) with compliant templates, personalization, and cadence.
-6. **Booking** — Calendly integration; webhook fires when a meeting is booked; lead is promoted to `meeting_booked`.
-7. **Learning** — Every outcome is stored and fed back into the strategy playbook. A/B winners are auto-promoted. New strategies get playbook-injected context from high-scoring patterns.
+| Stage | What happens |
+|---|---|
+| Intake | You describe the product or skill, optionally with past clients. |
+| Research | A 72-step pipeline (144 steps for a product with no past clients) produces the strategy: ideal customer, competitors, channels, messaging, objections, plan. |
+| Verification | The strategy is checked before any outreach starts. |
+| Leads | Leads are sourced, verified and checked against the suppression list. |
+| Outreach | Sequences run over email, WhatsApp, LinkedIn and AI phone calls, each with its own consent and sending rules. |
+| Meetings | Bookings, meeting links and call notes come back into the lead's record. |
+| Learning | Outcomes feed the strategy playbook; winning variants are promoted. |
+
+The customer-facing explanation of every feature, limit and rule is the help
+center in [`docs/help-center/`](docs/help-center/).
 
 ---
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  Clients                                                      │
-│  Web (Next.js)  ·  Mobile (Capacitor)  ·  CLI (pip install)  │
-└─────────────────────────┬────────────────────────────────────┘
-                          │  HTTPS / REST
-┌─────────────────────────▼────────────────────────────────────┐
-│  FastAPI — api:8000                                           │
-│  Auth · Products · Strategies · Leads · Campaigns · Playbook │
-└──────┬────────────────────────────────────┬──────────────────┘
-       │ SQLAlchemy                          │ Redis
-┌──────▼────────┐                  ┌────────▼────────────────┐
-│  PostgreSQL   │                  │  Celery Beat + Workers  │
-│  All state    │                  │  Pipeline · Outreach    │
-└───────────────┘                  │  Learning · Monitoring  │
-                                   └─────────────────────────┘
+  Web app (Next.js)   Android app (Capacitor)   Python SDK / CLI   MCP connector
+          \                    |                       |               /
+           +-------------------+-----------+-----------+--------------+
+                                           | HTTPS
+                                 FastAPI  (app/main.py, :8000)
+                                 /                         \
+                     PostgreSQL (SQLAlchemy,         Redis + Celery workers and beat
+                     Alembic migrations)             (pipeline, outreach, learning,
+                                                      notifications, default)
+                                           |
+                     Anthropic (research pipeline)  +  outside services (below)
 ```
 
-One backend, three clients. All business logic lives on the cloud — campaigns run whether your device is on or off.
+| Path | Contents |
+|---|---|
+| `app/` | Backend: `api/` routes, `services/` business logic, `integrations/` outside services, `pipeline/` research engine, `workers/` Celery tasks, `mcp/` remote MCP server, `db/` models |
+| `alembic/` | Database migrations (the head is whatever `alembic heads` reports) |
+| `frontend/` | Next.js web app; `frontend/android/` is the Capacitor Android app |
+| `sdk/` | Python SDK and CLI (package and command `clienthunter`, see [`sdk/README.md`](sdk/README.md)) |
+| `plugins/leadpilot/` | Claude plugin for the MCP connector |
+| `evals/` | Release gate: test registry, sealed compliance set, baseline, gate tools |
+| `tests/` | Backend test suite (offline: SQLite in memory, a fake Claude, no network) |
+| `docs/` | Help center, architecture, compliance, API reference, program records |
+| `scripts/` | Gate scripts, help-center index, operations tools |
 
 ---
 
-## Quick Start (Local Development)
+## Run it locally
 
-### Prerequisites
-- Docker + Docker Compose v2
-- Python 3.11+
-- Node.js 18+
-
-### Start the backend
+Requirements: Docker with Compose v2, Python 3.11+, Node.js 18+.
 
 ```bash
-# Clone and configure
-git clone https://github.com/yourorg/clienthunter-enterprise
-cd clienthunter-enterprise
-cp .env.example .env   # fill in API keys
+git clone https://github.com/Rmasood1122/Vectorae.git
+cd Vectorae
+cp .env.example .env            # fake values only; fill in your own keys
+docker compose up -d            # db, redis, backend (:8000), worker, beat, frontend (:3000)
+```
 
-# Start services
-docker compose up -d postgres redis
+The backend container runs `alembic upgrade head` before it starts.
 
-# Install Python deps
-pip install -e ".[dev]"
+To run the backend outside Docker:
 
-# Run migrations
+```bash
+pip install -r requirements.txt
+docker compose up -d db redis
 alembic upgrade head
-
-# Start API + workers
-uvicorn app.main:app --reload &
-celery -A app.workers.celery_app worker -Q pipeline,outreach,learning,default -c 2 &
-celery -A app.workers.celery_app beat &
+uvicorn app.main:app --reload
+celery -A app.workers.celery_app worker -Q pipeline,outreach,learning,default,notifications
+celery -A app.workers.celery_app beat
 ```
 
-### Start the frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-# → http://localhost:3000
-```
-
-### Run tests
-
-```bash
-pytest tests/ -q --tb=short
-```
+Frontend: `cd frontend && npm install && npm run dev` (http://localhost:3000).
 
 ---
 
-## pip Package (CLI / SDK)
+## Tests and the release gate
+
+Nothing merges without the gate. Install the test dependencies once:
 
 ```bash
-pip install clienthunter
-
-# Initialize
-clienthunter init --api-url https://api.yourdomain.com --email you@example.com
-
-# Run a campaign
-clienthunter run --product "AI-powered outreach automation" --flow with-clients
-
-# Check status
-clienthunter status
-
-# Self-host
-clienthunter serve --check-env   # validate env, then start
+pip install -r requirements.txt fakeredis pyyaml pytest pytest-asyncio pytest-mock
+scripts/gate/install_hooks.sh                  # once per clone
 ```
 
+| Command | Purpose |
+|---|---|
+| `scripts/gate/quick_gate.sh` | Before every push: secrets, syntax, lint, migrations, brand, affected tests, frontend. Stamps the commit. |
+| `python3 evals/run_evals.py` | The full offline suite (all backend tests), scored. |
+| `python3 evals/tools/promote.py` | Compares the run with the baseline: PROMOTE or BLOCK. |
+| `python3 evals/fixtures/verify_block_fixtures.py` | Proves every hard gate still blocks. |
+| `scripts/gate/full_gate.sh` | What CI runs; before marking a PR ready. |
+| `cd frontend && npm test` | Frontend tests (Vitest). |
+
+Merges to `master` go only through `scripts/gate/safe_merge.sh <PR>`. The sealed
+files (registry, compliance test set, baseline, workflows, gate scripts and the
+sealed tests) change only in their own reviewed gate PR. See
+[`CLAUDE.md`](CLAUDE.md) and [`docs/program/GATES.md`](docs/program/GATES.md).
+
 ---
 
-## Production Deployment
+## Deployment
 
-See [DEPLOY.md](DEPLOY.md) for the complete guide: SSL setup, Docker Compose production config, webhook configuration, monitoring endpoints, and update procedures.
+The model is self-hosted, single-tenant (decision P0-D in
+[`docs/program/DECISIONS.md`](docs/program/DECISIONS.md)).
+
+| Guide | Path |
+|---|---|
+| [`DEPLOY.md`](DEPLOY.md) | A VPS with Docker Compose, SSL, webhooks and monitoring |
+| [`DEPLOY_RENDER_FREE.md`](DEPLOY_RENDER_FREE.md) | Free tier: Render (`render.yaml`), Neon, Upstash, Vercel |
+| [`DEPLOY_RAILWAY.md`](DEPLOY_RAILWAY.md) | Railway (paid tier) |
+| [`LAUNCH_CHECKLIST.md`](LAUNCH_CHECKLIST.md) | Checks before going live |
+| [`BACKUP.md`](BACKUP.md) / [`SECURITY.md`](SECURITY.md) | Backups; secrets inventory and rotation |
 
 ---
 
-## Integrations
+## Outside services
 
-| Integration | Purpose | Auth |
-|---|---|---|
-| Apollo.io | Lead sourcing + enrichment | API key |
-| Hunter.io | Email verification | API key |
-| Gmail | Outreach sending | OAuth 2.0 |
-| WhatsApp Business | WhatsApp outreach | Meta App token |
-| Calendly | Meeting booking | OAuth 2.0 |
-| Anthropic (Claude) | Research pipeline, strategy, personalization | API key |
-| Firebase FCM | Push notifications (mobile + web) | Service account |
+Each is optional and configured by an administrator; a feature whose service is
+not configured stays off.
 
-All integrations live behind abstract interfaces — new channels can be added without touching core logic.
+| Area | Services |
+|---|---|
+| AI | Anthropic Claude (research, writing, checks) |
+| Leads and data | Apollo, Hunter |
+| Email | Gmail (OAuth), Google Postmaster, Mailreach |
+| Messaging | WhatsApp Business (Meta Cloud API), LinkedIn via Unipile, SMS |
+| Calls | Vapi and ElevenLabs (AI calls), Recall.ai (meeting notes) |
+| Meetings | Calendly, Google Meet, Zoom |
+| CRM and alerts | HubSpot, Salesforce, Slack, Firebase push |
+| Billing | Stripe |
+
+What has and has not been checked against each live service is listed in
+[`docs/help-center/29-known-limitations.md`](docs/help-center/29-known-limitations.md).
 
 ---
 
 ## Compliance
 
-Compliance is non-negotiable and enforced at the code level:
+- Every email carries an unsubscribe link and header; the suppression list is checked again at the moment of sending.
+- Cold WhatsApp needs an approved template and a recorded opt-in.
+- AI calls need recorded consent (by default), always say they are an AI and that the call is recorded, and are refused when that disclosure cannot be guaranteed.
+- A prospect or an account can be erased; a prospect who opted out or asked to be erased is never contacted again.
+- Secrets are encrypted at rest; webhooks are verified by signature.
 
-- **Email**: CAN-SPAM / GDPR — mandatory unsubscribe header/footer, suppression list checked at send time, bounce rate auto-pause at 3%, daily send caps
-- **WhatsApp**: Meta template-only for cold contact, opt-in required, 24-hour customer-service window enforced, STOP message handling
-- **GDPR**: Full right-to-erasure via `DELETE /leads/{id}` — PII wiped, tombstone created, lead never re-sourced
-- **Security**: Fernet-encrypted secrets at rest, JWT auth, signed webhook verification, cross-tenant isolation
-
-See [docs/compliance.md](docs/compliance.md) for the full picture.
+Details: [`docs/compliance.md`](docs/compliance.md) and
+[`docs/help-center/20-compliance.md`](docs/help-center/20-compliance.md).
 
 ---
 
-## Key Files
+## Documentation
 
-| File | Purpose |
+| Document | Contents |
 |---|---|
-| `DEPLOY.md` | Production deployment guide |
-| `BACKUP.md` | Backup and restore procedures |
-| `SECURITY.md` | Secrets inventory, rotation, compromise response |
-| `LAUNCH_CHECKLIST.md` | Pre-launch verification checklist |
-| `SYSTEM_HANDOFF.md` | Architecture decisions and extension guide |
-| `CHANGES.md` | Full milestone changelog (M1–M8) |
-| `docs/architecture.md` | Deep-dive architecture docs |
-| `docs/compliance.md` | Compliance implementation details |
-| `docs/api-reference.md` | Complete REST API reference |
-| `docs/learning-loop.md` | Learning loop and A/B testing details |
+| [`docs/architecture.md`](docs/architecture.md) | Architecture in depth |
+| [`docs/api-reference.md`](docs/api-reference.md) | REST API reference |
+| [`docs/learning-loop.md`](docs/learning-loop.md) | Learning loop and A/B testing |
+| [`docs/PRODUCTION_READINESS.md`](docs/PRODUCTION_READINESS.md) | What is ready and what still needs action |
+| [`docs/program/PROGRESS.md`](docs/program/PROGRESS.md) | Change log of the production-readiness program |
+| [`CHANGES.md`](CHANGES.md) | Milestone change log |
 
 ---
 
