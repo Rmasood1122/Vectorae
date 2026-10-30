@@ -291,6 +291,27 @@ class VapiClient:
                                           "content": content})
 
 
+# The AI and recording disclosure reaches an ElevenLabs call only as per-call
+# overrides of the agent's first message and system prompt (and voice, for a
+# cloned voice). ElevenLabs "Overrides" doc (read 2026-10-30): overrides are
+# disabled by default and are switched on per field in the agent's Security
+# tab; for most fields a call that sends an override that is not switched on
+# is rejected, while some (ASR keywords) are ignored silently, and older
+# reports (elevenlabs-python issue #640) describe silent ignoring. Either way
+# the call must not be attempted, so the agent's settings are read first:
+# GET /v1/convai/agents/{agent_id} -> platform_settings.overrides
+# .conversation_config_override (one boolean per field). Read before EVERY
+# call, never cached: an override switched off a minute ago must stop the
+# next call (calls are few -- daily caps -- so one extra request each is cheap).
+
+# Each override as the Security tab names it, and what it carries.
+_OVERRIDE_PURPOSE = {
+    "first_message": "First message (the opening line that says the caller is an AI)",
+    "prompt": "System prompt (the call script that says the call is recorded)",
+    "voice_id": "Voice ID (your cloned voice)",
+}
+
+
 class ElevenLabsClient:
     provider = "elevenlabs"
 
@@ -460,6 +481,47 @@ class ElevenLabsClient:
             raise VoiceProviderError("ElevenLabs did not start the call",
                                      permanent=bool(data.get("callSid")) or None)
         return {"id": data["conversation_id"], "status": "queued"}
+
+
+def _agent_overrides(client: ElevenLabsClient) -> dict[str, bool]:
+    with _transport(), _http() as http:
+        resp = http.get(f"{ELEVEN_BASE}/v1/convai/agents/{client.agent_id}",
+                        headers={"xi-api-key": client.api_key})
+    _check(resp, "elevenlabs get agent")
+    data = resp.json() if resp.content else {}
+    override = (((data or {}).get("platform_settings") or {}).get("overrides") or {}) \
+        .get("conversation_config_override") or {}
+    agent = override.get("agent") or {}
+    return {"first_message": agent.get("first_message") is True,
+            "prompt": (agent.get("prompt") or {}).get("prompt") is True,
+            "voice_id": (override.get("tts") or {}).get("voice_id") is True}
+
+
+def overrides_needed(voice_id: str | None) -> tuple[str, ...]:
+    """The overrides an outbound call sends: the disclosed opening line and
+    script always, the voice only for a cloned-voice call."""
+    return ("first_message", "prompt") + (("voice_id",) if voice_id else ())
+
+
+def require_overrides(client: ElevenLabsClient, needed: tuple[str, ...]) -> None:
+    """Refuse the call unless the agent lets each `needed` field be overridden.
+
+    Called by phone_channel.send (the only place a call is placed) before
+    ElevenLabsClient.create_call.
+
+    A field the agent's settings do not mention counts as not allowed (fail
+    closed). A failed lookup raises like any provider error -- retried later,
+    never dialled without the check."""
+    allowed = _agent_overrides(client)
+    missing = [f for f in needed if not allowed.get(f)]
+    if missing:
+        logger.warning("elevenlabs agent %s does not allow overrides: %s -- call refused",
+                       client.agent_id, ",".join(missing))
+        raise VoiceProviderError(
+            "No call placed: the ElevenLabs agent does not let Vectorae set its "
+            + "; ".join(_OVERRIDE_PURPOSE[f] for f in missing)
+            + ". In ElevenLabs, open the agent's Security tab and turn on these overrides.",
+            permanent=True)
 
 
 def get_clients(db, user_id=None) -> tuple[VapiClient | None, ElevenLabsClient | None]:
