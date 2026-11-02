@@ -808,41 +808,43 @@ class TestWhatSurvivedBefore:
         theirs = [r for r in rows if r.email == bob.email]
         assert len(theirs) == 1 and theirs[0].ip == "198.51.100.10"
 
-    def test_linkedin_accounts_are_disconnected_at_unipile(self, client, db_session, alice,
-                                                           monkeypatch):
-        from app.integrations import unipile_linkedin  # noqa: PLC0415
-
-        deleted = []
-
-        class FakeUnipile:
-            def delete_account(self, account_id):
-                deleted.append(account_id)
-                if account_id == "acc-broken":
-                    raise unipile_linkedin.UnipileError("HTTP 500", status=500)
-
-        monkeypatch.setattr(unipile_linkedin, "get_client", lambda db, user_id=None: FakeUnipile())
-        for ref in ("acc-1", "acc-broken"):
+    # Gate change 2026-11-02 (docs/program/plans/gate-linkedin-unipile-removal.md):
+    # Unipile was removed; legacy LinkedIn sessions are ended once by
+    # scripts/linkedin_unipile_offboard.py (tests/test_linkedin_unipile_offboard.py).
+    # What erasure must still guarantee: the legacy rows go with the account,
+    # the record says they existed, and no outside call is attempted.
+    def test_legacy_linkedin_rows_are_erased_and_recorded(self, client, db_session, alice):
+        for ref in ("acc-1", "acc-2"):
             db_session.add(m.LinkedInAccount(user_id=alice.id, unipile_account_id=ref))
         db_session.commit()
-        # A provider failure is recorded, never a reason to keep the data.
         assert _delete(client, alice).status_code == 200
-        assert sorted(deleted) == ["acc-1", "acc-broken"]
         record = db_session.execute(select(m.SecurityAuditEvent).where(
             m.SecurityAuditEvent.action == security_audit.ACCOUNT_DELETED)).scalar_one()
-        assert record.details_json["providers"] == {"unipile": {"disconnected": 1, "failed": 1}}
+        assert record.details_json["providers"]["unipile"] == "offboarded_by_script"
+        assert record.details_json["providers"]["accounts"] == 2
         assert _count(db_session, "linkedin_accounts", alice.id) == 0
 
-    def test_without_unipile_credentials_it_says_so(self, client, db_session, alice,
-                                                     monkeypatch):
-        from app.integrations import unipile_linkedin  # noqa: PLC0415
+    def test_linkedin_tasks_and_consents_go_with_the_account(self, client, db_session, alice):
+        from app.services import linkedin_consent, linkedin_tasks  # noqa: PLC0415
 
-        monkeypatch.setattr(unipile_linkedin, "get_client", lambda db, user_id=None: None)
-        db_session.add(m.LinkedInAccount(user_id=alice.id, unipile_account_id="acc-1"))
+        linkedin_consent.record(db_session, user_id=alice.id,
+                                scope=linkedin_consent.CONNECTIONS_IMPORT,
+                                text_version=linkedin_consent.current_text(
+                                    linkedin_consent.CONNECTIONS_IMPORT).version,
+                                lawful_basis="legitimate_interests")
+        linkedin_tasks.create(db_session, alice, source="network", kind="message", text="hi",
+                              profile_url="https://www.linkedin.com/in/someone/",
+                              claim_checked=True)
         db_session.commit()
+        assert _delete(client, alice).status_code == 200
+        assert _count(db_session, "linkedin_tasks", alice.id) == 0
+        assert _count(db_session, "linkedin_consents", alice.id) == 0
+
+    def test_without_legacy_rows_it_says_none(self, client, db_session, alice):
         assert _delete(client, alice).status_code == 200
         record = db_session.execute(select(m.SecurityAuditEvent).where(
             m.SecurityAuditEvent.action == security_audit.ACCOUNT_DELETED)).scalar_one()
-        assert record.details_json["providers"]["unipile"] == "not_configured"
+        assert record.details_json["providers"]["unipile"] == "none"
 
     def test_the_security_audit_log_line_carries_no_ip(self, db_session, caplog):
         import logging  # noqa: PLC0415
@@ -923,18 +925,13 @@ class TestCallbacksRefuseErasedAccounts:
                                params={"code": "c", "state": state}, follow_redirects=False)
         assert "unknown" in resp.headers["location"]
 
-    def test_unipile_notify(self, anon_client, db_session, erased):
-        from datetime import datetime as dt  # noqa: PLC0415
-
-        from app.api import linkedin as linkedin_api  # noqa: PLC0415
-
-        state = crypto.encrypt_json({"purpose": linkedin_api.STATE_PURPOSE,
-                                     "user_id": str(erased),
-                                     "exp": (dt.now(timezone.utc) + timedelta(hours=1)).isoformat()})
+    def test_the_unipile_callback_no_longer_exists(self, anon_client, db_session, erased):
+        # Gate change 2026-11-02: the hosted-auth callback was removed with
+        # Unipile, so an erased account cannot be re-linked through it.
         resp = anon_client.post("/integrations/linkedin/unipile/notify",
-                                params={"state": state},
+                                params={"state": "x" * 40},
                                 json={"status": "CREATION_SUCCESS", "account_id": "acc-9"})
-        assert resp.status_code == 400
+        assert resp.status_code in (404, 405)
         assert _count(db_session, "linkedin_accounts", erased) == 0
 
     def test_gmail_callback(self, anon_client, db_session, erased, monkeypatch):
