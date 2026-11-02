@@ -190,7 +190,7 @@ function LinkedInNetworkTab() {
   const [attested, setAttested] = useState(false);
   const upload = useMutation({
     mutationFn: (csv: string) =>
-      importConnections(csv, { version: status.data?.consent.version ?? "", lawfulBasis: basis }),
+      importConnections(csv, { version: status.data?.consent?.version ?? "", lawfulBasis: basis }),
     onSuccess: (r) => { setError(null); setMessage(importSummary(r)); refresh(); },
     onError: (e) => { setMessage(null); setError(importErrorMessage(e)); },
   });
@@ -252,13 +252,17 @@ function LinkedInNetworkTab() {
             </p>
             <section aria-label="Before you upload" className="space-y-2 rounded border p-3">
               <p className="font-medium">Before you upload</p>
-              <p className="whitespace-pre-wrap text-muted-foreground">{s.consent.text}</p>
+              {s.consent ? (
+                <p className="whitespace-pre-wrap text-muted-foreground">{s.consent.text}</p>
+              ) : (
+                <p className="text-muted-foreground">The upload notice could not be loaded. Reload the page.</p>
+              )}
               <label className="block">
                 <span className="mr-2">Lawful basis you rely on:</span>
                 <select value={basis} onChange={(e) => setBasis(e.target.value)}
                         aria-label="Lawful basis" className="rounded border px-2 py-1">
                   <option value="">Choose…</option>
-                  {s.consent.lawful_bases.map((b) => (
+                  {(s.consent?.lawful_bases ?? []).map((b) => (
                     <option key={b} value={b}>
                       {b === "legitimate_interests" ? "Legitimate interests" : "Consent"}
                     </option>
@@ -272,7 +276,7 @@ function LinkedInNetworkTab() {
               </label>
             </section>
             <input ref={fileRef} type="file" accept=".csv,text/csv"
-                   aria-label="Connections.csv" disabled={!basis || !attested}
+                   aria-label="Connections.csv" disabled={!s.consent || !basis || !attested}
                    onChange={(e) => onFile(e.target.files?.[0])} />
             {upload.isPending && <p>Importing…</p>}
             {s.needs_new_export && (

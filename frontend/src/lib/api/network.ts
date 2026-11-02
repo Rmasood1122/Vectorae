@@ -13,7 +13,7 @@ export interface NetworkStatus {
   max_bytes: number;
   max_rows: number;
   /** L3 notice the user must read and attest to before uploading. */
-  consent: NetworkConsent;
+  consent?: NetworkConsent;
 }
 
 export interface NetworkConsent {
