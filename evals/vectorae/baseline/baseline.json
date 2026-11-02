@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-11-02",
+  "commit": "6a34881",
+  "command": "python3 evals/run_evals.py && python3 evals/tools/promote.py",
+  "evals_exit": 0,
+  "offline_test_count": 8371,
+  "full_suite_pass_rate": 1.0,
+  "compliance_suite_pass_rate": 1.0,
+  "suite_runtime_s": 1121.86,
+  "promote": {"exit": 0, "decision": "PROMOTE", "soft_warnings": ["suite_runtime_s 1121.86 vs threshold 900 (this container; baseline 845)"]},
+  "brand_lint": {"command": "python3 scripts/gate/brand_lint.py", "exit": 0, "files": 1916},
+  "brand_leaks_program_regex": {"command": "python3 evals/vectorae/tools/brand_leaks.py", "rows": 658, "class_A": 28, "class_B": 303, "class_C": 208, "class_D": 119},
+  "not_run_yet": ["frontend tsc/vitest/lint", "status-page", "native", "coverage", "gitleaks/semgrep/pip-audit/npm audit", "Lighthouse/axe/lychee"],
+  "live_crawl": "baseline/live_crawl/ (72 URLs, Firecrawl maxAge 0)"
+}

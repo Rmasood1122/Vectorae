@@ -27,6 +27,8 @@ docs/VERIFICATION_REPORT.md | .* | C: dated audit verification (VIC-KEEP)
 reports/* | .* | C: dated launch-checklist decomposition reports (VIC-KEEP)
 CHANGES.md | .* | C: dated change log (VIC-KEEP)
 
+evals/vectorae/* | .* | C: Vectorae strict-eval records (2026-11-02): the brand-leak table, live-crawl baseline and gap register quote the old names by design
+
 # --- Sealed compliance tests (C: CLAUDE.md sealed-file rule) ------------------
 # These files change only through a reviewed gate/ PR. Their old names are test
 # fixtures (synthetic @leadpilot.dev addresses, "Sam from LeadPilot" sample copy)

@@ -1,0 +1,12 @@
+item,current_value,where_bound,dependency,risk,owner,status
+Domain + canonicals,calendarharvest.com / www.calendarharvest.com,"Vercel domain, DNS, every canonical, sitemap, render.yaml, app/config.py","domain_migration_plan.md (not yet written)","SEO loss, broken links, OAuth domain re-verification",Rehan,STOP-GATE
+Founder mailbox,rehanmasood@calendarharvest.com,"Terms, contact page, Google Workspace","12-month forwarding","Missed legal/customer mail",Rehan,STOP-GATE
+Sending domain / Resend,calendarharvest.com from-address,"app/config.py, render.yaml; SPF/DKIM status UNKNOWN (CLAUDE.md GAP-007)","DNS records","Deliverability",Rehan,STOP-GATE
+Google OAuth consent screen,UNKNOWN app name (SECURITY.md names it ClientHunter),"Google Cloud console","Restricted-scope verification (GAP-EXT-01)","Users see old name on consent; re-verification on change",Rehan,UNKNOWN
+Android applicationId,com.clienthunter.app,"capacitor.config.ts:8, build.gradle, assetlinks.json","Cannot change after Play publish","None if kept (not user-visible except in help/mobile-app)",Rehan,keep
+Webhook headers,X-LeadPilot-* / X-ClientHunter-Signature,"app/services/webhook_delivery.py; customers' verifiers","Dual-send new X-Vectorae-* for one release, then deprecate","Breaking customer integrations",eng+Rehan,proposed
+MCP/OAuth scopes,leadpilot:read|write|admin,"app/mcp/scopes.py; existing connector grants","Alias new scopes, re-consent","Breaking connectors",eng+Rehan,proposed
+Social / directory profiles,"linkedin.com/company/leadpilot-app, g2 leadpilot-2026-10-14, crunchbase leadpilot, youtube @LeadPilotEnterprise","frontend/src/content/product-facts.json sameAs (live JSON-LD on 64 pages)","Rename on each platform",Brand confusion with LeadPilot AB,Rehan,open
+Render services,leadpilot-api / leadpilot-worker,render.yaml,"Hostnames used by frontend/env","Downtime if renamed carelessly",Rehan,keep
+Claude plugin / skill,leadpilot / leadpilot-outbound,"plugins/, .claude-plugin/","Users' installed plugin name","Breaks installs",Rehan,keep-for-now
+LinkedIn provider,Unipile account + RapidAPI key,"Admin > Integrations; app/services/credentials.py","GAP-LI-01 decision","ToS breach if re-enabled",Rehan,STOP-GATE
