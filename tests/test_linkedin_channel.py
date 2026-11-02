@@ -84,6 +84,11 @@ class FakeUnipile:
 
 @pytest.fixture()
 def unipile(monkeypatch):
+    # These tests exercise the Unipile path that sits behind the GAP-LI-01
+    # kill switch (default off; tests/test_linkedin_unofficial_providers_off.py
+    # proves the default). They opt in explicitly.
+    from app.config import settings  # noqa: PLC0415
+    monkeypatch.setattr(settings, "linkedin_unofficial_providers_enabled", True)
     fake = FakeUnipile()
     monkeypatch.setattr("app.integrations.unipile_linkedin.get_client",
                         lambda db, user_id=None: fake)

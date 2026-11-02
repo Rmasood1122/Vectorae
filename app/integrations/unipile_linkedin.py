@@ -205,8 +205,22 @@ class UnipileClient:
             return False
 
 
+def unofficial_providers_enabled() -> bool:
+    """The deploy-level kill switch (settings.linkedin_unofficial_providers_enabled,
+    default False). Read at call time so a test or an env change takes effect
+    without a re-import."""
+    from app.config import settings  # noqa: PLC0415
+
+    return bool(getattr(settings, "linkedin_unofficial_providers_enabled", False))
+
+
 def get_client(db, user_id=None) -> UnipileClient | None:
-    """A configured client, or None. Tests monkeypatch this."""
+    """A configured client, or None. Tests monkeypatch this.
+
+    Deliberately NOT gated by the kill switch: account erasure
+    (app/services/account_erasure.py) calls it to disconnect accounts, and
+    ending a session is never the prohibited act. Every path that ACTS goes
+    through app/services/linkedin_outreach.client_for, which is gated."""
     from app.services import credentials  # noqa: PLC0415
 
     key = credentials.get_secret(db, "unipile", "api_key", user_id=user_id)

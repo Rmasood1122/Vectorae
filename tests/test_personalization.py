@@ -258,6 +258,10 @@ class TestLinkedInPosts:
             linkedin_posts.fetch_recent_posts(db_session, "https://linkedin.com/in/x", test_user.id)
 
     def test_unipile_then_rapidapi_fallback(self, db_session, test_user, monkeypatch):
+        # Provider order behind the GAP-LI-01 kill switch (default off,
+        # tests/test_linkedin_unofficial_providers_off.py); opted in here.
+        from app.config import settings  # noqa: PLC0415
+        monkeypatch.setattr(settings, "linkedin_unofficial_providers_enabled", True)
         credentials.set_system_secret(db_session, "unipile", "api_key", "u-key")
         credentials.set_system_secret(db_session, "unipile", "dsn", "api8.unipile.com:13851")
         credentials.set_system_secret(db_session, "unipile", "reader_account_id", "acc1")

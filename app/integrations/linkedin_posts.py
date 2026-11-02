@@ -153,8 +153,16 @@ def _reader_account(db, user_id) -> str | None:
 def fetch_recent_posts(db, linkedin_url: str, user_id) -> tuple[list[dict], str]:
     """(posts, source). Raises LinkedInPostsUnavailable when no provider is
     configured or every configured provider failed."""
+    from app.integrations.unipile_linkedin import unofficial_providers_enabled  # noqa: PLC0415
     from app.services import credentials  # noqa: PLC0415
 
+    # GAP-LI-01: both readers are third-party access to other members'
+    # LinkedIn content (a held session, a scraper). Off unless the founder
+    # turns the kill switch on; no request is made.
+    if not unofficial_providers_enabled():
+        raise LinkedInPostsUnavailable(
+            "LinkedIn data providers are disabled on this deployment "
+            "(LINKEDIN_UNOFFICIAL_PROVIDERS_ENABLED=false)")
     errors = []
     api_key = credentials.get_secret(db, "unipile", "api_key", user_id=user_id)
     dsn = credentials.get_secret(db, "unipile", "dsn", user_id=user_id)

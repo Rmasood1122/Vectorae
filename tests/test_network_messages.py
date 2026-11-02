@@ -59,6 +59,10 @@ def claude(monkeypatch):
 
 @pytest.fixture()
 def unipile(monkeypatch):
+    # Opt in to the GAP-LI-01 kill switch (default off): these tests exercise
+    # the Unipile path behind it.
+    from app.config import settings  # noqa: PLC0415
+    monkeypatch.setattr(settings, "linkedin_unofficial_providers_enabled", True)
     fake = FakeUnipile()
     monkeypatch.setattr("app.integrations.unipile_linkedin.get_client",
                         lambda db, user_id=None: fake)

@@ -1,0 +1,38 @@
+{
+  "tool": "firecrawl_scrape via MCP",
+  "maxAge": 0,
+  "started_at": "2026-11-02T16:27:25Z",
+  "started_at_note": "mtime of first persisted scrape result (homepage); the sitemap.xml fetch immediately preceded it",
+  "finished_at": "2026-11-02T16:32:47Z",
+  "url_count": 72,
+  "sitemap_loc_count": 64,
+  "sitemap_note": "sitemap.xml (fetched with formats [rawHtml], maxAge 0) contained 64 <loc> entries, not 62; all 64 crawled plus 8 extra URLs",
+  "formats_requested": [
+    "markdown",
+    "links",
+    "rawHtml"
+  ],
+  "onlyMainContent": false,
+  "failures": [],
+  "non_200": [
+    {
+      "url": "https://www.calendarharvest.com/this-page-does-not-exist-404-probe/",
+      "status_code": 404
+    },
+    {
+      "url": "https://www.calendarharvest.com/what-is-vectorae/",
+      "status_code": 404
+    },
+    {
+      "url": "https://www.calendarharvest.com/compare/vectorae-vs-apollo/",
+      "status_code": 404
+    }
+  ],
+  "caveats": [
+    "Parallel MCP calls occasionally wrote to the same tool-result filename (millisecond collision); 4 URLs were lost that way and re-fetched (/help/, /help/privacy-data-retention-deletion/, /help/glossary/, /help/learn-tab-and-tutorials/). Every URL has exactly one record.",
+    "5 pages (/login/, /signup/, /this-page-does-not-exist-404-probe/, /what-is-vectorae/, /compare/vectorae-vs-apollo/) returned inline instead of being persisted; their records have rawhtml_persisted=false and brand_matches=null (see extraction_note). /login/ and /signup/ were each fetched 2-3 times while trying to force persistence (extra formats html/branding); data recorded is identical across fetches.",
+    "robots.txt and llms.txt are text/plain; Firecrawl rawHtml equals the file body, which was written verbatim and parsed.",
+    "brand_matches is capped at 40 per page as specified; brand_match_counts_uncapped holds total regex hit counts per exact match string.",
+    "fetched_at for persisted pages = mtime of the saved tool result; for inline pages = record write time (within minutes of fetch)."
+  ]
+}

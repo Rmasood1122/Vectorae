@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-11-02",
+  "method": "read-only recon: git ls-files, ls, rg, file reads in the clones below. Every value is FACT from those commands unless tagged.",
+  "repos": [
+    {
+      "name": "Rmasood1122/LeadPilot",
+      "role": "THE Vectorae product: API, workers, marketing site + web app, Android wrapper, SDK, MCP connector, status page, evals",
+      "branch_audited": "claude/dreamy-pasteur-qflxk2 @ 6a34881",
+      "tracked_files": 1916,
+      "file_types_top": {"py": 912, "md": 299, "ts": 288, "tsx": 237, "json": 43, "yaml": 41}
+    },
+    {
+      "name": "Rmasood1122/LegacyAI",
+      "role": "UNRELATED product (Phase 1 identity/access/audit platform, TypeScript API + Python AI service). No Vectorae code. Out of scope for this eval.",
+      "branch_audited": "claude/dreamy-pasteur-qflxk2 @ 2f7c5a3",
+      "evidence": "LegacyAI/README.md:1-5"
+    }
+  ],
+  "components": {
+    "backend_api": {
+      "path": "app/",
+      "stack": "FastAPI (>=0.111,<0.112) + SQLAlchemy 2.0 + Alembic (98 revision files) + PostgreSQL",
+      "entry_point": "app/main.py (uvicorn app.main:app via scripts/render_api_entrypoint.sh)",
+      "routers": "app/api/*.py (82 modules)"
+    },
+    "workers": {
+      "path": "app/workers/",
+      "stack": "Celery 5.4 + Redis",
+      "entry_point": "scripts/render_worker_entrypoint.sh + app/worker_health.py (health shim for Render free tier)"
+    },
+    "llm_pipeline": {"path": "app/pipeline/, app/agents/, app/verification/", "provider": "Anthropic SDK (requirements.txt: anthropic>=0.28.0)"},
+    "frontend": {
+      "path": "frontend/",
+      "stack": "Next.js 16.4.2 + React 18, Tailwind, static export (next.config.js output:'export', trailingSlash:true)",
+      "package_name": "clienthunter-web (class C identifier)",
+      "hosting": "Vercel (frontend/vercel.json; render.yaml comment). Static export => redirects must live in vercel.json, not next.config.js",
+      "marketing_routes": "frontend/src/app/{page,about,contact,pricing,status,for,compare,what-is-leadpilot,faq,help,outbound-statistics,terms,privacy,how-it-works}",
+      "sitemap_source": "frontend/src/content/site-pages.json -> frontend/src/app/sitemap.ts"
+    },
+    "android": {
+      "path": "frontend/android/ (Capacitor)",
+      "app_name": "Vectorae (frontend/android/app/src/main/res/values/strings.xml)",
+      "applicationId": "com.clienthunter.app (class B: cannot change after Play publish; capacitor.config.ts:4-8)",
+      "release_workflow": ".github/workflows/android-release.yml"
+    },
+    "sdk": {"path": "sdk/", "package": "clienthunter (unpublished, kept per VIC-KEEP)", "release_workflow": ".github/workflows/pypi-release.yml"},
+    "status_page": {"path": "status-page/", "stack": "Next.js"},
+    "mcp_connector": {"path": "app/mcp/, plugins/, .claude-plugin/", "flag": "settings.mcp_enabled default False (app/config.py:218)"},
+    "native": {"path": "native/{rust,cpp}", "role": "agent cores with Python parity tests"},
+    "email_templates": "No template directory for outbound mail; bodies are generated per lead. app/templates/roi_card.html is the only file template. Footer/unsubscribe logic lives in app/services (to inspect in D2).",
+    "linkedin": {
+      "provider": "Unipile (app/integrations/unipile_linkedin.py) + 'RapidAPI LinkedIn scraper' fallback for prospect posts (app/integrations/linkedin_posts.py, app/services/credentials.py:93)",
+      "status": "P0 under this program's rules - see brand/claims phase notes"
+    }
+  },
+  "google_oauth_scopes_in_code": {
+    "gmail.send": "app/integrations/gmail.py:48",
+    "gmail.readonly": "app/integrations/gmail.py:49 (RESTRICTED scope)",
+    "gmail.compose": "app/integrations/gmail.py:65",
+    "gmail.modify": "app/services/email_network_gmail.py:63 (RESTRICTED scope)",
+    "calendar.events": "app/integrations/gmail.py:60",
+    "postmaster.traffic.readonly": "app/integrations/google_postmaster.py:44"
+  },
+  "ci": {
+    "workflows": [".github/workflows/eval-gate.yml (sealed)", "verify.yml", "android-release.yml", "pypi-release.yml", "post-merge-alarm.yml"],
+    "required_checks": "scripts/gate/required_checks.txt: gate, verify-backend-postgres, verify-frontend, verify-security, verify-image, verify-status-page, verify-native-agents",
+    "merge_policy": "MERGE-B: scripts/gate/safe_merge.sh only (CLAUDE.md)"
+  },
+  "existing_brand_controls": {
+    "lint": "scripts/gate/brand_lint.py (old names LeadPilot/ClientHunter/Victorae; does NOT include calendarharvest)",
+    "allowlist": ".brand-allowlist (154 non-blank lines; classes B and C)",
+    "result_2026-11-02": "brand_lint: OK (1916 files), exit 0",
+    "records": "docs/program/brand/rename-inventory.md, docs/program/brand/founder-actions.md, docs/program/DECISIONS.md VEC-NAME (2026-10-28)"
+  },
+  "env_files": [".env.example", ".env.production.example", "frontend/.env.example"],
+  "deploy_configs": ["render.yaml (leadpilot-api, leadpilot-worker on Render free)", "railway/", "Dockerfile", "docker-compose.yml", "docker-compose.prod.yml", "frontend/vercel.json", "nginx/"],
+  "repo_hygiene_flags": [
+    "dump.rdb, celerybeat-schedule.{bak,dat,dir} are committed at repo root (INFERENCE: runtime artifacts; out-of-scope discovery)"
+  ],
+  "live_site": {
+    "host": "https://www.calendarharvest.com (apex redirects to www per Firecrawl final URL)",
+    "direct_fetch_from_container": "BLOCKED (egress proxy 403 for calendarharvest.com:443); crawl done via Firecrawl MCP, maxAge 0",
+    "sitemap_urls": 62
+  }
+}
