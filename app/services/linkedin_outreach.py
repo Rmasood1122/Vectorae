@@ -79,8 +79,14 @@ def normalize_profile(url_or_slug: str | None) -> str | None:
 
 
 def client_for(session: Session, user_id) -> UnipileClient | None:
+    """The client every ACTING LinkedIn path uses (send, connect link, link
+    account, inbox reply, diagnostics). None while the GAP-LI-01 kill switch
+    is off, so each caller takes its existing "not configured" path and no
+    request reaches Unipile."""
     from app.integrations import unipile_linkedin  # noqa: PLC0415
 
+    if not unipile_linkedin.unofficial_providers_enabled():
+        return None
     return unipile_linkedin.get_client(session, user_id)
 
 
