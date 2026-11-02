@@ -144,7 +144,12 @@ DELETED: frozenset[str] = frozenset({
     "gmail_accounts", "guardrail_exclusions", "guardrail_library", "inbound_replies",
     "integration_tokens", "lead_batches", "lead_signals", "leads", "linkedin_accounts",
     "linkedin_connection_matches", "linkedin_connections", "linkedin_imports",
-    "linkedin_network_messages", "mailbox_health", "meeting_outcomes",
+    "linkedin_network_messages",
+    # L0/L3 (0097): the user's task queue and consent rows go with the
+    # account. The attestation also lives in the security_audit event of each
+    # import (version + lawful basis), which follows that table's decision.
+    "linkedin_consents", "linkedin_tasks",
+    "mailbox_health", "meeting_outcomes",
     "meeting_participants", "meeting_prep_briefs", "meetings", "messages", "outcomes",
     "past_clients", "pilot_scorecards", "pilots", "products", "quickstart_drafts",
     "quickstart_runs", "reengagement_attempts", "reengagement_plans",

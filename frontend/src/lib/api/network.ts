@@ -12,6 +12,24 @@ export interface NetworkStatus {
   needs_new_export: boolean;
   max_bytes: number;
   max_rows: number;
+  /** L3 notice the user must read and attest to before uploading. */
+  consent: NetworkConsent;
+}
+
+export interface NetworkConsent {
+  scope: string;
+  version: string;
+  purpose: string;
+  text: string;
+  lawful_bases: string[];
+  given: boolean;
+  lawful_basis: string | null;
+  granted_at: string | null;
+}
+
+export interface ImportAttestation {
+  version: string;
+  lawfulBasis: string;
 }
 
 export interface NetworkMatch {
@@ -37,6 +55,7 @@ export interface NetworkProduct {
 export interface ImportResult {
   added: number;
   skipped: number;
+  duplicates?: number;
   total: number;
   matched: number;
 }
@@ -44,8 +63,14 @@ export interface ImportResult {
 export const getNetworkStatus = () => api<NetworkStatus>("/linkedin-network/status");
 export const getRecommendations = () =>
   api<{ products: NetworkProduct[] }>("/linkedin-network/recommendations");
-export const importConnections = (csvText: string) =>
-  api<ImportResult>("/linkedin-network/import", { body: { csv_text: csvText } });
+export const importConnections = (csvText: string, attestation: ImportAttestation) =>
+  api<ImportResult>("/linkedin-network/import", {
+    body: {
+      csv_text: csvText,
+      consent_text_version: attestation.version,
+      lawful_basis: attestation.lawfulBasis,
+    },
+  });
 export const eraseNetwork = () =>
   api<Record<string, number>>("/linkedin-network", { method: "DELETE" });
 

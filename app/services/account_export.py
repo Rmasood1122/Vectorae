@@ -92,6 +92,8 @@ OWNERSHIP: dict[str, list[str]] = {
     "linkedin_connections": ["user_id"],
     "linkedin_imports": ["user_id"],
     "linkedin_network_messages": ["user_id"],
+    "linkedin_consents": ["user_id"],
+    "linkedin_tasks": ["user_id"],
     "mailbox_health": ["user_id"],
     "meeting_prep_briefs": ["user_id"],
     "pilot_scorecards": ["user_id"],               # F09 weekly scorecards
