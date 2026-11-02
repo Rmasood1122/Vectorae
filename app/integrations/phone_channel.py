@@ -19,6 +19,12 @@ metadata says, the first message and the voicemail are re-checked here to OPEN
 with the AI disclosure and recording notice, and the system prompt to START
 with the identity rules. An invalid or missing disclosure in the metadata is
 replaced by the generic one -- a call never goes out without it.
+
+ElevenLabs takes those words only as per-call overrides, which its agent
+must allow (Security tab; off by default). So before an ElevenLabs call the
+agent's override settings are read (voice_providers.require_overrides) and
+the call is refused, permanently and before anything is dialled, unless the
+opening line and the script (and the voice, for a cloned voice) can be set.
 """
 
 from __future__ import annotations
@@ -30,6 +36,7 @@ from sqlalchemy.orm import Session
 
 from app.core.exceptions import ComplianceError
 from app.db.models import Lead
+from app.integrations import voice_providers
 from app.integrations.outreach_base import (
     InboundMessage,
     OutboundMessage,
@@ -121,6 +128,9 @@ class PhoneChannel(OutreachChannel):
             if provider is None or (provider is self.eleven and not getattr(provider, "can_call", False)):
                 continue
             try:
+                if isinstance(provider, voice_providers.ElevenLabsClient):
+                    voice_providers.require_overrides(
+                        provider, voice_providers.overrides_needed(kwargs["voice_id"]))
                 data = provider.create_call(**kwargs)
                 return SendResult(ok=True, provider_message_id=data.get("id"),
                                   raw={"provider": provider.provider, **data})

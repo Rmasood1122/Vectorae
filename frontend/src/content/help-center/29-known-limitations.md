@@ -81,6 +81,7 @@ In particular:
 - **Recall.ai** (the bot that records and transcribes a call) has been built and tested with simulations only and has never been called live.
 - **Zoom meetings** are all hosted by one Zoom user, which your administrator sets as the host user under Admin > Integrations > Zoom. Until it is set, Vectorae does not create Zoom links.
 - **AI calls in your own voice** (ElevenLabs voice cloning, AI answering of your calls and Take over through Vapi) have been built and tested with simulations only. Some of the settings that make the assistant sound natural are switched off until they are checked against the live service.
+- **AI calls through ElevenLabs** need the ElevenLabs agent to allow Vectorae to set the opening line, the script and, for your own voice, the voice (the agent's **Security** tab; all are off by default). Vectorae checks this before every ElevenLabs call and places no call until they are on. The check reads the agent's settings as ElevenLabs documents them; it has not been run against the live service, and the setting that carries your own voice into an ElevenLabs call is itself not yet confirmed against ElevenLabs' documentation.
 
 ## What are the sending limitations?
 
