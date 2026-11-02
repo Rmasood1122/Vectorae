@@ -18,13 +18,13 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app.db import models as m
-from app.integrations import linkedin_posts, newsapi
+from app.integrations import newsapi
+from app.services import linkedin_profile
 from app.services import (
     credentials,
     loom_video,
     personalization_context,
     style_profile,
-    system_settings,
 )
 from app.services.message_personalization import render_message
 
@@ -240,49 +240,19 @@ class TestNews:
             newsapi.fetch_company_news("key", "Acme")
 
 
-class TestLinkedInPosts:
-    def test_identifier_and_normalise(self):
-        assert linkedin_posts.public_identifier(
+class TestLinkedInPostsAreNotFetched:
+    """2026-11-02 (evals/vectorae, option a): no LinkedIn post reader exists."""
+
+    def test_profile_identifier_helper_remains(self):
+        assert linkedin_profile.public_identifier(
             "https://www.linkedin.com/in/sara-khan-9/?x=1") == "sara-khan-9"
-        assert linkedin_posts.public_identifier("https://example.com") is None
-        posts = linkedin_posts.normalise([
-            {"text": "older", "date": "2026-01-01T00:00:00Z"},
-            {"commentary": "newest", "parsed_datetime": "2026-03-01T00:00:00Z", "share_url": "s"},
-            {"text": ""}, "junk", {"text": "mid", "posted": "2026-02-01"},
-            {"text": "oldest", "date": "2025-01-01"},
-        ])
-        assert [p["text"] for p in posts] == ["newest", "mid", "older"]
+        assert linkedin_profile.public_identifier("https://example.com") is None
 
-    def test_no_provider_configured_raises(self, db_session, test_user):
-        with pytest.raises(linkedin_posts.LinkedInPostsUnavailable):
-            linkedin_posts.fetch_recent_posts(db_session, "https://linkedin.com/in/x", test_user.id)
+    def test_the_readers_are_gone(self):
+        import importlib.util  # noqa: PLC0415
 
-    def test_unipile_then_rapidapi_fallback(self, db_session, test_user, monkeypatch):
-        # Provider order behind the GAP-LI-01 kill switch (default off,
-        # tests/test_linkedin_unofficial_providers_off.py); opted in here.
-        from app.config import settings  # noqa: PLC0415
-        monkeypatch.setattr(settings, "linkedin_unofficial_providers_enabled", True)
-        credentials.set_system_secret(db_session, "unipile", "api_key", "u-key")
-        credentials.set_system_secret(db_session, "unipile", "dsn", "api8.unipile.com:13851")
-        credentials.set_system_secret(db_session, "unipile", "reader_account_id", "acc1")
-        client = _Client({
-            "/users/sara/posts": _Resp(200, {"items": [{"text": "hello", "date": "2026-01-01"}]}),
-            "/users/sara": _Resp(200, {"provider_id": "sara"}),
-        })
-        monkeypatch.setattr(linkedin_posts, "_http", lambda: client)
-        posts, source = linkedin_posts.fetch_recent_posts(
-            db_session, "https://linkedin.com/in/sara", test_user.id)
-        assert source == "unipile" and posts[0]["text"] == "hello"
-        assert client.calls[0][1] == {"account_id": "acc1"}
-
-        credentials.set_system_secret(db_session, "rapidapi_linkedin", "api_key", "r-key")
-        credentials.set_system_secret(db_session, "rapidapi_linkedin", "host", "li.p.rapidapi.com")
-        failing = _Client({"unipile": _Resp(500, {}),
-                           "rapidapi": _Resp(200, {"data": [{"text": "from rapid"}]})})
-        monkeypatch.setattr(linkedin_posts, "_http", lambda: failing)
-        posts, source = linkedin_posts.fetch_recent_posts(
-            db_session, "https://linkedin.com/in/sara", test_user.id)
-        assert source == "rapidapi" and posts[0]["text"] == "from rapid"
+        assert importlib.util.find_spec("app.integrations.linkedin_posts") is None
+        assert importlib.util.find_spec("app.integrations.unipile_linkedin") is None
 
 
 # --------------------------------------------------------------------------
@@ -291,63 +261,35 @@ class TestLinkedInPosts:
 
 
 class TestEnsureFresh:
-    def test_backfills_url_fetches_and_caches(self, db_session, test_user, lead, monkeypatch):
+    def test_backfills_url_fetches_news_and_caches_but_never_posts(
+            self, db_session, test_user, lead, monkeypatch):
         credentials.set_system_secret(db_session, "newsapi", "api_key", "n-key")
-        calls = {"posts": 0, "news": 0}
-
-        def _posts_fetch(db, url, owner):
-            calls["posts"] += 1
-            return _posts(2), "unipile"
+        calls = {"news": 0}
 
         def _news_fetch(key, company, now=None):
             calls["news"] += 1
             return []
 
-        monkeypatch.setattr(linkedin_posts, "fetch_recent_posts", _posts_fetch)
         monkeypatch.setattr(newsapi, "fetch_company_news", _news_fetch)
         result = personalization_context.ensure_fresh(db_session, lead, owner_id=test_user.id)
         assert lead.linkedin_url == "https://www.linkedin.com/in/sara-khan-9/"
-        assert result["posts"] == "fetched:unipile:2" and result["news"] == "fetched:0"
-        assert lead.company_news_json == []           # fetched, nothing found
+        assert result == {"posts": "skipped", "news": "fetched:0"}
+        assert lead.linkedin_posts_fetched_at is None and lead.linkedin_posts_json is None
         personalization_context.ensure_fresh(db_session, lead, owner_id=test_user.id)
-        assert calls == {"posts": 1, "news": 1}       # cached
+        assert calls == {"news": 1}                     # cached
         personalization_context.ensure_fresh(db_session, lead, owner_id=test_user.id, force=True)
-        assert calls == {"posts": 2, "news": 2}
+        assert calls == {"news": 2}
 
-    def test_unconfigured_or_disabled_is_silent(self, db_session, test_user, lead):
-        result = personalization_context.ensure_fresh(db_session, lead, owner_id=test_user.id)
-        assert result["posts"].startswith("unavailable")
-        assert lead.linkedin_posts_fetched_at is None    # nothing stamped
-        system_settings.set(db_session, "linkedin_personalization_enabled", False)
-        assert personalization_context.ensure_fresh(
-            db_session, lead, owner_id=test_user.id)["posts"] == "skipped"
-
-    def test_send_path_fetches_and_records_inputs(self, db_session, enrolled, fake_channel,
-                                                  monkeypatch):
+    def test_send_path_works_without_any_linkedin_reader(self, db_session, enrolled,
+                                                         fake_channel):
         from app.workers.outreach_tasks import send_message_impl
 
-        monkeypatch.setattr(linkedin_posts, "fetch_recent_posts",
-                            lambda db, url, owner: (_posts(1), "unipile"))
-        msg = db_session.query(m.Message).filter_by(step_no=1).first()
-        lead_row = db_session.get(m.Lead, msg.lead_id)
-        lead_row.linkedin_url = "https://linkedin.com/in/lead0"
-        db_session.commit()
-        assert send_message_impl(db_session, msg.id, channel=fake_channel, now=NOW) == "sent"
-        db_session.refresh(msg)
-        assert msg.personalization_json["linkedin_post_url"] == "https://li/p/1"
-
-    def test_a_crashing_fetch_never_blocks_the_send(self, db_session, enrolled, fake_channel,
-                                                    monkeypatch):
-        from app.workers.outreach_tasks import send_message_impl
-
-        def _boom(*a, **k):
-            raise RuntimeError("scraper exploded")
-
-        monkeypatch.setattr(linkedin_posts, "fetch_recent_posts", _boom)
         msg = db_session.query(m.Message).filter_by(step_no=1).first()
         db_session.get(m.Lead, msg.lead_id).linkedin_url = "https://linkedin.com/in/x"
         db_session.commit()
         assert send_message_impl(db_session, msg.id, channel=fake_channel, now=NOW) == "sent"
+        db_session.refresh(msg)
+        assert not (msg.personalization_json or {}).get("linkedin_post_url")
 
 
 # --------------------------------------------------------------------------
@@ -426,10 +368,8 @@ class TestLeadPersonalizationApi:
     def test_get_refresh_and_url(self, client, db_session, lead, test_user, monkeypatch):
         body = client.get(f"/leads/{lead.id}/personalization").json()
         assert body["linkedin_url"] == "https://www.linkedin.com/in/sara-khan-9/"
-        monkeypatch.setattr(linkedin_posts, "fetch_recent_posts",
-                            lambda db, url, owner: (_posts(1), "rapidapi"))
         body = client.post(f"/leads/{lead.id}/personalization/refresh").json()
-        assert body["linkedin_posts"][0]["url"] == "https://li/p/1"
+        assert not body["linkedin_posts"]           # never fetched
         assert client.put(f"/leads/{lead.id}/linkedin-url",
                           json={"linkedin_url": "https://example.com"}).status_code == 422
         body = client.put(f"/leads/{lead.id}/linkedin-url",

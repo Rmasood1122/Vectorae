@@ -79,7 +79,7 @@ export function canApprove(selected: Set<ApprovalChannel>, linkedinAcknowledged:
   if (selected.has("linkedin") && !linkedinAcknowledged) {
     return {
       ok: false,
-      reason: "To approve LinkedIn, confirm you understand LinkedIn may restrict or suspend your account.",
+      reason: "To approve LinkedIn, confirm you understand that you send each LinkedIn message yourself.",
     };
   }
   return { ok: true, reason: null };

@@ -2,8 +2,10 @@
 
   process_inbound_reply(reply_id)   dispatched the moment an InboundReply row
                                     is committed, from every channel that
-                                    creates one (email polling, the Unipile
-                                    LinkedIn webhook, the WhatsApp webhook)
+                                    creates one (email polling, the WhatsApp
+                                    webhook). LinkedIn replies happen in the
+                                    user's own inbox; the user marks the task
+                                    "replied" (app/services/linkedin_tasks.py)
 
 On the `outreach` queue, with every other reply-path task: this is the same
 work as routing a reply, it just answers a different question about it.
@@ -15,7 +17,7 @@ user may already be editing. `force=True` is the deliberate override.
 
 WHY THIS IS A TASK AND NOT INLINE. Classifying a reply is two model calls in
 the worst case. Running that inside the webhook handler would hold the request
-open for seconds and make Unipile/Meta retry on timeout -- creating duplicate
+open for seconds and make Meta retry on timeout -- creating duplicate
 replies to classify. The webhook stores the reply, routes it the way it always
 did, and hands this off.
 """

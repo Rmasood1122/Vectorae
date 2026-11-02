@@ -3213,12 +3213,12 @@ class StrategyVersion(TimestampMixin, Base):
 
 
 class LinkedInAccount(TimestampMixin, Base):
-    """One LinkedIn account a user connected through Unipile.
-
-    The user signs in on Unipile's hosted page; Vectorae stores only the
-    Unipile account id, never a LinkedIn credential. Several per user is the
-    point: sends rotate across them (linkedin_limits.pick_account) so no one
-    account exceeds its daily ceiling.
+    """LEGACY (read-only since 2026-11-02, evals/vectorae option a): a LinkedIn
+    account a user connected through Unipile before the Unipile integration
+    was removed. Nothing creates rows any more; scripts/
+    linkedin_unipile_offboard.py ends each session at Unipile and marks the
+    row revoked. Kept (not dropped) because dropping a table that holds
+    customer data is a founder-run migration; Class C identifier.
 
     Daily usage lives in Redis (TTL'd per day), not here -- it is a counter
     that must be atomic across workers and forgotten at midnight. What lives
@@ -5136,7 +5136,7 @@ class LinkedInNetworkMessage(TimestampMixin, Base):
     text: Mapped[str] = mapped_column(Text)
     # draft -> approved -> (queued ->) sent | failed
     status: Mapped[str] = mapped_column(String(20), default="draft")
-    channel: Mapped[str | None] = mapped_column(String(20), nullable=True)  # copy|unipile|bulk
+    channel: Mapped[str | None] = mapped_column(String(20), nullable=True)  # copy (unipile|bulk: legacy rows)
     error: Mapped[str | None] = mapped_column(String(300), nullable=True)
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

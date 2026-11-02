@@ -122,7 +122,7 @@ def candidate_channels(session: Session, lead: Lead, owner: User | None, *,
                        ranking: list[str] | None = None) -> list[tuple[str, str]]:
     """[(channel, why it is usable)] in preference order."""
     from app.core.plans import get_plan  # noqa: PLC0415
-    from app.services import linkedin_outreach, phone_calls  # noqa: PLC0415
+    from app.services import linkedin_profile, phone_calls  # noqa: PLC0415
     from app.services import whatsapp_optin as optin_svc  # noqa: PLC0415
 
     plan_key = getattr(getattr(owner, "plan", None), "value", getattr(owner, "plan", None))
@@ -134,9 +134,10 @@ def candidate_channels(session: Session, lead: Lead, owner: User | None, *,
             continue
         if channel == "email" and lead.email:
             out.append((channel, "has a verified email address"))
-        elif channel == "linkedin" and lead.linkedin_url and owner is not None \
-                and linkedin_outreach.active_accounts(session, owner.id):
-            out.append((channel, "has a LinkedIn profile and you have a connected account"))
+        elif channel == "linkedin" and owner is not None \
+                and linkedin_profile.public_profile_url(lead.linkedin_url):
+            # L0: no account to connect; the step becomes a task YOU send.
+            out.append((channel, "has a LinkedIn profile; you send it yourself as a task"))
         elif channel == "phone" and _setting(session, "phone_calling_enabled") \
                 and phone_calls.e164(lead.phone) and phone_calls.consent_ok(session, lead):
             out.append((channel, "has a dialable number with recorded call consent"))

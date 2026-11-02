@@ -103,7 +103,7 @@ function LinkedInCard({ data, leadId, onSaved }: {
   const invalid = url.trim() !== "" && !isLinkedInProfileUrl(url);
   return (
     <Card>
-      <CardHeader><CardTitle>Recent LinkedIn posts</CardTitle></CardHeader>
+      <CardHeader><CardTitle>LinkedIn profile</CardTitle></CardHeader>
       <CardContent className="space-y-3 text-sm">
         <div className="flex gap-2">
           <Input aria-label="LinkedIn profile URL" placeholder="https://www.linkedin.com/in/…"
@@ -112,7 +112,8 @@ function LinkedInCard({ data, leadId, onSaved }: {
                   onClick={() => save.mutate()}>Save</Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          The next email opens on something they wrote. Checked {fetchedAgo(data.linkedin_posts_fetched_at)}.
+          Used as the link in this lead&apos;s LinkedIn tasks, which you send yourself. Vectorae does
+          not read LinkedIn posts or profiles.
         </p>
         {state.data && (
           <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -123,31 +124,7 @@ function LinkedInCard({ data, leadId, onSaved }: {
                 : state.data.connection_status === "pending" ? "Request pending" : "Not contacted"}
             </Badge>
             {state.data.is_premium && <Badge tone="accent">Premium (InMail)</Badge>}
-            {state.data.has_conversation && <Badge>Conversation open</Badge>}
           </div>
-        )}
-        {data.linkedin_posts?.length ? (
-          <ul className="space-y-2">
-            {data.linkedin_posts.map((p, i) => (
-              <li key={i} className="rounded border border-border p-2">
-                <p className="line-clamp-4 whitespace-pre-wrap">{p.text}</p>
-                <p className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-                  {p.posted_at && new Date(p.posted_at).toLocaleDateString()}
-                  {p.url && (
-                    <a href={p.url} target="_blank" rel="noreferrer" aria-label="Open post">
-                      <ExternalLink size={12} aria-hidden="true" />
-                    </a>
-                  )}
-                </p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-muted-foreground">
-            {data.linkedin_posts === null
-              ? "Not fetched yet — needs a LinkedIn URL and a LinkedIn data provider (Admin › Integrations)."
-              : "No recent posts."}
-          </p>
         )}
       </CardContent>
     </Card>

@@ -329,11 +329,9 @@ class TestPrerequisites:
     def test_ready_channel_launches_waiting_one_resumes(self, db_session, test_user, strategy,
                                                         chain, monkeypatch, queued_jobs,
                                                         mailbox):
-        from app.services import linkedin_outreach
-
+        # LinkedIn (L0) needs no provider or connected account: its steps
+        # become tasks the user sends (2026-11-02).
         entitle_owner(db_session, strategy, "growth")
-        monkeypatch.setattr(linkedin_outreach, "client_for", lambda s, u: object())
-        monkeypatch.setattr(linkedin_outreach, "active_accounts", lambda s, u: [object()])
         self._leads(db_session, strategy, test_user)
 
         # No Gmail: LinkedIn launches (lead c), email waits (a, b).

@@ -48,8 +48,6 @@ export function safeProfileUrl(url: string | null): string | null {
 // ---- messages ------------------------------------------------------------
 
 export const MESSAGE_MAX = 1500;
-export const BULK_MAX = 25;
-
 export function validateMessage(text: string): string | null {
   const v = text.trim();
   if (!v) return "Write a message first.";
@@ -57,16 +55,10 @@ export function validateMessage(text: string): string | null {
   return null;
 }
 
-/** Only a SAVED message can be copied-as-sent, sent, or queued. */
+/** Only a SAVED message can become a LinkedIn task. */
 export const isSavable = (m: NetworkMessage | undefined): boolean =>
   !!m && (m.status === "draft" || m.status === "approved" || m.status === "failed");
 export const isReadyToSend = (m: NetworkMessage | undefined): boolean => m?.status === "approved";
-
-/** The ids that may go in a bulk batch: saved, not yet sent, capped. */
-export function bulkCandidates(messages: NetworkMessage[], selected: Set<string>): string[] {
-  return messages.filter((m) => m.status === "approved" && selected.has(m.id))
-    .slice(0, BULK_MAX).map((m) => m.id);
-}
 
 export function messageErrorMessage(err: unknown): string {
   if (err instanceof ApiError) {

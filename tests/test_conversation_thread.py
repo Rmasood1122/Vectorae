@@ -45,8 +45,6 @@ def quiet_lead(db_session, test_user, email_sequence, verified_leads):
                         channel=m.ChannelType.EMAIL, step_no=3, template="breakup brief",
                         status=m.MessageStatus.SCHEDULED, scheduled_at=NOW + timedelta(days=2))
     db_session.add(pending)
-    db_session.add(m.LinkedInAccount(user_id=test_user.id, unipile_account_id="uni-1",
-                                     is_active=True))
     db_session.commit()
     return lead, pending
 
@@ -154,9 +152,11 @@ class TestStagnation:
         db_session.commit()
         assert orch.detect_stagnation(db_session)["suggested"] == 0
 
-    def test_no_connected_linkedin_account_means_no_linkedin(self, db_session, quiet_lead):
-        for account in db_session.execute(select(m.LinkedInAccount)).scalars():
-            account.is_active = False
+    def test_no_linkedin_profile_link_means_no_linkedin(self, db_session, quiet_lead):
+        # L0 (2026-11-02): LinkedIn needs no connected account, only a public
+        # profile link the user can open; a company page is not a person.
+        lead, _ = quiet_lead
+        lead.linkedin_url = "https://www.linkedin.com/company/acme/"
         db_session.commit()
         assert orch.detect_stagnation(db_session)["suggested"] == 0
 

@@ -762,10 +762,6 @@ def send_message_impl(session: Session, message_id: uuid.UUID,
         # Give back what THIS worker reserved in its prepare step. The
         # message row itself belongs to the winner now — nothing on it may
         # be touched here (which is why this is not _phone_send_failed).
-        if li_account is not None:
-            from app.services import linkedin_limits  # noqa: PLC0415
-
-            linkedin_limits.release(li_account, li_action, now=now)
         if is_phone:
             from app.services import notifications, phone_calls  # noqa: PLC0415
 
@@ -778,8 +774,8 @@ def send_message_impl(session: Session, message_id: uuid.UUID,
     # saying SCHEDULED for the rest of this function).
     message.status = MessageStatus.SENDING
     if is_linkedin:
-        message.sender_ref = f"linkedin:{li_account.id}"
-        message.linkedin_account_id = li_account.id
+        # L0: handed to the user's LinkedIn task queue, never sent by us.
+        message.sender_ref = "linkedin:assisted"
         message.linkedin_action = li_action
     elif is_phone:
         message.sender_ref = "phone:ai_voice"
@@ -792,8 +788,7 @@ def send_message_impl(session: Session, message_id: uuid.UUID,
 
     try:
         if is_linkedin:
-            outbound = _render_linkedin_outbound(session, strategy, lead, message,
-                                                 li_account, li_action)
+            outbound = _render_linkedin_outbound(session, strategy, lead, message, li_action)
         elif is_phone:
             outbound = _render_phone_outbound(session, strategy, lead, message)
         elif is_whatsapp:
@@ -923,11 +918,6 @@ def send_message_impl(session: Session, message_id: uuid.UUID,
             raise account_erasure.SendClaimLost(str(message.id))
         result = channel.send(outbound)
     except Exception as exc:
-        if li_account is not None:
-            # A request LinkedIn never received is not usage.
-            from app.services import linkedin_limits  # noqa: PLC0415
-
-            linkedin_limits.release(li_account, li_action, now=now)
         from app.services import account_erasure  # noqa: PLC0415
 
         if isinstance(exc, account_erasure.SendClaimLost):
@@ -988,10 +978,6 @@ def send_message_impl(session: Session, message_id: uuid.UUID,
         raise
 
     if not result.ok:
-        if li_account is not None:
-            from app.services import linkedin_limits  # noqa: PLC0415
-
-            linkedin_limits.release(li_account, li_action, now=now)
         if is_phone:
             _phone_send_failed(session, strategy, message, result.error or "call failed", now)
         if result.permanent_failure:
@@ -1010,10 +996,6 @@ def send_message_impl(session: Session, message_id: uuid.UUID,
     message.thread_ref = result.thread_ref
     message.rfc_message_id = result.rfc_message_id
     message.rfc_references = result.rfc_references
-    if li_account is not None:
-        from app.services import linkedin_outreach  # noqa: PLC0415
-
-        linkedin_outreach.after_send(session, lead, li_account, li_action, result, now)
     if is_phone:
         # "Sent" = the call was placed. What happened on it arrives on the
         # provider's webhook (app/api/calls.py).
@@ -1353,83 +1335,58 @@ def _step_of(session: Session, message: Message):
 
 
 def _get_linkedin_channel(session: Session, strategy: Strategy) -> OutreachChannel:
-    """Tests monkeypatch THIS function (like _get_channel for Gmail)."""
+    """Tests monkeypatch THIS function (like _get_channel for Gmail).
+
+    L0 (evals/vectorae, 2026-11-02): the channel queues a task for the
+    strategy's owner; it never transmits anything on LinkedIn."""
+    from app.db.models import User  # noqa: PLC0415
     from app.integrations.linkedin_channel import LinkedInChannel  # noqa: PLC0415
-    from app.services import linkedin_outreach, notifications  # noqa: PLC0415
+    from app.services import notifications  # noqa: PLC0415
 
     owner = notifications.owner_of_strategy(session, strategy)
-    return LinkedInChannel(session=session,
-                           client=linkedin_outreach.client_for(session, owner))
+    return LinkedInChannel(session=session, owner=session.get(User, owner) if owner else None)
 
 
 def _prepare_linkedin(session: Session, strategy: Strategy, lead: Lead,
                       message: Message, now: datetime, tz: str):
-    """Everything a LinkedIn send decides before it may claim the message.
+    """Everything a LinkedIn step decides before it may claim the message.
 
-    Returns (account, action) with the account's daily slot RESERVED, or a
-    status string when the send ends here:
-      failed_linkedin_not_configured   no Unipile credentials (permanent)
-      failed_no_linkedin_account       the owner has no active account
-      failed_linkedin_account_gone     the account that owns this lead's
-                                       conversation was disconnected
-      skipped_linkedin_not_connected   a message step, request still pending
-                                       (the sequence continues, like a
-                                       WhatsApp step for a lead without opt-in)
-      deferred_cap                     every eligible account is at its ceiling
+    Returns (None, action), or a status string when the step ends here:
+      failed_no_linkedin_profile       the lead has no public profile link
+      skipped_linkedin_not_connected   a message step while the user has not
+                                       reported the connection as accepted
+                                       (the sequence continues)
+      deferred_cap                     the user already has a full day's worth
+                                       of LinkedIn tasks waiting; queued again
+                                       tomorrow, never dropped
     """
-    from app.services import linkedin_limits, notifications  # noqa: PLC0415
+    from app.services import linkedin_profile, linkedin_tasks, notifications  # noqa: PLC0415
     from app.services import linkedin_outreach as li  # noqa: PLC0415
 
-    def _fail(code: str, reason: str) -> str:
+    if linkedin_profile.public_profile_url(lead.linkedin_url) is None:
         message.status = MessageStatus.FAILED
-        message.error = reason
+        message.error = "the lead has no LinkedIn profile link"
         session.commit()
-        return code
-
-    owner = notifications.owner_of_strategy(session, strategy)
-    client = li.client_for(session, owner)
-    if client is None:
-        return _fail("failed_linkedin_not_configured",
-                     "LinkedIn is not configured (Admin > Integrations > Unipile)")
-    if not li.active_accounts(session, owner):
-        return _fail("failed_no_linkedin_account",
-                     "no active LinkedIn account connected (Settings > Integrations)")
-    pinned = li.relationship_account(session, lead)
-    if lead.linkedin_account_id and (pinned is None or not pinned.is_active):
-        return _fail("failed_linkedin_account_gone",
-                     "the LinkedIn account that owns this conversation is "
-                     "disconnected -- reconnect it to continue")
-
-    li.refresh_profile(session, client, lead, owner)   # raises -> task retry
+        return "failed_no_linkedin_profile"
     action = li.resolve_action(_step_of(session, message).linkedin_action, lead)
     if action == li.WAIT:
         engine.skip_message(session, message, reason="skipped_linkedin_not_connected", now=now)
         return "skipped_linkedin_not_connected"
-
-    account = linkedin_limits.pick_account(session, owner, action,
-                                           required_account_id=lead.linkedin_account_id,
-                                           now=now)
-    if account is None and action == "inmail" and lead.linkedin_connection_status is None:
-        # No InMail-capable account with credits: a connection request is the
-        # next best first touch.
-        action = "connect"
-        account = linkedin_limits.pick_account(session, owner, action,
-                                               required_account_id=lead.linkedin_account_id,
-                                               now=now)
-    if account is None:
+    owner = notifications.owner_of_strategy(session, strategy)
+    cap_class = "connection_note" if action == "connect" else "message"
+    if linkedin_tasks.waiting_count(session, owner, cap_class) >= linkedin_tasks._cap(
+            session, cap_class):
         tomorrow = now.astimezone(timezone.utc).replace(
             hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
         message.scheduled_at = engine.next_window_slot(tomorrow, tz)
         session.commit()
         return "deferred_cap"
-    return account, action
+    return None, action
 
 
 def _render_linkedin_outbound(session: Session, strategy: Strategy, lead: Lead,
-                              message: Message, account, action: str) -> OutboundMessage:
-    from app.services import linkedin_outreach  # noqa: PLC0415
-
-    from app.services import claim_verification  # noqa: PLC0415
+                              message: Message, action: str) -> OutboundMessage:
+    from app.services import claim_verification, linkedin_outreach  # noqa: PLC0415
 
     rendered = linkedin_outreach.render(session, strategy, lead,
                                         _step_of(session, message), action)
@@ -1445,13 +1402,10 @@ def _render_linkedin_outbound(session: Session, strategy: Strategy, lead: Lead,
     return OutboundMessage(
         message_id=str(message.id),
         lead_id=str(lead.id),
-        to_address=lead.linkedin_provider_id or lead.linkedin_url,
+        to_address=lead.linkedin_url,
         body=rendered["text"],
         subject=rendered.get("subject"),
-        thread_ref=lead.linkedin_chat_id,
-        metadata={"action": action, "account_id": account.unipile_account_id,
-                  "provider_id": lead.linkedin_provider_id,
-                  "chat_id": lead.linkedin_chat_id},
+        metadata={"action": action},
     )
 
 

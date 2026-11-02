@@ -15,8 +15,8 @@ vi.mock("@/lib/api/network", () => ({
   getRecommendations: vi.fn(async () => ({ products: [] })),
   listMessages: vi.fn(async () => ({ messages: [] })),
   eraseNetwork: vi.fn(async () => ({ deleted: 3 })),
-  bulkSend: vi.fn(), draftMessage: vi.fn(), importConnections: vi.fn(),
-  markMessageSent: vi.fn(), saveMessage: vi.fn(), sendMessageNow: vi.fn(),
+  draftMessage: vi.fn(), importConnections: vi.fn(),
+  markMessageSent: vi.fn(), saveMessage: vi.fn(),
 }));
 import { eraseNetwork, getNetworkStatus } from "@/lib/api/network";
 import NetworkPage from "@/app/(app)/network/page";

@@ -3,7 +3,7 @@
 WHAT IT IS
 A normalising layer over data Vectorae ALREADY stores. Nothing here fetches:
   newsapi        leads.company_news_json      (personalization_context, NewsAPI)
-  linkedin_post  leads.linkedin_posts_json    (personalization_context, Unipile/RapidAPI)
+  linkedin_post  leads.linkedin_posts_json    (legacy: no longer fetched since 2026-11-02)
   apollo         the organisation record in leads.enrichment_json
   market_intel   strategies.market_signals_json, only items naming THIS lead's company
 Each distinct event becomes one `lead_signals` row with a type, a date, an

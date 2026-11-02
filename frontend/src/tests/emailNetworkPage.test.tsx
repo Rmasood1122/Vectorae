@@ -17,8 +17,8 @@ vi.mock("@/lib/api/network", () => ({
     connection_count: 0, needs_new_export: false, max_bytes: 5_000_000 })),
   getRecommendations: vi.fn(async () => ({ products: [] })),
   listMessages: vi.fn(async () => ({ messages: [] })),
-  eraseNetwork: vi.fn(), bulkSend: vi.fn(), draftMessage: vi.fn(), importConnections: vi.fn(),
-  markMessageSent: vi.fn(), saveMessage: vi.fn(), sendMessageNow: vi.fn(),
+  eraseNetwork: vi.fn(), draftMessage: vi.fn(), importConnections: vi.fn(),
+  markMessageSent: vi.fn(), saveMessage: vi.fn(),
 }));
 
 const IMPORT_FOR_MOCK = {

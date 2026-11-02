@@ -107,6 +107,10 @@ def _audit(db: Session, action: str, task: LinkedInTask, request=None, **details
 
 
 def own(db: Session, user: User, task_id) -> LinkedInTask:
+    try:
+        task_id = task_id if isinstance(task_id, uuid.UUID) else uuid.UUID(str(task_id))
+    except ValueError:
+        raise TaskError(404, "Task not found.") from None
     task = db.get(LinkedInTask, task_id)
     if task is None or task.user_id != user.id:
         raise TaskError(404, "Task not found.")
@@ -197,6 +201,18 @@ def opened_today(db: Session, user_id, cap_class: str, now: datetime) -> int:
     ).scalar_one()
 
 
+def waiting_count(db: Session, user_id, cap_class: str) -> int:
+    """Tasks of this cap class the user has not acted on yet (pending or
+    approved). The sequence engine stops queuing more once this reaches the
+    daily cap, so the queue never outgrows what the user may open today."""
+    kinds = ("connection_note",) if cap_class == "connection_note" else ("message", "comment")
+    return db.execute(
+        select(func.count(LinkedInTask.id))
+        .where(LinkedInTask.user_id == user_id, LinkedInTask.kind.in_(kinds),
+               LinkedInTask.status.in_(("pending", "approved")))
+    ).scalar_one()
+
+
 def open_task(db: Session, user: User, task_id, *, now: datetime | None = None,
               request=None) -> dict:
     """The user is about to act on LinkedIn. Re-checks everything, counts the
@@ -257,6 +273,13 @@ def complete(db: Session, user: User, task_id, outcome: str, *,
             LinkedInNetworkMessage.connection_id == task.connection_id)).scalars().first()
         if msg is not None and msg.status != "sent":
             msg.status, msg.channel, msg.sent_at = "sent", "copy", task.completed_at
+    if task.source == "sequence" and task.lead_id:
+        from app.db.models import Lead  # noqa: PLC0415
+        from app.services import linkedin_outreach  # noqa: PLC0415
+
+        lead = db.get(Lead, task.lead_id)
+        if lead is not None:
+            linkedin_outreach.after_task(db, lead, task.kind, outcome, task.completed_at)
     _audit(db, TASK_COMPLETED, task, request, outcome=outcome)
     return task
 

@@ -101,7 +101,7 @@ To act on a result, change your sequences yourself.
 The learning loop does not choose or reuse opening lines. The usual causes are:
 
 - **The claim check rewrote the opener.** If the first sentence makes a claim about the prospect that stored data cannot back up, it is replaced with "I wanted to reach out to you at" followed by their company and "directly." (or "I wanted to reach out to you directly." with no company). An unsupported subject line becomes "Quick question". Open the lead's **Claim checks** tab: a rewritten line has the verdict "rewritten".
-- **There was nothing personal to use.** The first line is asked to reference one of the lead's recent LinkedIn posts only when posts are stored for them, and company news only when there is recent news. Check the **Personalization** tab.
+- **There was nothing personal to use.** The first line is asked to reference company news only when there is recent news about the lead's company. Vectorae does not read LinkedIn posts. Check the **Personalization** tab.
 - **Every email in a step uses the same brief.** A brief that dictates an opening produces it every time.
 
 To fix it, rewrite the step's brief around a question or a problem rather than facts about the prospect.

@@ -2,8 +2,8 @@
 
 DELETE /me (app/api/account_data.py) calls erase_account() after the password
 and the typed confirmation are checked, any paid plan is cancelled
-(cancel_billing, fail closed) and connected LinkedIn accounts are disconnected
-at Unipile (disconnect_providers). Spec: docs/features/gdpr-erasure.md.
+(cancel_billing, fail closed) and provider-side data is deleted
+(disconnect_providers). Spec: docs/features/gdpr-erasure.md.
 
 WHAT BELONGS TO THE ACCOUNT. account_export.OWNERSHIP is the single source of
 truth: the same ownership paths that decide what the export contains decide
@@ -335,18 +335,20 @@ def cancel_billing(db: Session, user_id: uuid.UUID, now: datetime | None = None)
 
 
 def disconnect_providers(db: Session, user_id: uuid.UUID) -> dict:
-    """Disconnect the account's LinkedIn accounts AT UNIPILE, so the provider
-    drops the stored LinkedIn session too -- deleting our row alone would
-    leave it there. Best effort, BEFORE the erasure (the per-account Unipile
-    credentials are erased with it): a failure is logged and recorded on the
-    erasure record, never a reason to keep the person's data.
+    """Provider-side deletions done BEFORE the erasure. Best effort: a failure
+    is logged and recorded on the erasure record, never a reason to keep the
+    person's data.
+
+    LinkedIn: since 2026-11-02 (evals/vectorae, option a) Vectorae holds no
+    LinkedIn session anywhere. Sessions Unipile held for accounts connected
+    before then are ended once by scripts/linkedin_unipile_offboard.py; the
+    record only notes whether this account had such rows.
 
     Not done (no adapter support / founder decision, see the spec): revoking
     Google, HubSpot, Salesforce or Slack grants on the provider side, and
     deleting the Stripe Customer object.
     """
     from app.db.models import LinkedInAccount  # noqa: PLC0415
-    from app.integrations import unipile_linkedin  # noqa: PLC0415
 
     # Voice twin: a Professional Voice Clone of the owner's voice is biometric
     # data held AT ELEVENLABS; delete it there before our rows go. Only added
@@ -355,27 +357,11 @@ def disconnect_providers(db: Session, user_id: uuid.UUID) -> dict:
 
     voices = voice_twin.provider_deletions_for_erasure(db, user_id)
     extra = {"elevenlabs_voices": voices} if voices is not None else {}
-    ids = list(db.execute(select(LinkedInAccount.unipile_account_id)
-                          .where(LinkedInAccount.user_id == user_id)).scalars())
-    if not ids:
+    count = len(list(db.execute(select(LinkedInAccount.id)
+                                .where(LinkedInAccount.user_id == user_id)).scalars()))
+    if not count:
         return {"unipile": "none", **extra}
-    try:
-        client = unipile_linkedin.get_client(db, user_id)
-    except Exception:  # noqa: BLE001
-        logger.exception("account deletion: could not build the Unipile client")
-        client = None
-    if client is None:
-        return {"unipile": "not_configured", "accounts": len(ids), **extra}
-    done = failed = 0
-    for account_id in ids:
-        try:
-            client.delete_account(account_id)
-            done += 1
-        except Exception as exc:  # noqa: BLE001
-            failed += 1
-            logger.warning("account deletion: Unipile account %s not disconnected: %s",
-                           account_id, exc)
-    return {"unipile": {"disconnected": done, "failed": failed}, **extra}
+    return {"unipile": "offboarded_by_script", "accounts": count, **extra}
 
 
 _VOICEMAIL_FILE = re.compile(r"^[0-9a-f]{32}\.mp3$")

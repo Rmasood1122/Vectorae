@@ -13,8 +13,8 @@ vi.mock("@/lib/api/network", () => ({
   getNetworkStatus: vi.fn(),
   getRecommendations: vi.fn(async () => ({ products: [] })),
   listMessages: vi.fn(async () => ({ messages: [] })),
-  eraseNetwork: vi.fn(), bulkSend: vi.fn(), draftMessage: vi.fn(), importConnections: vi.fn(),
-  saveMessage: vi.fn(), sendMessageNow: vi.fn(),
+  eraseNetwork: vi.fn(), draftMessage: vi.fn(), importConnections: vi.fn(),
+  saveMessage: vi.fn(),
 }));
 vi.mock("@/lib/api/linkedinTasks", async (orig) => ({
   ...(await orig<typeof import("@/lib/api/linkedinTasks")>()),

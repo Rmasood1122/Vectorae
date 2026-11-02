@@ -20,7 +20,6 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/components/ui/toast";
 import { VoiceSettings } from "@/components/settings/VoiceSettings";
 import { VoiceTwinCard } from "@/components/settings/VoiceTwinCard";
-import { LinkedInAccountsCard } from "@/components/settings/LinkedInAccountsCard";
 import { SlackCard } from "@/components/settings/SlackCard";
 import { CrmCards } from "@/components/settings/CrmCards";
 import { ApiKeysCard, WebhooksCard } from "@/components/settings/WebhooksCard";
@@ -389,7 +388,6 @@ function IntegrationsSettings() {
           </Card>
 
           {/* LinkedIn (Feature Group 5) */}
-          <LinkedInAccountsCard />
 
           {/* Feature Group 4: Slack, HubSpot, Salesforce */}
           <SlackCard />
