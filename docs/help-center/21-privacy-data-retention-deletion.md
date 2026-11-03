@@ -130,10 +130,11 @@ Yes. It is immediate and cannot be undone, so download your data first if you wa
 When you confirm, Vectorae:
 
 1. cancels any paid plan at once, so nothing more is charged. A monthly or annual plan ends immediately; the unused rest of the current month or year is not refunded automatically (contact support about a refund before deleting). Pay-per-meeting meetings that were not yet charged are waived. If the payment provider does not confirm the cancellation, or payments are not set up on the server your account runs on, nothing is deleted and you see a message asking you to try again or contact support;
-2. disconnects your LinkedIn accounts at Unipile, so the stored LinkedIn session is dropped there too;
-3. cancels every scheduled message and stops every sequence;
-4. erases your profile, products, strategies, prospects, messages, replies, meetings, CRM records, settings, connected accounts (Gmail, LinkedIn, CRM and other integrations, with their stored tokens), API keys, every sign-in session on every device, uploaded backgrounds and logos, and voicemail audio;
-5. signs you out.
+2. cancels every scheduled message and stops every sequence;
+3. erases your profile, products, strategies, prospects, messages, replies, meetings, LinkedIn tasks and LinkedIn consent records, CRM records, settings, connected accounts (Gmail, CRM and other integrations, with their stored tokens), API keys, every sign-in session on every device, uploaded backgrounds and logos, and voicemail audio;
+4. signs you out.
+
+Vectorae holds no LinkedIn login or session for you, so there is nothing to disconnect on LinkedIn's side.
 
 ## What is kept after I delete my account?
 

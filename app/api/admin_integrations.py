@@ -3,7 +3,7 @@
 Two surfaces the feature expansion needed and app/api/admin.py did not have:
 
   /admin/integrations      the deployment-wide API keys and OAuth app
-                           credentials (OpenAI, NewsAPI, Unipile, Vapi, Slack
+                           credentials (OpenAI, NewsAPI, Vapi, Slack
                            app, HubSpot app ...). Stored ONLY through
                            TokenStore (Fernet-encrypted); never returned --
                            GET reports which keys are set, not their values.

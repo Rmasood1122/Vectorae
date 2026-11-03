@@ -1194,7 +1194,7 @@ async def crm_stream(request: Request, ticket: str = Query(...)) -> StreamingRes
 # ---------------------------------------------------------------------------
 #
 # The reply row itself is written by whichever channel received it (the Gmail
-# poller, the Unipile webhook, the WhatsApp webhook); these two routes are the
+# poller, the WhatsApp webhook); these two routes are the
 # only place a human touches the AI's reading of it.
 #
 # NOTHING HERE SENDS ANYTHING. `approved_draft` puts the draft in front of a

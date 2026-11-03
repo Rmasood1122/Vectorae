@@ -18,7 +18,6 @@ from app.db import models as m
 from app.services import daily_send_approval as dsa
 from app.services import send_diagnostics as diag
 from app.services import system_settings
-from tests.conftest import entitle_owner
 
 NOW = datetime(2026, 8, 11, 10, 0, tzinfo=timezone.utc)   # Tuesday, in the window
 _REAL_DSA = dsa.enabled
@@ -138,24 +137,13 @@ class TestPrerequisites:
         with pytest.raises(RuntimeError, match="no connected Gmail account"):
             outreach_tasks._account_for_strategy(db_session, verified_strategy)
 
-    def test_linkedin_not_configured(self, db_session, enrolled, verified_strategy, wired,
-                                     test_user):
-        entitle_owner(db_session, verified_strategy, "growth")
-        msg = _as_linkedin(db_session, _first(db_session))
-        assert "linkedin_not_configured" in _codes(
-            diag.diagnose(db_session, verified_strategy, now=NOW), "linkedin")
-        assert wired.send_message_impl(db_session, msg.id, now=NOW) == \
-            "failed_linkedin_not_configured"
-
-    def test_linkedin_no_account(self, db_session, test_user, monkeypatch):
-        from app.services import linkedin_outreach
-
-        monkeypatch.setattr(linkedin_outreach, "client_for", lambda s, u: object())
-        entitle_owner_user = db_session.get(m.User, test_user.id)
-        entitle_owner_user.plan = "growth"
+    def test_linkedin_needs_nothing_configured(self, db_session, test_user):
+        # L0 (2026-11-02): LinkedIn steps become tasks the user sends; there
+        # is no provider key and no account to connect, so no prerequisite.
+        user = db_session.get(m.User, test_user.id)
+        user.plan = "growth"
         db_session.commit()
-        codes = [r["code"] for r in diag.channel_readiness(db_session, test_user.id, "linkedin")]
-        assert codes == ["linkedin_no_account"]
+        assert diag.channel_readiness(db_session, test_user.id, "linkedin") == []
 
     def test_channel_not_in_plan_and_the_plan_hold(self, db_session, enrolled,
                                                    verified_strategy, wired):

@@ -2,8 +2,12 @@
 
 ensure_fresh() runs in the send path, just before an email is rendered
 (outreach_tasks._render_email_outbound), and refreshes what is stale:
-  LinkedIn posts   cached 7 days   (Unipile, else RapidAPI)
   company news    cached 3 days   (NewsAPI, last 30 days, must name the company)
+
+LinkedIn posts are NOT fetched (founder decision 2026-11-02, evals/vectorae):
+reading other members' posts needs LinkedIn partner access Vectorae does not
+have; the Unipile / RapidAPI readers were removed and
+scripts/linkedin_unipile_offboard.py purges what they stored.
 
 Fetching at SEND time rather than at sourcing time is deliberate. A sequence's
 step 3 goes out a week after step 1; posts fetched at sourcing would be two
@@ -75,7 +79,7 @@ def _stale(fetched_at: datetime | None, ttl: timedelta, now: datetime) -> bool:
 def ensure_fresh(session: Session, lead: Lead, *, owner_id=None, force: bool = False,
                  now: datetime | None = None) -> dict:
     """Refresh stale posts/news on `lead`. Returns what happened. Never raises."""
-    from app.integrations import linkedin_posts, newsapi  # noqa: PLC0415
+    from app.integrations import newsapi  # noqa: PLC0415
     from app.services import credentials, system_settings  # noqa: PLC0415
 
     now = now or _now()
@@ -89,27 +93,6 @@ def ensure_fresh(session: Session, lead: Lead, *, owner_id=None, force: bool = F
     try:
         if not lead.linkedin_url:
             lead.linkedin_url = linkedin_url_for(lead)
-
-        url = lead.linkedin_url
-        if (url and system_settings.get(session, "linkedin_personalization_enabled")
-                and (force or _stale(lead.linkedin_posts_fetched_at, POSTS_TTL, now))):
-            try:
-                posts, source = linkedin_posts.fetch_recent_posts(session, url, owner_id)
-                lead.linkedin_posts_json = posts
-                lead.linkedin_posts_fetched_at = now
-                result["posts"] = f"fetched:{source}:{len(posts)}"
-                # Part 1 Feature 10: an intent signal read from the prospect's
-                # own posts is a very different claim from one inferred, and
-                # the hook built on it should say which.
-                if posts:
-                    from app.services import provenance  # noqa: PLC0415
-
-                    provenance.record(session, lead, "intent_signal",
-                                      provenance.LINKEDIN,
-                                      detail=f"{len(posts)} recent post(s) via {source}",
-                                      observed_at=now, commit=False)
-            except linkedin_posts.LinkedInPostsUnavailable as exc:
-                result["posts"] = f"unavailable: {exc}"[:200]
 
         key = credentials.get_secret(session, "newsapi", "api_key", user_id=owner_id)
         if (key and lead.company and system_settings.get(session, "company_news_enabled")

@@ -34,8 +34,8 @@ router = APIRouter(tags=["send-approval"])
 
 class ApproveIn(BaseModel):
     channels: list[str] = Field(min_length=1, max_length=len(approval.ALL_CHANNELS))
-    #: Required (true) whenever "linkedin" is in `channels`: LinkedIn may
-    #: restrict or suspend accounts that use automation.
+    #: Required (true) whenever "linkedin" is in `channels`: the person read
+    #: that Vectorae only queues LinkedIn tasks they send themselves.
     linkedin_risk_acknowledged: bool = False
     #: The LinkedIn warning version the person was shown.
     linkedin_warning_version: str | None = Field(default=None, max_length=40)

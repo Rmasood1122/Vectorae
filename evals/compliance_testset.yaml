@@ -123,3 +123,13 @@ files:
   - tests/test_data_subject_objection_guards.py
   - tests/test_voice_call_guards.py
   - tests/test_lead_erasure_threading_guards.py
+  # LinkedIn, user-permission-based (2026-11-02 gate PR, justification in
+  # docs/program/plans/gate-linkedin-unipile-removal.md): no LinkedIn automation,
+  # scraping or third-party session provider ships; L0 tasks need a per-task
+  # approval that expires, honour suppression at create/approve/open and the
+  # daily caps; the L3 connections import needs a recorded lawful-basis
+  # attestation; the one-time offboarding ends every legacy Unipile session
+  - tests/test_linkedin_guard.py
+  - tests/test_linkedin_tasks.py
+  - tests/test_linkedin_l3_attestation.py
+  - tests/test_linkedin_unipile_offboard.py

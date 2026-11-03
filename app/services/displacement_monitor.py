@@ -259,10 +259,9 @@ def watchlist(db: Session, strategy_id) -> list[Lead]:
 def _posts_for(db: Session, lead: Lead, owner_id, now: datetime) -> list[dict]:
     """This lead's recent posts, refreshed through the normal cached path.
 
-    Reuses app/services/personalization_context.py::ensure_fresh rather than
-    calling Unipile directly, so the 7-day cache, the provider fallback and
-    the admin kill switch are all shared with the personalization path -- a
-    twelve-hourly sweep must not re-fetch every lead's posts twice a day.
+    Reuses app/services/personalization_context.py::ensure_fresh, which no
+    longer fetches LinkedIn posts (2026-11-02, evals/vectorae): only posts
+    already stored are read, and the offboarding script purges those.
     Never raises.
     """
     from app.services import personalization_context  # noqa: PLC0415

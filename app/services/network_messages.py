@@ -1,12 +1,15 @@
-"""Write to, and send to, the user's OWN LinkedIn connections.
+"""Write to the user's OWN LinkedIn connections. The USER sends.
 
-Every path (copy, one-click, bulk) shares these rules:
-  * Growth plan or higher (checked again at send time, not just at queue time)
+Since 2026-11-02 (evals/vectorae, option a) Vectorae never sends on LinkedIn.
+A saved message becomes an L0 task (POST /linkedin-tasks/from-network-message,
+app/services/linkedin_tasks.py) that the user approves, opens and sends
+themselves. Rules here:
+  * Growth plan or higher
   * the connection and the product belong to the caller
-  * what is sent is the text the user SAVED. A draft is never sent.
-  * LinkedIn suppression list honoured
-  * the per-account daily message cap honoured (linkedin_limits)
-  * only people who are still 1st-degree connections; never a stranger
+  * what the user sends is the text they SAVED; a draft never becomes a task
+  * the LinkedIn suppression list is honoured at draft, save-as-sent and in
+    every task step
+There is no one-click send and no bulk send.
 """
 
 from __future__ import annotations
@@ -21,12 +24,9 @@ from sqlalchemy.orm import Session
 from app.db.models import (
     LinkedInConnection, LinkedInConnectionMatch, LinkedInNetworkMessage, Product, User,
 )
-from app.services import anthropic_client, linkedin_limits, prompt_safety, style_profile
-from app.services import linkedin_network as ln
+from app.services import anthropic_client, prompt_safety, style_profile
 
 MESSAGE_MAX = 1500
-BULK_MAX = 25
-BULK_SPACING_SECONDS = 90
 
 logger = logging.getLogger(__name__)
 
@@ -186,68 +186,3 @@ def mark_sent_manually(db: Session, user: User, message_id) -> LinkedInNetworkMe
     msg.status, msg.channel, msg.sent_at = "sent", "copy", datetime.now(timezone.utc)
     db.commit()
     return msg
-
-
-def deliver(db: Session, user: User, msg: LinkedInNetworkMessage, channel: str) -> LinkedInNetworkMessage:
-    """Send ONE saved message through the user's connected LinkedIn account.
-    Raises MessageError with the status the API should answer; leaves the row
-    in a state the user can act on."""
-    from app.services import linkedin_outreach as lo  # noqa: PLC0415
-    from app.workers.lead_tasks import is_suppressed  # noqa: PLC0415
-    from app.integrations.unipile_linkedin import UnipileError  # noqa: PLC0415
-
-    if not ln.is_eligible(user):
-        raise MessageError(402, "Your plan does not include the LinkedIn network.")
-    if msg.status not in ("approved", "queued"):
-        raise MessageError(409, "Only a saved message can be sent.")
-    conn = db.get(LinkedInConnection, msg.connection_id)
-    if conn is None or conn.user_id != user.id:
-        raise MessageError(404, "Connection not found.")
-    slug = lo.normalize_profile(conn.profile_url)
-    if not slug:
-        raise _fail(db, msg, 409, "This connection has no LinkedIn profile link.")
-    if is_suppressed(db, linkedin=conn.profile_url):
-        raise _fail(db, msg, 409, "This person is on the do-not-contact list.")
-    client = lo.client_for(db, user.id)
-    if client is None or not lo.active_accounts(db, user.id):
-        raise MessageError(409, "Connect a LinkedIn account in Settings first.")
-    account = linkedin_limits.pick_account(db, user.id, "message")
-    if account is None:
-        raise MessageError(429, "Daily LinkedIn message limit reached. Try again tomorrow.")
-    try:
-        profile = client.profile(slug, account.unipile_account_id)
-        if not profile.get("is_connected"):
-            linkedin_limits.release(account, "message")
-            raise _fail(db, msg, 409, "This person is no longer a 1st-degree connection.")
-        client.start_chat(profile["provider_id"], account.unipile_account_id, msg.text)
-    except UnipileError as exc:
-        linkedin_limits.release(account, "message")
-        # Unipile's text goes to the log; the message row and the 502 say
-        # what happened without the provider's body (gaps-sweep-2 review L3).
-        logger.warning("network message %s: Unipile send failed: %s", msg.id, exc)
-        raise _fail(db, msg, 502, "LinkedIn send failed: the LinkedIn provider "
-                                  "refused it. Try again later.") from exc
-    now = datetime.now(timezone.utc)
-    account.last_used_at = now
-    msg.status, msg.channel, msg.sent_at, msg.error = "sent", channel, now, None
-    db.commit()
-    return msg
-
-
-def _fail(db: Session, msg: LinkedInNetworkMessage, status: int, detail: str) -> MessageError:
-    msg.status, msg.error = "failed", detail[:300]
-    db.commit()
-    return MessageError(status, detail)
-
-
-def queue_bulk(db: Session, user: User, ids: list) -> list[LinkedInNetworkMessage]:
-    if not ids or len(ids) > BULK_MAX:
-        raise MessageError(422, f"Choose 1 to {BULK_MAX} messages per batch.")
-    rows = [own_message(db, user, i) for i in ids]          # 404 on any foreign id
-    bad = [r for r in rows if r.status != "approved"]
-    if bad:
-        raise MessageError(409, "Every message must be saved before it can be queued.")
-    for r in rows:
-        r.status, r.channel, r.error = "queued", "bulk", None
-    db.commit()
-    return rows

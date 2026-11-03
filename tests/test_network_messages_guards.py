@@ -8,10 +8,8 @@ the file stands alone.
 """
 
 from __future__ import annotations
-import fakeredis
 import pytest
 from app.db import models as m
-from app.services import linkedin_limits
 
 
 class StubClaude:
@@ -34,12 +32,9 @@ def claude(monkeypatch):
     return stub
 
 
-@pytest.fixture(autouse=True)
-def redis(monkeypatch):
-    r = fakeredis.FakeRedis(decode_responses=True)
-    monkeypatch.setattr(linkedin_limits, "_redis", lambda: r)
-    return r
-
+# Gate change 2026-11-02 (docs/program/plans/gate-linkedin-unipile-removal.md):
+# the Redis-backed per-account LinkedIn limiter (linkedin_limits) was removed
+# with Unipile, so its fixture went too. The draft guard below is unchanged.
 
 class _KeepOpen:
     """Stand-in for SessionLocal(): hands the test session to the task and

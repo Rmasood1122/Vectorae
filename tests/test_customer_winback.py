@@ -570,13 +570,13 @@ class TestCustomersAreNeverProfiled:
 
     def test_personalization_research_never_fetches_for_a_customer(
             self, db_session, local_strategy, monkeypatch):
-        from app.integrations import linkedin_posts, newsapi
+        from app.integrations import newsapi
         from app.services import personalization_context
 
         def boom(*a, **k):
             raise AssertionError("a consumer's data was sent to a provider")
 
-        monkeypatch.setattr(linkedin_posts, "fetch_recent_posts", boom)
+        # (No LinkedIn post reader exists since 2026-11-02.)
         monkeypatch.setattr(newsapi, "fetch_company_news", boom, raising=False)
         customer = _contacted_customer(db_session, local_strategy)
         out = personalization_context.ensure_fresh(db_session, customer, force=True)

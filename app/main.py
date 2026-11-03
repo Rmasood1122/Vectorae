@@ -282,7 +282,7 @@ app.include_router(ai_intelligence_router)       # FG1: /strategies/{id}/intelli
 app.include_router(personalization_router)       # /me/style-profile, /leads/{id}/personalization, /public/video
 # FG5. Its /integrations/linkedin/* paths do not collide with ui_support's
 # /integrations/status or /integrations/{provider}/test (different segments).
-app.include_router(linkedin_router)              # /integrations/linkedin/*, /webhooks/unipile
+app.include_router(linkedin_router)              # /leads/{id}/linkedin (L0 state)
 app.include_router(calls_router)                 # FG6: /calls, /leads/{id}/call, /webhooks/vapi|elevenlabs
 app.include_router(revenue_analytics_router)     # FG3: /analytics/revenue, /costs, funnel, send-time, sentiment
 app.include_router(tracking_router)              # FG3: /t/o/{token}.gif (public open pixel)

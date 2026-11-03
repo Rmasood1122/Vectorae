@@ -285,13 +285,13 @@ class TestDispatch:
         with open(outreach_tasks.__file__, encoding="utf-8") as handle:
             assert "reply_tasks.enqueue(reply_row.id)" in handle.read()
 
-    def test_the_linkedin_webhook_dispatches_classification(self):
-        from app.api import linkedin
+    def test_there_is_no_linkedin_webhook_to_dispatch_from(self):
+        # 2026-11-02: the Unipile webhook was removed with Unipile. A LinkedIn
+        # reply is reported by the user on the task ("They replied"), which
+        # stops the lead's sequences (tests/test_linkedin_channel.py).
+        from app.main import app
 
-        # gaps-sweep-2 #7: published after routing, from an id read before it
-        # (behaviour tested in tests/test_linkedin_channel.py::TestWebhook).
-        with open(linkedin.__file__, encoding="utf-8") as handle:
-            assert "reply_tasks.enqueue(reply_id)" in handle.read()
+        assert not [r for r in app.routes if "unipile" in getattr(r, "path", "")]
 
 
 class TestEndpoints:

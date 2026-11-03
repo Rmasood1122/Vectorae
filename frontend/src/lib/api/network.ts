@@ -80,6 +80,7 @@ export interface NetworkMessage {
   product_id: string;
   text: string;
   status: "draft" | "approved" | "queued" | "sent" | "failed";
+  /** "copy" = sent by the user; "unipile" / "bulk" only on legacy rows. */
   channel: "copy" | "unipile" | "bulk" | null;
   error: string | null;
   sent_at: string | null;
@@ -95,9 +96,3 @@ export const saveMessage = (id: string, text: string) =>
   api<NetworkMessage>(`/linkedin-network/messages/${id}`, { method: "PUT", body: { text } });
 export const markMessageSent = (id: string) =>
   api<NetworkMessage>(`/linkedin-network/messages/${id}/mark-sent`, { body: {} });
-export const sendMessageNow = (id: string) =>
-  api<NetworkMessage>(`/linkedin-network/messages/${id}/send`, { body: {} });
-export const bulkSend = (ids: string[]) =>
-  api<{ queued: number; spacing_seconds: number }>("/linkedin-network/messages/bulk-send", {
-    body: { ids },
-  });

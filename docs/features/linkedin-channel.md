@@ -1,3 +1,9 @@
+> **SUPERSEDED 2026-11-02.** Unipile and the RapidAPI scraper were removed
+> (evals/vectorae, founder option a; gate change
+> `docs/program/plans/gate-linkedin-unipile-removal.md`). LinkedIn steps are
+> now L0 tasks the user sends: see `docs/features/linkedin-assisted.md`. This
+> file is kept as the record of the removed design.
+
 # Feature Group 5 — LinkedIn outreach channel
 
 ## What it adds

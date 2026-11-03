@@ -1,23 +1,19 @@
-"""Messaging a LinkedIn connection from the Network page.
+"""Messaging a LinkedIn connection from the Network page. The USER sends.
 
-Three ways to send, all behind the same rules:
-  copy      user copies the text and sends it on LinkedIn themselves
-  unipile   one click, one message, through the user's connected account
-  bulk      many approved messages, queued and spaced, capped per day
+Since 2026-11-02 (evals/vectorae, option a) there is one way: the user saves
+the text, turns it into an L0 task (tests/test_linkedin_tasks.py) or records
+that they sent it themselves ("copy"). Vectorae never sends: the one-click
+and bulk routes are gone.
 
-Rules every path obeys: Growth+ plan, the user's OWN connection and product,
-the text the user saved (a draft is never sent), suppression, the daily cap,
-and 1st-degree connections only (never a stranger).
+Rules: Growth+ plan, the user's OWN connection and product, the text the user
+saved (a draft never becomes a task), suppression.
 """
 
 from __future__ import annotations
 
-import fakeredis
 import pytest
 
 from app.db import models as m
-from app.integrations.unipile_linkedin import UnipileError
-from app.services import linkedin_limits
 
 
 class StubClaude:
@@ -33,57 +29,11 @@ class StubClaude:
         return self.reply
 
 
-class FakeUnipile:
-    def __init__(self):
-        self.calls = []
-        self.connected = True
-        self.fail_with = None
-
-    def profile(self, identifier, account_id):
-        self.calls.append(("profile", identifier))
-        return {"provider_id": "prov-" + identifier, "is_connected": self.connected}
-
-    def start_chat(self, provider_id, account_id, text, *, inmail=False, subject=None):
-        self.calls.append(("start_chat", provider_id, account_id, text))
-        if self.fail_with:
-            raise self.fail_with
-        return {"chat_id": "chat-1", "message_id": "msg-1"}
-
-
 @pytest.fixture()
 def claude(monkeypatch):
     stub = StubClaude()
     monkeypatch.setattr("app.services.anthropic_client.get_client", lambda: stub)
     return stub
-
-
-@pytest.fixture()
-def unipile(monkeypatch):
-    # Opt in to the GAP-LI-01 kill switch (default off): these tests exercise
-    # the Unipile path behind it.
-    from app.config import settings  # noqa: PLC0415
-    monkeypatch.setattr(settings, "linkedin_unofficial_providers_enabled", True)
-    fake = FakeUnipile()
-    monkeypatch.setattr("app.integrations.unipile_linkedin.get_client",
-                        lambda db, user_id=None: fake)
-    return fake
-
-
-@pytest.fixture(autouse=True)
-def redis(monkeypatch):
-    r = fakeredis.FakeRedis(decode_responses=True)
-    monkeypatch.setattr(linkedin_limits, "_redis", lambda: r)
-    return r
-
-
-@pytest.fixture()
-def queued(monkeypatch):
-    calls = []
-    from app.workers import network_tasks
-
-    monkeypatch.setattr(network_tasks.send_queued, "apply_async",
-                        lambda args=None, countdown=0, **kw: calls.append((args[0], countdown)))
-    return calls
 
 
 class _KeepOpen:
@@ -120,11 +70,7 @@ def world(db_session, test_user):
                                 profile_url="https://www.linkedin.com/in/ana-lopez/")
     db_session.add(conn)
     db_session.commit()
-    account = m.LinkedInAccount(user_id=test_user.id, unipile_account_id="acc-1",
-                                display_name="Me", is_active=True)
-    db_session.add(account)
-    db_session.commit()
-    return {"user": test_user, "product": product, "conn": conn, "account": account}
+    return {"user": test_user, "product": product, "conn": conn}
 
 
 def _draft(client, w):
@@ -188,11 +134,11 @@ class TestDraft:
         assert _draft(client, world).status_code == 502
 
     def test_redrafting_replaces_an_unsent_draft_but_not_a_sent_one(
-            self, client, world, claude, unipile, db_session):
+            self, client, world, claude, db_session):
         first = _draft(client, world).json()["id"]
         assert _draft(client, world).json()["id"] == first
         mid = _approved(client, world)
-        assert client.post(f"/linkedin-network/messages/{mid}/send").status_code == 200
+        assert client.post(f"/linkedin-network/messages/{mid}/mark-sent").status_code == 200
         assert _draft(client, world).status_code == 409
 
 
@@ -231,144 +177,17 @@ class TestCopyMode:
         assert r.json()["channel"] == "copy"
 
 
-class TestSendNow:
-    def test_sends_the_saved_text_through_the_account(self, client, world, claude, unipile):
-        mid = _approved(client, world, "Exactly this text.")
-        r = client.post(f"/linkedin-network/messages/{mid}/send")
-        assert r.status_code == 200 and r.json()["status"] == "sent"
-        assert ("start_chat", "prov-ana-lopez", "acc-1", "Exactly this text.") in unipile.calls
-
-    def test_a_draft_is_never_sent(self, client, world, claude, unipile):
-        mid = _draft(client, world).json()["id"]
-        assert client.post(f"/linkedin-network/messages/{mid}/send").status_code == 409
-        assert not [c for c in unipile.calls if c[0] == "start_chat"]
-
-    def test_no_connected_account_is_409(self, client, world, claude, unipile, db_session):
-        world["account"].is_active = False
-        db_session.commit()
+class TestVectoraeNeverSends:
+    def test_the_send_and_bulk_routes_are_gone(self, client, world, claude):
         mid = _approved(client, world)
-        r = client.post(f"/linkedin-network/messages/{mid}/send")
-        assert r.status_code == 409 and "LinkedIn account" in r.json()["detail"]
+        assert client.post(f"/linkedin-network/messages/{mid}/send").status_code in (404, 405)
+        assert client.post("/linkedin-network/messages/bulk-send",
+                           json={"ids": [mid]}).status_code in (404, 405)
 
-    def test_a_stranger_is_never_messaged(self, client, world, claude, unipile):
-        unipile.connected = False
-        mid = _approved(client, world)
-        r = client.post(f"/linkedin-network/messages/{mid}/send")
-        assert r.status_code == 409
-        assert not [c for c in unipile.calls if c[0] == "start_chat"]
-
-    def test_suppressed_profiles_are_never_messaged(self, client, world, claude, unipile, db_session):
+    def test_suppressed_profiles_get_no_draft(self, client, world, claude, db_session):
         db_session.add(m.LinkedInSuppression(profile="ana-lopez", reason="optout"))
         db_session.commit()
-        # Since evals/vectorae Phase 5B the DRAFT is already refused (before
-        # any model call), so there is never a message to send.
         assert _draft(client, world).status_code == 409
-        assert not [c for c in unipile.calls if c[0] == "start_chat"]
-
-    def test_daily_cap_blocks_and_does_not_send(self, client, world, claude, unipile, redis):
-        key = linkedin_limits._key(world["account"].id, "message", None)
-        redis.set(key, 10_000)
-        mid = _approved(client, world)
-        r = client.post(f"/linkedin-network/messages/{mid}/send")
-        assert r.status_code == 429
-        assert not [c for c in unipile.calls if c[0] == "start_chat"]
-
-    def test_provider_error_marks_failed_and_releases_the_slot(
-            self, client, world, claude, unipile, redis):
-        unipile.fail_with = UnipileError("boom", status=500)
-        mid = _approved(client, world)
-        r = client.post(f"/linkedin-network/messages/{mid}/send")
-        assert r.status_code == 502
-        got = client.get("/linkedin-network/messages").json()["messages"][0]
-        assert got["status"] == "failed" and got["error"]
-        assert int(redis.get(linkedin_limits._key(world["account"].id, "message", None)) or 0) == 0
-
-    def test_downgraded_plan_cannot_send(self, client, world, claude, unipile, db_session):
-        mid = _approved(client, world)
-        world["user"].plan = m.PlanTier.FREE
-        db_session.commit()
-        assert client.post(f"/linkedin-network/messages/{mid}/send").status_code == 402
-
-    def test_cannot_send_twice(self, client, world, claude, unipile):
-        mid = _approved(client, world)
-        assert client.post(f"/linkedin-network/messages/{mid}/send").status_code == 200
-        assert client.post(f"/linkedin-network/messages/{mid}/send").status_code == 409
-
-
-class TestBulk:
-    def test_queues_approved_messages_spaced_apart(self, client, world, claude, queued, db_session):
-        c2 = m.LinkedInConnection(user_id=world["user"].id, dedupe_key="k2", full_name="Ben Ng",
-                                  profile_url="https://www.linkedin.com/in/ben-ng/")
-        db_session.add(c2)
-        db_session.commit()
-        a = _approved(client, world)
-        b = client.post("/linkedin-network/messages/draft",
-                        json={"connection_id": str(c2.id), "product_id": str(world["product"].id)}).json()["id"]
-        client.put(f"/linkedin-network/messages/{b}", json={"text": "hi Ben"})
-        r = client.post("/linkedin-network/messages/bulk-send", json={"ids": [a, b]})
-        assert r.status_code == 200 and r.json()["queued"] == 2
-        assert [i for i, _ in queued] == [a, b]
-        delays = [d for _, d in queued]
-        assert delays == sorted(delays) and delays[1] - delays[0] >= 30
-
-    def test_one_unapproved_message_rejects_the_whole_batch(self, client, world, claude, queued):
-        a = _approved(client, world)
-        r = client.post("/linkedin-network/messages/bulk-send", json={"ids": [a, "00000000-0000-0000-0000-000000000000"]})
-        assert r.status_code in (404, 409) and queued == []
-
-    def test_a_draft_cannot_be_bulk_sent(self, client, world, claude, queued):
-        d = _draft(client, world).json()["id"]
-        assert client.post("/linkedin-network/messages/bulk-send", json={"ids": [d]}).status_code == 409
-        assert queued == []
-
-    def test_batch_size_is_capped(self, client, world, claude, queued):
-        ids = ["00000000-0000-0000-0000-0000000000%02d" % i for i in range(26)]
-        assert client.post("/linkedin-network/messages/bulk-send", json={"ids": ids}).status_code == 422
-
-    def test_free_plan_gets_402(self, client, world, claude, queued, db_session):
-        world["user"].plan = m.PlanTier.FREE
-        db_session.commit()
-        assert client.post("/linkedin-network/messages/bulk-send", json={"ids": []}).status_code in (402, 422)
-
-    def test_queued_text_cannot_be_edited(self, client, world, claude, queued):
-        a = _approved(client, world)
-        client.post("/linkedin-network/messages/bulk-send", json={"ids": [a]})
-        assert client.put(f"/linkedin-network/messages/{a}", json={"text": "swap"}).status_code == 409
-
-    def test_task_sends_a_queued_message(self, client, world, claude, queued, unipile, db_session):
-        from app.workers import network_tasks
-
-        a = _approved(client, world, "Queued text.")
-        client.post("/linkedin-network/messages/bulk-send", json={"ids": [a]})
-        out = network_tasks.send_queued.run(a)
-        assert out["status"] == "sent"
-        assert ("start_chat", "prov-ana-lopez", "acc-1", "Queued text.") in unipile.calls
-
-    def test_task_skips_a_message_that_is_no_longer_queued(self, client, world, claude, unipile):
-        from app.workers import network_tasks
-
-        a = _approved(client, world)   # approved, never queued
-        assert network_tasks.send_queued.run(a)["status"] == "skipped"
-        assert not [c for c in unipile.calls if c[0] == "start_chat"]
-
-    def test_task_rechecks_the_plan(self, client, world, claude, queued, unipile, db_session):
-        from app.workers import network_tasks
-
-        a = _approved(client, world)
-        client.post("/linkedin-network/messages/bulk-send", json={"ids": [a]})
-        world["user"].plan = m.PlanTier.FREE
-        db_session.commit()
-        assert network_tasks.send_queued.run(a)["status"] == "failed"
-        assert not [c for c in unipile.calls if c[0] == "start_chat"]
-
-    def test_task_cap_hit_returns_message_to_approved(self, client, world, claude, queued,
-                                                      unipile, redis):
-        from app.workers import network_tasks
-
-        a = _approved(client, world)
-        client.post("/linkedin-network/messages/bulk-send", json={"ids": [a]})
-        redis.set(linkedin_limits._key(world["account"].id, "message", None), 10_000)
-        assert network_tasks.send_queued.run(a)["status"] == "approved"
 
 
 class TestPrivacy:

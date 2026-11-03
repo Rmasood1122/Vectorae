@@ -126,7 +126,7 @@ class LinkedInUrlIn(BaseModel):
     def _profile_url(cls, value):
         if value is None or not value.strip():
             return None
-        from app.integrations.linkedin_posts import public_identifier  # noqa: PLC0415
+        from app.services.linkedin_profile import public_identifier  # noqa: PLC0415
 
         if not public_identifier(value):
             raise ValueError("must be a linkedin.com/in/<profile> URL")
