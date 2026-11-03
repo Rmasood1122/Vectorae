@@ -2,6 +2,7 @@ import { api, saveSession, clearSession, usesCookieTransport, ApiError } from ".
 import { getRefreshToken } from "../auth-session";
 import { resetAuthStore } from "../stores/authStore";
 import type { TokenBundle, UserOut } from "./types";
+import { readSignupSource } from "../signupSource";
 
 /** Create an account.
  *
@@ -18,8 +19,10 @@ export async function signup(
   email: string,
   password: string,
 ): Promise<TokenBundle> {
+  // Where the visit came from (UTM tags, referring site), for Admin > Growth.
+  const source = readSignupSource();
   const bundle = await api<TokenBundle>("/auth/signup", {
-    body: { email, password },
+    body: source ? { email, password, source } : { email, password },
     auth: false,
   });
   saveSession(bundle);

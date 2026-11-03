@@ -70,7 +70,9 @@ export default function PrivacyPage() {
               <li>
                 <strong className="text-white">Technical and security data:</strong> IP address, browser and
                 device type, sign-in and security logs, country and VPN checks, AI usage, tutorial progress,
-                and a push-notification token in the mobile app.
+                a push-notification token in the mobile app, and how you reached our site when you sign up
+                (the referring website&apos;s name, the campaign tags in the link, and the first page you
+                opened).
               </li>
               <li>
                 <strong className="text-white">Prospect data:</strong> public LinkedIn profile information and

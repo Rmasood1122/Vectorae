@@ -20,7 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import require_admin
+from app.api.deps import require_admin, require_growth_viewer
 from app.db.models import User
 from app.services import tutorials as catalogue
 from app.core.database import get_db
@@ -776,6 +776,30 @@ def list_signups(
     from app.services import signup_watch  # noqa: PLC0415
 
     return signup_watch.list_signups(db, page=page, page_size=page_size)
+
+
+@router.get("/growth")
+def growth_dashboard(
+    days: int = Query(30, ge=1, le=365),
+    db: Session = Depends(get_db),
+    viewer: User = Depends(require_growth_viewer),
+) -> dict:
+    """Admin > Growth: sign-ups and subscription purchases, live.
+
+    Only the addresses on GROWTH_DASHBOARD_VIEWERS, and only while they are
+    admins (deps.require_growth_viewer). Every read is logged with who read it.
+    """
+    from app.services import growth_dashboard as growth  # noqa: PLC0415
+
+    logger.info("admin.growth_dashboard_read", by=viewer.email, days=days)
+    return growth.build(db, days=days)
+
+
+@router.get("/growth/access")
+def growth_dashboard_access(_viewer: User = Depends(require_growth_viewer)) -> dict:
+    """200 for a permitted viewer, 403 otherwise: lets the admin menu decide
+    whether to show the Growth link without loading the data."""
+    return {"allowed": True}
 
 
 @router.get("/identity-reviews")

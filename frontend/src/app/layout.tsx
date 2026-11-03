@@ -21,6 +21,7 @@ import { QueryProvider }  from '@/components/providers/QueryProvider';
 // ── M7 additions ──────────────────────────────────────────────────────────
 import { NetworkProvider } from '@/contexts/NetworkContext';
 import { NativeProvider }  from '@/components/providers/NativeProvider';
+import { SignupSourceCapture } from '@/components/providers/SignupSourceCapture';
 import { OfflineBanner }   from '@/components/ui/OfflineBanner';
 
 // ── Vercel Speed Insights ──────────────────────────────────────────────────
@@ -92,6 +93,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider>
             <NetworkProvider>
               <NativeProvider />
+              {/* Where this visit came from, for Admin > Growth. */}
+              <SignupSourceCapture />
               <OfflineBanner />
               {/* sonner's toast() is called from a dozen pages but nothing
                   rendered a Toaster, so every toast was silently dropped. */}
