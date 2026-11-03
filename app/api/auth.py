@@ -55,7 +55,7 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.responses import JSONResponse, RedirectResponse
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -90,6 +90,26 @@ _HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 class Credentials(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=200)
+
+
+class SignupSourceIn(BaseModel):
+    """Where a sign-up came from, as the browser saw it (all optional).
+
+    Never a reason to refuse a sign-up: unknown keys are ignored and the
+    values are cleaned and cut to length by signup_watch.clean_source.
+    """
+    model_config = ConfigDict(extra="ignore")
+    utm_source: str | None = None
+    utm_medium: str | None = None
+    utm_campaign: str | None = None
+    utm_term: str | None = None
+    utm_content: str | None = None
+    referrer: str | None = None
+    landing_path: str | None = None
+
+
+class SignupIn(Credentials):
+    source: SignupSourceIn | None = None
 
 
 class LoginIn(Credentials):
@@ -246,7 +266,7 @@ def _enforce_signup_policy(email: str) -> None:
 
 
 @router.post("/auth/signup", status_code=201)
-def signup(request: Request, response: Response, body: Credentials,
+def signup(request: Request, response: Response, body: SignupIn,
            db: Session = Depends(get_db)) -> dict:
     """Create an account (or claim a pre-auth row that has no password yet).
 
@@ -294,7 +314,9 @@ def signup(request: Request, response: Response, body: Credentials,
     from app.services import signup_watch  # noqa: PLC0415
     from app.workers import notification_tasks  # noqa: PLC0415
 
-    signup_event = signup_watch.record_signup(db, user, user.signup_ip)
+    signup_event = signup_watch.record_signup(
+        db, user, user.signup_ip,
+        source=body.source.model_dump() if body.source is not None else None)
     db.commit()
     notification_tasks.enqueue_signup_alert(signup_event.id)
 

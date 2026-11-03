@@ -53,7 +53,93 @@ export interface SignupRow {
   user_id: string | null;
 }
 
+/** GET /admin/growth (app/services/growth_dashboard.py). */
+export interface GrowthSignup {
+  signed_up_at: string | null;
+  user_id: string | null;
+  email: string | null;
+  full_name: string | null;
+  ip: string | null;
+  ip_country: string | null;
+  declared_country: string | null;
+  account_type: string | null;
+  company_name: string | null;
+  company_country: string | null;
+  source: string;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  referrer_host: string | null;
+  landing_path: string | null;
+  email_verified: boolean | null;
+  phone_verified: boolean | null;
+  identity_review: string | null;
+  is_suspended: boolean | null;
+  plan: string | null;
+  subscription_status: string | null;
+  last_active_at: string | null;
+  account_deleted: boolean;
+}
+
+export interface GrowthPurchase {
+  subscription_id: string;
+  user_id: string;
+  email: string | null;
+  company_name: string | null;
+  tier: string;
+  billing_model: string;
+  status: string;
+  purchased_at: string | null;
+  amount_cents: number | null;
+  currency: string | null;
+  interval: string | null;
+  monthly_value_cents: number | null;
+  counts_as_revenue: boolean;
+  is_stub: boolean;
+  trial_started_at: string | null;
+  trial_ends_at: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  canceled_at: string | null;
+  stripe_customer_id: string | null;
+  signup_ip: string | null;
+  signup_country: string | null;
+  signup_source: string;
+  days_signup_to_purchase: number | null;
+  needs_attention: boolean;
+}
+
+export interface GrowthDashboard {
+  generated_at: string;
+  window_days: number;
+  totals: {
+    accounts: number;
+    signups_24h: number;
+    signups_7d: number;
+    signups_window: number;
+    verified_in_window: number;
+    refused_attempts_window: number;
+    paying_subscriptions: number;
+    trialing_subscriptions: number;
+    purchases_window: number;
+    canceled_window: number;
+    converted_in_window: number;
+    mrr_cents_by_currency: Record<string, number>;
+  };
+  top_countries: [string, number][];
+  top_sources: [string, number][];
+  daily: { date: string; signups: number; purchases: number }[];
+  signups: GrowthSignup[];
+  purchases: GrowthPurchase[];
+}
+
 export const adminApi = {
+  getGrowth: async (days = 30) =>
+    apiClient.get<GrowthDashboard>(`/admin/growth?days=${days}`),
+
+  /** Resolves for a permitted viewer, rejects (403) for everyone else. */
+  growthAccess: async () => apiClient.get<{ allowed: boolean }>("/admin/growth/access"),
+
   listIdentityReviews: async (status = "pending") =>
     apiClient.get<{ pending_count: number; reviews: IdentityReview[] }>(
       `/admin/identity-reviews?status=${encodeURIComponent(status)}`),

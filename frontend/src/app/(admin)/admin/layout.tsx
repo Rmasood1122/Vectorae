@@ -1,13 +1,15 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { LogoMark } from "@/components/ui/Logo";
 import { ConfigWarningsBanner } from "@/components/admin/ConfigWarningsBanner";
+import { adminApi } from "@/lib/api/admin";
 import {
   Users, AlertCircle, Shield, BookOpen, Heart, Zap, List,
-  GraduationCap, LifeBuoy, KeyRound, SlidersHorizontal, ShieldAlert, ShieldCheck, UserPlus
+  GraduationCap, LifeBuoy, KeyRound, SlidersHorizontal, ShieldAlert, ShieldCheck, UserPlus, TrendingUp
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -35,6 +37,18 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuthStore();
   const router = useRouter();
+  // Admin > Growth is limited to named addresses (GROWTH_DASHBOARD_VIEWERS);
+  // the link appears only when the server says this account is one of them.
+  const { data: growthAccess } = useQuery({
+    queryKey: ["admin", "growth-access", user?.email],
+    queryFn: adminApi.growthAccess,
+    enabled: Boolean(user?.is_admin),
+    retry: false,
+    staleTime: 5 * 60_000,
+  });
+  const navItems = growthAccess?.allowed
+    ? [{ href: "/admin/growth", label: "Growth", icon: TrendingUp }, ...NAV_ITEMS]
+    : NAV_ITEMS;
 
   useEffect(() => {
     if (!isLoading && (!user || !user.is_admin)) {
@@ -62,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             Admin Panel
           </span>
         </div>
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
+        {navItems.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
             href={href}

@@ -518,6 +518,17 @@ class Settings(BaseSettings):
     # address and country). Off: sign-ups are still logged and listed under
     # Admin > Sign-ups, nobody is messaged. app/services/signup_watch.py
     signup_alerts_enabled: bool = True
+    # Admin > Growth (GET /admin/growth): live sign-ups and subscription
+    # purchases. Visible ONLY to these addresses, and only while the account is
+    # also an admin (is_admin), verified and not suspended -- a listed address
+    # without the admin flag, or an admin not on the list, gets 403.
+    # Founder list, 2026-11-03. Override with GROWTH_DASHBOARD_VIEWERS=a@x,b@y;
+    # an empty value closes the dashboard to everyone (fail closed).
+    growth_dashboard_viewers: str = (
+        "devsahmad37@gmail.com,vectorae@calendarharvest.com,"
+        "ahmadshahid@calendaharvest.com,rehanmasood@calendarharvest.com,"
+        "shahidussain@calendarharvest.com"
+    )
 
     # --- Phone verification (SMS one-time code) ----------------------------
     #   twilio   Twilio Messages API (TWILIO_* below)
@@ -995,6 +1006,12 @@ class Settings(BaseSettings):
             d.strip().lower().lstrip("@") for d in raw.split(",")
             if d.strip().lstrip("@")
         )
+
+    @property
+    def growth_dashboard_viewer_emails(self) -> frozenset[str]:
+        """GROWTH_DASHBOARD_VIEWERS parsed: lower-case, trimmed, no blanks."""
+        raw = self.growth_dashboard_viewers or ""
+        return frozenset(e.strip().lower() for e in raw.split(",") if "@" in e)
 
     @property
     def broker_url(self) -> str:

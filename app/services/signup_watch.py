@@ -46,13 +46,67 @@ OUTCOMES = {
 }
 
 
-def record_signup(db: Session, user: User, ip: str | None) -> AccountSecurityEvent:
+_UTM_KEYS = ("utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content")
+_MAX_VALUE = 120
+
+
+def _clean_text(value) -> str | None:
+    if not isinstance(value, str):
+        return None
+    text = "".join(ch for ch in value if ch.isprintable()).strip()
+    return text[:_MAX_VALUE] or None
+
+
+def clean_source(raw: dict | None) -> dict | None:
+    """The sign-up source worth keeping, minimised (Admin > Growth).
+
+    UTM tags as sent; the referrer cut to its HOST (a full referring URL can
+    carry someone's search terms or a token in its query); the landing page cut
+    to its PATH (no query, no fragment). Anything else is dropped. None when
+    nothing is left, so a direct visit stores no source at all.
+    """
+    from urllib.parse import urlsplit  # noqa: PLC0415
+
+    if not isinstance(raw, dict):
+        return None
+    out = {k: v for k in _UTM_KEYS if (v := _clean_text(raw.get(k)))}
+    referrer = _clean_text(raw.get("referrer"))
+    if referrer:
+        try:
+            host = (urlsplit(referrer if "//" in referrer else f"//{referrer}")
+                    .hostname or "")
+        except ValueError:
+            host = ""
+        if host:
+            out["referrer_host"] = host[:_MAX_VALUE]
+    landing = _clean_text(raw.get("landing_path"))
+    if landing:
+        try:
+            path = urlsplit(landing).path or ""
+        except ValueError:
+            path = ""
+        if path.startswith("/"):
+            out["landing_path"] = path[:_MAX_VALUE]
+    return out or None
+
+
+def source_label(source: dict | None) -> str:
+    """One word for "where from": utm_source, else the referring site, else direct."""
+    if not source:
+        return "direct"
+    return source.get("utm_source") or source.get("referrer_host") or "direct"
+
+
+def record_signup(db: Session, user: User, ip: str | None,
+                  source: dict | None = None) -> AccountSecurityEvent:
     """Add (not commit) the sign-up row; it rides the sign-up transaction."""
     from app.services import identity  # noqa: PLC0415
 
     if user.id is None:
         db.flush()  # a brand-new account gets its id at flush
-    return identity.record_event(db, event=EVENT_SIGNUP, user=user, ip=ip)
+    cleaned = clean_source(source)
+    return identity.record_event(db, event=EVENT_SIGNUP, user=user, ip=ip,
+                                 details={"source": cleaned} if cleaned else None)
 
 
 def admin_emails(db: Session) -> list[str]:
