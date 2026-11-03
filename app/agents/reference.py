@@ -214,7 +214,8 @@ _UNSUB_ELEVATED, _UNSUB_CRITICAL = 0.005, 0.01
 
 
 def wilson_lower(k: int, n: int, z: float = 1.96) -> float:
-    if n <= 0:
+    # Same guard as native/cpp/src/deliverability.cpp: no successes is exactly 0.
+    if n <= 0 or k <= 0:
         return 0.0
     p = k / n
     z2 = z * z

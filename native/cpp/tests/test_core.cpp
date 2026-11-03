@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
+#include <initializer_list>
 #include <string>
 
 #include "vectorae/agents.hpp"
@@ -23,6 +24,10 @@ int main() {
 
     // deliverability
     assert(wilson_lower(0, 100) == 0.0);
+    // No successes is exactly 0 for every n and z (GCC 15 left ~3e-19).
+    for (long n : {1L, 7L, 100L, 12345L})
+        for (double z : {1.0, 1.645, 1.96, 2.576})
+            assert(wilson_lower(0, n, z) == 0.0);
     assert(std::fabs(wilson_lower(10, 100) - 0.0552) < 1e-3);
     assert(warmup_cap(5, 100) == 20 && warmup_cap(20, 100) == 40 && warmup_cap(90, 100) == 100);
     assert(warmup_cap(5, 10) == 10);

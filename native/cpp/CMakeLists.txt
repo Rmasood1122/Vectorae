@@ -9,6 +9,10 @@ add_library(vectorae_core STATIC src/deliverability.cpp src/triage.cpp src/claim
 target_include_directories(vectorae_core PUBLIC include)
 if(NOT MSVC)
   target_compile_options(vectorae_core PRIVATE -Wall -Wextra -Werror)
+  # No fused multiply-add contraction: the core's floating-point results must
+  # not depend on the compiler version or target CPU, and must match the
+  # Python reference (app/agents/reference.py), which never fuses.
+  target_compile_options(vectorae_core PRIVATE -ffp-contract=off)
 endif()
 
 # The Python module (built by scikit-build-core from pyproject.toml).

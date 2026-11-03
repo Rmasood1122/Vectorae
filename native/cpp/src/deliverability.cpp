@@ -21,7 +21,10 @@ double round1(double x) { return std::floor(x * 10.0 + 0.5) / 10.0; }
 }  // namespace
 
 double wilson_lower(long k, long n, double z) {
-    if (n <= 0) return 0.0;
+    // With no successes the Wilson lower bound is exactly 0. Computed through
+    // the formula it is centre - margin of two equal terms, which a compiler
+    // that fuses multiply-adds (GCC 15 on the CI runner) leaves at ~3e-19.
+    if (n <= 0 || k <= 0) return 0.0;
     const double nn = static_cast<double>(n);
     const double p = static_cast<double>(k) / nn;
     const double z2 = z * z;
