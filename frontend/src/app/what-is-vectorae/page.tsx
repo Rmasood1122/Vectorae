@@ -1,5 +1,5 @@
 /**
- * app/what-is-leadpilot/page.tsx — the definition page (/what-is-leadpilot/).
+ * app/what-is-vectorae/page.tsx — the definition page (/what-is-vectorae/).
  * Static server component; copy in src/content/geo/whatIs.ts.
  */
 
@@ -15,13 +15,13 @@ import { pageGraph } from "@/lib/seo/structuredData";
 export const metadata: Metadata = {
   title: "What is Vectorae? AI outbound for agencies and B2B service firms",
   description: `What ${PRODUCT_FULL_NAME} is, how it works step by step, who it is for and not for, what it costs, and what is not live yet.`,
-  ...canonicalMeta("/what-is-leadpilot/"),
+  ...canonicalMeta("/what-is-vectorae/"),
 };
 
 export default function WhatIsVectoraePage() {
   return (
     <ContentPage
-      jsonLd={pageGraph({ path: "/what-is-leadpilot/", breadcrumb: "What is Vectorae", software: true })}
+      jsonLd={pageGraph({ path: "/what-is-vectorae/", breadcrumb: "What is Vectorae", software: true })}
       eyebrow="About the product"
       h1={`What is ${PRODUCT_FULL_NAME}?`}
       lead={WHAT_IS_LEAD}

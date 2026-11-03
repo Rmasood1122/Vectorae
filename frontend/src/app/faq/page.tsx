@@ -33,7 +33,7 @@ export default function FaqPage() {
       lastChecked={FACTS_CHECKED}
       sections={FAQ_SECTIONS}
       related={[
-        { href: "/what-is-leadpilot", label: "What is Vectorae?" },
+        { href: "/what-is-vectorae", label: "What is Vectorae?" },
         { href: "/help", label: "Help center" },
         { href: "/compare", label: "Compare Vectorae" },
       ]}

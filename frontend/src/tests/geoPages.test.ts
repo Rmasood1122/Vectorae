@@ -63,7 +63,7 @@ describe("every GEO and help page is reachable and in the sitemap", () => {
 
   it("the 12 GEO pages are in site-pages.json and linked from the footer", () => {
     const geo = [
-      "/what-is-leadpilot/", "/faq/", "/outbound-statistics/", "/compare/",
+      "/what-is-vectorae/", "/faq/", "/outbound-statistics/", "/compare/",
       ...COMPARISONS.map((c) => comparisonPath(c.slug)),
       ...FOR_PAGES.map((p) => `/for/${p.slug}/`),
     ];

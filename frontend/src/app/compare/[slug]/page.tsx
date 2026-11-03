@@ -1,5 +1,5 @@
 /**
- * app/compare/[slug]/page.tsx — /compare/leadpilot-vs-<competitor>/.
+ * app/compare/[slug]/page.tsx — /compare/vectorae-vs-<competitor>/.
  * One static page per entry in src/content/geo/compare.ts (no other slug is
  * built: dynamicParams = false).
  */
@@ -14,7 +14,7 @@ import { pageGraph } from "@/lib/seo/structuredData";
 
 export const dynamicParams = false;
 
-const PREFIX = "leadpilot-vs-";
+const PREFIX = "vectorae-vs-";
 
 export function generateStaticParams() {
   return COMPARISONS.map((c) => ({ slug: `${PREFIX}${c.slug}` }));

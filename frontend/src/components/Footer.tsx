@@ -34,18 +34,18 @@ const COLUMNS = [
   {
     heading: "Compare",
     links: [
-      { href: "/compare/leadpilot-vs-apollo", label: "vs Apollo" },
-      { href: "/compare/leadpilot-vs-instantly", label: "vs Instantly" },
-      { href: "/compare/leadpilot-vs-smartlead", label: "vs Smartlead" },
-      { href: "/compare/leadpilot-vs-clay", label: "vs Clay" },
-      { href: "/compare/leadpilot-vs-artisan", label: "vs Artisan" },
+      { href: "/compare/vectorae-vs-apollo", label: "vs Apollo" },
+      { href: "/compare/vectorae-vs-instantly", label: "vs Instantly" },
+      { href: "/compare/vectorae-vs-smartlead", label: "vs Smartlead" },
+      { href: "/compare/vectorae-vs-clay", label: "vs Clay" },
+      { href: "/compare/vectorae-vs-artisan", label: "vs Artisan" },
       { href: "/compare", label: "All comparisons" },
     ],
   },
   {
     heading: "Resources",
     links: [
-      { href: "/what-is-leadpilot", label: "What is Vectorae" },
+      { href: "/what-is-vectorae", label: "What is Vectorae" },
       { href: "/faq", label: "FAQ" },
       { href: "/help", label: "Help center" },
       { href: "/outbound-statistics", label: "Outbound statistics" },

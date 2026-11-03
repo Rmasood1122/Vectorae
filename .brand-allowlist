@@ -79,10 +79,13 @@ frontend/android/* | clienthunter | B: Android package path segment and keystore
 * | leadpilot\.\* | B: Celery task-route glob
 * | (?:getting-started-with|welcome-to|using-the)-leadpilot(?:-dashboard)? | B: tutorial slugs stored with users' progress
 * | (?:badge-)?leadpilot-certified | B: badge id stored on users
-* | what-is-leadpilot[\w./-]*|/what-is-leadpilot | B: help-center article id, public /help/ and /what-is-leadpilot/ URL slugs, stored citation ids
-* | (?:/compare/|compare/)?leadpilot-vs-[\w-]* | B: public comparison-page URL slugs (indexed; renaming needs 301s)
+frontend/vercel.json | /(?:help/)?what-is-leadpilot/?|/compare/leadpilot-vs-[\w-]+/?|/media/leadpilot-walkthrough[\w.-]* | B: 301 redirect sources: the old public URLs (renamed 2026-11-02, evals/vectorae GAP-BR-01) must keep redirecting for links and search indexes
+app/services/help_center.py | what-is-leadpilot | B: legacy FAQ id and renamed help-article id stored on chat messages; resolve_citation maps them forever
+app/services/support_kb.py | what-is-leadpilot | B: legacy FAQ id stored on chat messages (support_kb ids never change)
+tests/* | what-is-leadpilot | B: tests that the stored legacy FAQ id and the renamed article id keep resolving
+tests/test_slug_redirects.py | leadpilot[\w-]*|what-is-leadpilot|leadpilot-vs-[\w{}-]*|leadpilot-walkthrough[\w{}.-]* | B: the redirect test names every old URL it proves is 301-redirected
+frontend/e2e/support-chat.spec.ts | what-is-leadpilot | B: mocked legacy FAQ id in the support-chat e2e
 * | apollo-clay-leadpilot-comparison | B: published blog URL slug
-* | leadpilot-walkthrough[\w./-]* | B: media file names referenced by URL
 * | leadpilot-gate | B: quick-gate stamp directory the pre-push and Claude hooks read
 
 # --- Deploy, env, service names, databases (B) -------------------------------

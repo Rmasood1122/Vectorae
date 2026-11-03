@@ -46,7 +46,7 @@ export default function CompareHubPage() {
         },
       ]}
       related={[
-        { href: "/what-is-leadpilot", label: "What is Vectorae?" },
+        { href: "/what-is-vectorae", label: "What is Vectorae?" },
         { href: "/faq", label: "Vectorae FAQ" },
       ]}
     />

@@ -1,5 +1,5 @@
 ---
-id: what-is-leadpilot
+id: what-is-vectorae
 title: What is Vectorae?
 audience: prospect
 last_verified: 2026-10-10

@@ -1,6 +1,104 @@
 {
-    "rewrites": [
-    { "source": "/book/:slug", "destination": "/book/" },
-    { "source": "/book/:slug/", "destination": "/book/" }
+  "redirects": [
+    {
+      "source": "/what-is-leadpilot/",
+      "destination": "/what-is-vectorae/",
+      "statusCode": 301
+    },
+    {
+      "source": "/what-is-leadpilot",
+      "destination": "/what-is-vectorae/",
+      "statusCode": 301
+    },
+    {
+      "source": "/help/what-is-leadpilot/",
+      "destination": "/help/what-is-vectorae/",
+      "statusCode": 301
+    },
+    {
+      "source": "/help/what-is-leadpilot",
+      "destination": "/help/what-is-vectorae/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-apollo/",
+      "destination": "/compare/vectorae-vs-apollo/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-apollo",
+      "destination": "/compare/vectorae-vs-apollo/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-instantly/",
+      "destination": "/compare/vectorae-vs-instantly/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-instantly",
+      "destination": "/compare/vectorae-vs-instantly/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-smartlead/",
+      "destination": "/compare/vectorae-vs-smartlead/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-smartlead",
+      "destination": "/compare/vectorae-vs-smartlead/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-clay/",
+      "destination": "/compare/vectorae-vs-clay/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-clay",
+      "destination": "/compare/vectorae-vs-clay/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-artisan/",
+      "destination": "/compare/vectorae-vs-artisan/",
+      "statusCode": 301
+    },
+    {
+      "source": "/compare/leadpilot-vs-artisan",
+      "destination": "/compare/vectorae-vs-artisan/",
+      "statusCode": 301
+    },
+    {
+      "source": "/media/leadpilot-walkthrough-poster.jpg",
+      "destination": "/media/vectorae-walkthrough-poster.jpg",
+      "statusCode": 301
+    },
+    {
+      "source": "/media/leadpilot-walkthrough.mp4",
+      "destination": "/media/vectorae-walkthrough.mp4",
+      "statusCode": 301
+    },
+    {
+      "source": "/media/leadpilot-walkthrough.webm",
+      "destination": "/media/vectorae-walkthrough.webm",
+      "statusCode": 301
+    },
+    {
+      "source": "/media/leadpilot-walkthrough.en.vtt",
+      "destination": "/media/vectorae-walkthrough.en.vtt",
+      "statusCode": 301
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/book/:slug",
+      "destination": "/book/"
+    },
+    {
+      "source": "/book/:slug/",
+      "destination": "/book/"
+    }
   ]
 }

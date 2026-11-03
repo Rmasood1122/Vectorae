@@ -73,11 +73,11 @@
       ]
     },
     {
-      "path": "/what-is-leadpilot/",
+      "path": "/what-is-vectorae/",
       "changefreq": "monthly",
       "priority": 0.8,
       "sources": [
-        "src/app/what-is-leadpilot/page.tsx",
+        "src/app/what-is-vectorae/page.tsx",
         "src/content/geo/whatIs.ts",
         "src/content/geo/shared.ts",
         "src/components/content/ContentPage.tsx",
@@ -125,7 +125,7 @@
       ]
     },
     {
-      "path": "/compare/leadpilot-vs-apollo/",
+      "path": "/compare/vectorae-vs-apollo/",
       "changefreq": "monthly",
       "priority": 0.8,
       "sources": [
@@ -138,7 +138,7 @@
       ]
     },
     {
-      "path": "/compare/leadpilot-vs-instantly/",
+      "path": "/compare/vectorae-vs-instantly/",
       "changefreq": "monthly",
       "priority": 0.8,
       "sources": [
@@ -151,7 +151,7 @@
       ]
     },
     {
-      "path": "/compare/leadpilot-vs-smartlead/",
+      "path": "/compare/vectorae-vs-smartlead/",
       "changefreq": "monthly",
       "priority": 0.8,
       "sources": [
@@ -164,7 +164,7 @@
       ]
     },
     {
-      "path": "/compare/leadpilot-vs-clay/",
+      "path": "/compare/vectorae-vs-clay/",
       "changefreq": "monthly",
       "priority": 0.8,
       "sources": [
@@ -177,7 +177,7 @@
       ]
     },
     {
-      "path": "/compare/leadpilot-vs-artisan/",
+      "path": "/compare/vectorae-vs-artisan/",
       "changefreq": "monthly",
       "priority": 0.8,
       "sources": [
@@ -234,7 +234,7 @@
       "priority": 0.7,
       "sources": [
         "src/app/help/page.tsx",
-        "src/content/help-center/01-what-is-leadpilot.md",
+        "src/content/help-center/01-what-is-vectorae.md",
         "src/content/help-center/02-who-its-for-and-not-for.md",
         "src/content/help-center/03-getting-started.md",
         "src/content/help-center/04-research-pipeline.md",
@@ -285,12 +285,12 @@
       ]
     },
     {
-      "path": "/help/what-is-leadpilot/",
+      "path": "/help/what-is-vectorae/",
       "changefreq": "monthly",
       "priority": 0.6,
       "sources": [
         "src/app/help/[slug]/page.tsx",
-        "src/content/help-center/01-what-is-leadpilot.md",
+        "src/content/help-center/01-what-is-vectorae.md",
         "src/lib/content/helpCenter.ts",
         "src/lib/content/markdown.ts",
         "src/components/content/ContentPage.tsx",

@@ -29,7 +29,7 @@ const HOME_FILES = [
   "src/components/home/HomeVideo.tsx",
   "src/components/home/StageStepper.tsx",
   "src/app/(auth)/signup/page.tsx",
-  "public/media/leadpilot-walkthrough.en.vtt",
+  "public/media/vectorae-walkthrough.en.vtt",
   "video-src/walkthrough.html",
 ];
 

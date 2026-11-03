@@ -20,12 +20,12 @@ answerable:
   style: paraphrase
   question: What does Vectorae actually do from start to finish?
   expected:
-  - what-is-leadpilot#what-does-vectorae-do-start-to-finish
+  - what-is-vectorae#what-does-vectorae-do-start-to-finish
 - id: q02
   style: paraphrase
   question: Do I have to press send on every email myself?
   expected:
-  - what-is-leadpilot#do-i-have-to-send-the-messages-myself
+  - what-is-vectorae#do-i-have-to-send-the-messages-myself
 - id: q03
   style: paraphrase
   question: Is Vectorae a good fit if I want to blast thousands of cold emails a day?
@@ -386,7 +386,7 @@ answerable:
   style: starter
   question: What is Vectorae?
   expected:
-  - what-is-leadpilot#what-does-vectorae-do-start-to-finish
+  - what-is-vectorae#what-does-vectorae-do-start-to-finish
 - id: s02
   style: starter
   question: Who is Vectorae for?
@@ -396,8 +396,8 @@ answerable:
   style: starter
   question: How does outreach work?
   expected:
-  - what-is-leadpilot#do-i-have-to-send-the-messages-myself
-  - what-is-leadpilot#what-does-vectorae-do-start-to-finish
+  - what-is-vectorae#do-i-have-to-send-the-messages-myself
+  - what-is-vectorae#what-does-vectorae-do-start-to-finish
   - sequences-and-follow-ups#what-is-a-sequence
 - id: s04
   style: starter

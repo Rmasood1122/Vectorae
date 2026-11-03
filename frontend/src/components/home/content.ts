@@ -51,13 +51,13 @@ export const HERO = {
 };
 
 export const VIDEO = {
-  mp4: "/media/leadpilot-walkthrough.mp4",
-  webm: "/media/leadpilot-walkthrough.webm",
-  poster: "/media/leadpilot-walkthrough-poster.jpg",
-  captions: "/media/leadpilot-walkthrough.en.vtt",
+  mp4: "/media/vectorae-walkthrough.mp4",
+  webm: "/media/vectorae-walkthrough.webm",
+  poster: "/media/vectorae-walkthrough-poster.jpg",
+  captions: "/media/vectorae-walkthrough.en.vtt",
   label: "Vectorae product walkthrough",
   description: "A 26-second product animation with sample data. It has no sound.",
-  /** Must match the cues of public/media/leadpilot-walkthrough.en.vtt, in order. */
+  /** Must match the cues of public/media/vectorae-walkthrough.en.vtt, in order. */
   transcript: [
     "Describe what you sell: a name and a plain-language description.",
     "Vectorae researches your market once per strategy, then checks the strategy: 10 of 10 checks passed.",
