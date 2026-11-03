@@ -7,6 +7,7 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import { LogoMark } from "@/components/ui/Logo";
 import { ConfigWarningsBanner } from "@/components/admin/ConfigWarningsBanner";
 import { adminApi } from "@/lib/api/admin";
+import { currentPath, rememberReturnTo } from "@/lib/returnTo";
 import {
   Users, AlertCircle, Shield, BookOpen, Heart, Zap, List,
   GraduationCap, LifeBuoy, KeyRound, SlidersHorizontal, ShieldAlert, ShieldCheck, UserPlus, TrendingUp
@@ -51,7 +52,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     : NAV_ITEMS;
 
   useEffect(() => {
-    if (!isLoading && (!user || !user.is_admin)) {
+    if (isLoading) return;
+    if (!user) {
+      // Signed out: sign in, then come straight back to this admin page.
+      rememberReturnTo(currentPath());
+      router.replace("/login");
+    } else if (!user.is_admin) {
       router.replace("/");
     }
   }, [user, isLoading, router]);

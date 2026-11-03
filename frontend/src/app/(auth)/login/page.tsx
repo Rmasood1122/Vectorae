@@ -8,6 +8,7 @@ import { ApiError, restoreSession } from "@/lib/api/client";
 import { isPhoneDeferred } from "@/lib/identity";
 import { postLoginDestination } from "@/lib/post-login";
 import { takeConsentReturn, withConsentReturn } from "@/lib/oauthConsent";
+import { takeReturnTo, withReturnTo } from "@/lib/returnTo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
@@ -56,8 +57,9 @@ export default function LoginPage() {
         if (!(await restoreSession())) return;
         const user = await me();
         if (mounted) {
-          router.replace(withConsentReturn(
-            postLoginDestination(user, { phoneDeferred: isPhoneDeferred() }), takeConsentReturn()));
+          router.replace(withReturnTo(withConsentReturn(
+            postLoginDestination(user, { phoneDeferred: isPhoneDeferred() }), takeConsentReturn()),
+            takeReturnTo()));
         }
       } catch (err) {
         if (mounted && isUnverifiedError(err)) router.replace("/check-email");
@@ -84,9 +86,11 @@ export default function LoginPage() {
       // ONE place the plan check runs (afterLogin); session restores skip it.
       // A pending Claude / ChatGPT connection (lib/oauthConsent.ts) goes back
       // to its consent page instead of the dashboard or pricing.
-      router.replace(withConsentReturn(
+      // A page the person was sent here from (lib/returnTo.ts) comes next,
+      // e.g. an /admin/growth link opened while signed out.
+      router.replace(withReturnTo(withConsentReturn(
         postLoginDestination(user, { phoneDeferred: isPhoneDeferred(), afterLogin: true }),
-        takeConsentReturn()));
+        takeConsentReturn()), takeReturnTo()));
     } catch (err) {
       setError(err instanceof ApiError ? err.detail : "Could not sign in");
       setBusy(false);

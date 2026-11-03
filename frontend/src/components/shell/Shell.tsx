@@ -17,6 +17,7 @@ import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { InboxBadge } from "./InboxBadge";
 import { SendApprovalBanner } from "@/components/campaigns/SendApprovalBanner";
 import { LiveCallBanner } from "@/components/calls/LiveCallBanner";
+import { currentPath, rememberReturnTo } from "@/lib/returnTo";
 
 /** Responsive app shell: collapsible sidebar on >=md, bottom-tab bar on
  *  mobile (the M7 Capacitor wrapper ships THIS layout). Also the protected
@@ -48,7 +49,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
     restoreSession()
       .then((signedIn) => {
         if (!signedIn) {
-          if (mounted) router.replace("/login");
+          if (mounted) {
+            // Back to this page after sign-in (lib/returnTo.ts).
+            rememberReturnTo(currentPath());
+            router.replace("/login");
+          }
           return null;
         }
         return me();
