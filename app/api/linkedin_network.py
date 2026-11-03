@@ -22,9 +22,12 @@ from app.db.models import (
     LinkedInConnection, LinkedInConnectionMatch, LinkedInImport, LinkedInNetworkMessage,
     Product, User,
 )
+from app.core.rate_limiting import client_ip
+from app.services import linkedin_consent
 from app.services import linkedin_network as ln
 from app.services import network_messages as nm
 from app.services import security_audit
+from app.workers.lead_tasks import is_suppressed
 
 router = APIRouter(prefix="/linkedin-network", tags=["linkedin-network"])
 
@@ -33,6 +36,11 @@ UPGRADE_TO = "growth"
 
 class ImportIn(BaseModel):
     csv_text: str = Field(min_length=1, description="Contents of LinkedIn's Connections.csv")
+    # L3 attestation (evals/vectorae Phase 5B): the version of the notice the
+    # user read (GET /linkedin-network/status -> consent.version) and the
+    # lawful basis they rely on. Both required; nothing is stored without them.
+    consent_text_version: str | None = Field(default=None, max_length=40)
+    lawful_basis: str | None = Field(default=None, max_length=40)
 
 
 def _require_plan(user: User) -> None:
@@ -63,7 +71,18 @@ def status(db: Session = Depends(get_db), current_user: User = Depends(get_curre
         "last_import_at": last_import, "last_analyzed_at": last_analyzed,
         "needs_new_export": ln.needs_new_export(db, current_user),
         "max_bytes": ln.MAX_BYTES, "max_rows": ln.MAX_ROWS,
+        "consent": _consent_out(db, current_user),
     }
+
+
+def _consent_out(db: Session, user: User) -> dict:
+    text = linkedin_consent.current_text(linkedin_consent.CONNECTIONS_IMPORT)
+    live = linkedin_consent.current(db, user.id, linkedin_consent.CONNECTIONS_IMPORT)
+    return {"scope": text.scope, "version": text.version, "purpose": text.purpose,
+            "text": text.text, "lawful_bases": list(linkedin_consent.LAWFUL_BASES),
+            "given": live is not None,
+            "lawful_basis": live.lawful_basis if live else None,
+            "granted_at": live.granted_at if live else None}
 
 
 @router.post("/import")
@@ -73,16 +92,28 @@ def import_export(body: ImportIn, request: Request, db: Session = Depends(get_db
     if len(body.csv_text.encode("utf-8")) > ln.MAX_BYTES:
         raise HTTPException(status_code=413,
                             detail=f"File is larger than {ln.MAX_BYTES // 1_000_000} MB.")
+    # Attest BEFORE parsing: without a lawful basis the file is not read.
+    try:
+        consent = linkedin_consent.record(
+            db, user_id=current_user.id, scope=linkedin_consent.CONNECTIONS_IMPORT,
+            text_version=body.consent_text_version or "", lawful_basis=body.lawful_basis,
+            ip=client_ip(request))
+    except linkedin_consent.ConsentRequired as exc:
+        db.rollback()
+        raise HTTPException(status_code=422, detail=str(exc))
     try:
         parsed = ln.parse_connections_csv(body.csv_text)
     except ln.NetworkImportError as exc:
+        db.rollback()
         raise HTTPException(status_code=422, detail=str(exc))
     out = ln.import_connections(db, current_user, parsed)
     analysis = ln.analyze_user(db, current_user)
     # Counts only: never names, companies or addresses.
     security_audit.record(db, action=security_audit.LINKEDIN_NETWORK_IMPORTED,
                           request=request, user_id=current_user.id,
-                          target_type="linkedin_network", details=out)
+                          target_type="linkedin_network",
+                          details={**out, "consent_text_version": consent.consent_text_version,
+                                   "lawful_basis": consent.lawful_basis})
     db.commit()
     return {**out, "matched": analysis["matches"]}
 
@@ -116,6 +147,10 @@ def recommendations(
                    LinkedInConnectionMatch.score >= min_score)
             .order_by(LinkedInConnectionMatch.score.desc(), LinkedInConnection.full_name)
         ).all()
+        # A person on the do-not-contact list is not recommended, whichever
+        # channel they opted out on (lead_tasks.is_suppressed is global).
+        rows = [(match, c) for match, c in rows
+                if not (c.profile_url and is_suppressed(db, linkedin=c.profile_url))]
         segments = Counter(match.segment for match, _ in rows)
         out.append({
             "product_id": str(product.id), "product_name": product.name,
@@ -138,6 +173,9 @@ def erase(request: Request, db: Session = Depends(get_db),
     """Delete everything this account uploaded. Never plan-gated: a downgraded
     account can always remove its data."""
     out = ln.erase_user_network(db, current_user)
+    # Deleting the network withdraws the attestation too: a new upload asks again.
+    out["consents_revoked"] = linkedin_consent.revoke(
+        db, current_user.id, linkedin_consent.CONNECTIONS_IMPORT)
     security_audit.record(db, action=security_audit.LINKEDIN_NETWORK_ERASED,
                           request=request, user_id=current_user.id,
                           target_type="linkedin_network", details=out)

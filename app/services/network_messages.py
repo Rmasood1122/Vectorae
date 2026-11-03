@@ -86,6 +86,13 @@ def draft(db: Session, user: User, connection_id, product_id) -> LinkedInNetwork
         LinkedInNetworkMessage.connection_id == conn.id)).scalar_one_or_none()
     if existing is not None and existing.status in ("sent", "queued"):
         raise MessageError(409, "This message was already sent or is queued.")
+    if conn.profile_url:
+        from app.workers.lead_tasks import is_suppressed  # noqa: PLC0415
+
+        if is_suppressed(db, linkedin=conn.profile_url):
+            # Checked before any model call: nothing is drafted for a person
+            # who asked not to be contacted.
+            raise MessageError(409, "This person is on the do-not-contact list.")
     match = db.execute(select(LinkedInConnectionMatch).where(
         LinkedInConnectionMatch.user_id == user.id,
         LinkedInConnectionMatch.connection_id == conn.id,
@@ -170,6 +177,12 @@ def mark_sent_manually(db: Session, user: User, message_id) -> LinkedInNetworkMe
     msg = own_message(db, user, message_id)
     if msg.status != "approved":
         raise MessageError(409, "Save the message first.")
+    conn = db.get(LinkedInConnection, msg.connection_id)
+    if conn is not None and conn.profile_url:
+        from app.workers.lead_tasks import is_suppressed  # noqa: PLC0415
+
+        if is_suppressed(db, linkedin=conn.profile_url):
+            raise MessageError(409, "This person is on the do-not-contact list.")
     msg.status, msg.channel, msg.sent_at = "sent", "copy", datetime.now(timezone.utc)
     db.commit()
     return msg

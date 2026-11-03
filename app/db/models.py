@@ -5142,6 +5142,79 @@ class LinkedInNetworkMessage(TimestampMixin, Base):
 
 
 # --------------------------------------------------------------------------
+# LinkedIn, user-permission-based (migration 0097,
+# docs/features/linkedin-assisted.md). Vectorae never acts on LinkedIn: it
+# records what the user consented to and prepares tasks the user performs
+# on LinkedIn themselves.
+# --------------------------------------------------------------------------
+
+
+class LinkedInConsent(Base):
+    """One consent (or attestation) a user gave for one LinkedIn scope.
+
+    Append-only in practice: a revoke sets revoked_at; a changed consent text
+    means a NEW row at the new version (re-consent), never an edit. ip_hash
+    is a SHA-256 of the client IP with the deployment secret, so the record
+    proves "same origin" without storing the address.
+    """
+
+    __tablename__ = "linkedin_consents"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, nullable=True)
+    scope: Mapped[str] = mapped_column(String(60))
+    purpose: Mapped[str] = mapped_column(String(300))
+    consent_text_version: Mapped[str] = mapped_column(String(40))
+    lawful_basis: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    granted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    ip_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class LinkedInTask(TimestampMixin, Base):
+    """L0: one LinkedIn action the USER performs on LinkedIn.
+
+    Vectorae drafts `text` and stores the prospect's public profile URL (from
+    the user's own connections export or a licensed data source, never
+    scraped). The user approves this one task (the approval expires), opens
+    the profile on LinkedIn, sends the text themselves, and marks the task
+    done, skipped or replied.
+
+    status: pending -> approved -> opened -> done | skipped | replied
+            any open state -> cancelled (suppression, user) | expired
+    """
+
+    __tablename__ = "linkedin_tasks"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    source: Mapped[str] = mapped_column(String(20))  # network | sequence
+    kind: Mapped[str] = mapped_column(String(30))    # connection_note | message | comment
+    connection_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("linkedin_connections.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("leads.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    profile_url: Mapped[str] = mapped_column(String(500))
+    profile_key: Mapped[str] = mapped_column(String(200), index=True)
+    text: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    approval_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    opened_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancel_reason: Mapped[str | None] = mapped_column(String(60), nullable=True)
+
+
+# --------------------------------------------------------------------------
 # Private email network (migration 0090, docs/features/email-network.md)
 # --------------------------------------------------------------------------
 #

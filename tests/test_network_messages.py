@@ -260,8 +260,9 @@ class TestSendNow:
     def test_suppressed_profiles_are_never_messaged(self, client, world, claude, unipile, db_session):
         db_session.add(m.LinkedInSuppression(profile="ana-lopez", reason="optout"))
         db_session.commit()
-        mid = _approved(client, world)
-        assert client.post(f"/linkedin-network/messages/{mid}/send").status_code == 409
+        # Since evals/vectorae Phase 5B the DRAFT is already refused (before
+        # any model call), so there is never a message to send.
+        assert _draft(client, world).status_code == 409
         assert not [c for c in unipile.calls if c[0] == "start_chat"]
 
     def test_daily_cap_blocks_and_does_not_send(self, client, world, claude, unipile, redis):

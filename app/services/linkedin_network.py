@@ -311,9 +311,10 @@ def import_connections(db: Session, user: User, parsed: ParseResult) -> dict:
     existing = set(db.execute(
         select(LinkedInConnection.dedupe_key).where(LinkedInConnection.user_id == user.id)
     ).scalars())
-    added = 0
+    added = duplicates = 0
     for row in parsed.rows:
         if row.dedupe_key in existing:
+            duplicates += 1
             continue
         existing.add(row.dedupe_key)
         db.add(LinkedInConnection(
@@ -326,7 +327,8 @@ def import_connections(db: Session, user: User, parsed: ParseResult) -> dict:
     db.commit()
     total = db.execute(select(func.count(LinkedInConnection.id))
                        .where(LinkedInConnection.user_id == user.id)).scalar_one()
-    return {"added": added, "skipped": parsed.skipped, "total": total}
+    return {"added": added, "skipped": parsed.skipped, "duplicates": duplicates,
+            "total": total}
 
 
 def erase_user_network(db: Session, user: User) -> dict:

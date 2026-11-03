@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "@/lib/api/client";
 import {
   bulkSend, draftMessage, eraseNetwork, getNetworkStatus, getRecommendations,
-  importConnections, listMessages, markMessageSent, saveMessage, sendMessageNow,
+  importConnections, listMessages, saveMessage, sendMessageNow,
   type NetworkMatch, type NetworkMessage,
 } from "@/lib/api/network";
 import {
@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmailNetworkPanel } from "@/components/network/EmailNetworkPanel";
+import { LinkedInTasksPanel } from "@/components/linkedin/LinkedInTasksPanel";
+import { taskFromNetworkMessage } from "@/lib/api/linkedinTasks";
 
 /** One connection's message: write (or have it drafted), edit, save, then
  *  choose how it goes out. Nothing is sent from a draft. */
@@ -33,8 +35,7 @@ function MessageBox({ match, productId, message, onChanged, selected, onToggle }
   const [open, setOpen] = useState(false);
   const [text, setText] = useState(message?.text ?? "");
   const [err, setErr] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-  const link = safeProfileUrl(match.profile_url);
+  const [queued, setQueued] = useState(false);
 
   useEffect(() => { if (message) setText(message.text); }, [message?.id, message?.text]);
 
@@ -97,17 +98,15 @@ function MessageBox({ match, productId, message, onChanged, selected, onToggle }
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" disabled={run.isPending}
                         onClick={() => run.mutate(async () => {
-                          await navigator.clipboard.writeText(message.text);
-                          setCopied(true);
-                          if (link) window.open(link, "_blank", "noopener,noreferrer");
+                          await taskFromNetworkMessage(message.id);
+                          setQueued(true);
                         })}>
-                  Copy and open LinkedIn
+                  Add to my LinkedIn tasks
                 </Button>
-                {copied && (
-                  <Button variant="outline" disabled={run.isPending}
-                          onClick={() => run.mutate(async () => { await markMessageSent(message.id); })}>
-                    I sent it
-                  </Button>
+                {queued && (
+                  <span className="self-center text-xs text-muted-foreground">
+                    Added. Approve and open it in “Your LinkedIn tasks” above.
+                  </span>
                 )}
                 <Button disabled={run.isPending}
                         onClick={() => {
@@ -187,8 +186,11 @@ function LinkedInNetworkTab() {
   });
   const bulkIds = bulkCandidates(msgs.data?.messages ?? [], selected);
 
+  const [basis, setBasis] = useState<string>("");
+  const [attested, setAttested] = useState(false);
   const upload = useMutation({
-    mutationFn: importConnections,
+    mutationFn: (csv: string) =>
+      importConnections(csv, { version: status.data?.consent?.version ?? "", lawfulBasis: basis }),
     onSuccess: (r) => { setError(null); setMessage(importSummary(r)); refresh(); },
     onError: (e) => { setMessage(null); setError(importErrorMessage(e)); },
   });
@@ -220,6 +222,8 @@ function LinkedInNetworkTab() {
         </p>
       </header>
 
+      {eligible && <LinkedInTasksPanel />}
+
       {!eligible && (
         <Card>
           <CardContent className="space-y-2 pt-6 text-sm">
@@ -246,8 +250,33 @@ function LinkedInNetworkTab() {
               addresses in the file are ignored. LinkedIn has no feed for new connections, so
               upload a fresh export when your network has grown; scores are refreshed weekly.
             </p>
+            <section aria-label="Before you upload" className="space-y-2 rounded border p-3">
+              <p className="font-medium">Before you upload</p>
+              {s.consent ? (
+                <p className="whitespace-pre-wrap text-muted-foreground">{s.consent.text}</p>
+              ) : (
+                <p className="text-muted-foreground">The upload notice could not be loaded. Reload the page.</p>
+              )}
+              <label className="block">
+                <span className="mr-2">Lawful basis you rely on:</span>
+                <select value={basis} onChange={(e) => setBasis(e.target.value)}
+                        aria-label="Lawful basis" className="rounded border px-2 py-1">
+                  <option value="">Choose…</option>
+                  {(s.consent?.lawful_bases ?? []).map((b) => (
+                    <option key={b} value={b}>
+                      {b === "legitimate_interests" ? "Legitimate interests" : "Consent"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex items-start gap-2">
+                <input type="checkbox" checked={attested}
+                       onChange={(e) => setAttested(e.target.checked)} />
+                <span>I have read this and I have that lawful basis for these people&apos;s data.</span>
+              </label>
+            </section>
             <input ref={fileRef} type="file" accept=".csv,text/csv"
-                   aria-label="Connections.csv"
+                   aria-label="Connections.csv" disabled={!s.consent || !basis || !attested}
                    onChange={(e) => onFile(e.target.files?.[0])} />
             {upload.isPending && <p>Importing…</p>}
             {s.needs_new_export && (

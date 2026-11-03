@@ -17,10 +17,15 @@ afterEach(() => { vi.unstubAllGlobals(); });
 
 describe("wire", () => {
   it("posts the csv text as a JSON object", async () => {
-    await importConnections("First Name,Last Name\nA,B\n");
+    await importConnections("First Name,Last Name\nA,B\n",
+                            { version: "2026-11-02.1", lawfulBasis: "legitimate_interests" });
     expect(calls[0].url).toContain("/linkedin-network/import");
     expect(calls[0].init.method).toBe("POST");
-    expect(JSON.parse(calls[0].init.body as string)).toEqual({ csv_text: "First Name,Last Name\nA,B\n" });
+    expect(JSON.parse(calls[0].init.body as string)).toEqual({
+      csv_text: "First Name,Last Name\nA,B\n",
+      consent_text_version: "2026-11-02.1",
+      lawful_basis: "legitimate_interests",
+    });
   });
   it("erases with DELETE on the collection root", async () => {
     await eraseNetwork();

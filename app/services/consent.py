@@ -264,6 +264,12 @@ def suppress_everywhere(db: Session, lead: Lead, *, source: str, reason: str,
         from app.services.linkedin_outreach import normalize_profile  # noqa: PLC0415
 
         profile = normalize_profile(lead.linkedin_url)
+        if profile:
+            # L0: open LinkedIn tasks for this person end now, in every
+            # account (evals/vectorae Phase 5B step 3.5).
+            from app.services.linkedin_tasks import cancel_for_profile  # noqa: PLC0415
+
+            cancel_for_profile(db, profile)
         if not profile:
             result[LINKEDIN] = "no_identifier"
         elif is_suppressed(db, linkedin=lead.linkedin_url):

@@ -59,7 +59,14 @@ def _set_plan(db, user, plan):
 
 
 def _import(client, text=CSV):
-    return client.post("/linkedin-network/import", json={"csv_text": text})
+    # L3 attestation is required since evals/vectorae Phase 5B; its own rules
+    # are pinned in tests/test_linkedin_l3_attestation.py.
+    from app.services import linkedin_consent  # noqa: PLC0415
+
+    version = linkedin_consent.current_text(linkedin_consent.CONNECTIONS_IMPORT).version
+    return client.post("/linkedin-network/import",
+                       json={"csv_text": text, "consent_text_version": version,
+                             "lawful_basis": "legitimate_interests"})
 
 
 # --------------------------------------------------------------------------
