@@ -13,7 +13,6 @@ sources:
   - app/services/fpta_scoring.py
   - app/services/sequence_engine.py
   - app/workers/outreach_tasks.py
-  - app/integrations/linkedin_posts.py
   - app/integrations/newsapi.py
   - app/api/claims.py
   - app/api/personalization.py
@@ -40,7 +39,7 @@ Messages are written at the moment they are sent, not when the sequence is creat
 - the step's **brief** (what you asked the message to say);
 - the strategy's **messaging research** (the summary of research phase 6);
 - the lead's **name, title, company** and enrichment details;
-- any recent **LinkedIn posts** and **company news** it has stored for the lead;
+- any **company news** it has stored for the lead;
 - your **voice profile**, if you set one up;
 - the sequence's booking link, if it has one.
 
@@ -49,15 +48,15 @@ The AI is asked for a plain-text email under 140 words, with no placeholders suc
 ## What information about a prospect does Vectorae use?
 
 - **Enrichment** gathered during lead sourcing (from Apollo).
-- **Recent LinkedIn posts.** Right before writing an email, Vectorae fetches the lead's three most recent posts if its stored copy is more than 7 days old. It reads them through Unipile, which needs a connected LinkedIn account, or through a RapidAPI scraper as a fallback. When posts are available, the email's first line is asked to reference one specific detail from them.
+- **No LinkedIn posts.** Vectorae does not read prospects' LinkedIn posts. Reading other people's LinkedIn activity needs partner access from LinkedIn, which Vectorae does not have, so first lines use company news and the lead's details instead.
 - **Company news.** News from NewsAPI from the last 30 days, refreshed if the stored copy is more than 3 days old. An article is kept only if the company name appears in its title or description, and the AI is told to use it only if it plausibly concerns this company.
 - **Your voice.** In **Settings**, on the **Voice** tab, you can paste up to 5 writing samples. Vectorae extracts a style profile from them (tone, formality, vocabulary and similar). Only the profile is used when writing; your samples are stored for editing but never go into an outreach prompt.
 
 If a provider is not set up or fails, Vectorae writes the email without that input. It never holds back a send because of it.
 
-The LinkedIn post and news integrations have not yet been verified against the live services. Several request details for the LinkedIn post providers are still marked in the code as needing confirmation.
+The news integration has not yet been verified against the live service.
 
-You can see what Vectorae has stored on a lead's detail page, on the **Personalization** tab (**Company news** and **Recent LinkedIn posts**).
+You can see what Vectorae has stored on a lead's detail page, on the **Personalization** tab (**Company news**).
 
 ## What happens when a message makes a claim Vectorae can't back up?
 

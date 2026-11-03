@@ -2,28 +2,28 @@
 id: linkedin
 title: LinkedIn outreach and your LinkedIn network
 audience: customer
-last_verified: 2026-10-12
+last_verified: 2026-11-02
 owner: help-center
 sources:
   - app/services/plan_holds.py
   - app/core/plans.py
   - app/api/sequences.py
   - app/integrations/linkedin_channel.py
-  - app/integrations/unipile_linkedin.py
-  - app/integrations/linkedin_posts.py
+  - app/services/linkedin_tasks.py
+  - app/api/linkedin_tasks.py
+  - app/services/linkedin_consent.py
+  - app/services/linkedin_profile.py
   - app/services/linkedin_outreach.py
-  - app/services/linkedin_limits.py
   - app/services/system_settings.py
   - app/workers/outreach_tasks.py
   - app/api/linkedin.py
   - app/api/linkedin_network.py
   - app/services/linkedin_network.py
   - app/services/network_messages.py
-  - frontend/src/components/settings/LinkedInAccountsCard.tsx
-  - frontend/src/app/(app)/settings/page.tsx
+  - frontend/src/components/linkedin/LinkedInTasksPanel.tsx
   - frontend/src/app/(app)/network/page.tsx
   - frontend/src/components/shell/nav.ts
-  - docs/features/linkedin-channel.md
+  - docs/features/linkedin-assisted.md
   - app/services/daily_send_approval.py
   - docs/features/daily-send-approval.md
   - app/workers/network_tasks.py
@@ -36,73 +36,60 @@ sources:
   - frontend/src/components/network/EmailNetworkPanel.tsx
   - docs/features/email-network.md
 ---
-
 # LinkedIn outreach and your LinkedIn network
 
-Vectorae has two separate LinkedIn features. LinkedIn steps in a sequence send connection requests, messages and InMail to prospects through a LinkedIn account you connect. The Network page lets you upload your own LinkedIn connections, see which of them may fit your products, and write messages to them. This article explains what each one does and does not do.
+**Vectorae drafts; you send on LinkedIn.** Vectorae never sends, connects, comments or reads anything on LinkedIn for you. It has no access to your LinkedIn account and asks for no LinkedIn login. LinkedIn's rules do not allow automation tools to act for you, so every LinkedIn message is one you send yourself.
+
+There are two LinkedIn features. LinkedIn steps in a sequence turn into **LinkedIn tasks**: Vectorae writes the text and you send it. The Network page lets you upload your own LinkedIn connections, see which of them may fit your products, and write messages to them, which also become tasks.
 
 ## Which plans include LinkedIn?
 
 There are two different plan checks:
 
-- **LinkedIn steps in sequences** are part of the plan's channel list. The Growth, Scale, Pay per meeting, Pro and Enterprise plans include the LinkedIn channel. Free and Starter do not. If your plan does not include it, creating a sequence with a LinkedIn step is refused with an upgrade message. The check runs again when a sequence is launched, so a sequence built on a higher plan cannot be launched after a downgrade. For sequences enrolled from 12 October 2026 on, LinkedIn steps scheduled before a downgrade are held when they come due, not sent, and show the reason on the lead and on the Campaigns page; they are released automatically within about 30 minutes once your plan includes LinkedIn again.
+- **LinkedIn steps in sequences** are part of the plan's channel list. The Growth, Scale, Pay per meeting, Pro and Enterprise plans include the LinkedIn channel. Free and Starter do not. If your plan does not include it, creating a sequence with a LinkedIn step is refused with an upgrade message. The check runs again when a sequence is launched, so a sequence built on a higher plan cannot be launched after a downgrade. For sequences enrolled from 12 October 2026 on, LinkedIn steps scheduled before a downgrade are held when they come due and show the reason on the lead and on the Campaigns page; they are released automatically within about 30 minutes once your plan includes LinkedIn again.
 - **The Network page** (your private LinkedIn network) is included with Growth, Scale, Pro and Enterprise. It is **not** included with Pay per meeting, even though that plan includes the LinkedIn channel. On other plans the Network page still opens and shows "Upgrade in Settings".
 
-## Has LinkedIn sending been verified against the live service?
+## Do I need to connect my LinkedIn account?
 
-No.
+No. There is nothing to connect. A LinkedIn task contains a plain link to the person's public LinkedIn profile and the text to send. You open the profile in your own browser, signed in as yourself, and send the text there.
 
-Vectorae talks to LinkedIn through a third-party service called Unipile. The code that calls Unipile is marked in several places as not yet checked against Unipile's current documentation. That includes looking up profiles, sending connection requests, starting chats, sending messages, the account-connection page, reading InMail credits, and the incoming webhook for replies and accepted connection requests. Until that check is done, treat LinkedIn sending as not yet verified against the live service.
+## What happens when a LinkedIn step comes due?
 
-Your Vectorae administrator must also set up Unipile (Admin > Integrations > Unipile) before any LinkedIn sending can work. If it is not set up, LinkedIn steps fail with the reason "LinkedIn is not configured".
+When a LinkedIn step is due (inside your send window, and after your daily approval if you use it), Vectorae writes the text and adds a task to **Your LinkedIn tasks** on the Network page. Each step has an action. The default, **auto**, decides based on what you have reported on earlier tasks:
 
-## How do I connect my LinkedIn account?
+- You marked an earlier task with this person as **They replied**: a **message**.
+- You sent a connection note and they have not replied yet: the step is **skipped** and the sequence continues.
+- The prospect has a Premium profile: a **message** you can send as an InMail if your own account allows it.
+- Anyone else: a **connection note**.
 
-Go to **Settings**, open the **Integrations** tab, and find the **LinkedIn** card. Click **Connect an account**. You are sent to Unipile's hosted sign-in page and sign in to LinkedIn there. Vectorae does not see your LinkedIn password; it stores only an account id. There is also an option to "Link an existing Unipile account id instead" if you already have one.
-
-You can connect more than one LinkedIn account. Each connected account shows a **Premium** badge if it has LinkedIn Premium, a **Paused** badge if it is inactive, and two usage bars for today: **Connection requests** and **Messages + InMail**. You can refresh an account's details or remove it from the same card.
-
-## What does a LinkedIn step actually send?
-
-LinkedIn steps are sent automatically by Vectorae from your connected account, in the same way as email and WhatsApp steps: within your send window, your daily limits, and the send-review queue if you use it. Each step has an action. The default, **auto**, decides at send time based on the prospect:
-
-- Already connected to you: a **message**.
-- A connection request is still pending: the step is **skipped** and the sequence continues.
-- The prospect has a Premium profile: an **InMail**. If none of your accounts can send InMail (no Premium, or no InMail credits left), it falls back to a **connection request**.
-- Anyone else: a **connection request**.
-
-You can also set a step to **connect**, **message** or **inmail** explicitly. A "connect" step to someone already connected becomes a message. A "message" step to someone who is not connected is skipped.
-
-Before each send, Vectorae re-reads the prospect's profile (connected, pending, Premium) from LinkedIn through Unipile. When someone accepts your connection request, the incoming webhook marks them as connected.
+A "message" step to someone you have not reported as connected is skipped. A step for a lead without a link to a LinkedIn member profile fails with "the lead has no LinkedIn profile link".
 
 The text is written by AI from the step brief and your messaging playbook, and it passes through the same claim check as other channels. Length limits in the code: a connection note is cut to at most 300 characters, a message to at most 1,500 characters. The writer is told to keep connection notes to 280 characters with no pitch, messages under 120 words, and InMail bodies under 150 words with a short subject.
 
-## Will Vectorae warn me that LinkedIn can restrict my account?
+## How do I work through my LinkedIn tasks?
 
-Yes. LinkedIn's User Agreement does not allow automated tools to send messages or connection requests, and LinkedIn may restrict or suspend LinkedIn accounts that use automation, including Vectorae's automatic LinkedIn sending through your connected account. Because of that, automatic LinkedIn sending needs a separate approval every day. On the daily approval page the LinkedIn box is never ticked for you; ticking it shows this warning and asks "Do you want to proceed with automatic LinkedIn sending today?", and you must confirm before LinkedIn can be approved. If you approve only email, LinkedIn steps and bulk-sent network messages keep waiting and are not sent. See [The send-review queue and approvals](12-send-review-queue.md#do-i-approve-automatic-sending-every-day) for how the daily approval works.
+Each task goes through the same steps, one task at a time:
 
-## How many LinkedIn actions are sent per day?
+1. **Approve this one.** You read the text and approve that single task. There is no "approve all". An approval lasts 24 hours; after that the task asks to be approved again. Editing the text withdraws the approval.
+2. **Open profile on LinkedIn.** Vectorae copies the text and opens the person's profile. Before it does, it checks again that the person is not on the do-not-contact list, that it is business hours, and that you are within today's limits.
+3. Send the text yourself on LinkedIn.
+4. Mark the task **I sent it**, **They replied** or **Skip**.
 
-Each connected LinkedIn account has two daily ceilings, counted per UTC day:
+**They replied** stops that person's sequences, the same as a reply on any other channel.
 
-- **Connection requests:** default 20 per account per day.
-- **Messages (including InMail):** default 50 per account per day. An InMail counts against the message ceiling.
+LinkedIn approval is separate from the daily email approval: approving a task approves only that task.
 
-Connection requests also have a weekly ceiling, counted per ISO week (Monday to Sunday, UTC): default 180 per account, and at most 150 for an account without LinkedIn Premium. LinkedIn allows roughly 200 a week with Premium and 150 without, and Unipile does not limit them for you.
+## How many LinkedIn tasks can I open per day?
 
-These numbers are set by your Vectorae administrator in System Settings, so your deployment may use different values. If a send fails, the slot it reserved is given back.
+To protect your LinkedIn account from looking like automation, at most **20 connection notes** and at most **50 messages** can be opened per day, counted in your account's timezone, during business hours. Your Vectorae administrator can lower these limits in System Settings but cannot raise them.
 
-If LinkedIn answers that an account has reached one of its own limits, the message is retried later instead of failing. If Unipile reports that an account is disconnected, needs its LinkedIn login again, or is restricted, that account is taken out of rotation until Unipile reports it working again or you reconnect it.
-
-When you have several accounts, a prospect's first touch goes from the active account with the fewest sends of that kind today. **Every later touch to that prospect comes from the same account**, so the conversation stays with one person. If that account is disconnected, the step fails with a message asking you to reconnect it.
-
-When every eligible account has reached its ceiling, the message is not dropped. It is moved to the next day's send window.
+When you already have a full day's worth of tasks waiting, a LinkedIn step that comes due is not dropped. It is moved to the next day's send window.
 
 ## How do people opt out on LinkedIn?
 
-LinkedIn messages do not carry an unsubscribe footer, because a link in a connection note can get the account restricted. Instead, a reply on LinkedIn goes through the same reply classifier and stop rules as email and WhatsApp. A reply classified as an unsubscribe request suppresses that person's LinkedIn profile, email address and phone number.
+LinkedIn messages do not carry an unsubscribe footer, because a link in a connection note looks like spam on LinkedIn. If someone asks you on LinkedIn to stop, mark the task **They replied** and add them to the do-not-contact list.
 
-An unsubscribe on any channel also suppresses the LinkedIn profile. Vectorae checks the suppression list when a prospect is enrolled, when a message is sent, and once more immediately before the LinkedIn send call. A suppressed prospect is never sent a LinkedIn message.
+An unsubscribe on any channel suppresses that person's LinkedIn profile too. Vectorae checks the suppression list when a prospect is enrolled, when a task is created, when it is approved and again when you open it. When someone is suppressed, their open LinkedIn tasks are cancelled at once.
 
 ## What is the Network page?
 
@@ -110,26 +97,23 @@ An unsubscribe on any channel also suppresses the LinkedIn profile. Vectorae che
 
 1. On LinkedIn: Settings & Privacy, then Data privacy, then Get a copy of your data.
 2. Choose **Connections** and request the archive.
-3. Upload the `Connections.csv` file from it on the Network page.
+3. On the Network page, read the notice, choose the lawful basis you rely on (usually legitimate interests), tick the confirmation box, and upload the `Connections.csv` file. The file picker stays locked until you have done both, and nothing is pre-selected.
 
-The file can be up to 5 MB and up to 20,000 rows. Only name, job title, company, profile link and connection date are stored. Email addresses and phone numbers in the file are discarded when it is read.
+Vectorae records your confirmation (the version of the notice you read, the lawful basis, and the time). If the notice changes, you are asked again on your next upload. Deleting your uploaded connections also withdraws it.
 
-Vectorae then scores each connection against each of your products with fixed rules. This scoring does not use AI and does not send your connections to any outside service. Connections scoring 30 or more out of 100 appear as matches, grouped into segments, with the reasons for each match. Stored connections are re-scored weekly. New connections only appear when you upload a fresh export; the page reminds you when your last upload is more than 7 days old.
+The file can be up to 5 MB and up to 20,000 rows. Only name, job title, company, profile link and connection date are stored. Email addresses and phone numbers in the file are discarded when it is read, and your connections are never added to email campaigns. A connection already stored is skipped, and the import summary says how many duplicates there were.
+
+Vectorae then scores each connection against each of your products with fixed rules. This scoring does not use AI and does not send your connections to any outside service. Connections scoring 30 or more out of 100 appear as matches, grouped into segments, with the reasons for each match. People on the do-not-contact list are never shown. Stored connections are re-scored weekly. New connections only appear when you upload a fresh export; the page reminds you when your last upload is more than 7 days old.
 
 Your uploaded connections are private to your account. They are never shown to any other account.
 
 ## Can Vectorae message my own connections?
 
-Yes, on eligible plans, and only after you approve the text. For a matched connection:
+No. You message them yourself, with Vectorae's help, on eligible plans. For a matched connection:
 
-- **Draft it in my voice** asks AI to write a short message. A draft is never sent.
-- Edit it if you want (up to 1,500 characters), then click **Save**. Only saved text can be sent.
-- Then choose how to send it:
-  - **Copy and open LinkedIn** copies the text and opens their profile; you send it yourself, then click **I sent it** to record it.
-  - **Send now via LinkedIn** sends it through your connected LinkedIn account after you confirm.
-  - **Bulk send** sends up to 25 saved messages per batch, one at a time, about 90 seconds apart. Because the batch then sends on its own, it counts as automatic LinkedIn sending: queued messages wait until today's LinkedIn sending is approved on the daily approval page, and go out after that. Sending one message with **Send** is your own action and is not held.
-
-Every Vectorae send to a connection checks again at that moment that your plan still includes the feature, the person is not on the do-not-contact list, your daily LinkedIn message limit has not been reached, and the person is still a 1st-degree connection. If they are no longer connected, nothing is sent and the message is marked failed.
+- **Draft it in my voice** asks AI to write a short message. No draft is made for someone on the do-not-contact list.
+- Edit it if you want (up to 1,500 characters), then click **Save**.
+- Click **Add to my LinkedIn tasks**. The message then goes through the task steps above: approve, open the profile, send it yourself, mark it.
 
 ## How do I delete my uploaded connections?
 

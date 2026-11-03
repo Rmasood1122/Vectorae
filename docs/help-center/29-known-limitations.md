@@ -28,7 +28,6 @@ sources:
   - app/integrations/apollo.py
   - app/integrations/hunter.py
   - app/integrations/calendly.py
-  - app/integrations/unipile_linkedin.py
   - app/integrations/zoom.py
   - app/integrations/recall.py
   - app/integrations/voice_providers.py
@@ -73,7 +72,7 @@ This is an honest list of what Vectorae does not do, does not do yet, or has not
 
 ## Which integrations have not been verified against the live services?
 
-Vectorae's automated tests run against simulated versions of outside services. Gmail, WhatsApp Business, Apollo, Hunter, Calendly, LinkedIn (through Unipile) and Zoom were checked against each provider's public documentation on 2026-10-27, and the differences found were fixed, but none of them has been checked against the live service from these tests. HubSpot, Recall.ai, Vapi and ElevenLabs were checked on 2026-10-28 from search excerpts of their documentation (their documentation sites could not be opened from the checking session), and the differences found were fixed. Some Recall.ai, Vapi and ElevenLabs fields and calls are still marked in the code as not confirmed (for Recall.ai this includes the request that sends the note-taker into a meeting), and none of these four has been checked against the live service.
+Vectorae's automated tests run against simulated versions of outside services. Gmail, WhatsApp Business, Apollo, Hunter, Calendly and Zoom were checked against each provider's public documentation on 2026-10-27, and the differences found were fixed, but none of them has been checked against the live service from these tests. HubSpot, Recall.ai, Vapi and ElevenLabs were checked on 2026-10-28 from search excerpts of their documentation (their documentation sites could not be opened from the checking session), and the differences found were fixed. Some Recall.ai, Vapi and ElevenLabs fields and calls are still marked in the code as not confirmed (for Recall.ai this includes the request that sends the note-taker into a meeting), and none of these four has been checked against the live service.
 
 In particular:
 

@@ -65,7 +65,7 @@ These actions need an owner or manager. The server refuses them with these messa
 | What you tried | Message |
 |---|---|
 | Deleting anything: a lead (**Delete (GDPR erasure)**), a strategy, a note, a tag, a saved view | "Deleting needs a manager in this workspace." |
-| Changing integrations (for example connecting or pausing a LinkedIn account; removing one gets the deleting message above), outgoing webhooks, costs or pilots | "Integrations, webhooks, costs and pilots need a manager." |
+| Changing integrations (for example connecting a CRM; removing one gets the deleting message above), outgoing webhooks, costs or pilots | "Integrations, webhooks, costs and pilots need a manager." |
 | Approving today's automatic sending | "Approving automatic sending needs an owner or manager in this workspace." |
 | Turning Autopilot on or off | "Turning on Autopilot needs the account owner or a workspace manager: it launches outreach without a separate approval." |
 | Overriding a blocked pre-send review | "Overriding a review needs a manager." |

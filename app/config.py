@@ -212,17 +212,6 @@ class Settings(BaseSettings):
     # jwt_refresh_ttl_seconds has passed since that deploy.
     auth_accept_legacy_refresh_tokens: bool = True
 
-    # --- LinkedIn third-party providers (GAP-LI-01, evals/vectorae/) --------
-    # Unipile acts on LinkedIn through a session it holds for the member's
-    # account (its docs: log in with username/password or the li_at cookie);
-    # the "RapidAPI LinkedIn scraper" reads prospects' posts. LinkedIn's User
-    # Agreement and its "Prohibited software and extensions" page ban both
-    # patterns. OFF by default: every Unipile action, the hosted connect link,
-    # and both post readers refuse while this is false. Disconnecting an
-    # account (erasure, revoke) still works, because removing a session is
-    # never the prohibited act. Turning this on is a founder decision.
-    linkedin_unofficial_providers_enabled: bool = False
-
     # --- Claude / ChatGPT connector (app/mcp/, DECISIONS.md CONN-*) ---------
     # Off until the OAuth authorization server is deployed: /mcp and its
     # metadata answer 404 while this is false.

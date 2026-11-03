@@ -35,7 +35,6 @@ Automatic means anything Vectorae sends on its own schedule:
 - sequence steps and automatic follow-ups;
 - re-engagement messages and "not now" return messages;
 - Reply Copilot answers sent by auto-send;
-- LinkedIn network messages you queued with a bulk send, because they are sent later without you.
 
 Not held, because a person already decided on that exact message:
 
@@ -57,11 +56,11 @@ Only a workspace owner or manager can decide, and only when signed in as a perso
 
 LinkedIn is a separate, explicit choice. Its checkbox is never ticked for you, and the page shows this warning:
 
-"LinkedIn's User Agreement does not allow automated tools to send messages or connection requests. LinkedIn may restrict or suspend LinkedIn accounts that use automation, including Vectorae's automatic LinkedIn sending through your connected account. Do you want to proceed with automatic LinkedIn sending today?"
+"Vectorae does not send anything on LinkedIn. Approving LinkedIn lets today's LinkedIn steps become tasks in your queue; you approve, open and send each one yourself on LinkedIn. LinkedIn may still restrict or suspend accounts that send many messages or connection requests in a short time, so the daily limits stay in place. Do you want today's LinkedIn steps added to your LinkedIn tasks?"
 
-When you tick LinkedIn, a second checkbox appears: "I understand LinkedIn may restrict or suspend my LinkedIn account, and I want to proceed with automatic LinkedIn sending today." You cannot approve LinkedIn without it. The warning has a version number, and the version and text you saw are stored with your decision; if the warning changed after you opened the page, the approval is refused and you are asked to reload the page and read it again. Declining clears the acknowledgement, so approving LinkedIn again later that day asks again.
+When you tick LinkedIn, a second checkbox appears: "I understand Vectorae only drafts LinkedIn tasks, and that I approve and send each LinkedIn message myself within the daily limits." You cannot approve LinkedIn without it. The warning has a version number, and the version and text you saw are stored with your decision; if the warning changed after you opened the page, the approval is refused and you are asked to reload the page and read it again. Declining clears the acknowledgement, so approving LinkedIn again later that day asks again.
 
-The warning is a risk disclosure, not legal advice. LinkedIn sending itself has not yet been checked against the live LinkedIn provider; see [LinkedIn outreach and your LinkedIn network](11-linkedin.md).
+The warning is a risk disclosure, not legal advice. How LinkedIn tasks work is in [LinkedIn outreach and your LinkedIn network](11-linkedin.md).
 
 ## What happens to my messages if nobody approves?
 

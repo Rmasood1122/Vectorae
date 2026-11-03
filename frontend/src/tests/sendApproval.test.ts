@@ -36,9 +36,9 @@ function state(overrides: Partial<SendApprovalState> = {}): SendApprovalState {
     notified_at: null,
     linkedin_warning: {
       version: "li-automation-2026-10-11",
-      text: "LinkedIn may restrict or suspend LinkedIn accounts that use automation. "
-        + "Do you want to proceed with automatic LinkedIn sending today?",
-      question: "Do you want to proceed with automatic LinkedIn sending today?",
+      text: "Vectorae does not send anything on LinkedIn. "
+        + "Do you want today's LinkedIn steps added to your LinkedIn tasks?",
+      question: "Do you want today's LinkedIn steps added to your LinkedIn tasks?",
     },
     channel_labels: { email: "Email", linkedin: "LinkedIn", whatsapp: "WhatsApp",
                       phone: "AI phone calls" },
@@ -68,7 +68,7 @@ describe("canApprove", () => {
   it("refuses LinkedIn without the risk acknowledgement", () => {
     const check = canApprove(sel("email", "linkedin"), false);
     expect(check.ok).toBe(false);
-    expect(check.reason).toMatch(/restrict or suspend/);
+    expect(check.reason).toMatch(/send each LinkedIn message yourself/);
     expect(canApprove(sel("email", "linkedin"), true).ok).toBe(true);
   });
 

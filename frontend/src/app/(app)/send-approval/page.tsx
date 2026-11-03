@@ -164,8 +164,8 @@ function Decision({ state }: { state: SendApprovalState }) {
                   disabled={!state.can_decide || busy}
                 />
                 <span>
-                  I understand LinkedIn may restrict or suspend my LinkedIn account, and I want
-                  to proceed with automatic LinkedIn sending today.
+                  I understand Vectorae only drafts LinkedIn tasks, and that I approve and send
+                  each LinkedIn message myself within the daily limits.
                 </span>
               </label>
             )}

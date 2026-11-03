@@ -62,9 +62,9 @@ export const BILLING_RETENTION_YEARS = 7;
  *  E1/E2, docs/features/gdpr-erasure.md). Pinned by profile.test.ts. */
 export const DELETE_ACCOUNT_COPY = {
   erased:
-    "Your profile, products, strategies, prospects, messages, replies, meetings, CRM records, " +
-    "connected accounts (Gmail, LinkedIn, CRM and other integrations), API keys, sessions and " +
-    "uploaded files are erased at once, and LinkedIn accounts are disconnected at Unipile. Any " +
+    "Your profile, products, strategies, prospects, messages, replies, meetings, LinkedIn tasks, " +
+    "CRM records, connected accounts (Gmail, CRM and other integrations), API keys, sessions and " +
+    "uploaded files are erased at once. Any " +
     "scheduled message is cancelled and any paid plan is cancelled immediately, with no further " +
     "charges — if the payment provider cannot confirm that, nothing is deleted. This cannot be undone.",
   kept: [

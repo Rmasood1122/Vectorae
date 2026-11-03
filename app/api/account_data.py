@@ -126,9 +126,10 @@ def delete_my_account(body: AccountDeleteIn, request: Request,
     the administrator refusal, the password (a refusal is audited and
     committed on its own), then billing: a subscription that exists in Stripe
     is cancelled FIRST, and if that cannot be confirmed (Stripe unreachable,
-    or no Stripe key on this server) nothing is erased (502). Then LinkedIn
-    accounts are disconnected at Unipile (best effort), and the erasure and
-    its record commit together; the account's files are removed after.
+    or no Stripe key on this server) nothing is erased (502). Then the
+    provider-side deletions run (disconnect_providers, best effort), and the
+    erasure and its record commit together; the account's files are removed
+    after.
     """
     if getattr(request.state, "auth_via", None) == "api_key":
         raise HTTPException(status_code=403, detail=DELETE_API_KEY_REFUSED)

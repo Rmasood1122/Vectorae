@@ -1,14 +1,15 @@
-"""Feature Group 5 — the LinkedIn channel's decisions and copy.
+"""Feature Group 5 — the LinkedIn channel's decisions and copy (L0: assisted).
 
-The send path (outreach_tasks.send_message_impl) owns WHEN a LinkedIn message
-may go (campaign state, suppression, send window, daily caps). This module
-answers the LinkedIn-specific questions it asks along the way:
+Since 2026-11-02 (evals/vectorae, option a) Vectorae never acts on LinkedIn:
+a LinkedIn step becomes a task the USER performs (app/integrations/
+linkedin_channel.py -> app/services/linkedin_tasks.py). The send path
+(outreach_tasks.send_message_impl) still owns WHEN a step is due. This module
+answers:
 
-  refresh_profile   who is this person on LinkedIn right now -- Unipile id,
-                    Premium, already connected, request already pending
-  resolve_action    connect, message or InMail for THIS step and THIS lead
+  resolve_action    connect, message or InMail for THIS step and THIS lead,
+                    from what the USER reported on earlier tasks
   render            the copy, within LinkedIn's limits, in the sender's voice
-  after_send        record the relationship the send created
+  after_task        record what the user reported (sent, replied)
 
 RESOLVING `auto` (the default for LinkedIn steps)
   already connected                          -> message
@@ -32,13 +33,12 @@ from __future__ import annotations
 import logging
 from datetime import datetime, timezone
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import Lead, LinkedInAccount, Strategy
-from app.integrations.linkedin_posts import public_identifier
-from app.integrations.unipile_linkedin import CONNECTION_NOTE_MAX, UnipileClient
+from app.db.models import Lead, Strategy
 from app.services import anthropic_client, prompt_safety
+from app.services.linkedin_profile import normalize_profile, public_identifier  # noqa: F401
+from app.services.linkedin_tasks import CONNECTION_NOTE_MAX
 
 logger = logging.getLogger(__name__)
 
@@ -69,60 +69,6 @@ LINKEDIN_MESSAGE_SCHEMA = {
 
 def _now() -> datetime:
     return datetime.now(timezone.utc)
-
-
-def normalize_profile(url_or_slug: str | None) -> str | None:
-    if not url_or_slug:
-        return None
-    slug = public_identifier(url_or_slug) or url_or_slug
-    return slug.strip().strip("/").lower()[:200] or None
-
-
-def client_for(session: Session, user_id) -> UnipileClient | None:
-    """The client every ACTING LinkedIn path uses (send, connect link, link
-    account, inbox reply, diagnostics). None while the GAP-LI-01 kill switch
-    is off, so each caller takes its existing "not configured" path and no
-    request reaches Unipile."""
-    from app.integrations import unipile_linkedin  # noqa: PLC0415
-
-    if not unipile_linkedin.unofficial_providers_enabled():
-        return None
-    return unipile_linkedin.get_client(session, user_id)
-
-
-def active_accounts(session: Session, user_id) -> list[LinkedInAccount]:
-    return list(session.execute(
-        select(LinkedInAccount).where(LinkedInAccount.user_id == user_id,
-                                      LinkedInAccount.is_active.is_(True))
-    ).scalars().all())
-
-
-def relationship_account(session: Session, lead: Lead) -> LinkedInAccount | None:
-    return session.get(LinkedInAccount, lead.linkedin_account_id) \
-        if lead.linkedin_account_id else None
-
-
-def refresh_profile(session: Session, client: UnipileClient, lead: Lead, user_id) -> None:
-    """Look the lead up through the relationship account (or any active one).
-    Raises on a provider error: the send cannot proceed without a provider id,
-    and the task's retry is the right response to a transient failure."""
-    owner_account = relationship_account(session, lead)
-    accounts = [owner_account] if owner_account else active_accounts(session, user_id)
-    if not accounts:
-        return
-    identifier = lead.linkedin_provider_id or public_identifier(lead.linkedin_url)
-    if not identifier:
-        raise ValueError("lead has no usable LinkedIn profile URL")
-    profile = client.profile(identifier, accounts[0].unipile_account_id)
-    lead.linkedin_provider_id = profile["provider_id"]
-    lead.linkedin_is_premium = profile["is_premium"]
-    if profile["is_connected"]:
-        if lead.linkedin_connection_status != "connected":
-            lead.linkedin_connection_status = "connected"
-            lead.linkedin_connected_at = lead.linkedin_connected_at or _now()
-    elif profile["invitation_pending"] and lead.linkedin_connection_status is None:
-        lead.linkedin_connection_status = "pending"
-    session.commit()
 
 
 def resolve_action(configured: str | None, lead: Lead) -> str:
@@ -205,32 +151,33 @@ def render(session: Session, strategy: Strategy, lead: Lead, step, action: str) 
     return out
 
 
-def after_send(session: Session, lead: Lead, account: LinkedInAccount, action: str,
-               result, now: datetime | None = None) -> None:
-    """Record the relationship this send created. Caller commits."""
+def after_task(session: Session, lead: Lead, kind: str, outcome: str,
+               now: datetime | None = None) -> None:
+    """Record what the user reported on a sequence task. Caller commits.
+
+    connection_note done     -> request pending
+    connection_note replied  -> connected (they accepted and wrote back)
+    any task replied         -> the lead's live sequences stop, as on a reply
+    """
+    from app.services import sequence_engine  # noqa: PLC0415
+
     now = now or _now()
-    lead.linkedin_account_id = account.id
-    account.last_used_at = now
-    if action == "connect":
-        lead.linkedin_connection_status = "pending"
-        lead.linkedin_invited_at = now
-    elif result.thread_ref:
-        lead.linkedin_chat_id = result.thread_ref
-    if action == "inmail":
-        account.inmail_sent_total = (account.inmail_sent_total or 0) + 1
-        if account.inmail_credits is not None:
-            account.inmail_credits = max(0, account.inmail_credits - 1)
+    if kind == "connection_note" and outcome == "done":
+        if lead.linkedin_connection_status != "connected":
+            lead.linkedin_connection_status = "pending"
+            lead.linkedin_invited_at = now
+    if outcome == "replied":
+        lead.linkedin_connection_status = "connected"
+        lead.linkedin_connected_at = lead.linkedin_connected_at or now
+        sequence_engine.stop_live_enrollments(session, lead.id, "replied", now, commit=False)
 
 
 def lead_state(lead: Lead) -> dict:
     return {
         "linkedin_url": lead.linkedin_url,
-        "provider_id": lead.linkedin_provider_id,
         "is_premium": lead.linkedin_is_premium,
         "connection_status": lead.linkedin_connection_status,
         "invited_at": lead.linkedin_invited_at.isoformat() if lead.linkedin_invited_at else None,
         "connected_at": (lead.linkedin_connected_at.isoformat()
                          if lead.linkedin_connected_at else None),
-        "account_id": str(lead.linkedin_account_id) if lead.linkedin_account_id else None,
-        "has_conversation": bool(lead.linkedin_chat_id),
     }

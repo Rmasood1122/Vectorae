@@ -6,7 +6,7 @@ Spec: docs/features/autopilot-launch.md section 3.3.
 SAME CHECKS AS THE SEND PATH, NOT A COPY OF IT. Each reason reads the
 function or the data its gate reads: plans.check_send_channel, the owner's
 Gmail account (and the token failures the send path recorded on it),
-linkedin_outreach.client_for / active_accounts, daily_send_approval's own
+daily_send_approval's own
 `_channel_hold`, compliance_rules.resolve for the next due lead (empty
 window, consent required, the resolved send window and daily cap -- never the
 baseline when a rule applies), sequence_engine.in_send_window /
@@ -171,16 +171,9 @@ def channel_readiness(session: Session, owner_id, channel: str) -> list[dict]:
                                    "Google refused your Gmail connection (revoked or expired).",
                                    "Reconnect Gmail.", INTEGRATIONS_LINK))
     elif channel == "linkedin":
-        from app.services import linkedin_outreach  # noqa: PLC0415
-
-        if linkedin_outreach.client_for(session, owner_id) is None:
-            missing.append(_reason("linkedin_not_configured",
-                                   "LinkedIn sending is not set up on this deployment.",
-                                   "An admin adds the Unipile key under Admin > Integrations.",
-                                   INTEGRATIONS_LINK))
-        elif not linkedin_outreach.active_accounts(session, owner_id):
-            missing.append(_reason("linkedin_no_account", "No LinkedIn account is connected.",
-                                   "Connect your LinkedIn account.", INTEGRATIONS_LINK))
+        # L0: nothing to configure. LinkedIn steps become tasks the user
+        # performs (/linkedin-tasks); there is no account to connect.
+        pass
     elif channel == "whatsapp":
         if not (settings.whatsapp_access_token and settings.whatsapp_phone_number_id):
             missing.append(_reason("whatsapp_not_configured",

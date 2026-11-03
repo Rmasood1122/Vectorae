@@ -131,7 +131,7 @@ answerable:
   style: paraphrase
   question: Does Vectorae send connection requests on LinkedIn for me?
   expected:
-  - linkedin#what-does-a-linkedin-step-actually-send
+  - linkedin#what-happens-when-a-linkedin-step-comes-due
 - id: q23
   style: paraphrase
   question: Which plan do I need to use LinkedIn?
@@ -264,8 +264,8 @@ answerable:
   question: does it work with linkdin
   expected:
   - linkedin#which-plans-include-linkedin
-  - linkedin#what-does-a-linkedin-step-actually-send
-  - linkedin#has-linkedin-sending-been-verified-against-the-live-service
+  - linkedin#what-happens-when-a-linkedin-step-comes-due
+  - linkedin#linkedin-outreach-and-your-linkedin-network
 - id: q49
   style: typo
   question: how do i set my availabilty for bookings

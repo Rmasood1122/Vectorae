@@ -26,10 +26,7 @@ from tests.test_linkedin_channel import (  # noqa: F401
     RecordingChannel,
     _li_lead,
     _message as _li_message,
-    configured,
-    li_accounts,
     li_sequence,
-    unipile,
 )
 from tests.test_phone_calls import (  # noqa: F401
     _message as _phone_message,
@@ -71,9 +68,12 @@ def _assert_held(db, message, result, expected=dsa.SEND_RESULT_AWAITING):
 
 
 class TestChannels:
+    # Gate change 2026-11-02 (docs/program/plans/gate-linkedin-unipile-removal.md):
+    # LinkedIn "sent" now means handed to the user's L0 task queue; the hold
+    # and the acknowledged approval it guards are unchanged. The second test
+    # proves the real channel queues exactly one task only after approval.
     def test_linkedin_held_then_approved_with_acknowledgement_then_sent(
-            self, db_session, verified_strategy, li_sequence, li_accounts, unipile,
-            configured, fake_claude, test_user):
+            self, db_session, verified_strategy, li_sequence, fake_claude, test_user):
         lead = _li_lead(db_session, verified_strategy, 1)
         msg = _li_message(db_session, li_sequence, lead)
         channel = RecordingChannel()
@@ -89,6 +89,18 @@ class TestChannels:
         assert outreach_tasks.send_message_impl(db_session, msg.id, channel=channel,
                                                 now=NOW) == "sent"
         assert len(channel.sent) == 1
+
+    def test_linkedin_real_channel_queues_a_task_only_after_approval(
+            self, db_session, verified_strategy, li_sequence, fake_claude, test_user):
+        lead = _li_lead(db_session, verified_strategy, 2)
+        msg = _li_message(db_session, li_sequence, lead)
+        _assert_held(db_session, msg, outreach_tasks.send_message_impl(
+            db_session, msg.id, now=NOW))
+        assert db_session.query(m.LinkedInTask).count() == 0
+        _approve(db_session, test_user, ["linkedin"])
+        assert outreach_tasks.send_message_impl(db_session, msg.id, now=NOW) == "sent"
+        (task,) = db_session.query(m.LinkedInTask).all()
+        assert task.status == "pending" and task.lead_id == lead.id   # the user still approves it
 
     def test_whatsapp_held_then_approved_then_sent(
             self, db_session, fake_claude, gmail_account, multichannel_sequence, wa_lead,

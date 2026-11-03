@@ -62,9 +62,7 @@ class ProviderSpec:
     # "system": only the admin sets it. "user": only a user connects it (an
     # OAuth grant). "both": a system default a user may override.
     scope: str
-    # Keys the admin MAY set that `configured` does not require (e.g. the
-    # Unipile account used to READ LinkedIn posts when a user has not
-    # connected their own).
+    # Keys the admin MAY set that `configured` does not require.
     optional: tuple[str, ...] = ()
 
 
@@ -80,20 +78,6 @@ CATALOGUE: tuple[ProviderSpec, ...] = (
     ProviderSpec("newsapi", "NewsAPI", ("api_key",),
                  "Recent company news injected into outreach hooks and the "
                  "meeting prep brief.", "both"),
-    ProviderSpec("unipile", "Unipile", ("api_key", "dsn"),
-                 "LinkedIn post fetching and the LinkedIn outreach channel "
-                 "(connection requests, messages, InMail). `dsn` is your "
-                 "Unipile API host, e.g. api8.unipile.com:13851. "
-                 "`reader_account_id` (optional) is the Unipile LinkedIn "
-                 "account used to read posts for users who have not "
-                 "connected their own. `webhook_secret` authenticates "
-                 "Unipile's deliveries to /webhooks/unipile (set the same "
-                 "value as the webhook's Unipile-Auth header).", "system",
-                 optional=("reader_account_id", "webhook_secret")),
-    ProviderSpec("rapidapi_linkedin", "RapidAPI LinkedIn scraper",
-                 ("api_key", "host"),
-                 "Fallback for LinkedIn post fetching when Unipile is not "
-                 "configured.", "system"),
     ProviderSpec("loom", "Loom", ("public_app_id",),
                  "Loom recordSDK app id used to build the personalised video "
                  "CTA for high-scoring leads.", "system"),

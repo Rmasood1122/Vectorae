@@ -145,9 +145,6 @@ facts:
   phrase: in at least 20 characters
   expr: app.services.verification_override.MIN_REASON_CHARS
 - article: '07'
-  phrase: is more than 7 days old
-  expr: app.services.personalization_context.POSTS_TTL.days
-- article: '07'
   phrase: News from NewsAPI from the last 30 days
   expr: app.services.personalization_context.NEWS_WINDOW.days
 - article: '07'
@@ -230,7 +227,7 @@ facts:
   expr: sorted(app.workers.celery_app.celery_app.conf.beat_schedule['plan-hold-release']['schedule'].minute)[1] - sorted(app.workers.celery_app.celery_app.conf.beat_schedule['plan-hold-release']['schedule'].minute)[0]
 - article: '11'
   phrase: cut to at most 300 characters
-  expr: app.integrations.unipile_linkedin.CONNECTION_NOTE_MAX
+  expr: app.services.linkedin_tasks.CONNECTION_NOTE_MAX
 - article: '11'
   phrase: a message to at most 1,500 characters
   expr: app.services.linkedin_outreach.MESSAGE_MAX
@@ -254,8 +251,14 @@ facts:
   expr: app.services.network_messages.MESSAGE_MAX
   shows: '{v:,}'
 - article: '11'
-  phrase: about 90 seconds apart
-  expr: app.services.network_messages.BULK_SPACING_SECONDS
+  phrase: An approval lasts 24 hours
+  expr: int(app.services.linkedin_tasks.APPROVAL_TTL.total_seconds() // 3600)
+- article: '11'
+  phrase: at most **20 connection notes**
+  expr: app.services.linkedin_tasks.HARD_CAPS['connection_note']
+- article: '11'
+  phrase: at most **50 messages**
+  expr: app.services.linkedin_tasks.HARD_CAPS['message']
 - article: '11'
   phrase: (up to 20 MB; at most 10 address
   expr: app.services.email_network_parse.CONTACTS_MAX_BYTES // 1048576

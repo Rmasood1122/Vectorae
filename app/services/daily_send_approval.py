@@ -2,8 +2,9 @@
 
 Founder decision (2026-10-11): before Vectorae sends anything AUTOMATICALLY on
 a given day, the account owner (or a workspace owner/manager) is notified and
-decides, per channel. For LinkedIn they are told plainly that LinkedIn may
-restrict or suspend accounts that use automation. Spec:
+decides, per channel. For LinkedIn (where Vectorae only queues tasks the user
+sends, since 2026-11-02) they are told that and that LinkedIn may still
+restrict or suspend accounts that send in bursts. Spec:
 docs/features/daily-send-approval.md. THIS IS A LEGAL/SAFETY GUARD.
 
 WHERE IT IS ENFORCED. `send_hold()` is called by
@@ -87,13 +88,19 @@ APPROVAL_PATH = "/send-approval"
 
 #: The LinkedIn risk disclosure. Bump the VERSION whenever the TEXT changes:
 #: the version a person saw is recorded with their decision.
-LINKEDIN_WARNING_VERSION = "li-automation-2026-10-11"
-LINKEDIN_QUESTION = "Do you want to proceed with automatic LinkedIn sending today?"
+# Since 2026-11-02 (evals/vectorae, option a) Vectorae never sends on
+# LinkedIn: approving LinkedIn lets today's due LinkedIn steps become tasks in
+# the user's queue (app/services/linkedin_tasks.py), each of which the user
+# approves, opens and sends. A new version: an acknowledgement of the old
+# "automatic sending" text is not an acknowledgement of this one.
+LINKEDIN_WARNING_VERSION = "li-tasks-2026-11-02"
+LINKEDIN_QUESTION = "Do you want today's LinkedIn steps added to your LinkedIn tasks?"
 LINKEDIN_WARNING_TEXT = (
-    "LinkedIn's User Agreement does not allow automated tools to send messages or "
-    "connection requests. LinkedIn may restrict or suspend LinkedIn accounts that use "
-    "automation, including Vectorae's automatic LinkedIn sending through your connected "
-    f"account. {LINKEDIN_QUESTION}"
+    "Vectorae does not send anything on LinkedIn. Approving LinkedIn lets today's "
+    "LinkedIn steps become tasks in your queue; you approve, open and send each one "
+    "yourself on LinkedIn. LinkedIn may still restrict or suspend accounts that send many "
+    "messages or connection requests in a short time, so the daily limits stay in "
+    f"place. {LINKEDIN_QUESTION}"
 )
 
 TZ_SOURCE_CALENDAR = "calendar_availability"
@@ -389,31 +396,9 @@ def confirm_hold(db: Session, hold: Hold, channel: str, now: datetime | None = N
                 and channel in approved_channels(decision))
 
 
-def network_hold(db: Session, user_id, now: datetime | None = None) -> Hold | None:
-    """The gate for a QUEUED LinkedIn network message (bulk send: up to 25
-    Celery jobs sending through Unipile on the customer's LinkedIn account --
-    automation, so it needs today's LinkedIn approval). A single interactive
-    send is a person's action and does not come through here. RAISES on
-    error; the caller fails closed."""
-    now = _aware(now or _now())
-    if not enabled(db) or "linkedin" not in gated_channels(db):
-        return None
-    return _channel_hold(db, _uuid(user_id), "linkedin", now)
-
-
 # --------------------------------------------------------------------------
 # Counts and state
 # --------------------------------------------------------------------------
-
-
-def _network_queued(db: Session, user_id: uuid_module.UUID) -> int:
-    from app.db.models import LinkedInNetworkMessage  # noqa: PLC0415
-
-    return int(db.execute(
-        select(func.count(LinkedInNetworkMessage.id))
-        .where(LinkedInNetworkMessage.user_id == user_id,
-               LinkedInNetworkMessage.status == "queued")
-    ).scalar_one())
 
 
 def queued_counts(db: Session, user_id, now: datetime | None = None,
@@ -422,8 +407,9 @@ def queued_counts(db: Session, user_id, now: datetime | None = None,
     send path would actually send: SCHEDULED, due before the end of the local
     day (or already deferred by this gate), in an ACTIVE campaign, on an
     enrollment that is not paused and not stopped (a Reply Copilot auto-answer
-    may answer the stop, as in the send path). LinkedIn also counts queued
-    LinkedIn network (bulk) messages."""
+    may answer the stop, as in the send path). A LinkedIn "message" is a
+    sequence step that becomes a task for the user (L0); there is no bulk
+    LinkedIn queue any more."""
     from app.services import reply_copilot  # noqa: PLC0415
     from app.services import sequence_engine as engine  # noqa: PLC0415
 
@@ -455,8 +441,6 @@ def queued_counts(db: Session, user_id, now: datetime | None = None,
         value = getattr(channel, "value", channel)
         if value in counts:
             counts[value] = int(n)
-    if "linkedin" in counts:
-        counts["linkedin"] += _network_queued(db, uid)
     return counts
 
 
@@ -533,36 +517,6 @@ def _release(db: Session, user_id: uuid_module.UUID, channels: list[str],
     return int(result.rowcount or 0)
 
 
-def _held_network(db: Session, user_id: uuid_module.UUID) -> list:
-    """Queued LinkedIn network messages this gate held, oldest first."""
-    from app.db.models import LinkedInNetworkMessage  # noqa: PLC0415
-
-    return list(db.execute(
-        select(LinkedInNetworkMessage)
-        .where(LinkedInNetworkMessage.user_id == user_id,
-               LinkedInNetworkMessage.status == "queued",
-               LinkedInNetworkMessage.error.like(f"{ERROR_PREFIX}%"))
-        .order_by(LinkedInNetworkMessage.created_at, LinkedInNetworkMessage.id)
-    ).scalars())
-
-
-def _enqueue_network(db: Session, rows: list) -> int:
-    """After the approval commit: queue the held network messages again,
-    spaced like a bulk send. One that cannot be queued keeps its hold tag, so
-    the next approval releases it."""
-    from app.services import network_messages as nm  # noqa: PLC0415
-    from app.workers import network_tasks  # noqa: PLC0415
-
-    queued = 0
-    for i, row in enumerate(rows):
-        if network_tasks.enqueue_send(row.id, countdown=i * nm.BULK_SPACING_SECONDS):
-            queued += 1
-        else:
-            row.error = f"{ERROR_PREFIX}released but could not be queued -- waiting"
-    db.commit()
-    return queued
-
-
 def _base_checks(row: DailySendApproval, tz_source: str, end: datetime, actor_id,
                  now: datetime, counts: dict, gated: tuple[str, ...]) -> dict:
     return {
@@ -599,7 +553,7 @@ def approve(db: Session, user_id, *, actor_id, channels: list[str],
     if "linkedin" in chosen:
         if linkedin_risk_acknowledged is not True:
             raise ApprovalError("approving LinkedIn needs linkedin_risk_acknowledged: true -- "
-                                "LinkedIn may restrict or suspend accounts that use automation")
+                                "confirm you send each LinkedIn task yourself")
         if not linkedin_warning_version:
             raise ApprovalError("approving LinkedIn needs the linkedin_warning_version shown")
         if linkedin_warning_version != LINKEDIN_WARNING_VERSION:
@@ -645,15 +599,10 @@ def approve(db: Session, user_id, *, actor_id, channels: list[str],
     })
     _audit(db, uid, AUDIT_APPROVED, checks)
     released = _release(db, uid, merged, now)
-    network = _held_network(db, uid) if "linkedin" in merged else []
-    for msg in network:
-        msg.error = None
     db.commit()
-    released_network = _enqueue_network(db, network) if network else 0
-    logger.info("daily send approval: account %s approved %s for %s (released %d + %d network)",
-                uid, merged, today, released, released_network)
-    return {"released": released, "released_network": released_network,
-            **state(db, uid, now)}
+    logger.info("daily send approval: account %s approved %s for %s (released %d)",
+                uid, merged, today, released)
+    return {"released": released, **state(db, uid, now)}
 
 
 def decline(db: Session, user_id, *, actor_id, note: str | None = None,
@@ -684,7 +633,7 @@ def decline(db: Session, user_id, *, actor_id, note: str | None = None,
                    "note": (note or "")[:500] or None})
     _audit(db, uid, AUDIT_DECLINED, checks)
     db.commit()
-    return {"released": 0, "released_network": 0, **state(db, uid, now)}
+    return {"released": 0, **state(db, uid, now)}
 
 
 # --------------------------------------------------------------------------
@@ -778,7 +727,7 @@ def notify_if_needed(db: Session, hold: Hold, now: datetime | None = None) -> bo
 
         body = f"Queued today: {_summary(counts)}. Nothing automatic sends until you approve."
         if linkedin_gated:
-            body += " LinkedIn may restrict accounts that use automation."
+            body += " LinkedIn steps become tasks you send yourself."
         queued = notification_tasks.enqueue_event(
             hold.user_id, EVENT,
             title="Approve today's automatic sending",

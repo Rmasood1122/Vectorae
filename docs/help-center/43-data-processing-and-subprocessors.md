@@ -14,8 +14,6 @@ sources:
   - app/integrations/hunter.py
   - app/integrations/gmail.py
   - app/integrations/whatsapp.py
-  - app/integrations/unipile_linkedin.py
-  - app/integrations/linkedin_posts.py
   - app/integrations/newsapi.py
   - app/integrations/recall.py
   - app/integrations/voice_providers.py
@@ -98,7 +96,6 @@ These receive data only when the feature is used or the account is connected.
 
 **Built, not live yet:**
 
-- **Unipile (LinkedIn)**: your connected LinkedIn session, the profiles you contact and the messages you send. Tested only against simulated services.
 - **Recall.ai**: the meeting link; its bot joins and records the call and returns the transcript. Never called live.
 - **Stripe**: your email address and account id when you take a paid plan; card details are entered on Stripe's own checkout page. Online checkout is tested only against simulated services.
 - **Twilio**: your mobile number, to send phone verification codes. Not configured in production.
@@ -106,7 +103,6 @@ These receive data only when the feature is used or the account is connected.
 **Used only when a key or connection is set up, usually by an administrator:**
 
 - **NewsAPI**: a prospect's company name, to find recent news about it.
-- **RapidAPI**: a prospect's LinkedIn profile address, as a fallback for reading their recent posts.
 - **Vapi.ai and ElevenLabs**: for AI phone calls and voicemail, the prospect's phone number, the call's prompt and the voicemail text; ElevenLabs also receives your voice samples if you create a voice clone.
 - **Mailreach**: your sending email address, to check inbox placement.
 - **Google Calendar and Meet**: meeting details and attendee emails, through your connected Google account, to create Meet links. **Google Postmaster Tools** is asked for your sending domain's spam rate; that import is built but switched off.
@@ -131,7 +127,9 @@ Until that change ships, Voyage AI is not in use and receives nothing from Vecto
 - **Billing records** are kept for 7 years after an account is deleted, without your name or email address.
 - **Consent and suppression records** are kept without a time limit, so a person who opted out is never contacted again.
 
-Outside providers keep data under their own terms. When you delete your account, Vectorae disconnects your LinkedIn account at Unipile, but it does not ask Stripe to delete its customer record, and it does not revoke its access inside Google, HubSpot, Salesforce or Slack. Details are in [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md).
+**Removed on 2 November 2026:** Unipile (LinkedIn sending) and RapidAPI (reading prospects' LinkedIn posts). Vectorae no longer sends anything on LinkedIn or reads LinkedIn content; LinkedIn steps are tasks you send yourself. The Privacy Policy still names both providers until it is next updated.
+
+Outside providers keep data under their own terms. When you delete your account, Vectorae does not ask Stripe to delete its customer record, and it does not revoke its access inside Google, HubSpot, Salesforce or Slack. Details are in [Privacy, data retention and deletion](21-privacy-data-retention-deletion.md).
 
 ## Is there a data processing agreement?
 

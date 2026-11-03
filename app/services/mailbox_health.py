@@ -119,9 +119,10 @@ def mailboxes(db: Session, user_id) -> list[dict]:
     """Every sending identity of one user, keyed the way the send path keys
     them (`messages.sender_ref`).
 
-    Email only for now: LinkedIn has its own per-account limiter
-    (app/services/linkedin_limits.py) and WhatsApp's reputation is Meta's
-    template approval, so neither has a deliverability score to compute.
+    Email only for now: LinkedIn steps are tasks the user sends themselves
+    (app/services/linkedin_tasks.py caps them per day) and WhatsApp's
+    reputation is Meta's template approval, so neither has a deliverability
+    score to compute.
     Their refs are already shaped for this table when that changes.
     """
     out = []

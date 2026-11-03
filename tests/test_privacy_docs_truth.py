@@ -79,15 +79,21 @@ PROCESSOR_NAMES = {
     "geolocation": ["ipapi.co", "ipinfo.io"], "gmail": ["Gmail API"],
     "google_meet": ["Calendar / Meet"], "google_postmaster": ["Postmaster Tools"],
     "hubspot": ["HubSpot"], "hunter": ["Hunter"],
-    "ip_intelligence": ["IPQualityScore", "proxycheck.io"], "linkedin_channel": ["Unipile"],
-    "linkedin_posts": ["RapidAPI"], "mailreach": ["Mailreach"], "newsapi": ["NewsAPI"],
+    "ip_intelligence": ["IPQualityScore", "proxycheck.io"],
+    "mailreach": ["Mailreach"], "newsapi": ["NewsAPI"],
     "openai_client": ["OpenAI"], "phone_channel": ["Vapi"], "postiq": ["PostIQ"],
     "recall": ["Recall.ai"], "salesforce": ["Salesforce"], "signalforge": ["SIGNALFORGE"],
     "slack": ["Slack"], "sms": ["Twilio"], "stripe_billing": ["Stripe"],
-    "unipile_linkedin": ["Unipile"], "voice_providers": ["Vapi", "ElevenLabs"],
+    "voice_providers": ["Vapi", "ElevenLabs"],
     "whatsapp": ["WhatsApp"], "zoom": ["Zoom"],
 }
+# Gate change 2026-11-02 (docs/program/plans/gate-linkedin-unipile-removal.md):
+# Unipile (unipile_linkedin, linkedin_channel) and RapidAPI (linkedin_posts)
+# were removed. linkedin_channel now only queues a task for the user and sends
+# nothing out. The policy still names both removed providers until the
+# founder updates it (legal text): over-disclosure, not a gap.
 NOT_A_PROCESSOR = {"__init__": "package", "base": "interfaces", "outreach_base": "interfaces",
+                   "linkedin_channel": "queues an L0 task for the user; sends nothing out",
                    "plumbing": "HTTP/cache/breaker helpers", "token_store": "local DB storage"}
 
 

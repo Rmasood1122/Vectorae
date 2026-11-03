@@ -24,7 +24,6 @@ sources:
   - app/config.py
   - frontend/src/app/(app)/campaigns/page.tsx
   - frontend/src/components/settings/MailboxHealthCard.tsx
-  - frontend/src/components/settings/LinkedInAccountsCard.tsx
   - frontend/src/components/leads/ConversionCard.tsx
   - frontend/src/app/(app)/settings/page.tsx
   - docs/features/send-review-queue.md
@@ -74,10 +73,10 @@ Other status changes by hand on the Pipeline board do not by themselves stop a s
 
 To hold individual messages for a person to check first, see the send-review queue.
 
-## How do I pause one mailbox or LinkedIn account?
+## How do I pause one mailbox?
 
 - **Gmail mailbox:** Vectorae scores each mailbox's sending health. Below 70 it slows sending down; below 40 it pauses the mailbox and sends nothing from it. Messages are deferred, not cancelled. A paused mailbox is resumed only by a person: **Settings** › **Deliverability**, then **Resume** on that mailbox. A later better score never resumes it on its own.
-- **LinkedIn account:** in **Settings** › **Integrations**, each connected LinkedIn account has a **Pause** button (and **Resume** to undo it).
+- **LinkedIn:** there is no LinkedIn account to pause. Vectorae never sends on LinkedIn; LinkedIn steps become tasks that wait for you, so nothing goes out unless you open and send a task yourself. To stop LinkedIn tasks for a campaign, pause the campaign.
 
 ## How do I pause everything in my account?
 

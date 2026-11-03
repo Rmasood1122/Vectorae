@@ -9,12 +9,12 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "@/lib/api/client";
 import {
-  bulkSend, draftMessage, eraseNetwork, getNetworkStatus, getRecommendations,
-  importConnections, listMessages, saveMessage, sendMessageNow,
+  draftMessage, eraseNetwork, getNetworkStatus, getRecommendations,
+  importConnections, listMessages, saveMessage,
   type NetworkMatch, type NetworkMessage,
 } from "@/lib/api/network";
 import {
-  BULK_MAX, MESSAGE_MAX, bulkCandidates, checkExportFile, importErrorMessage, importSummary,
+  MESSAGE_MAX, checkExportFile, importErrorMessage, importSummary,
   isReadyToSend, isSavable, messageErrorMessage, safeProfileUrl, scoreLabel, statusLabel,
   validateMessage,
 } from "@/lib/linkedinNetwork";
@@ -27,10 +27,10 @@ import { LinkedInTasksPanel } from "@/components/linkedin/LinkedInTasksPanel";
 import { taskFromNetworkMessage } from "@/lib/api/linkedinTasks";
 
 /** One connection's message: write (or have it drafted), edit, save, then
- *  choose how it goes out. Nothing is sent from a draft. */
-function MessageBox({ match, productId, message, onChanged, selected, onToggle }: {
+ *  add it to YOUR LinkedIn tasks. Vectorae never sends on LinkedIn. */
+function MessageBox({ match, productId, message, onChanged }: {
   match: NetworkMatch; productId: string; message: NetworkMessage | undefined;
-  onChanged: () => void; selected: boolean; onToggle: () => void;
+  onChanged: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState(message?.text ?? "");
@@ -57,12 +57,6 @@ function MessageBox({ match, productId, message, onChanged, selected, onToggle }
   if (!open) {
     return (
       <div className="flex flex-wrap items-center gap-2">
-        {message?.status === "approved" && (
-          <label className="flex items-center gap-1 text-xs">
-            <input type="checkbox" checked={selected} onChange={onToggle}
-                   aria-label={`Select ${match.full_name} for bulk send`} /> Select
-          </label>
-        )}
         <Button variant="outline" onClick={() => setOpen(true)}>
           {message ? `Edit message (${statusLabel(message)})` : "Write message"}
         </Button>
@@ -94,7 +88,7 @@ function MessageBox({ match, productId, message, onChanged, selected, onToggle }
           </div>
           {isReadyToSend(message) && (
             <div className="space-y-2 border-t pt-2">
-              <p className="text-xs text-muted-foreground">Choose how to send this saved message:</p>
+              <p className="text-xs text-muted-foreground">You send it yourself on LinkedIn, as a task:</p>
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" disabled={run.isPending}
                         onClick={() => run.mutate(async () => {
@@ -108,13 +102,6 @@ function MessageBox({ match, productId, message, onChanged, selected, onToggle }
                     Added. Approve and open it in “Your LinkedIn tasks” above.
                   </span>
                 )}
-                <Button disabled={run.isPending}
-                        onClick={() => {
-                          if (window.confirm(`Send this message to ${match.full_name} now through your connected LinkedIn account?`))
-                            run.mutate(async () => { await sendMessageNow(message.id); });
-                        }}>
-                  Send now via LinkedIn
-                </Button>
               </div>
             </div>
           )}
@@ -164,27 +151,11 @@ function LinkedInNetworkTab() {
     enabled: eligible && (status.data?.connection_count ?? 0) > 0,
   });
   const byConn = new Map((msgs.data?.messages ?? []).map((m) => [m.connection_id, m]));
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const toggle = (id: string) => setSelected((prev) => {
-    const next = new Set(prev);
-    if (next.has(id)) next.delete(id); else next.add(id);
-    return next;
-  });
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["network-status"] });
     qc.invalidateQueries({ queryKey: ["network-recs"] });
     qc.invalidateQueries({ queryKey: ["network-msgs"] });
   };
-  const bulk = useMutation({
-    mutationFn: (ids: string[]) => bulkSend(ids),
-    onSuccess: (r) => {
-      setError(null); setSelected(new Set());
-      setMessage(`${r.queued} message${r.queued === 1 ? "" : "s"} queued, about one every ${r.spacing_seconds} seconds.`);
-      refresh();
-    },
-    onError: (e) => { setMessage(null); setError(messageErrorMessage(e)); },
-  });
-  const bulkIds = bulkCandidates(msgs.data?.messages ?? [], selected);
 
   const [basis, setBasis] = useState<string>("");
   const [attested, setAttested] = useState(false);
@@ -310,25 +281,6 @@ function LinkedInNetworkTab() {
       {message && <p role="status" className="text-sm">{message}</p>}
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
-      {eligible && (msgs.data?.messages ?? []).some((m) => m.status === "approved") && (
-        <Card>
-          <CardContent className="space-y-2 pt-6 text-sm">
-            <p>
-              <strong>Bulk send.</strong> Tick the saved messages you want to send. They go out one at a
-              time through your connected LinkedIn account, spaced apart, and stop at your daily limit.
-              Up to {BULK_MAX} per batch. Only people who are still your connections receive anything.
-            </p>
-            <Button disabled={bulk.isPending || bulkIds.length === 0}
-                    onClick={() => {
-                      if (window.confirm(`Queue ${bulkIds.length} saved message(s) to send through LinkedIn?`))
-                        bulk.mutate(bulkIds);
-                    }}>
-              Send {bulkIds.length} selected
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
       {eligible && recs.data?.products.map((p) => (
         <Card key={p.product_id}>
           <CardHeader>
@@ -359,8 +311,7 @@ function LinkedInNetworkTab() {
                     ) : null}
                     <div className="mt-2">
                       <MessageBox match={m} productId={p.product_id} message={byConn.get(m.connection_id)}
-                                  onChanged={refresh} selected={selected.has(byConn.get(m.connection_id)?.id ?? "")}
-                                  onToggle={() => { const id = byConn.get(m.connection_id)?.id; if (id) toggle(id); }} />
+                                  onChanged={refresh} />
                     </div>
                   </li>
                 );
