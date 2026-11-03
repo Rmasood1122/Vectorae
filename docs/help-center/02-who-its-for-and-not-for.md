@@ -112,7 +112,7 @@ Partly. A Vectorae deployment is intended to serve one customer organization (th
 Vectorae works out which region a lead is in from their country or time zone and applies region-specific rules. For example, it never adds an open-tracking pixel to email sent to leads in the EU, EEA or UK, and it adds a regional notice to the email footer where that region's rules ask for one. Leads with neither a country nor a time zone are treated as "unknown". You are still responsible for knowing the outreach rules that apply to you and your prospects.
 
 ## Related
-- [What is Vectorae?](01-what-is-leadpilot.md)
+- [What is Vectorae?](01-what-is-vectorae.md)
 - [Getting started](03-getting-started.md)
 - [Lead sourcing and email verification](06-lead-sourcing-and-email-verification.md)
 - [Sending email through Gmail](09-email-sending-gmail.md)

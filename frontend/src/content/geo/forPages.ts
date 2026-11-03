@@ -84,13 +84,13 @@ const AGENCIES: ForPage = {
             "Replies are classified and routed to you, and the sequence stops when a person replies (an out-of-office reply only pauses it). Interested prospects book on your Vectorae booking page.",
           ],
         },
-        { kind: "note", text: "Unlike Apollo, where an agency gets a contact database and a sequencer and still builds the list and writes the sequence itself, Vectorae does the research and writing and leaves the founder one approval step. See [Vectorae vs Apollo](/compare/leadpilot-vs-apollo) and [Vectorae vs Instantly](/compare/leadpilot-vs-instantly)." },
+        { kind: "note", text: "Unlike Apollo, where an agency gets a contact database and a sequencer and still builds the list and writes the sequence itself, Vectorae does the research and writing and leaves the founder one approval step. See [Vectorae vs Apollo](/compare/vectorae-vs-apollo) and [Vectorae vs Instantly](/compare/vectorae-vs-instantly)." },
       ],
     },
     {
       heading: "Agencies that run outreach for clients",
       blocks: [
-        { kind: "p", text: "Workspaces for agencies are built and switched on, but not yet confirmed working end to end. For email, client workspaces can restrict each client's outreach to that client's own sending domains. There is one WhatsApp number per deployment, so every client's prospects would see the same WhatsApp number. If you send at volume for many clients, a sending platform such as Smartlead fits better: see [Vectorae vs Smartlead](/compare/leadpilot-vs-smartlead)." },
+        { kind: "p", text: "Workspaces for agencies are built and switched on, but not yet confirmed working end to end. For email, client workspaces can restrict each client's outreach to that client's own sending domains. There is one WhatsApp number per deployment, so every client's prospects would see the same WhatsApp number. If you send at volume for many clients, a sending platform such as Smartlead fits better: see [Vectorae vs Smartlead](/compare/vectorae-vs-smartlead)." },
       ],
     },
     measure("Meetings booked per month, reply rate, and founder hours per week spent on new business, before and after."),
@@ -98,9 +98,9 @@ const AGENCIES: ForPage = {
     notFit,
   ],
   related: [
-    { href: "/compare/leadpilot-vs-apollo", label: "Vectorae vs Apollo" },
-    { href: "/compare/leadpilot-vs-instantly", label: "Vectorae vs Instantly" },
-    { href: "/compare/leadpilot-vs-smartlead", label: "Vectorae vs Smartlead" },
+    { href: "/compare/vectorae-vs-apollo", label: "Vectorae vs Apollo" },
+    { href: "/compare/vectorae-vs-instantly", label: "Vectorae vs Instantly" },
+    { href: "/compare/vectorae-vs-smartlead", label: "Vectorae vs Smartlead" },
     { href: "/faq", label: "Vectorae FAQ" },
   ],
 };
@@ -145,13 +145,13 @@ const SERVICE_FIRMS: ForPage = {
     {
       heading: "Early-stage B2B SaaS founders (partial fit)",
       blocks: [
-        { kind: "p", text: "Vectorae is designed for service firms. A SaaS founder with a clear B2B buyer can use it to learn which segment responds before the first sales hire, but high-volume sending, product-usage signals and LinkedIn are not covered today. If you need a flexible data workbench instead, see [Vectorae vs Clay](/compare/leadpilot-vs-clay)." },
+        { kind: "p", text: "Vectorae is designed for service firms. A SaaS founder with a clear B2B buyer can use it to learn which segment responds before the first sales hire, but high-volume sending, product-usage signals and LinkedIn are not covered today. If you need a flexible data workbench instead, see [Vectorae vs Clay](/compare/vectorae-vs-clay)." },
       ],
     },
     {
       heading: "Vectorae or an SDR?",
       blocks: [
-        { kind: "p", text: "The Bridge Group's 2025 report puts median SDR on-target earnings at $80K with an average ramp of 3.0 months ([Bridge Group](https://www.bridgegroupinc.com/research/2025-sdr-models-metrics-report-the-bridge-group)). A firm that cannot justify that yet can use Vectorae to find the segment that buys. See [Vectorae vs Artisan, and vs hiring an SDR](/compare/leadpilot-vs-artisan)." },
+        { kind: "p", text: "The Bridge Group's 2025 report puts median SDR on-target earnings at $80K with an average ramp of 3.0 months ([Bridge Group](https://www.bridgegroupinc.com/research/2025-sdr-models-metrics-report-the-bridge-group)). A firm that cannot justify that yet can use Vectorae to find the segment that buys. See [Vectorae vs Artisan, and vs hiring an SDR](/compare/vectorae-vs-artisan)." },
       ],
     },
     measure("First meetings per month, meeting-to-client rate, and cost per meeting against your plan or the pay-per-meeting price."),
@@ -159,8 +159,8 @@ const SERVICE_FIRMS: ForPage = {
     notFit,
   ],
   related: [
-    { href: "/compare/leadpilot-vs-artisan", label: "Vectorae vs hiring an SDR" },
-    { href: "/compare/leadpilot-vs-clay", label: "Vectorae vs Clay" },
+    { href: "/compare/vectorae-vs-artisan", label: "Vectorae vs hiring an SDR" },
+    { href: "/compare/vectorae-vs-clay", label: "Vectorae vs Clay" },
     { href: "/outbound-statistics", label: "Outbound statistics" },
     { href: "/faq", label: "Vectorae FAQ" },
   ],
@@ -223,7 +223,7 @@ const LOCAL: ForPage = {
   ],
   related: [
     { href: "/how-it-works", label: "How Vectorae works" },
-    { href: "/compare/leadpilot-vs-apollo", label: "Vectorae vs Apollo" },
+    { href: "/compare/vectorae-vs-apollo", label: "Vectorae vs Apollo" },
     { href: "/help/who-its-for-and-not-for", label: "Who Vectorae is for (help center)" },
     { href: "/faq", label: "Vectorae FAQ" },
   ],

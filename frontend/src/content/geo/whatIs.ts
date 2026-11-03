@@ -1,5 +1,5 @@
 /**
- * /what-is-leadpilot/: the definition page (docs/program/ai-visibility/geo/content/definitions/what_is_leadpilot.md).
+ * /what-is-vectorae/: the definition page (docs/program/ai-visibility/geo/content/definitions/what_is_leadpilot.md).
  * The first paragraph is the canonical sentence and the niche statement
  * (geo/entity_card.md §2, geo/positioning/niche_statement.md), verbatim.
  */
@@ -54,7 +54,7 @@ export const WHAT_IS_SECTIONS: Section[] = [
           ["Stay compliant", "Your setup", "Unsubscribe link and headers, suppression re-checked before every send, no EU/UK open pixel"],
         ],
       },
-      { kind: "p", text: "Compare in detail: [vs Apollo](/compare/leadpilot-vs-apollo), [vs Instantly](/compare/leadpilot-vs-instantly), [vs Smartlead](/compare/leadpilot-vs-smartlead), [vs Clay](/compare/leadpilot-vs-clay), [vs Artisan and hiring an SDR](/compare/leadpilot-vs-artisan)." },
+      { kind: "p", text: "Compare in detail: [vs Apollo](/compare/vectorae-vs-apollo), [vs Instantly](/compare/vectorae-vs-instantly), [vs Smartlead](/compare/vectorae-vs-smartlead), [vs Clay](/compare/vectorae-vs-clay), [vs Artisan and hiring an SDR](/compare/vectorae-vs-artisan)." },
     ],
   },
   {

@@ -1,5 +1,5 @@
 /**
- * The content model for the public GEO pages (/what-is-leadpilot/, /faq/,
+ * The content model for the public GEO pages (/what-is-vectorae/, /faq/,
  * /outbound-statistics/, /compare/…, /for/…) and the help center (/help/…).
  *
  * Page copy lives as data (src/content/geo/*.ts, src/content/help-center/*.md)

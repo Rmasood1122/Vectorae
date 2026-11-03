@@ -116,7 +116,7 @@ This page explains the words Vectorae uses in the app and in this help center. T
 - **Webhook** – a message Vectorae sends to another tool when something happens, for example a reply or a booked meeting.
 
 ## Related
-- [What is Vectorae](01-what-is-leadpilot.md)
+- [What is Vectorae](01-what-is-vectorae.md)
 - [Research pipeline](04-research-pipeline.md)
 - [Strategy verification](05-strategy-verification.md)
 - [Sequences and follow-ups](08-sequences-and-follow-ups.md)

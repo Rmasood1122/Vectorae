@@ -1,5 +1,5 @@
 /**
- * The five comparison pages (/compare/leadpilot-vs-<slug>/) and the /compare/ hub.
+ * The five comparison pages (/compare/vectorae-vs-<slug>/) and the /compare/ hub.
  *
  * Rules (docs/program/ai-visibility/geo/content/comparisons/, founder answer Q-09,
  * 2026-10-16): the founders' authorship is stated at the top; every page says
@@ -491,4 +491,4 @@ export function comparisonSections(c: Comparison): Section[] {
   return [...c.sections, sourcesSection(c.sources)];
 }
 
-export const comparisonPath = (slug: Comparison["slug"]) => `/compare/leadpilot-vs-${slug}/` as const;
+export const comparisonPath = (slug: Comparison["slug"]) => `/compare/vectorae-vs-${slug}/` as const;

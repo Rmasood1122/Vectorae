@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The home page product video (public/media/leadpilot-walkthrough.*, made by
+ * The home page product video (public/media/vectorae-walkthrough.*, made by
  * frontend/video-src/render.mjs). Muted, looping, inline, poster first,
  * preload="metadata".
  *

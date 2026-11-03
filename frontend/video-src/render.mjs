@@ -5,11 +5,11 @@
  *   node video-src/render.mjs            (run from frontend/)
  *
  * Output (committed, served from the static export):
- *   public/media/leadpilot-walkthrough.mp4     H.264, yuv420p, faststart, no audio
- *   public/media/leadpilot-walkthrough.webm    VP9, no audio
- *   public/media/leadpilot-walkthrough-poster.jpg
+ *   public/media/vectorae-walkthrough.mp4     H.264, yuv420p, faststart, no audio
+ *   public/media/vectorae-walkthrough.webm    VP9, no audio
+ *   public/media/vectorae-walkthrough-poster.jpg
  *
- * The captions file public/media/leadpilot-walkthrough.en.vtt is written by
+ * The captions file public/media/vectorae-walkthrough.en.vtt is written by
  * hand next to them; src/tests/homeVideo.test.ts checks that its cues match
  * the transcript on the page and that the files exist and stay small.
  *
@@ -31,7 +31,7 @@ import { chromium } from "playwright";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.resolve(here, "../public/media");
-const NAME = "leadpilot-walkthrough";
+const NAME = "vectorae-walkthrough";
 const FPS = 30;
 const W = 1280;
 const H = 720;

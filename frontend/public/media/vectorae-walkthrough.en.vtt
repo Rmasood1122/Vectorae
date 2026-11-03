@@ -1,7 +1,7 @@
 WEBVTT
 
 NOTE
-Captions for leadpilot-walkthrough.mp4/.webm (no sound). Rendered from
+Captions for vectorae-walkthrough.mp4/.webm (no sound). Rendered from
 frontend/video-src/walkthrough.html. Cue text must match VIDEO.transcript in
 frontend/src/components/home/content.ts (src/tests/homeVideo.test.ts checks it).
 

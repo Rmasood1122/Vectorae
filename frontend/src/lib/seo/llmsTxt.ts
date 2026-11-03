@@ -30,7 +30,7 @@ export function llmsTxt(): string {
     "",
     "## Key Pages",
     `- [Home](${url("/")}): what Vectorae does, who it is for, what is live and what is not`,
-    `- [What is Vectorae](${url("/what-is-leadpilot/")}): definition, workflow, fit, cost`,
+    `- [What is Vectorae](${url("/what-is-vectorae/")}): definition, workflow, fit, cost`,
     `- [How it works](${url("/how-it-works/")}): the workflow from description to booked meeting`,
     `- [Pricing](${url("/pricing/")}): plans, limits and pay-per-meeting terms`,
     `- [FAQ](${url("/faq/")}): 30 questions with direct answers`,

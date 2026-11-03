@@ -29,7 +29,7 @@ export default function OutboundStatisticsPage() {
       sections={STATS_SECTIONS}
       related={[
         { href: "/for/agencies", label: "Vectorae for agencies" },
-        { href: "/compare/leadpilot-vs-artisan", label: "Vectorae vs hiring an SDR" },
+        { href: "/compare/vectorae-vs-artisan", label: "Vectorae vs hiring an SDR" },
         { href: "/help/compliance", label: "Compliance (help center)" },
       ]}
     />

@@ -179,10 +179,10 @@ MOCK_MIN_HEADING_COVERAGE = 0.60
 # delete an entry; if a target heading is renamed, point the entry at the new
 # chunk id (tests/help_center/test_corpus.py fails until you do).
 LEGACY_FAQ_ALIASES: dict[str, str] = {
-    "what-is-leadpilot": "what-is-leadpilot#what-does-vectorae-do-start-to-finish",
-    "what-does-it-replace": "what-is-leadpilot#what-does-vectorae-do-start-to-finish",
+    "what-is-leadpilot": "what-is-vectorae#what-does-vectorae-do-start-to-finish",
+    "what-does-it-replace": "what-is-vectorae#what-does-vectorae-do-start-to-finish",
     "who-is-it-for": "who-its-for-and-not-for#who-is-vectorae-designed-for",
-    "how-outreach-works": "what-is-leadpilot#do-i-have-to-send-the-messages-myself",
+    "how-outreach-works": "what-is-vectorae#do-i-have-to-send-the-messages-myself",
     "learning-loop": "learning-loop-and-ab-tests#what-does-vectorae-learn-from",
     "first-campaign": "getting-started#how-do-i-create-my-first-product-and-strategy",
     "tutorial-section": "learn-tab-and-tutorials#where-do-i-find-the-training-videos",
@@ -832,16 +832,30 @@ def chunk_by_id(chunk_id: str) -> Chunk | None:
     return get_corpus().by_id.get(chunk_id)
 
 
+# Help articles whose id (= public URL slug /help/<id>/) was renamed. Chunk ids
+# are "<article id>#<heading>", and chat messages store the ids they cited, so
+# an old article id must keep resolving. PERMANENT, like LEGACY_FAQ_ALIASES.
+# 2026-11-02 (evals/vectorae GAP-BR-01): the old product name left the URL;
+# frontend/vercel.json 301s /help/what-is-leadpilot/ to the new page.
+RENAMED_ARTICLES: dict[str, str] = {
+    "what-is-leadpilot": "what-is-vectorae",
+}
+
+
 def resolve_citation(cited_id: str) -> Chunk | None:
-    """A stored or model-cited id -> its chunk. Accepts current chunk ids and
-    the permanent legacy FAQ ids."""
+    """A stored or model-cited id -> its chunk. Accepts current chunk ids, the
+    permanent legacy FAQ ids and chunk ids of renamed articles."""
     if not isinstance(cited_id, str):
         return None
     chunk = chunk_by_id(cited_id)
     if chunk is not None:
         return chunk
     alias = LEGACY_FAQ_ALIASES.get(cited_id)
-    return chunk_by_id(alias) if alias else None
+    if alias:
+        return chunk_by_id(alias)
+    article, sep, heading = cited_id.partition("#")
+    renamed = RENAMED_ARTICLES.get(article)
+    return chunk_by_id(f"{renamed}{sep}{heading}") if renamed else None
 
 
 def sources_for(cited_ids) -> list[dict]:

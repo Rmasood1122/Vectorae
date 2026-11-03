@@ -95,7 +95,7 @@ You sign in with the same email and password as on the web, and the same rules a
 The app is built for distribution through the Google Play Store. Whether it is currently published there for your deployment is not confirmed in this help center. Ask your administrator or contact support for the current way to install it. If your team runs its own Vectorae deployment, the app must be built to point at that deployment's server.
 
 ## Related
-- [What is Vectorae](01-what-is-leadpilot.md)
+- [What is Vectorae](01-what-is-vectorae.md)
 - [Pausing and stopping outreach](25-pause-stop-kill-switch.md)
 - [Account security](23-account-security.md)
 - [Replies and the unified inbox](13-replies-and-unified-inbox.md)

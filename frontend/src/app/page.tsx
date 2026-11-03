@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   ...canonicalMeta("/", {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    images: ["/media/leadpilot-walkthrough-poster.jpg"],
+    images: ["/media/vectorae-walkthrough-poster.jpg"],
   }),
 };
 

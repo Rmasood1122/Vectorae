@@ -202,7 +202,7 @@ class TestReindexSqlite:
     def test_summary_is_a_diff(self, db_session):
         text = reindex.run(db_session, directory=HELP).summary()
         assert text.splitlines()[0].startswith("help_chunks: ")
-        assert "+ what-is-leadpilot#" in text
+        assert "+ what-is-vectorae#" in text
 
     def test_needs_embedding(self, rows):
         row = rows[0]

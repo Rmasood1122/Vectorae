@@ -164,10 +164,10 @@ class TestCitations:
 class TestApi:
     def test_chat_returns_sources_without_changing_existing_fields(self, client, fake_claude):
         body = _ask(client, "What is Vectorae?").json()
-        target = help_center.LEGACY_FAQ_ALIASES["what-is-leadpilot"]
+        target = help_center.LEGACY_FAQ_ALIASES["what-is-leadpilot"]  # stored legacy FAQ id: never renamed
         for payload in (body["answer"], body["message"]):
             assert payload["faq_ids"] == [target]
-            assert payload["sources"] == [{"id": target, "article_id": "what-is-leadpilot",
+            assert payload["sources"] == [{"id": target, "article_id": "what-is-vectorae",
                                            "title": "What is Vectorae?"}]
         assert {"text", "on_topic", "confidence", "faq_ids", "suggest_ticket",
                 "reason"} <= set(body["answer"])
@@ -208,7 +208,7 @@ class TestApi:
 
 class TestMockFromCorpus:
     @pytest.mark.parametrize("question,chunk_id,starts", [
-        ("What is Vectorae?", "what-is-leadpilot#what-does-vectorae-do-start-to-finish",
+        ("What is Vectorae?", "what-is-vectorae#what-does-vectorae-do-start-to-finish",
          "Vectorae is an outbound sales system."),
         ("How do I connect Gmail?", "email-sending-gmail#how-do-i-connect-gmail",
          "1. Go to Settings"),
