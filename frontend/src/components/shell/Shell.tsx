@@ -18,12 +18,13 @@ import { InboxBadge } from "./InboxBadge";
 import { SendApprovalBanner } from "@/components/campaigns/SendApprovalBanner";
 import { LiveCallBanner } from "@/components/calls/LiveCallBanner";
 import { currentPath, rememberReturnTo } from "@/lib/returnTo";
+import { planGateRedirect } from "@/lib/post-login";
 
 /** Responsive app shell: collapsible sidebar on >=md, bottom-tab bar on
  *  mobile (the M7 Capacitor wrapper ships THIS layout). Also the protected
  *  gate: no session (after a silent restore attempt) -> /login, unverified
- *  email -> /check-email. The plan check is NOT here: it runs once, straight
- *  after sign-in (see lib/post-login.ts). */
+ *  email -> /check-email, no purchased plan -> /pricing (planGateRedirect in
+ *  lib/post-login.ts; the server enforces the same rule). */
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -72,6 +73,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             && needsVerification(user, isPhoneDeferred())) {
           router.replace("/onboarding/verify");
           setReady(true);
+          return;
+        }
+        // Paywall: no purchased plan -> pricing, on every app load, not only
+        // straight after sign-in. The server refuses the data anyway (402
+        // SUBSCRIPTION_REQUIRED); this keeps the person off a page of errors.
+        const gate = planGateRedirect(user, pathname, window.location.search);
+        if (gate) {
+          router.replace(gate);
           return;
         }
         setReady(true);

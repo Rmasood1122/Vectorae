@@ -69,9 +69,14 @@ describe("appEntryDestination: the app routes as the old page did", () => {
     expect(d.me).not.toHaveBeenCalled();
   });
 
-  it("a restored session -> the dashboard (no plan check on a restore)", async () => {
+  // Paywall (founder decision 2026-11-05): a restore now checks the plan too.
+  it("a restored session without a plan -> pricing", async () => {
     const noPlan = { ...ready, has_active_plan: false } as UserOut;
-    expect(await appEntryDestination(deps({ me: vi.fn().mockResolvedValue(noPlan) }))).toBe("/pipeline");
+    expect(await appEntryDestination(deps({ me: vi.fn().mockResolvedValue(noPlan) }))).toBe("/pricing");
+  });
+
+  it("a restored session with a plan -> the dashboard", async () => {
+    expect(await appEntryDestination(deps({ me: vi.fn().mockResolvedValue(ready as UserOut) }))).toBe("/pipeline");
   });
 
   it("an unverified email -> /check-email?email=...", async () => {

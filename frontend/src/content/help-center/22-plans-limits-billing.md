@@ -91,7 +91,7 @@ Monthly and annual plans both renew automatically, so before you go to payment t
 
 **Pay per meeting:** no monthly fee ($0) and $179 for each prospect who books a meeting through Vectorae.
 
-The Free plan has no price. Free accounts are limited by the table above.
+The Free plan has no price. On a production deployment a Free account cannot use the app at all: it is sent to the Pricing page until it chooses a plan. The Free column describes the limits a deployment applies only if its operator has turned that rule off.
 
 ## How does pay per meeting work?
 
@@ -105,8 +105,6 @@ A meeting charge can be disputed only while it is still inside its 48-hour windo
 
 ## How do I choose or change a plan?
 
-Online checkout is not open yet: Stripe checkout has so far been built and tested only against simulated services, so the **Pricing** page says "Online checkout opens soon" and offers a call instead of a checkout button. The steps below describe how choosing a plan works once checkout opens.
-
 Go to the **Pricing** page. You can also reach it from **Profile**, in the **Plan** card, with the **Upgrade plan** button. On Pricing you pick a tier (and, where offered, **Monthly** or **Annual**) and press the trial button, or press **Pay per meeting**.
 
 - You must be signed in. If you are not, the button takes you to sign-up.
@@ -118,7 +116,7 @@ Go to the **Pricing** page. You can also reach it from **Profile**, in the **Pla
 - Once an annual year has been paid, it cannot be changed to another plan online before the year ends, because that would need a partial refund. Contact support, or cancel it and choose a new plan when the year ends. During the free trial of an annual plan you can still switch.
 - If a checkout you started earlier is completed after your annual year was paid, Vectorae keeps both: your annual plan stays, the new subscription will not renew, and our team contacts you about a refund. Starting a new checkout closes any earlier unfinished one.
 
-If you sign in and your account has no paid plan, Vectorae takes you to the Pricing page once, right after sign-in. You can still go back to the app; the Free limits then apply.
+If your account has no paid plan, Vectorae takes you to the Pricing page whenever you open the app, and the app's pages and data stay closed until you choose a plan (a 14-day free trial counts). Without a plan you can still open **Profile** (your plan card, exporting your data and deleting your account), finish verifying your identity, accept a team invitation, and submit a support ticket (the AI support chat needs a plan). Members of a workspace whose owner has a plan do not need their own.
 
 If you are a member of someone else's workspace, you work under the workspace owner's plan and are not asked to buy your own, as long as the workspace owner has a paid plan. Only the account owner can buy or cancel a plan for their account.
 
@@ -152,13 +150,13 @@ Go to **Profile**, find the **Plan** card and press **Cancel plan**, then confir
 - **If your last payment failed** (the card shows "Payment failed"): cancelling ends the plan straight away and cancels the unpaid invoice, so nothing more is charged.
 - **Pay per meeting:** stops immediately. Meetings already booked are still billed.
 
-When a subscription ends, the account returns to the Free plan and its limits.
+When a subscription ends, the account returns to the Free plan, so the app closes until you choose a new plan.
 
 Before you are charged for an annual plan, Vectorae emails the account owner: once when the plan starts (with the renewal terms), 7 days before an annual free trial ends, and 30 days before each yearly renewal. Each email states the amount Stripe will actually charge, the date (in UTC) and how to cancel. A monthly trial that a pilot made longer than 31 days also gets the 7-day email.
 
 ## What if a payment fails?
 
-If a monthly payment fails, the subscription is marked past due. You keep your plan while Stripe retries the card. If Stripe finally cancels the subscription, the account returns to Free.
+If a monthly payment fails, the subscription is marked past due. You keep your plan while Stripe retries the card. If Stripe finally cancels the subscription, the account returns to Free and the app closes until you choose a new plan.
 
 ## What do analytics history and multi-variate testing mean?
 

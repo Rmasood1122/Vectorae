@@ -45,9 +45,7 @@ An annual plan has exactly the same limits as the monthly plan of the same tier,
 
 ## Can I buy or change a plan online right now?
 
-Not yet. Online payment through Stripe is marked "simulated only": it has been built and tested against a simulated payment service, not against the live one. While that is the case, the **Pricing** page shows the prices but, instead of a checkout button, it says "Online checkout opens soon. To start now, book a call." with a **Book a call** button.
-
-So today, starting a paid plan, switching between monthly and annual, or moving to another tier goes through a conversation with the Vectorae team rather than a checkout page. The rules in the rest of this article describe what the product does once online checkout is open, and they are what the billing code applies to any subscription that exists.
+Yes. The **Pricing** page has a checkout button for each plan. It takes you to a payment page run by Stripe, the payment provider. Starting a paid plan, switching between monthly and annual, or moving to another tier all go through that checkout. The rules in the rest of this article are what the billing code applies.
 
 On a production deployment where payments are not set up at all, choosing a plan fails with a message saying payments are not configured.
 
@@ -61,7 +59,7 @@ Moving up and moving down work the same way: you start a checkout for the new pl
 - The free trial is once per account. If you are in a trial and switch, the trial of the old plan ends when the new checkout is completed, and the new plan does not get a second 14-day trial.
 - If you choose the plan you are already on, you see "You are already on this plan."
 
-If you would rather go down a level only when the period you paid for ends, cancel instead (**Profile**, **Plan** card, **Cancel plan**). You keep the current plan until that date, then the account returns to Free, and you can choose a new plan from there.
+If you would rather go down a level only when the period you paid for ends, cancel instead (**Profile**, **Plan** card, **Cancel plan**). You keep the current plan until that date, then the account returns to Free and the app closes until you choose a new plan on **Pricing**.
 
 ## What happens to the money I already paid if I change plans part-way through?
 

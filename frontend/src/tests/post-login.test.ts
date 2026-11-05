@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { postLoginDestination } from "@/lib/post-login";
+import { planGateRedirect, postLoginDestination } from "@/lib/post-login";
 
 const ready = {
   email: "founder@agency.com",
@@ -42,8 +42,14 @@ describe("postLoginDestination — right after sign-in", () => {
 });
 
 describe("postLoginDestination — silent session restore", () => {
-  it("never sends a no-plan user to pricing on app load", () => {
-    expect(postLoginDestination({ ...ready, has_active_plan: false })).toBe("/pipeline");
+  // Paywall (founder decision 2026-11-05): replaces "never sends a no-plan
+  // user to pricing on app load" -- a no-plan account no longer gets the app.
+  it("sends a no-plan user to pricing on app load too", () => {
+    expect(postLoginDestination({ ...ready, has_active_plan: false })).toBe("/pricing");
+  });
+
+  it("sends a paying user to the dashboard", () => {
+    expect(postLoginDestination(ready)).toBe("/pipeline");
   });
 
   it("still enforces email and identity verification", () => {
@@ -51,5 +57,34 @@ describe("postLoginDestination — silent session restore", () => {
       .toBe("/check-email?email=founder%40agency.com");
     expect(postLoginDestination({ ...ready, identity_required: true, identity_complete: false }))
       .toBe("/onboarding/verify");
+  });
+});
+
+describe("planGateRedirect — the paywall on every app page", () => {
+  const noPlan = { has_active_plan: false };
+
+  it.each(["/pipeline", "/leads", "/strategies", "/inbox", "/settings", "/crm/dashboard/overview"])(
+    "sends a no-plan user from %s to pricing", (path) => {
+      expect(planGateRedirect(noPlan, path)).toBe("/pricing");
+    });
+
+  it.each(["/profile", "/profile/", "/onboarding/verify", "/invite"])(
+    "lets a no-plan user open %s (plan card, data export, delete, verify, invite)", (path) => {
+      expect(planGateRedirect(noPlan, path)).toBeNull();
+    });
+
+  it("lets a just-paid user land on the Stripe success page", () => {
+    expect(planGateRedirect(noPlan, "/settings", "?billing=success")).toBeNull();
+    expect(planGateRedirect(noPlan, "/settings", "?billing=other")).toBe("/pricing");
+  });
+
+  it("does not match look-alike paths", () => {
+    expect(planGateRedirect(noPlan, "/profiles")).toBe("/pricing");
+    expect(planGateRedirect(noPlan, "/inviteX")).toBe("/pricing");
+  });
+
+  it("never gates a paying user or a backend that predates the field", () => {
+    expect(planGateRedirect({ has_active_plan: true }, "/pipeline")).toBeNull();
+    expect(planGateRedirect({ has_active_plan: undefined }, "/pipeline")).toBeNull();
   });
 });
