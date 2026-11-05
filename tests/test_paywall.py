@@ -96,6 +96,11 @@ class TestFreeAccountStillReaches:
         assert not _refused(client.request("DELETE", "/me/style-profile"))
 
 
+class TestAdminRoutesKeepTheirOwnAnswer:
+    def test_non_admin_gets_403_not_402(self, client, paywall_on):
+        assert client.get("/admin/config-warnings").status_code == 403
+
+
 class TestPayingAccountsPass:
     @pytest.mark.parametrize("status", ["trialing", "active", "past_due"])
     def test_granting_subscription(self, client, db_session, test_user, paywall_on, status):
@@ -129,7 +134,7 @@ class TestExemptList:
         ("POST", "/billing/checkout"), ("GET", "/onboarding/verification"),
         ("POST", "/workspaces/invitations/accept"), ("POST", "/support/tickets"),
         ("POST", "/me/data-export"), ("DELETE", "/me"), ("DELETE", "/me/voice-clone"),
-        ("GET", "/me/theme"), ("GET", "/billing/"),
+        ("GET", "/me/theme"), ("GET", "/billing/"), ("GET", "/admin/config-warnings"),
     ])
     def test_exempt(self, method, path):
         assert auth_svc.plan_exempt(method, path) is True
@@ -137,7 +142,7 @@ class TestExemptList:
     @pytest.mark.parametrize("method,path", [
         ("GET", "/strategies"), ("GET", "/leads"), ("GET", "/authx"),
         ("GET", "/billingx"), ("GET", "/me/voice-clone"), ("POST", "/support/chat"),
-        ("GET", "/workspaces/current"), ("GET", "/admin/billing/meetings/x"),
+        ("GET", "/workspaces/current"), ("GET", "/adminx"),
         ("POST", "/onboardingx"), ("GET", "/"),
     ])
     def test_not_exempt(self, method, path):

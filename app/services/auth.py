@@ -296,7 +296,10 @@ SUBSCRIPTION_REQUIRED = "SUBSCRIPTION_REQUIRED"
 # buying a plan, the identity/phone checks that come before buying, accepting
 # a team invite (a member of a paying owner has access), support tickets, and
 # the GDPR rights (export, delete the account). Everything else is the product.
-_PLAN_EXEMPT_PREFIXES = ("/auth/", "/billing/", "/onboarding/", "/devices/")
+# /admin/* is admin-only already (deps.require_admin, which answers 403); an
+# admin always has plan access, so paywalling it would only turn a non-admin's
+# 403 into a misleading 402.
+_PLAN_EXEMPT_PREFIXES = ("/auth/", "/billing/", "/onboarding/", "/devices/", "/admin/")
 _PLAN_EXEMPT_EXACT = frozenset({
     "/auth", "/billing", "/devices", "/me", "/me/data-export", "/me/theme",
     "/workspaces/invitations/accept", "/support/faq", "/support/tickets",
