@@ -49,7 +49,7 @@ sources:
 
 # Getting started with Vectorae
 
-This article walks you through your first session: creating an account, verifying your email and phone, choosing a plan, and launching your first strategy. Email verification is required before you can use anything; the phone step and the plan choice can be put off, with the limits described below.
+This article walks you through your first session: creating an account, verifying your email and phone, choosing a plan, and launching your first strategy. Email verification is required before you can use anything; the phone step can sometimes be put off, but the app does not open until you choose a plan.
 
 ## How do I create an account?
 
@@ -94,7 +94,7 @@ The text-message service behind this step (Twilio) has not yet been verified aga
 
 ## Do I need a plan?
 
-Not to start. An account without a paid plan uses the Free plan's limits (for example 3 strategies, a $10 daily AI limit, and email only). Right after you sign in, if your account has no paid plan, Vectorae shows you the **Pricing** page ("Choose a plan to start using Vectorae"); it does not send you back there later. Each monthly tier starts with a 14-day free trial. Choosing a plan requires a verified phone number. The payment integration (Stripe) has not yet been verified against the live service; if checkout is not available on your deployment, contact support. Members of a workspace whose owner has a plan do not need their own. See the plans article for what each plan includes.
+Yes. Without a paid plan the app does not open: Vectorae shows you the **Pricing** page ("Choose a plan to start using Vectorae") every time you open the app, until you choose a plan. Each monthly tier starts with a 14-day free trial, and a trial counts as a plan. Choosing a plan requires a verified phone number. Without a plan you can still open **Profile** to export your data or delete your account, and you can submit a support ticket. Members of a workspace whose owner has a plan do not need their own. See the plans article for what each plan includes.
 
 ## How do I connect Gmail?
 
@@ -117,7 +117,7 @@ You land on the strategy's page. The research runs on Vectorae's servers, so you
 
 A strategy may be refused at launch if:
 
-- you have reached your plan's number of strategies (for example, 3 on the Free plan);
+- you have reached your plan's number of strategies (for example, 10 on Starter);
 - your plan's daily AI limit is used up (it resets at 00:00 UTC);
 - you have already started 2 strategies in the past hour.
 
@@ -131,7 +131,7 @@ Vectorae sets no timetable: research time depends on the AI service, and replies
 
 1. **Verify your email** with the link from the **Check your email** screen.
 2. **Verify your phone** when asked, or press **Do this later**. You need it before launching outreach.
-3. **Choose a plan** on **Pricing**, or stay within the Free plan's limits.
+3. **Choose a plan** on **Pricing**. The app opens once you have one (a free trial counts).
 4. **Connect Gmail**: **Settings**, **Integrations** tab.
 5. **Check your sending domain**: **Settings**, **Deliverability** tab, **Email health** card. Fix SPF, DKIM and DMARC problems before sending.
 6. **Set up booking**: in **Calendar**, set your **Weekly availability**, then create a page under **Booking pages**.

@@ -59,7 +59,7 @@ Moving up and moving down work the same way: you start a checkout for the new pl
 - The free trial is once per account. If you are in a trial and switch, the trial of the old plan ends when the new checkout is completed, and the new plan does not get a second 14-day trial.
 - If you choose the plan you are already on, you see "You are already on this plan."
 
-If you would rather go down a level only when the period you paid for ends, cancel instead (**Profile**, **Plan** card, **Cancel plan**). You keep the current plan until that date, then the account returns to Free, and you can choose a new plan from there.
+If you would rather go down a level only when the period you paid for ends, cancel instead (**Profile**, **Plan** card, **Cancel plan**). You keep the current plan until that date, then the account returns to Free and the app closes until you choose a new plan on **Pricing**.
 
 ## What happens to the money I already paid if I change plans part-way through?
 
