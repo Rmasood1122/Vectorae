@@ -34,9 +34,23 @@ logger = logging.getLogger(__name__)
 
 class StripeError(ClientHunterError):
     """Stripe refused or could not be reached. The message can carry Stripe's
-    own response text, so it is never put in an API response as is."""
+    own response text, so it is never put in an API response as is.
+
+    `code` / `param` are Stripe's error.code and error.param when Stripe
+    answered (None for a transport failure)."""
 
     user_safe = False
+
+    def __init__(self, message: str = "", *, code: str | None = None,
+                 param: str | None = None, status: int | None = None) -> None:
+        super().__init__(message)
+        self.code, self.param, self.status = code, param, status
+
+    @property
+    def missing(self) -> bool:
+        """Stripe says the object does not exist on THIS account and mode --
+        e.g. a test-mode customer or subscription after switching to live keys."""
+        return self.code == "resource_missing"
 
 
 class StripeNotConfigured(StripeError):
@@ -104,8 +118,11 @@ def _request(method: str, path: str, data: dict | None = None,
     except ValueError:
         body = {}
     if resp.status_code >= 400:
-        message = ((body.get("error") or {}).get("message")) or resp.text[:200]
-        raise StripeError(f"stripe HTTP {resp.status_code}: {message}")
+        err = body.get("error") or {}
+        message = err.get("message") or resp.text[:200]
+        raise StripeError(f"stripe HTTP {resp.status_code}: {message}",
+                          code=err.get("code"), param=err.get("param"),
+                          status=resp.status_code)
     return body
 
 

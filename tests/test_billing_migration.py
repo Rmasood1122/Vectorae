@@ -92,6 +92,8 @@ LATER_COLUMNS = {"billing_subscriptions": {name: "0082_annual_billing" for name 
     "trial_started_at", "trial_used", "renewal_consent_at", "consent_disclosure_version",
     "consent_price_cents", "consent_interval", "consent_checkout_session_id",
     "price_unit_amount_cents", "price_interval", "price_currency", "support_note")}}
+# 0098: proven by tests/test_billing_welcome_migration.py.
+LATER_COLUMNS["billing_subscriptions"]["welcome_email_sent_at"] = "0098_billing_welcome_email"
 
 
 @pytest.mark.parametrize("table", NEW_TABLES)

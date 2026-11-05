@@ -346,13 +346,12 @@ def start_checkout(db: Session, user: User, *, billing_model: str, tier: str | N
         except stripe.StripeError as exc:
             logger.info("checkout session %s not expired (already closed?): %s",
                         sub.stripe_checkout_session_id, exc)
-    try:
-        customer_id = (sub.stripe_customer_id if sub is not None else None) or \
-            stripe.create_customer(email=user.email, user_id=str(user.id))["id"]
+
+    def open_session(customer_id: str) -> dict:
         if model in catalog.SUBSCRIPTION_MODELS:
             price_setting = (f"stripe_price_{tier_id}_annual" if model == catalog.ANNUAL
                              else f"stripe_price_{tier_id}")
-            session = stripe.create_subscription_checkout(
+            return stripe.create_subscription_checkout(
                 customer_id=customer_id, user_id=str(user.id),
                 tier=catalog.monthly_tier(tier_id),
                 success_url=success_url, cancel_url=cancel_url,
@@ -364,10 +363,26 @@ def start_checkout(db: Session, user: User, *, billing_model: str, tier: str | N
                 session_metadata={
                     **_consent_metadata(model, tier_id, now),
                     "trial_end": str(int(trial_end.timestamp())) if trial_end else ""})
-        else:
-            session = stripe.create_setup_checkout(
-                customer_id=customer_id, user_id=str(user.id),
-                success_url=success_url, cancel_url=cancel_url)
+        return stripe.create_setup_checkout(
+            customer_id=customer_id, user_id=str(user.id),
+            success_url=success_url, cancel_url=cancel_url)
+
+    try:
+        stored = sub.stripe_customer_id if sub is not None else None
+        customer_id = stored or \
+            stripe.create_customer(email=user.email, user_id=str(user.id))["id"]
+        try:
+            session = open_session(customer_id)
+        except stripe.StripeError as exc:
+            # The saved customer does not exist on this Stripe account/mode:
+            # typically it was made with TEST keys and the deployment now runs
+            # LIVE keys. Make a fresh customer once and retry.
+            if not (stored and exc.missing and exc.param in (None, "customer")):
+                raise
+            logger.warning("stripe customer %s missing for user %s (test-mode leftover?); "
+                           "creating a new one", stored, user.id)
+            customer_id = stripe.create_customer(email=user.email, user_id=str(user.id))["id"]
+            session = open_session(customer_id)
     except stripe.StripeError as exc:
         logger.error("stripe checkout for user %s failed: %s", user.id, exc)
         raise BillingError("Payments are unavailable right now. Please try again shortly.",
@@ -415,8 +430,10 @@ def cancel(db: Session, user: User, now: datetime | None = None) -> dict:
             stripe.cancel_subscription_now(sub.stripe_subscription_id)
             voided = stripe.void_open_invoices(sub.stripe_subscription_id)
         except stripe.StripeError as exc:
-            raise BillingError("Could not reach the payment provider. Try again.",
-                               status_code=502) from exc
+            if not exc.missing:
+                raise BillingError("Could not reach the payment provider. Try again.",
+                                   status_code=502) from exc
+            voided = []
         logger.info("past-due subscription %s cancelled now; voided invoices %s",
                     sub.id, voided)
         sub.status, sub.canceled_at = "canceled", now
@@ -425,8 +442,18 @@ def cancel(db: Session, user: User, now: datetime | None = None) -> dict:
         try:
             stripe.cancel_subscription_at_period_end(sub.stripe_subscription_id)
         except stripe.StripeError as exc:
-            raise BillingError("Could not reach the payment provider. Try again.",
-                               status_code=502) from exc
+            if not exc.missing:
+                raise BillingError("Could not reach the payment provider. Try again.",
+                                   status_code=502) from exc
+            # Stripe has no such subscription on this account/mode (a test-mode
+            # leftover after switching to live keys): nothing can bill it, so
+            # end it here and now instead of leaving a plan that never ends.
+            logger.warning("subscription %s not found in Stripe; cancelling locally",
+                           sub.stripe_subscription_id)
+            sub.status, sub.canceled_at = "canceled", now
+            _sync_plan(db, sub)
+            db.commit()
+            return subscription_out(sub)
         sub.cancel_at_period_end = True
     else:
         if not live:
@@ -620,7 +647,62 @@ def _on_checkout_completed(db: Session, obj: dict) -> str:
     db.flush()
     _sync_plan(db, sub)
     db.commit()
+    _send_welcome_once(db, sub, user, model, tier_id)
     return "activated"
+
+
+def welcome_email(model: str, tier_id: str) -> tuple[str, str, str]:
+    """(subject, html, text) of the post-payment welcome. Never contains a
+    password or any credential: the customer chose their own at sign-up."""
+    if model == catalog.PAY_PER_MEETING:
+        plan = catalog.PAY_PER_MEETING_PLAN["name"]
+    else:
+        tier = catalog.monthly_tier(tier_id) or {}
+        plan = tier.get("name") or str(tier_id).title()
+        if model == catalog.ANNUAL:
+            plan += " (annual)"
+    login = f"{settings.frontend_url.rstrip('/')}/login"
+    booking = (settings.onboarding_call_url or "").strip()
+    subject = "Welcome to Vectorae: your plan is active"
+    lines = [f"Thanks for choosing Vectorae. Your {plan} plan is active.",
+             f"Sign in any time at {login} with the email and password you chose "
+             "when you signed up."]
+    html_lines = [escape(lines[0]),
+                  f'Sign in any time at <a href="{escape(login)}">{escape(login)}</a> '
+                  "with the email and password you chose when you signed up."]
+    if booking:
+        lines.append(f"Book your onboarding call (30 minutes) here: {booking}")
+        html_lines.append('Book your onboarding call (30 minutes) here: '
+                          f'<a href="{escape(booking)}">{escape(booking)}</a>')
+    tail = ("Questions? Reply to this email. You can manage or cancel your plan "
+            "in Profile, Plan.")
+    lines.append(tail)
+    html_lines.append(escape(tail))
+    text = "\n\n".join(lines)
+    html = "<p>" + "</p><p>".join(html_lines) + "</p>"
+    return subject, html, text
+
+
+def _send_welcome_once(db: Session, sub: BillingSubscription, user: User,
+                       model: str, tier_id: str) -> None:
+    """Email the welcome after the account's FIRST completed checkout.
+
+    Once per account (welcome_email_sent_at, migration 0098): a redelivered
+    event or a later plan change sends nothing. Marked only after the send
+    succeeds, so a mail outage retries on the next checkout. A failure never
+    fails the webhook: the payment is already recorded."""
+    if sub.welcome_email_sent_at is not None or not user.email:
+        return
+    try:
+        from app.services.email_sender import send_email  # noqa: PLC0415
+
+        subject, html, text = welcome_email(model, tier_id)
+        send_email(to=user.email, subject=subject, html=html, text=text)
+    except Exception:  # noqa: BLE001
+        logger.exception("billing: welcome email to user %s failed", user.id)
+        return
+    sub.welcome_email_sent_at = _now()
+    db.commit()
 
 
 def _on_subscription_changed(db: Session, obj: dict) -> str:

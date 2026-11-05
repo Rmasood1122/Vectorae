@@ -585,6 +585,9 @@ class Settings(BaseSettings):
     stripe_price_enterprise_annual: str = ""
     # Seconds of clock skew tolerated on a Stripe-Signature timestamp.
     stripe_webhook_tolerance_seconds: int = 300
+    # The link in the post-payment welcome email for booking the onboarding
+    # call (Calendly). Empty = the email leaves the booking line out.
+    onboarding_call_url: str = "https://calendly.com/rmasood112224/30min"
 
     # --- Feature A2: tamper-evident audit trail ----------------------------
     # Base64 of a 32-byte Ed25519 seed that signs audit-trail exports. EMPTY =

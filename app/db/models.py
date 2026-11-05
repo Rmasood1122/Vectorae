@@ -4164,6 +4164,10 @@ class BillingSubscription(TimestampMixin, Base):
         Boolean, default=False, server_default="0", nullable=False
     )
     canceled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Migration 0098: when the post-payment welcome email went out (once per
+    # account; app/services/billing.py::_send_welcome_once).
+    welcome_email_sent_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True)
     is_stub: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default="0", nullable=False
     )
