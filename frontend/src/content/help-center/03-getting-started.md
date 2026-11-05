@@ -94,7 +94,7 @@ The text-message service behind this step (Twilio) has not yet been verified aga
 
 ## Do I need a plan?
 
-Not to start. An account without a paid plan uses the Free plan's limits (for example 3 strategies, a $10 daily AI limit, and email only). Right after you sign in, if your account has no paid plan, Vectorae shows you the **Pricing** page ("Choose a plan to start using Vectorae"); it does not send you back there later. Each monthly tier starts with a 14-day free trial. Choosing a plan requires a verified phone number. The payment integration (Stripe) has not yet been verified against the live service; if checkout is not available on your deployment, contact support. Members of a workspace whose owner has a plan do not need their own. See the plans article for what each plan includes.
+Yes. Without a paid plan the app does not open: Vectorae shows you the **Pricing** page ("Choose a plan to start using Vectorae") every time you open the app, until you choose a plan. Each monthly tier starts with a 14-day free trial, and a trial counts as a plan. Choosing a plan requires a verified phone number. Without a plan you can still open **Profile** to export your data or delete your account. Members of a workspace whose owner has a plan do not need their own. See the plans article for what each plan includes.
 
 ## How do I connect Gmail?
 

@@ -62,6 +62,13 @@ def load_principal(db: Session, claims: dict) -> User:
         auth_svc.check_account_usable(user)
     except HTTPException as exc:
         raise PrincipalRejected(str(exc.detail)) from None
+    # The paywall (auth.check_plan_active): every connector tool reads or
+    # changes product data, so none of it is exempt.
+    if settings.active_plan_required:
+        from app.services.billing import plan_access  # noqa: PLC0415
+
+        if not plan_access(db, user)["has_active_plan"]:
+            raise PrincipalRejected(auth_svc.SUBSCRIPTION_REQUIRED)
     return user
 
 

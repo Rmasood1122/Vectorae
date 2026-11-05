@@ -284,7 +284,55 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
         if _issued_before_password_change(user, claims):
             raise HTTPException(status_code=401, detail="session expired")
     check_account_usable(user)
+    check_plan_active(request, db, user)
     return _workspace_principal(request, db, user)
+
+
+# The exact detail every paywall refusal carries; the frontend matches on it
+# (frontend/src/lib/api/client.ts) the way it matches EMAIL_NOT_VERIFIED.
+SUBSCRIPTION_REQUIRED = "SUBSCRIPTION_REQUIRED"
+
+# Routes an account WITHOUT a paid plan still reaches: signing in and out,
+# buying a plan, the identity/phone checks that come before buying, accepting
+# a team invite (a member of a paying owner has access), support tickets, and
+# the GDPR rights (export, delete the account). Everything else is the product.
+_PLAN_EXEMPT_PREFIXES = ("/auth/", "/billing/", "/onboarding/", "/devices/")
+_PLAN_EXEMPT_EXACT = frozenset({
+    "/auth", "/billing", "/devices", "/me", "/me/data-export", "/me/theme",
+    "/workspaces/invitations/accept", "/support/faq", "/support/tickets",
+})
+
+
+def plan_exempt(method: str, path: str) -> bool:
+    """True when a no-plan account may call METHOD PATH."""
+    path = (path or "/").rstrip("/") or "/"
+    if path in _PLAN_EXEMPT_EXACT or path.startswith(_PLAN_EXEMPT_PREFIXES):
+        return True
+    # Removing your own data (voice clone, style profile) is never paywalled:
+    # withdrawing consent must not depend on paying.
+    return method.upper() == "DELETE" and path.startswith("/me/")
+
+
+def check_plan_active(request: Request, db: Session, user: User) -> None:
+    """The paywall (settings.active_plan_required): 402 for an account with no
+    paid plan, a trial, or a paying workspace owner (billing.plan_access, the
+    same answer /auth/me gives as has_active_plan). 402, not 401/403: the
+    credentials are valid and the account is usable; it has not paid."""
+    if not settings.active_plan_required:
+        return
+    root = request.scope.get("root_path") or ""
+    path = request.url.path
+    if root and path.startswith(root):
+        path = path[len(root):]
+    if plan_exempt(request.method, path):
+        return
+    from app.services.billing import plan_access  # noqa: PLC0415
+
+    if not plan_access(db, user)["has_active_plan"]:
+        raise HTTPException(status_code=402, detail={
+            "error": SUBSCRIPTION_REQUIRED,
+            "message": "Choose a plan to use Vectorae.",
+        })
 
 
 def check_account_usable(user: User) -> None:

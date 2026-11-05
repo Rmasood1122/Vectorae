@@ -352,6 +352,14 @@ class Settings(BaseSettings):
     # instead of needing a code change and a redeploy.
     require_email_verification: bool = True
 
+    # PAYWALL. get_current_user refuses an account with no paid plan (402
+    # SUBSCRIPTION_REQUIRED) on every route except the few it needs to buy a
+    # plan, finish verification, or export/delete its data
+    # (app/services/auth.py::plan_exempt). Unset = on in production only, so
+    # dev and the offline test suite are unchanged. REQUIRE_ACTIVE_PLAN=false
+    # is the kill switch: an env change and a restart, not a deploy.
+    require_active_plan: bool | None = None
+
     # --- Engagement Hub: calendar (Feature 2) -----------------------------
     # How far ahead a public booking page offers slots. 30 days is the brief's
     # figure. It is also the width of the window every slot query scans, so it
@@ -1057,6 +1065,12 @@ class Settings(BaseSettings):
     def mcp_allowed_origins_list(self) -> tuple[str, ...]:
         return tuple(o.strip() for o in (self.mcp_allowed_origins or "").split(",")
                      if o.strip())
+
+    @property
+    def active_plan_required(self) -> bool:
+        if self.require_active_plan is not None:
+            return bool(self.require_active_plan)
+        return (self.app_env or "").strip().lower() in {"production", "prod", "live"}
 
     @property
     def refresh_cookie_samesite(self) -> str:

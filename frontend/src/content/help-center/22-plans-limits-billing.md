@@ -105,8 +105,6 @@ A meeting charge can be disputed only while it is still inside its 48-hour windo
 
 ## How do I choose or change a plan?
 
-Online checkout is not open yet: Stripe checkout has so far been built and tested only against simulated services, so the **Pricing** page says "Online checkout opens soon" and offers a call instead of a checkout button. The steps below describe how choosing a plan works once checkout opens.
-
 Go to the **Pricing** page. You can also reach it from **Profile**, in the **Plan** card, with the **Upgrade plan** button. On Pricing you pick a tier (and, where offered, **Monthly** or **Annual**) and press the trial button, or press **Pay per meeting**.
 
 - You must be signed in. If you are not, the button takes you to sign-up.
@@ -118,7 +116,7 @@ Go to the **Pricing** page. You can also reach it from **Profile**, in the **Pla
 - Once an annual year has been paid, it cannot be changed to another plan online before the year ends, because that would need a partial refund. Contact support, or cancel it and choose a new plan when the year ends. During the free trial of an annual plan you can still switch.
 - If a checkout you started earlier is completed after your annual year was paid, Vectorae keeps both: your annual plan stays, the new subscription will not renew, and our team contacts you about a refund. Starting a new checkout closes any earlier unfinished one.
 
-If you sign in and your account has no paid plan, Vectorae takes you to the Pricing page once, right after sign-in. You can still go back to the app; the Free limits then apply.
+If your account has no paid plan, Vectorae takes you to the Pricing page whenever you open the app, and the app's pages and data stay closed until you choose a plan (a 14-day free trial counts). Without a plan you can still open **Profile** (your plan card, exporting your data and deleting your account), finish verifying your identity, accept a team invitation, and contact support. Members of a workspace whose owner has a plan do not need their own.
 
 If you are a member of someone else's workspace, you work under the workspace owner's plan and are not asked to buy your own, as long as the workspace owner has a paid plan. Only the account owner can buy or cancel a plan for their account.
 

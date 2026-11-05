@@ -45,9 +45,7 @@ An annual plan has exactly the same limits as the monthly plan of the same tier,
 
 ## Can I buy or change a plan online right now?
 
-Not yet. Online payment through Stripe is marked "simulated only": it has been built and tested against a simulated payment service, not against the live one. While that is the case, the **Pricing** page shows the prices but, instead of a checkout button, it says "Online checkout opens soon. To start now, book a call." with a **Book a call** button.
-
-So today, starting a paid plan, switching between monthly and annual, or moving to another tier goes through a conversation with the Vectorae team rather than a checkout page. The rules in the rest of this article describe what the product does once online checkout is open, and they are what the billing code applies to any subscription that exists.
+Yes. The **Pricing** page has a checkout button for each plan. It takes you to a payment page run by Stripe, the payment provider. Starting a paid plan, switching between monthly and annual, or moving to another tier all go through that checkout. The rules in the rest of this article are what the billing code applies.
 
 On a production deployment where payments are not set up at all, choosing a plan fails with a message saying payments are not configured.
 
