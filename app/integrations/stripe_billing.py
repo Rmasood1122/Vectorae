@@ -22,6 +22,7 @@ import hmac
 import logging
 import time
 from typing import Any
+from urllib.parse import urlencode
 
 import httpx
 
@@ -82,9 +83,18 @@ def _request(method: str, path: str, data: dict | None = None,
     headers = {"Stripe-Version": "2024-06-20"}
     if idempotency_key:
         headers["Idempotency-Key"] = idempotency_key
+    # Stripe takes form-encoded bodies with bracketed keys (a[b]=1, c[0]=x),
+    # which a dict cannot express when a key repeats. Encode the pairs here:
+    # httpx's `data=` accepts only a dict, and given this list it streamed
+    # the tuples as raw bytes and every live call died with
+    # "TypeError: expected a bytes-like object, tuple found" (prod, 2026-11-05).
+    pairs = _form(data or {})
+    content = urlencode(pairs).encode() if pairs else None
+    if content is not None:
+        headers["Content-Type"] = "application/x-www-form-urlencoded"
     try:
         with _http() as client:
-            resp = client.request(method, path, data=_form(data or {}) or None,
+            resp = client.request(method, path, content=content,
                                   headers=headers,
                                   auth=(settings.stripe_secret_key, ""))
     except httpx.HTTPError as exc:

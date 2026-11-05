@@ -53,9 +53,8 @@ facts:
   phrase: new code after 60 seconds
   expr: app.config.Settings.model_fields['phone_otp_resend_cooldown_seconds'].default
 - article: '03'
-  phrase: a $10 daily AI limit
-  expr: app.core.plans.PLANS['free']['max_ai_spend_usd_per_day']
-  shows: ${v:.0f}
+  phrase: 10 on Starter
+  expr: app.core.plans.PLANS['starter']['max_strategies']
 - article: '03'
   phrase: it runs 144 steps
   expr: len(app.pipeline.registry.STRATEGY_STEPS) + len(app.pipeline.registry.GTM_STEPS)
