@@ -358,9 +358,14 @@ def verify_email(token: str = Query(default="", max_length=512),
     IP would punish the shared corporate NAT of exactly the customer we want.
     """
     frontend = settings.frontend_url.rstrip("/")
-    status, _user = verify_svc.consume_token(db, token or "")
+    status, verified_user = verify_svc.consume_token(db, token or "")
     if status == verify_svc.VERIFIED:
         db.commit()
+        # After the commit, so the worker reads email_verified=true. The
+        # service's once-only claim makes a repeat enqueue a no-op.
+        from app.workers import notification_tasks  # noqa: PLC0415
+
+        notification_tasks.enqueue_onboarding_email(verified_user.id)
         target = f"{frontend}/login?verified=true"
     elif status == verify_svc.ALREADY_VERIFIED:
         target = f"{frontend}/login?verified=already"

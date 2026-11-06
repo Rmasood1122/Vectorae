@@ -739,6 +739,15 @@ def queued_jobs(monkeypatch):
     monkeypatch.setattr("app.workers.notification_tasks.enqueue_signup_alert",
                         _signup_alert)
 
+    jobs["onboarding_emails"] = []
+
+    def _onboarding_email(user_id):
+        jobs["onboarding_emails"].append(str(user_id))
+        return True
+
+    monkeypatch.setattr("app.workers.notification_tasks.enqueue_onboarding_email",
+                        _onboarding_email)
+
     jobs["intel"] = []
 
     def _intel(task, *args):
