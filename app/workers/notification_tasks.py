@@ -73,6 +73,41 @@ def enqueue_signup_alert(event_id) -> bool:
         return False
 
 
+@celery_app.task(name="app.workers.notification_tasks.onboarding_email",
+                 bind=True, max_retries=3)
+def onboarding_email(self, user_id: str) -> str:
+    """Send the one-time onboarding email. Retries only a transport failure;
+    send_once releases its claim first, and its once-only UPDATE makes a retry
+    that races a duplicate harmless."""
+    from app.services import onboarding_email as onboarding_svc  # noqa: PLC0415
+    from app.services.email_sender import EmailSendError  # noqa: PLC0415
+
+    session = SessionLocal()
+    try:
+        return onboarding_svc.send_once(session, user_id)
+    except EmailSendError as exc:
+        logger.warning("onboarding email for %s failed -- retrying", user_id)
+        raise self.retry(exc=exc, countdown=120)
+    finally:
+        session.close()
+
+
+def enqueue_onboarding_email(user_id) -> bool:
+    """Queue the onboarding email for one freshly verified account.
+
+    Never raises; tests monkeypatch. Broker down: nothing is sent inline,
+    because the caller is the verification-link redirect and a slow mail
+    relay must not hold that page. The account keeps
+    onboarding_email_sent_at NULL, so it is findable for a catch-up send."""
+    try:
+        onboarding_email.apply_async(args=[str(user_id)], retry=False)
+        return True
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("could not queue the onboarding email for %s: %s", user_id,
+                       type(exc).__name__)
+        return False
+
+
 def enqueue_event(user_id, event: str, **kwargs) -> bool:
     """Queue one event_bus.emit. Returns True when queued, False when it had
     to be delivered inline. Never raises. Tests monkeypatch this."""

@@ -437,6 +437,14 @@ class User(TimestampMixin, Base):
     email_verified_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    # Migration 0098: when the one-time onboarding email went out. It is the
+    # once-only claim (app/services/onboarding_email.py): set before the send,
+    # cleared again if the send fails. NULL on every account that existed
+    # before 0098, which is how a one-off catch-up for existing users can
+    # find who never got it.
+    onboarding_email_sent_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     # Feature Group 2 (migration 0025): voice-matched messaging. The samples
     # are kept so the user can edit and re-run them; only the extracted
     # PROFILE ever reaches an outreach prompt (see style_profile.py).
