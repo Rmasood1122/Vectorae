@@ -31,6 +31,10 @@ dependencies = [
     "alembic>=1.13.0,<1.14",
     "celery[redis]>=5.4.0,<5.5",
     "redis>=5.0.0,<6.0",
+    # kombu 5.7 needs redis-py >= 6.1; redis is capped below 6 (see
+    # tests/test_dependency_pins.py). Unpinned, the image resolved kombu 5.7.0
+    # and every broker connection raised VersionMismatch (2026-11-06).
+    "kombu>=5.4.0,<5.7",
     "anthropic>=0.28.0",
     "httpx>=0.27.0",
     "tenacity>=8.4.1",
