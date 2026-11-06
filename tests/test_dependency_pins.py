@@ -27,6 +27,7 @@ from pathlib import Path
 import pytest
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
+from packaging.version import Version
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -148,3 +149,45 @@ def test_core_runtime_packages_are_capped_in_both_files(package):
         assert operators & {"<", "<=", "==", "~="}, (
             f"{package} has no upper bound in {label}: "
             f"{[str(r) for r in declared[package]]}")
+
+
+# --------------------------------------------------------------------------
+# The Celery broker transport can talk to the redis-py we allow
+# --------------------------------------------------------------------------
+
+#: kombu release -> the oldest redis-py its Redis transport accepts. A kombu
+#: newer than this table must be added here before it may be allowed.
+_KOMBU_MIN_REDIS = (("5.7.0", "6.1.0"),)
+
+
+def test_every_allowed_kombu_works_with_every_allowed_redis():
+    """2026-11-06 outage. kombu was not declared, so `pip install .` took the
+    newest release Celery allows: kombu 5.7.0, whose Redis transport refuses
+    redis-py < 6.1. redis is capped below 6, so every broker connection
+    raised VersionMismatch: the worker and beat crash-looped and every
+    strategy launch returned 500, while every test passed (tests run on the
+    pinned lockfile versions)."""
+    for label, declared in (("requirements.txt", _requirements_txt()),
+                            ("pyproject.toml", _pyproject())):
+        assert "kombu" in declared, f"kombu is not declared in {label}"
+        kombu = declared["kombu"][0].specifier
+        redis = declared["redis"][0].specifier
+        for kombu_version, min_redis in _KOMBU_MIN_REDIS:
+            if kombu.contains(kombu_version):
+                too_old = [v for v in ("5.3.1", "6.0.0") if redis.contains(v)
+                           and Version(v) < Version(min_redis)]
+                assert not too_old, (
+                    f"{label} allows kombu {kombu_version} (needs redis-py >= "
+                    f"{min_redis}) and redis {too_old}: {kombu} / {redis}")
+
+
+def test_the_installed_kombu_accepts_the_installed_redis():
+    """The same check against what this environment actually installed."""
+    import kombu
+    import redis
+
+    for kombu_version, min_redis in _KOMBU_MIN_REDIS:
+        if Version(kombu.__version__) >= Version(kombu_version):
+            assert Version(redis.__version__) >= Version(min_redis), (
+                f"kombu {kombu.__version__} needs redis-py >= {min_redis}, "
+                f"installed {redis.__version__}")

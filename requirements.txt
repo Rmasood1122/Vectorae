@@ -19,6 +19,8 @@ alembic>=1.13.0,<1.14
 # ── Task queue ────────────────────────────────────────────────────────────────
 celery[redis]>=5.4.0,<5.5
 redis>=5.0.0,<6.0
+# kombu 5.7 needs redis-py >= 6.1, which the redis cap above excludes.
+kombu>=5.4.0,<5.7
 
 # ── Pydantic ──────────────────────────────────────────────────────────────────
 pydantic>=2.7.0,<3.0
