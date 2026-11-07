@@ -38,7 +38,7 @@ from app.api.deps import get_current_user, require_admin
 from app.config import settings
 from app.core import billing_catalog, production_guard
 from app.db.base import get_db
-from app.db.models import BillableMeeting, ProcessedWebhook, User
+from app.db.models import BillableMeeting, CreditTransactionLog, ProcessedWebhook, User
 from app.integrations import stripe_billing
 from app.services import billing
 from app.services import identity as identity_svc
@@ -155,6 +155,32 @@ def get_usage(limit: int = Query(default=20, ge=1, le=100),
         **summary,
         "meetings": [billing.meeting_out(m) for m in meetings],
     }
+
+
+@router.get("/billing/credit-transactions")
+def get_credit_transactions(limit: int = Query(default=50, ge=1, le=500),
+                           transaction_type: str | None = Query(default=None,
+                                                               pattern="^(purchase|adjustment|expiration|block)$"),
+                           db: Session = Depends(get_db),
+                           current_user: User = Depends(get_current_user)) -> list[dict]:
+    """Get user's credit transaction history and audit log."""
+    query = (select(CreditTransactionLog)
+             .where(CreditTransactionLog.user_id == current_user.id)
+             .order_by(CreditTransactionLog.created_at.desc())
+             .limit(limit))
+    if transaction_type:
+        query = query.where(CreditTransactionLog.transaction_type == transaction_type)
+
+    transactions = db.execute(query).scalars()
+    return [{
+        "id": str(t.id),
+        "type": t.transaction_type,
+        "amount_cents": t.amount_cents,
+        "old_limit_cents": t.old_limit_cents,
+        "new_limit_cents": t.new_limit_cents,
+        "reason": t.reason,
+        "created_at": t.created_at.isoformat(),
+    } for t in transactions]
 
 
 @router.post("/billing/meetings/{meeting_id}/dispute")
