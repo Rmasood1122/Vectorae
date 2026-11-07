@@ -127,6 +127,7 @@ function getStatusTone(status: string): "default" | "success" | "warn" | "error"
     case "disputed":
       return "info";
     case "failed":
+    case "blocked_by_credit_limit":
       return "error";
     default:
       return "default";

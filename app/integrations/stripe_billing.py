@@ -210,6 +210,34 @@ def create_setup_checkout(*, customer_id: str, user_id: str, success_url: str,
     })
 
 
+def create_one_time_checkout(*, customer_id: str, user_id: str, amount_cents: int,
+                            currency: str, description: str, success_url: str,
+                            cancel_url: str, session_metadata: dict | None = None) -> dict:
+    """Checkout Session in payment mode: one-time purchase (e.g. credit top-up)."""
+    metadata = {
+        "user_id": user_id,
+        "purchase_type": "ppm_credits",
+        **(session_metadata or {})
+    }
+    return _request("POST", "/v1/checkout/sessions", {
+        "mode": "payment",
+        "customer": customer_id,
+        "currency": currency,
+        "line_items": [{
+            "price_data": {
+                "currency": currency,
+                "product_data": {"name": description},
+                "unit_amount": amount_cents,
+            },
+            "quantity": 1,
+        }],
+        "metadata": metadata,
+        "client_reference_id": user_id,
+        "success_url": success_url,
+        "cancel_url": cancel_url,
+    })
+
+
 def cancel_subscription_at_period_end(subscription_id: str) -> dict:
     return _request("POST", f"/v1/subscriptions/{subscription_id}",
                     {"cancel_at_period_end": True})

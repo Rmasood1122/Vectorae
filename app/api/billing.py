@@ -66,6 +66,11 @@ class ResolveIn(BaseModel):
     note: str = Field(default="", max_length=500)
 
 
+class PurchaseCreditsIn(BaseModel):
+    amount_cents: int = Field(gt=0, description="Amount in cents (e.g. 5000 for $50)")
+    phone_verified: bool = Field(default=False, description="Confirms phone is verified")
+
+
 def _raise(exc: billing.BillingError) -> HTTPException:
     return HTTPException(status_code=exc.status_code, detail=str(exc))
 
@@ -165,6 +170,23 @@ def resolve(meeting_id: uuid.UUID, body: ResolveIn, db: Session = Depends(get_db
     try:
         return billing.meeting_out(billing.resolve_dispute(db, meeting, decision=body.decision,
                                                            note=body.note))
+    except billing.BillingError as exc:
+        raise _raise(exc)
+
+
+@router.post("/billing/purchase-credits")
+def purchase_credits(body: PurchaseCreditsIn, db: Session = Depends(get_db),
+                    current_user: User = Depends(get_current_user)) -> dict:
+    """Purchase additional credits for pay-per-meeting plan.
+
+    Only available for users on pay_per_meeting billing model. Increases their
+    monthly credit limit by the specified amount (in cents). Requires phone
+    verification and returns a Stripe Checkout URL (or stub mode response).
+    """
+    identity_svc.require_verified_phone(current_user)
+
+    try:
+        return billing.purchase_ppm_credits(db, current_user, body.amount_cents)
     except billing.BillingError as exc:
         raise _raise(exc)
 
