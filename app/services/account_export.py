@@ -54,6 +54,7 @@ OWNERSHIP: dict[str, list[str]] = {
     "billable_meetings": ["user_id"],
     "billing_renewal_notices": ["user_id"],        # auto-renewal notices sent
     "billing_subscriptions": ["user_id"],
+    "credit_transaction_log": ["user_id"],         # pay-per-meeting credit audit trail
     "calendar_availability": ["user_id"],
     "calendar_booking_pages": ["user_id"],
     "campaign_costs": ["user_id"],
