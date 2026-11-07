@@ -4350,7 +4350,7 @@ class CreditTransactionLog(TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = _uuid_pk()
     user_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"), index=True
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
     )
     transaction_type: Mapped[str] = mapped_column(
         String(20), nullable=False  # "purchase", "adjustment", "expiration", "block"
