@@ -57,6 +57,10 @@ export interface BillableMeetingRow {
   resolution_note: string | null;
 }
 
+export interface UsagePage extends BillingOverview {
+  meetings: BillableMeetingRow[];
+}
+
 export const billingApi = {
   catalog: () => api<Catalog>("/billing/catalog", { auth: false }),
   overview: () => api<BillingOverview>("/billing"),
@@ -67,6 +71,7 @@ export const billingApi = {
       { body: checkoutPayload(billing_model, tier, acceptRenewalTerms) }),
   cancel: () => api<Subscription>("/billing/cancel", { method: "POST" }),
   meetings: () => api<BillableMeetingRow[]>("/billing/meetings"),
+  usage: () => api<UsagePage>("/billing/usage"),
   dispute: (id: string, reason: string) =>
     api<BillableMeetingRow>(`/billing/meetings/${id}/dispute`, { body: { reason } }),
 };

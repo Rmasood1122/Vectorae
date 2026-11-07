@@ -129,6 +129,23 @@ def list_meetings(status: str | None = Query(default=None,
     return [billing.meeting_out(r) for r in rows]
 
 
+@router.get("/billing/usage")
+def get_usage(limit: int = Query(default=20, ge=1, le=100),
+              db: Session = Depends(get_db),
+              current_user: User = Depends(get_current_user)) -> dict:
+    """Usage page: summary stats + recent billable meetings."""
+    summary = billing.usage_summary(db, current_user)
+    query = (select(BillableMeeting)
+             .where(BillableMeeting.user_id == current_user.id)
+             .order_by(BillableMeeting.occurred_at.desc())
+             .limit(limit))
+    meetings = db.execute(query).scalars()
+    return {
+        **summary,
+        "meetings": [billing.meeting_out(m) for m in meetings],
+    }
+
+
 @router.post("/billing/meetings/{meeting_id}/dispute")
 def dispute(meeting_id: uuid.UUID, body: DisputeIn, db: Session = Depends(get_db),
             current_user: User = Depends(get_current_user)) -> dict:
