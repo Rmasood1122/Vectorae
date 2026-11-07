@@ -88,10 +88,15 @@ def test_the_revision_follows_0039():
 # Columns a LATER migration adds to these tables. 0040 is judged against the
 # model minus these; each is proven by its own migration's test
 # (tests/test_annual_billing_migration.py for 0081).
-LATER_COLUMNS = {"billing_subscriptions": {name: "0082_annual_billing" for name in (
-    "trial_started_at", "trial_used", "renewal_consent_at", "consent_disclosure_version",
-    "consent_price_cents", "consent_interval", "consent_checkout_session_id",
-    "price_unit_amount_cents", "price_interval", "price_currency", "support_note")}}
+LATER_COLUMNS = {"billing_subscriptions": {
+    **{name: "0082_annual_billing" for name in (
+        "trial_started_at", "trial_used", "renewal_consent_at", "consent_disclosure_version",
+        "consent_price_cents", "consent_interval", "consent_checkout_session_id",
+        "price_unit_amount_cents", "price_interval", "price_currency", "support_note")},
+    **{name: "0099_ppm_credits_limit" for name in (
+        "ppm_credits_limit_cents", "ppm_credits_expires_at",
+        "ppm_credits_carryover_cents", "ppm_credits_reset_day")}
+}}
 
 
 @pytest.mark.parametrize("table", NEW_TABLES)
