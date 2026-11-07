@@ -235,6 +235,25 @@ class OptInSource(str, enum.Enum):
     API = "api"                        # recorded via the opt-in API
 
 
+class BulkImportStatus(str, enum.Enum):
+    """Lifecycle of a bulk CSV import job."""
+    PENDING = "pending"                  # uploaded, not yet validated
+    VALIDATING = "validating"            # running validation checks
+    READY_FOR_PREVIEW = "ready_for_preview"  # validation complete, preview ready
+    IMPORTING = "importing"              # user confirmed, import running
+    COMPLETED = "completed"              # all rows imported
+    FAILED = "failed"                    # unrecoverable validation or import error
+
+
+class BulkImportRowStatus(str, enum.Enum):
+    """Status of one row in a bulk import."""
+    PENDING = "pending"
+    VALIDATED = "validated"
+    IMPORTED = "imported"
+    FAILED = "failed"
+    SKIPPED = "skipped"                  # duplicate, suppressed, etc.
+
+
 # --------------------------------------------------------------------------
 # M9 — native CRM layer
 # --------------------------------------------------------------------------
@@ -6412,6 +6431,84 @@ class HelpChunk(Base):
     # "<embedding model>@<dimension>" that produced the vector; "" when none.
     model: Mapped[str] = mapped_column(String(80), nullable=False, default="",
                                        server_default="")
+
+class BulkImport(TimestampMixin, Base):
+    """Track a bulk CSV import job."""
+    __tablename__ = "bulk_imports"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    # Optional: which strategy this import is for (if null, user selects per row)
+    strategy_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("strategies.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+
+    # File info
+    filename: Mapped[str] = mapped_column(String(500))
+
+    # Counters
+    status: Mapped[BulkImportStatus] = mapped_column(
+        _enum(BulkImportStatus), default=BulkImportStatus.PENDING, index=True
+    )
+    total_rows: Mapped[int] = mapped_column(Integer, default=0)
+    valid_rows: Mapped[int] = mapped_column(Integer, default=0)
+    failed_rows: Mapped[int] = mapped_column(Integer, default=0)
+    created_leads: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Preview: [{email, name, company, status, reason}]
+    preview_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+
+    # Validation/import errors: {validation_errors: [...], import_errors: [...]}
+    error_summary: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+
+    # Timestamps for tracking
+    validation_started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    validation_completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    import_started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    import_completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+
+class BulkImportRow(TimestampMixin, Base):
+    """One row from a bulk import."""
+    __tablename__ = "bulk_import_rows"
+    __table_args__ = (
+        UniqueConstraint("bulk_import_id", "row_number", name="uq_bulk_import_row_number"),
+    )
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    bulk_import_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("bulk_imports.id", ondelete="CASCADE"), index=True
+    )
+
+    # Row number in the CSV (1-indexed for user-facing errors)
+    row_number: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    # Optional: the lead created from this row
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("leads.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+
+    # Raw CSV row as dict
+    raw_data_json: Mapped[dict] = mapped_column(JSON, default=dict)
+
+    # Validation result
+    status: Mapped[BulkImportRowStatus] = mapped_column(
+        _enum(BulkImportRowStatus), default=BulkImportRowStatus.PENDING, index=True
+    )
+
+    # Error details: {validation: [...], import: "reason"}
+    error_message: Mapped[str | None] = mapped_column(String(500), nullable=True)
+
 
 # Product defect #2: fill outcomes.strategy_id / outcomes.variant on every new
 # Outcome (the learning loop and A/B promotion read those columns). Imported

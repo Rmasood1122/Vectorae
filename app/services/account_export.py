@@ -62,6 +62,8 @@ OWNERSHIP: dict[str, list[str]] = {
     "compliance_audit_log": ["user_id"],
     "consent_events": ["user_id"],
     "credit_transaction_log": ["user_id"],           # credit purchase/adjustment/expiration audit
+    "bulk_imports": ["user_id"],                   # CSV import jobs (file, status, counts)
+    "bulk_import_rows": ["bulk_import_id", "user_id"],  # rows from bulk imports (linked via bulk_import->user_id)
     "customer_imports": ["user_id"],               # local business win-back imports (no PII)
     "voice_clones": ["user_id"],                   # voice twin: consent + clone metadata (no audio)
     "voice_twin_settings": ["user_id"],            # voice twin switches

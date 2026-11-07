@@ -137,6 +137,7 @@ DELETED: frozenset[str] = frozenset({
     "calendar_availability", "calendar_booking_pages", "calendar_bookings", "calls",
     "campaign_costs", "champion_moves", "channel_suggestions", "chat_messages",
     "chat_sessions", "claim_verification_log", "client_sending_domains", "credit_transaction_log",
+    "bulk_imports", "bulk_import_rows",  # CSV import jobs and rows (audit trail, no PII)
     "client_workspaces", "compliance_rules", "crm_activities", "crm_custom_field_values",
     "crm_custom_fields", "crm_lead_meta", "crm_lead_tags", "crm_notes", "crm_saved_views",
     "crm_tags", "deals", "deliverability_checks", "device_tokens", "displacement_alerts",
