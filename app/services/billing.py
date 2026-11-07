@@ -55,6 +55,7 @@ from app.db.models import (
     BillableMeeting,
     BillingRenewalNotice,
     BillingSubscription,
+    CreditTransactionLog,
     Lead,
     LeadStatus,
     Outcome,
@@ -644,11 +645,18 @@ def _on_credit_purchase_completed(db: Session, user: User, obj: dict) -> str:
     # Increase the credit limit
     if sub.ppm_credits_limit_cents is None:
         sub.ppm_credits_limit_cents = 6000
+    old_limit = sub.ppm_credits_limit_cents
     sub.ppm_credits_limit_cents += amount_cents
 
     # Clear the checkout session
     if sub.stripe_checkout_session_id == obj.get("id"):
         sub.stripe_checkout_session_id = None
+
+    _log_credit_transaction(
+        db, user.id, "purchase", amount_cents,
+        old_limit_cents=old_limit, new_limit_cents=sub.ppm_credits_limit_cents,
+        reason="User purchased credits", reference_id=obj.get("id")
+    )
 
     db.commit()
     logger.info("billing: user %s purchased %d credits, new limit: %d cents",
@@ -921,6 +929,14 @@ def _charge_one(db: Session, meeting: BillableMeeting, now: datetime) -> str:
                 f"Monthly credit limit (${sub.ppm_credits_limit_cents/100:.2f}) reached. "
                 "Purchase additional credits to continue booking meetings."
             )
+
+            _log_credit_transaction(
+                db, meeting.user_id, "block", int(meeting.amount_cents),
+                old_limit_cents=sub.ppm_credits_limit_cents,
+                new_limit_cents=sub.ppm_credits_limit_cents,
+                reason=f"Meeting blocked due to credit limit. Used: ${charged_this_month/100:.2f}"
+            )
+
             db.commit()
             return "blocked_by_credit_limit"
 
@@ -980,6 +996,24 @@ def resolve_dispute(db: Session, meeting: BillableMeeting, *, decision: str, not
     return meeting
 
 
+def _log_credit_transaction(db: Session, user_id: uuid.UUID, transaction_type: str,
+                           amount_cents: int, old_limit_cents: int | None = None,
+                           new_limit_cents: int | None = None, reason: str | None = None,
+                           reference_id: str | None = None) -> None:
+    """Log a credit transaction to the audit trail."""
+    txn = CreditTransactionLog(
+        user_id=user_id,
+        transaction_type=transaction_type,
+        amount_cents=amount_cents,
+        old_limit_cents=old_limit_cents,
+        new_limit_cents=new_limit_cents,
+        reason=reason,
+        reference_id=reference_id,
+        created_at=_now(),
+    )
+    db.add(txn)
+
+
 def adjust_user_credits(db: Session, user: User, adjustment_cents: int, reason: str,
                        notify_user: bool = True) -> dict:
     """Admin: manually adjust a user's pay-per-meeting credit limit.
@@ -1002,6 +1036,12 @@ def adjust_user_credits(db: Session, user: User, adjustment_cents: int, reason: 
     new_limit = max(0, old_limit + adjustment_cents)
 
     sub.ppm_credits_limit_cents = new_limit
+
+    _log_credit_transaction(
+        db, user.id, "adjustment", adjustment_cents,
+        old_limit_cents=old_limit, new_limit_cents=new_limit, reason=reason
+    )
+
     db.commit()
 
     result = {
