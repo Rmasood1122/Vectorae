@@ -4211,6 +4211,14 @@ class BillingSubscription(TimestampMixin, Base):
     # NULL for monthly/annual plans. When a user's charged meetings this month
     # reach this limit, further meetings are not charged until they purchase more.
     ppm_credits_limit_cents: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # Expiration and carryover for pay-per-meeting credits
+    ppm_credits_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    # Unused credits from previous month carried over (up to 50% of current month limit)
+    ppm_credits_carryover_cents: Mapped[int | None] = mapped_column(Integer, nullable=True, default=0)
+    # Day of month credits reset (1-31; NULL defaults to 1st)
+    ppm_credits_reset_day: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class BillingRenewalNotice(TimestampMixin, Base):
@@ -4321,6 +4329,38 @@ class BillableMeeting(TimestampMixin, Base):
     )
     failure_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     resolution_note: Mapped[str | None] = mapped_column(String(500), nullable=True)
+
+
+class CreditTransactionLog(TimestampMixin, Base):
+    """Append-only audit log of all credit-related transactions for pay-per-meeting.
+
+    Tracks:
+    - Credit purchases (user bought additional credits)
+    - Credit adjustments (admin adjusted user's limit)
+    - Credit expirations (monthly rollover, expired credits)
+    - Credit blocks (meeting blocked due to insufficient credits)
+
+    Provides audit trail and transaction history for users and admins.
+    """
+
+    __tablename__ = "credit_transaction_log"
+    __table_args__ = (
+        Index("ix_credit_transaction_user_ts", "user_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"), index=True
+    )
+    transaction_type: Mapped[str] = mapped_column(
+        String(20), nullable=False  # "purchase", "adjustment", "expiration", "block"
+    )
+    amount_cents: Mapped[int] = mapped_column(BigInteger)  # Amount added/removed/blocked
+    old_limit_cents: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    new_limit_cents: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    reason: Mapped[str | None] = mapped_column(String(500), nullable=True)  # Why the change happened
+    reference_id: Mapped[str | None] = mapped_column(String(64), nullable=True)  # Stripe ID, admin ID, etc
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
 # --------------------------------------------------------------------------

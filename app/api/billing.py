@@ -38,7 +38,7 @@ from app.api.deps import get_current_user, require_admin
 from app.config import settings
 from app.core import billing_catalog, production_guard
 from app.db.base import get_db
-from app.db.models import BillableMeeting, ProcessedWebhook, User
+from app.db.models import BillableMeeting, CreditTransactionLog, ProcessedWebhook, User
 from app.integrations import stripe_billing
 from app.services import billing
 from app.services import identity as identity_svc
@@ -69,6 +69,12 @@ class ResolveIn(BaseModel):
 class PurchaseCreditsIn(BaseModel):
     amount_cents: int = Field(gt=0, description="Amount in cents (e.g. 5000 for $50)")
     phone_verified: bool = Field(default=False, description="Confirms phone is verified")
+
+
+class AdjustCreditsIn(BaseModel):
+    adjustment_cents: int = Field(description="Amount to adjust in cents (positive to increase, negative to decrease)")
+    reason: str = Field(min_length=3, max_length=500, description="Reason for adjustment")
+    notify_user: bool = Field(default=True, description="Whether to notify the user of the adjustment")
 
 
 def _raise(exc: billing.BillingError) -> HTTPException:
@@ -151,6 +157,57 @@ def get_usage(limit: int = Query(default=20, ge=1, le=100),
     }
 
 
+@router.get("/billing/credit-transactions")
+def get_credit_transactions(limit: int = Query(default=50, ge=1, le=500),
+                           transaction_type: str | None = Query(default=None,
+                                                               pattern="^(purchase|adjustment|expiration|block)$"),
+                           db: Session = Depends(get_db),
+                           current_user: User = Depends(get_current_user)) -> list[dict]:
+    """Get user's credit transaction history and audit log."""
+    query = (select(CreditTransactionLog)
+             .where(CreditTransactionLog.user_id == current_user.id)
+             .order_by(CreditTransactionLog.created_at.desc())
+             .limit(limit))
+    if transaction_type:
+        query = query.where(CreditTransactionLog.transaction_type == transaction_type)
+
+    transactions = db.execute(query).scalars()
+    return [{
+        "id": str(t.id),
+        "type": t.transaction_type,
+        "amount_cents": t.amount_cents,
+        "old_limit_cents": t.old_limit_cents,
+        "new_limit_cents": t.new_limit_cents,
+        "reason": t.reason,
+        "created_at": t.created_at.isoformat(),
+    } for t in transactions]
+
+
+@router.get("/billing/credit-expiration")
+def get_credit_expiration(db: Session = Depends(get_db),
+                         current_user: User = Depends(get_current_user)) -> dict:
+    """Get user's credit limit, carryover, and expiration date."""
+    sub = billing.get_subscription(db, current_user.id)
+    if not sub or sub.billing_model != "pay_per_meeting":
+        raise HTTPException(status_code=409, detail="User is not on a pay-per-meeting plan.")
+
+    limit_cents = sub.ppm_credits_limit_cents or 0
+    carryover_cents = sub.ppm_credits_carryover_cents or 0
+    expires_at = sub.ppm_credits_expires_at
+
+    # Cap carryover at 50% of limit
+    max_carryover = limit_cents // 2
+    carryover_cents = min(carryover_cents, max_carryover)
+
+    return {
+        "monthly_limit_cents": limit_cents,
+        "carryover_cents": carryover_cents,
+        "total_available_cents": limit_cents + carryover_cents,
+        "expires_at": expires_at.isoformat() if expires_at else None,
+        "reset_day": sub.ppm_credits_reset_day or 1,
+    }
+
+
 @router.post("/billing/meetings/{meeting_id}/dispute")
 def dispute(meeting_id: uuid.UUID, body: DisputeIn, db: Session = Depends(get_db),
             current_user: User = Depends(get_current_user)) -> dict:
@@ -170,6 +227,24 @@ def resolve(meeting_id: uuid.UUID, body: ResolveIn, db: Session = Depends(get_db
     try:
         return billing.meeting_out(billing.resolve_dispute(db, meeting, decision=body.decision,
                                                            note=body.note))
+    except billing.BillingError as exc:
+        raise _raise(exc)
+
+
+@router.post("/admin/billing/users/{user_id}/adjust-credits")
+def adjust_credits(user_id: uuid.UUID, body: AdjustCreditsIn, db: Session = Depends(get_db),
+                   _admin: User = Depends(require_admin)) -> dict:
+    """Admin endpoint to manually adjust a user's pay-per-meeting credit limit.
+
+    Adjustment can be positive (increase) or negative (decrease). Notifies the user
+    of the adjustment via email and push unless notify_user is false.
+    """
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="user not found")
+    try:
+        return billing.adjust_user_credits(db, user, body.adjustment_cents, body.reason,
+                                          notify_user=body.notify_user)
     except billing.BillingError as exc:
         raise _raise(exc)
 
