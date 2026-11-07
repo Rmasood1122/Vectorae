@@ -71,6 +71,12 @@ class PurchaseCreditsIn(BaseModel):
     phone_verified: bool = Field(default=False, description="Confirms phone is verified")
 
 
+class AdjustCreditsIn(BaseModel):
+    adjustment_cents: int = Field(description="Amount to adjust in cents (positive to increase, negative to decrease)")
+    reason: str = Field(min_length=3, max_length=500, description="Reason for adjustment")
+    notify_user: bool = Field(default=True, description="Whether to notify the user of the adjustment")
+
+
 def _raise(exc: billing.BillingError) -> HTTPException:
     return HTTPException(status_code=exc.status_code, detail=str(exc))
 
@@ -170,6 +176,24 @@ def resolve(meeting_id: uuid.UUID, body: ResolveIn, db: Session = Depends(get_db
     try:
         return billing.meeting_out(billing.resolve_dispute(db, meeting, decision=body.decision,
                                                            note=body.note))
+    except billing.BillingError as exc:
+        raise _raise(exc)
+
+
+@router.post("/admin/billing/users/{user_id}/adjust-credits")
+def adjust_credits(user_id: uuid.UUID, body: AdjustCreditsIn, db: Session = Depends(get_db),
+                   _admin: User = Depends(require_admin)) -> dict:
+    """Admin endpoint to manually adjust a user's pay-per-meeting credit limit.
+
+    Adjustment can be positive (increase) or negative (decrease). Notifies the user
+    of the adjustment via email and push unless notify_user is false.
+    """
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="user not found")
+    try:
+        return billing.adjust_user_credits(db, user, body.adjustment_cents, body.reason,
+                                          notify_user=body.notify_user)
     except billing.BillingError as exc:
         raise _raise(exc)
 
