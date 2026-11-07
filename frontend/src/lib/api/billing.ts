@@ -61,6 +61,37 @@ export interface UsagePage extends BillingOverview {
   meetings: BillableMeetingRow[];
 }
 
+export interface CreditTransactionRow {
+  id: string;
+  type: "purchase" | "adjustment" | "expiration" | "block";
+  amount_cents: number;
+  old_limit_cents: number;
+  new_limit_cents: number;
+  reason: string;
+  created_at: string;
+}
+
+export interface CreditExpirationInfo {
+  monthly_limit_cents: number;
+  carryover_cents: number;
+  total_available_cents: number;
+  expires_at: string | null;
+  reset_day: number;
+}
+
+export interface MonthlyTrendPoint {
+  period: string;
+  spent_cents: number;
+  transaction_count: number;
+}
+
+export interface CreditAnalyticsData {
+  transaction_summary: Record<string, { count: number; total_usd: string }>;
+  monthly_trend: MonthlyTrendPoint[];
+  projected_monthly_burn_cents: number;
+  days_until_expiration: number | null;
+}
+
 export const billingApi = {
   catalog: () => api<Catalog>("/billing/catalog", { auth: false }),
   overview: () => api<BillingOverview>("/billing"),
@@ -72,6 +103,14 @@ export const billingApi = {
   cancel: () => api<Subscription>("/billing/cancel", { method: "POST" }),
   meetings: () => api<BillableMeetingRow[]>("/billing/meetings"),
   usage: () => api<UsagePage>("/billing/usage"),
+  creditTransactions: (limit?: number, type?: string) => {
+    const params = new URLSearchParams();
+    if (limit) params.append("limit", String(limit));
+    if (type) params.append("transaction_type", type);
+    return api<CreditTransactionRow[]>(`/billing/credit-transactions?${params}`);
+  },
+  creditExpiration: () => api<CreditExpirationInfo>("/billing/credit-expiration"),
+  creditAnalytics: () => api<CreditAnalyticsData>("/billing/analytics"),
   dispute: (id: string, reason: string) =>
     api<BillableMeetingRow>(`/billing/meetings/${id}/dispute`, { body: { reason } }),
 };

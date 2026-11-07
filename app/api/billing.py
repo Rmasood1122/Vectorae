@@ -208,6 +208,73 @@ def get_credit_expiration(db: Session = Depends(get_db),
     }
 
 
+@router.get("/billing/analytics")
+def get_credit_analytics(db: Session = Depends(get_db),
+                        current_user: User = Depends(get_current_user)) -> dict:
+    """Get credit usage analytics and metrics for dashboard."""
+    from sqlalchemy import and_
+    from datetime import timedelta
+
+    sub = billing.get_subscription(db, current_user.id)
+    if not sub or sub.billing_model != "pay_per_meeting":
+        raise HTTPException(status_code=409, detail="User is not on a pay-per-meeting plan.")
+
+    # Get all transactions for this user
+    txns = db.execute(
+        select(CreditTransactionLog)
+        .where(CreditTransactionLog.user_id == current_user.id)
+        .order_by(CreditTransactionLog.created_at)
+    ).scalars().all()
+
+    # Aggregate by transaction type
+    type_summary = {}
+    for txn in txns:
+        key = txn.transaction_type
+        if key not in type_summary:
+            type_summary[key] = {"count": 0, "total_cents": 0}
+        type_summary[key]["count"] += 1
+        type_summary[key]["total_cents"] += txn.amount_cents
+
+    # Get monthly spend trend (last 6 months)
+    now = db.execute(select(func.now())).scalar()
+    monthly_data = []
+    for i in range(6):
+        month_start = (now - timedelta(days=30*i)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        month_end = (month_start + timedelta(days=32)).replace(day=1)
+
+        monthly_txns = [t for t in txns
+                       if month_start <= t.created_at < month_end]
+        monthly_spend = sum(t.amount_cents for t in monthly_txns if t.transaction_type in ("block", "charge"))
+
+        monthly_data.append({
+            "period": month_start.strftime("%Y-%m"),
+            "spent_cents": monthly_spend,
+            "transaction_count": len(monthly_txns),
+        })
+
+    monthly_data.reverse()
+
+    # Calculate projected monthly burn
+    recent_months = [m for m in monthly_data[-3:] if m["spent_cents"] > 0]
+    projected_burn = int(sum(m["spent_cents"] for m in recent_months) / len(recent_months)) if recent_months else 0
+
+    return {
+        "transaction_summary": {
+            k: {
+                "count": v["count"],
+                "total_usd": f"${v['total_cents']/100:.2f}",
+            }
+            for k, v in type_summary.items()
+        },
+        "monthly_trend": monthly_data,
+        "projected_monthly_burn_cents": projected_burn,
+        "days_until_expiration": (
+            (sub.ppm_credits_expires_at - now).days
+            if sub.ppm_credits_expires_at else None
+        ),
+    }
+
+
 @router.post("/billing/meetings/{meeting_id}/dispute")
 def dispute(meeting_id: uuid.UUID, body: DisputeIn, db: Session = Depends(get_db),
             current_user: User = Depends(get_current_user)) -> dict:
