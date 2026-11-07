@@ -193,7 +193,7 @@ def _user_out(user: User, db: Session) -> dict:
         "id": str(user.id),
         "email": user.email,
         "full_name": user.full_name,
-        "plan": user.plan.value,
+        "plan": str(getattr(user.plan, "value", user.plan) or "free"),
         # has_active_plan + subscription_status. Recomputed from the database
         # on every response so a purchase (or a cancellation) takes effect on
         # the very next sign-in or page load. See billing.plan_access.
