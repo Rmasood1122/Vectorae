@@ -58,7 +58,7 @@ EXIT_ABORTED = 2
 # The alembic head. tests/test_activation_script.py asserts this IS the
 # head, so adding a migration without moving this line fails there rather
 # than in production against a database missing the new tables.
-TARGET_REVISION = "0104_bulk_import"
+TARGET_REVISION = "0105_ppm_credits_columns_repair"
 SENDING_DOMAIN = "calendarharvest.com"
 ADVERSARIAL_MIN_PASS = 28
 ADVERSARIAL_TOTAL = 32
