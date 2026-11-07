@@ -2,6 +2,7 @@ import {
   BarChart3,
   Building2,
   CalendarDays,
+  DollarSign,
   GraduationCap,
   Inbox,
   KanbanSquare,
@@ -59,6 +60,7 @@ export const NAV: NavItem[] = [
   // sending-domain pools, separate invoices. Next to Team because both are
   // "who is this account for", not "what is it doing today".
   { href: "/clients", label: "Clients", icon: Building2 },
+  { href: "/usage", label: "Usage", icon: DollarSign },
   { href: "/profile", label: "Profile", icon: UserCircle },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
