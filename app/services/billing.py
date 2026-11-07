@@ -36,6 +36,7 @@ stub path logs STUB_TODO so it is greppable. See BUILD_BLOCKERS.md.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import math
 import uuid
@@ -60,6 +61,7 @@ from app.db.models import (
     User,
 )
 from app.integrations import stripe_billing as stripe
+from app.services import billing_notifications
 
 logger = logging.getLogger(__name__)
 
@@ -651,6 +653,18 @@ def _on_credit_purchase_completed(db: Session, user: User, obj: dict) -> str:
     db.commit()
     logger.info("billing: user %s purchased %d credits, new limit: %d cents",
                user.id, amount_cents, sub.ppm_credits_limit_cents)
+
+    # Send success notification asynchronously, don't block if it fails
+    try:
+        asyncio.run(billing_notifications.notify_credit_purchase_success(
+            user=user,
+            amount_cents=amount_cents,
+            new_limit_cents=sub.ppm_credits_limit_cents
+        ))
+    except Exception as exc:
+        logger.warning("failed to send credit purchase success notification for user %s: %s",
+                      user.id, exc)
+
     return "credit_purchase_completed"
 
 
@@ -920,6 +934,20 @@ def _charge_one(db: Session, meeting: BillableMeeting, now: datetime) -> str:
                 "Purchase additional credits to continue booking meetings."
             )
             db.commit()
+
+            # Send notification asynchronously, don't block if it fails
+            user = db.get(User, meeting.user_id)
+            if user:
+                try:
+                    asyncio.run(billing_notifications.notify_credit_limit_hit(
+                        user=user,
+                        amount_blocked_cents=int(meeting.amount_cents),
+                        limit_cents=sub.ppm_credits_limit_cents
+                    ))
+                except Exception as exc:
+                    logger.warning("failed to send credit limit notification for user %s: %s",
+                                 user.id, exc)
+
             return "blocked_by_credit_limit"
 
     try:
