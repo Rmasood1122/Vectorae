@@ -33,19 +33,19 @@ export default function UsagePage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <StatCard
                 label="Meetings Booked"
-                value={String(data.meetings_booked)}
+                value={String(data.usage.meetings_booked)}
               />
               <StatCard
                 label="Cost This Month"
-                value={formatPrice(data.amount_cents, data.currency)}
+                value={formatPrice(data.usage.amount_cents, data.usage.currency)}
               />
               <StatCard
                 label="Price Per Meeting"
-                value={formatPrice(data.price_per_meeting_cents, data.currency)}
+                value={formatPrice(data.usage.price_per_meeting_cents, data.usage.currency)}
               />
               <StatCard
                 label="Status Breakdown"
-                value={Object.entries(data.by_status)
+                value={Object.entries(data.usage.by_status)
                   .map(([status, count]) => `${count} ${status}`)
                   .join(", ")}
               />
