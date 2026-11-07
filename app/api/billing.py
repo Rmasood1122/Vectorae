@@ -183,6 +183,31 @@ def get_credit_transactions(limit: int = Query(default=50, ge=1, le=500),
     } for t in transactions]
 
 
+@router.get("/billing/credit-expiration")
+def get_credit_expiration(db: Session = Depends(get_db),
+                         current_user: User = Depends(get_current_user)) -> dict:
+    """Get user's credit limit, carryover, and expiration date."""
+    sub = billing.get_subscription(db, current_user.id)
+    if not sub or sub.billing_model != "pay_per_meeting":
+        raise HTTPException(status_code=409, detail="User is not on a pay-per-meeting plan.")
+
+    limit_cents = sub.ppm_credits_limit_cents or 0
+    carryover_cents = sub.ppm_credits_carryover_cents or 0
+    expires_at = sub.ppm_credits_expires_at
+
+    # Cap carryover at 50% of limit
+    max_carryover = limit_cents // 2
+    carryover_cents = min(carryover_cents, max_carryover)
+
+    return {
+        "monthly_limit_cents": limit_cents,
+        "carryover_cents": carryover_cents,
+        "total_available_cents": limit_cents + carryover_cents,
+        "expires_at": expires_at.isoformat() if expires_at else None,
+        "reset_day": sub.ppm_credits_reset_day or 1,
+    }
+
+
 @router.post("/billing/meetings/{meeting_id}/dispute")
 def dispute(meeting_id: uuid.UUID, body: DisputeIn, db: Session = Depends(get_db),
             current_user: User = Depends(get_current_user)) -> dict:

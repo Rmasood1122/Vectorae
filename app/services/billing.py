@@ -883,6 +883,82 @@ def charge_due_meetings(db: Session, now: datetime | None = None, limit: int = 5
     return {"processed": len(rows), **counts}
 
 
+def _calculate_month_end_for_reset(sub: BillingSubscription, now: datetime) -> datetime:
+    """Calculate when credits expire for a subscription based on its reset day."""
+    reset_day = sub.ppm_credits_reset_day or 1
+    year, month = now.year, now.month
+
+    # Try to use the reset day in current month
+    try:
+        expiry = now.replace(day=reset_day, hour=0, minute=0, second=0, microsecond=0)
+    except ValueError:
+        # If reset_day doesn't exist (e.g., Feb 30), use last day of month
+        if month == 12:
+            next_month_start = now.replace(year=year + 1, month=1, day=1)
+        else:
+            next_month_start = now.replace(month=month + 1, day=1)
+        expiry = next_month_start - timedelta(days=1)
+        expiry = expiry.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # If expiry is today or past, it's next month
+    if expiry <= now.replace(hour=0, minute=0, second=0, microsecond=0):
+        if month == 12:
+            expiry = expiry.replace(year=year + 1, month=1, day=reset_day)
+        else:
+            try:
+                expiry = expiry.replace(month=month + 1, day=reset_day)
+            except ValueError:
+                # Last day of next month
+                next_month = now.replace(month=month + 2, day=1) if month < 11 else now.replace(year=year + 1, month=1, day=1)
+                expiry = next_month - timedelta(days=1)
+
+    return expiry.replace(tzinfo=timezone.utc)
+
+
+def _get_effective_credit_limit(db: Session, sub: BillingSubscription, now: datetime) -> tuple[int, int, int]:
+    """Get effective credit limit including carryover, and carryover amount.
+
+    Returns: (limit, carryover, total)
+    """
+    if not sub.ppm_credits_limit_cents:
+        return 0, 0, 0
+
+    limit = sub.ppm_credits_limit_cents
+    carryover = (sub.ppm_credits_carryover_cents or 0)
+
+    # Carryover can't exceed 50% of current month's limit
+    max_carryover = limit // 2
+    carryover = min(carryover, max_carryover)
+
+    return limit, carryover, limit + carryover
+
+
+def _handle_monthly_credit_reset(db: Session, sub: BillingSubscription, now: datetime) -> None:
+    """Reset monthly credits and handle expiration. Called by sweep."""
+    if not sub.ppm_credits_limit_cents or not sub.ppm_credits_expires_at:
+        return
+
+    if now >= sub.ppm_credits_expires_at:
+        # Get charged amount this month before reset
+        charged_this_month = _get_monthly_charged_amount(db, sub.user_id, now)
+        used = min(charged_this_month, sub.ppm_credits_limit_cents)
+        unused = max(0, (sub.ppm_credits_limit_cents or 0) - used)
+
+        # Carryover up to 50% of next month's limit
+        max_carryover = sub.ppm_credits_limit_cents // 2
+        carryover = min(unused, max_carryover)
+
+        sub.ppm_credits_carryover_cents = carryover
+        sub.ppm_credits_expires_at = _calculate_month_end_for_reset(sub, now)
+
+        _log_credit_transaction(
+            db, sub.user_id, "expiration", 0,
+            old_limit_cents=(sub.ppm_credits_limit_cents or 0),
+            new_limit_cents=(sub.ppm_credits_limit_cents or 0),
+            reason=f"Monthly reset. Carried over: ${carryover/100:.2f}"
+        )
+
+
 def _get_monthly_charged_amount(db: Session, user_id: uuid.UUID, now: datetime) -> int:
     """Total amount (in cents) charged this month for a user (status='charged')."""
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -919,22 +995,26 @@ def _charge_one(db: Session, meeting: BillableMeeting, now: datetime) -> str:
         db.commit()
         return "failed"
 
-    # Check pay-per-meeting credit limit
+    # Check pay-per-meeting credit limit (including carryover)
     if (sub.billing_model == "pay_per_meeting" and
         sub.ppm_credits_limit_cents is not None):
+        _handle_monthly_credit_reset(db, sub, now)
+
+        limit, carryover, total_available = _get_effective_credit_limit(db, sub, now)
         charged_this_month = _get_monthly_charged_amount(db, meeting.user_id, now)
-        if charged_this_month + int(meeting.amount_cents) > sub.ppm_credits_limit_cents:
+        if charged_this_month + int(meeting.amount_cents) > total_available:
             meeting.status = "blocked_by_credit_limit"
             meeting.failure_reason = (
-                f"Monthly credit limit (${sub.ppm_credits_limit_cents/100:.2f}) reached. "
-                "Purchase additional credits to continue booking meetings."
+                f"Monthly credit limit (${limit/100:.2f}" +
+                (f" + ${carryover/100:.2f} carryover" if carryover > 0 else "") +
+                f") reached. Purchase additional credits to continue booking meetings."
             )
 
             _log_credit_transaction(
                 db, meeting.user_id, "block", int(meeting.amount_cents),
-                old_limit_cents=sub.ppm_credits_limit_cents,
-                new_limit_cents=sub.ppm_credits_limit_cents,
-                reason=f"Meeting blocked due to credit limit. Used: ${charged_this_month/100:.2f}"
+                old_limit_cents=total_available,
+                new_limit_cents=total_available,
+                reason=f"Meeting blocked due to credit limit. Used: ${charged_this_month/100:.2f} of ${total_available/100:.2f}"
             )
 
             db.commit()

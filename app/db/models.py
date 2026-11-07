@@ -4211,6 +4211,14 @@ class BillingSubscription(TimestampMixin, Base):
     # NULL for monthly/annual plans. When a user's charged meetings this month
     # reach this limit, further meetings are not charged until they purchase more.
     ppm_credits_limit_cents: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # Expiration and carryover for pay-per-meeting credits
+    ppm_credits_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    # Unused credits from previous month carried over (up to 50% of current month limit)
+    ppm_credits_carryover_cents: Mapped[int | None] = mapped_column(Integer, nullable=True, default=0)
+    # Day of month credits reset (1-31; NULL defaults to 1st)
+    ppm_credits_reset_day: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class BillingRenewalNotice(TimestampMixin, Base):
