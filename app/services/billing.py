@@ -36,6 +36,7 @@ stub path logs STUB_TODO so it is greppable. See BUILD_BLOCKERS.md.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import math
 import uuid
@@ -49,6 +50,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.core import billing_catalog as catalog
+from app.services import billing_notifications
 from app.db.models import (
     BillableMeeting,
     BillingRenewalNotice,
@@ -976,6 +978,47 @@ def resolve_dispute(db: Session, meeting: BillableMeeting, *, decision: str, not
     meeting.resolution_note = (note or "").strip()[:500] or meeting.resolution_note
     db.commit()
     return meeting
+
+
+def adjust_user_credits(db: Session, user: User, adjustment_cents: int, reason: str,
+                       notify_user: bool = True) -> dict:
+    """Admin: manually adjust a user's pay-per-meeting credit limit.
+
+    Args:
+        db: Database session
+        user: User whose credits to adjust
+        adjustment_cents: Amount to adjust (positive to increase, negative to decrease)
+        reason: Reason for adjustment (logged and sent to user)
+        notify_user: Whether to notify the user of the adjustment
+
+    Returns:
+        Dict with old_limit, new_limit, adjustment, and reason
+    """
+    sub = get_subscription(db, user.id)
+    if not sub or sub.billing_model != "pay_per_meeting":
+        raise BillingError("User is not on a pay-per-meeting plan.", status_code=409)
+
+    old_limit = (sub.ppm_credits_limit_cents or 0)
+    new_limit = max(0, old_limit + adjustment_cents)
+
+    sub.ppm_credits_limit_cents = new_limit
+    db.commit()
+
+    result = {
+        "old_limit_cents": old_limit,
+        "new_limit_cents": new_limit,
+        "adjustment_cents": adjustment_cents,
+        "reason": reason,
+    }
+
+    if notify_user:
+        try:
+            asyncio.run(billing_notifications.notify_credit_adjustment(
+                db, user, old_limit, new_limit, reason))
+        except Exception as e:
+            logger.exception("Failed to notify user of credit adjustment: %s", e)
+
+    return result
 
 
 # --------------------------------------------------------------------------
