@@ -57,9 +57,12 @@ export interface BillableMeetingRow {
   resolution_note: string | null;
 }
 
-export interface UsagePage extends BillingOverview {
+/** GET /billing/usage: the usage summary at the TOP level (app/api/billing.py
+ *  get_usage spreads billing.usage_summary()), not nested under `usage` as in
+ *  GET /billing. Typing it as BillingOverview broke `npm run type-check`. */
+export type UsagePage = BillingOverview["usage"] & {
   meetings: BillableMeetingRow[];
-}
+};
 
 export interface CreditTransactionRow {
   id: string;
