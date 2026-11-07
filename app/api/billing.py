@@ -138,16 +138,18 @@ def list_meetings(status: str | None = Query(default=None,
 def get_usage(limit: int = Query(default=20, ge=1, le=100),
               db: Session = Depends(get_db),
               current_user: User = Depends(get_current_user)) -> dict:
-    """Usage page: summary stats + recent billable meetings."""
+    """Usage page: summary stats + recent billable meetings + subscription info for credit purchase CTA."""
     summary = billing.usage_summary(db, current_user)
     query = (select(BillableMeeting)
              .where(BillableMeeting.user_id == current_user.id)
              .order_by(BillableMeeting.occurred_at.desc())
              .limit(limit))
     meetings = db.execute(query).scalars()
+    sub = billing.get_subscription(db, current_user.id)
     return {
         **summary,
         "meetings": [billing.meeting_out(m) for m in meetings],
+        "subscription": billing.subscription_out(sub),
     }
 
 

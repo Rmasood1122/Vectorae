@@ -35,6 +35,17 @@ export interface BillingOverview {
   };
 }
 
+export interface UsagePage {
+  period_start: string;
+  meetings_booked: number;
+  amount_cents: number;
+  by_status: Record<string, number>;
+  price_per_meeting_cents: number;
+  currency: string;
+  meetings: BillableMeetingRow[];
+  subscription: Subscription | null;
+}
+
 export interface CheckoutResult {
   mode: "stub" | "stripe";
   checkout_url: string | null;
@@ -74,4 +85,6 @@ export const billingApi = {
   usage: () => api<UsagePage>("/billing/usage"),
   dispute: (id: string, reason: string) =>
     api<BillableMeetingRow>(`/billing/meetings/${id}/dispute`, { body: { reason } }),
+  purchaseCredits: (amount_cents: number) =>
+    api<CheckoutResult>("/billing/purchase-credits", { body: { amount_cents } }),
 };
