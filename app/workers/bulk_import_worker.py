@@ -14,9 +14,11 @@ from app.db.models import (
     Lead,
     LeadStatus,
 )
+from app.workers.celery_app import celery_app
 
 
-def process_bulk_import(job_id: str, db: Session | None = None) -> dict:
+@celery_app.task(bind=True)
+def process_bulk_import(self, job_id: str, db: Session | None = None) -> dict:
     """Process validated rows from a bulk import job and create leads.
 
     Fetches the job, iterates through validated rows, checks for duplicates,

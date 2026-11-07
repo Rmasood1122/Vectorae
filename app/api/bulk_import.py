@@ -86,9 +86,9 @@ async def confirm_import(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    # TODO: Trigger Celery task here
-    # from app.workers.bulk_import_worker import process_bulk_import
-    # process_bulk_import.delay(str(job.id))
+    # Trigger Celery task to process the import
+    from app.workers.bulk_import_worker import process_bulk_import
+    process_bulk_import.delay(str(job.id))
 
     return {
         "import_id": str(job.id),

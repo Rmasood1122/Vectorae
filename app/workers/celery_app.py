@@ -21,6 +21,7 @@ celery_app = Celery(
         "app.workers.tasks",
         "app.workers.lead_tasks",
         "app.workers.outreach_tasks",
+        "app.workers.bulk_import_worker",
         # M8 additions
         "app.workers.learning_tasks",   # nightly aggregation + A/B promotion
         "app.workers.webhook_tasks",    # C5 reliable outbound webhooks
@@ -208,6 +209,8 @@ celery_app.conf.task_routes = {
     # Autopilot launch: short database work (its sourcing chain is published
     # to `default` explicitly, see app/workers/autopilot_tasks.py).
     "leadpilot.autopilot.*": {"queue": "default"},
+    # Feature 1: bulk import of CSV leads. User-initiated, one at a time per user.
+    "app.workers.bulk_import_worker.*": {"queue": "default"},
 }
 
 celery_app.conf.update(
@@ -220,6 +223,8 @@ celery_app.conf.update(
     accept_content=["json"],
     timezone="UTC",
     enable_utc=True,
+    task_always_eager=settings.CELERY_ALWAYS_EAGER,
+    task_eager_propagates=settings.CELERY_EAGER_PROPAGATES,
     # Pipeline steps persist their own state to research_steps before ack,
     # but late-ack + reject-on-worker-lost gives an extra safety net so a
     # killed worker never silently drops a step.
