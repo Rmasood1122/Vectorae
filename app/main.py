@@ -37,6 +37,7 @@ from app.api.products import router as products_router
 from app.api.strategies import router as strategies_router
 from app.api.tutorials import router as tutorials_router   # Feature 2
 from app.api.support import router as support_router       # Feature 3
+from app.api.bulk_import import router as bulk_import_router  # Feature 1
 from app.api.linkedin_network import router as linkedin_network_router
 from app.api.linkedin_tasks import router as linkedin_tasks_router
 from app.api.email_network import router as email_network_router
@@ -260,6 +261,7 @@ app.include_router(playbook_router)              # /playbook/* (M8)
 app.include_router(onboarding_router)            # /onboarding/* (M8-C5)
 app.include_router(tutorials_router)             # /tutorials/* (Feature 2)
 app.include_router(support_router)               # /support/* (Feature 3)
+app.include_router(bulk_import_router)           # /bulk-import/* (Feature 1)
 app.include_router(linkedin_network_router)      # /linkedin-network/* (Growth+)
 app.include_router(linkedin_tasks_router)        # /linkedin-tasks/* (L0, user acts on LinkedIn)
 app.include_router(email_network_router)         # /email-network/* (Growth+, flag)
