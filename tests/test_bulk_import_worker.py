@@ -1,6 +1,7 @@
 """Tests for bulk import Celery worker."""
 
 import uuid
+from datetime import datetime, timezone
 
 from app.db.models import (
     BulkImport,
@@ -70,6 +71,9 @@ def test_bulk_import_worker_creates_leads(db_session, test_user, verified_strate
     db_session.refresh(job)
     assert job.status == BulkImportStatus.COMPLETED
     assert job.created_leads == 2
+    assert job.failed_rows == 0
+    assert job.import_started_at is not None
+    assert job.import_completed_at is not None
 
     # Verify leads were created
     leads = (
@@ -92,6 +96,7 @@ def test_bulk_import_worker_creates_leads(db_session, test_user, verified_strate
 
     # Return value
     assert result["created"] == 2
+    assert result["status"] == "completed"
 
 
 def test_bulk_import_worker_handles_duplicates(
@@ -154,6 +159,50 @@ def test_bulk_import_worker_handles_duplicates(
     assert "Duplicate" in row.error_message
 
     assert result["created"] == 0
+    assert result["skipped"] == 1
+
+
+def test_bulk_import_worker_handles_missing_email(
+    db_session, test_user, verified_strategy
+):
+    """Verify worker fails rows with missing email."""
+    job = BulkImport(
+        id=uuid.uuid4(),
+        user_id=test_user.id,
+        strategy_id=verified_strategy.id,
+        filename="test.csv",
+        status=BulkImportStatus.IMPORTING,
+        total_rows=1,
+        valid_rows=1,
+        failed_rows=0,
+    )
+    db_session.add(job)
+    db_session.flush()
+
+    row = BulkImportRow(
+        id=uuid.uuid4(),
+        bulk_import_id=job.id,
+        row_number=1,
+        raw_data_json={
+            "client_name": "John Doe",
+            "email": "",  # Missing email
+            "company": "Acme Inc",
+        },
+        status=BulkImportRowStatus.VALIDATED,
+    )
+    db_session.add(row)
+    db_session.commit()
+
+    result = process_bulk_import(str(job.id), db_session)
+
+    db_session.refresh(job)
+    db_session.refresh(row)
+    assert job.status == BulkImportStatus.FAILED  # All rows failed
+    assert row.status == BulkImportRowStatus.FAILED
+    assert "Email is required" in row.error_message
+    assert result["failed"] == 1
+    assert job.error_summary is not None
+    assert "import_errors" in job.error_summary
 
 
 def test_bulk_import_worker_job_not_found(db_session):
