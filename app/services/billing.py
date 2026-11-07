@@ -388,6 +388,89 @@ def start_checkout(db: Session, user: User, *, billing_model: str, tier: str | N
             "subscription": subscription_out(sub)}
 
 
+def purchase_ppm_credits(db: Session, user: User, amount_cents: int,
+                         now: datetime | None = None) -> dict:
+    """Purchase additional credits for pay-per-meeting plan.
+
+    Creates a one-time Stripe Checkout for the specified amount. When the
+    checkout completes (via webhook), the user's ppm_credits_limit_cents
+    is increased by the purchased amount.
+    """
+    now = now or _now()
+    sub = get_subscription(db, user.id)
+
+    if sub is None or sub.billing_model != "pay_per_meeting":
+        raise BillingError(
+            "Credit purchases are only available for pay-per-meeting plans.",
+            status_code=409)
+
+    if sub.status not in GRANTING:
+        raise BillingError(
+            "Your pay-per-meeting plan is not active. Please reactivate it first.",
+            status_code=409)
+
+    if amount_cents < 100:  # Minimum $1
+        raise BillingError("Minimum purchase amount is $1.00.", status_code=422)
+    if amount_cents > 50000:  # Maximum $500
+        raise BillingError("Maximum purchase amount is $500.00.", status_code=422)
+
+    if settings.billing_stub_mode:
+        logger.warning("billing stub mode (%s): purchasing %d credits for user %s without Stripe",
+                       STUB_TODO, amount_cents, user.id)
+        # In stub mode, just increase the limit immediately
+        if sub.ppm_credits_limit_cents is None:
+            sub.ppm_credits_limit_cents = 6000
+        sub.ppm_credits_limit_cents += amount_cents
+        db.commit()
+        return {
+            "mode": "stub",
+            "checkout_url": None,
+            "new_limit_cents": sub.ppm_credits_limit_cents,
+            "subscription": subscription_out(sub)
+        }
+
+    if not sub.stripe_customer_id:
+        raise BillingError(
+            "No payment method on file. Set up a payment method first.",
+            status_code=409)
+
+    frontend = settings.frontend_url.rstrip("/")
+    success_url = f"{frontend}/usage?credits=purchased"
+    cancel_url = f"{frontend}/usage?credits=cancelled"
+
+    try:
+        session = stripe.create_one_time_checkout(
+            customer_id=sub.stripe_customer_id,
+            user_id=str(user.id),
+            amount_cents=amount_cents,
+            currency="usd",
+            description="Additional Vectorae pay-per-meeting credits",
+            success_url=success_url,
+            cancel_url=cancel_url,
+            session_metadata={
+                "user_id": str(user.id),
+                "purchase_type": "ppm_credits",
+                "amount_cents": str(amount_cents)
+            }
+        )
+    except stripe.StripeError as exc:
+        logger.error("stripe credit purchase checkout for user %s failed: %s", user.id, exc)
+        raise BillingError(
+            "Could not create checkout. Please try again.",
+            status_code=502) from exc
+
+    # Store the checkout session for tracking
+    sub.stripe_checkout_session_id = session.get("id")
+    db.commit()
+
+    return {
+        "mode": "stripe",
+        "checkout_url": session.get("url"),
+        "amount_cents": amount_cents,
+        "new_limit_cents": (sub.ppm_credits_limit_cents or 6000) + amount_cents
+    }
+
+
 def cancel(db: Session, user: User, now: datetime | None = None) -> dict:
     """Monthly and annual: cancel at period end (access continues until then;
     no renewal). PAST DUE (the renewal payment failed): cancel NOW and void
@@ -537,6 +620,40 @@ def _retrieve(subscription_id: str | None) -> dict:
         return {}
 
 
+def _on_credit_purchase_completed(db: Session, user: User, obj: dict) -> str:
+    """A pay-per-meeting credit purchase checkout completed. Increase the user's
+    monthly credit limit by the purchased amount."""
+    meta = obj.get("metadata") or {}
+    try:
+        amount_cents = int(meta.get("amount_cents", 0))
+    except (TypeError, ValueError):
+        return "bad_metadata"
+
+    if amount_cents <= 0:
+        return "invalid_amount"
+
+    sub = get_subscription(db, user.id)
+    if sub is None or sub.billing_model != "pay_per_meeting":
+        logger.warning(
+            "credit purchase completed for user %s but subscription not found or not ppm",
+            user.id)
+        return "invalid_subscription"
+
+    # Increase the credit limit
+    if sub.ppm_credits_limit_cents is None:
+        sub.ppm_credits_limit_cents = 6000
+    sub.ppm_credits_limit_cents += amount_cents
+
+    # Clear the checkout session
+    if sub.stripe_checkout_session_id == obj.get("id"):
+        sub.stripe_checkout_session_id = None
+
+    db.commit()
+    logger.info("billing: user %s purchased %d credits, new limit: %d cents",
+               user.id, amount_cents, sub.ppm_credits_limit_cents)
+    return "credit_purchase_completed"
+
+
 def _on_checkout_completed(db: Session, obj: dict) -> str:
     """A checkout finished. Stripe delivers events in ANY order, so this
     never assumes it is first: it reads the subscription's own state from
@@ -546,6 +663,11 @@ def _on_checkout_completed(db: Session, obj: dict) -> str:
     if user is None:
         return "no_user"
     meta = obj.get("metadata") or {}
+
+    # Handle pay-per-meeting credit purchases (one-time payments)
+    if meta.get("purchase_type") == "ppm_credits":
+        return _on_credit_purchase_completed(db, user, obj)
+
     try:
         model, tier_id = _validate(meta.get("billing_model"), meta.get("tier"))
     except BillingError:
@@ -751,6 +873,20 @@ def charge_due_meetings(db: Session, now: datetime | None = None, limit: int = 5
     return {"processed": len(rows), **counts}
 
 
+def _get_monthly_charged_amount(db: Session, user_id: uuid.UUID, now: datetime) -> int:
+    """Total amount (in cents) charged this month for a user (status='charged')."""
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    result = db.execute(
+        select(func.sum(BillableMeeting.amount_cents))
+        .where(
+            BillableMeeting.user_id == user_id,
+            BillableMeeting.status == "charged",
+            BillableMeeting.charged_at >= month_start
+        )
+    ).scalar()
+    return int(result) if result else 0
+
+
 def _charge_one(db: Session, meeting: BillableMeeting, now: datetime) -> str:
     lead = db.get(Lead, meeting.lead_id) if meeting.lead_id else None
     if lead is None or lead.status not in _BOOKED_OR_LATER:
@@ -772,6 +908,20 @@ def _charge_one(db: Session, meeting: BillableMeeting, now: datetime) -> str:
         meeting.failure_reason = "No saved payment method for this account."
         db.commit()
         return "failed"
+
+    # Check pay-per-meeting credit limit
+    if (sub.billing_model == "pay_per_meeting" and
+        sub.ppm_credits_limit_cents is not None):
+        charged_this_month = _get_monthly_charged_amount(db, meeting.user_id, now)
+        if charged_this_month + int(meeting.amount_cents) > sub.ppm_credits_limit_cents:
+            meeting.status = "blocked_by_credit_limit"
+            meeting.failure_reason = (
+                f"Monthly credit limit (${sub.ppm_credits_limit_cents/100:.2f}) reached. "
+                "Purchase additional credits to continue booking meetings."
+            )
+            db.commit()
+            return "blocked_by_credit_limit"
+
     try:
         result = stripe.charge_meeting(
             customer_id=sub.stripe_customer_id, amount_cents=int(meeting.amount_cents),

@@ -48,7 +48,7 @@ export interface BillableMeetingRow {
   source: string;
   amount_cents: number;
   currency: string;
-  status: "pending" | "charged" | "waived" | "disputed" | "failed";
+  status: "pending" | "charged" | "waived" | "disputed" | "failed" | "blocked_by_credit_limit";
   occurred_at: string;
   charge_after: string;
   charged_at: string | null;

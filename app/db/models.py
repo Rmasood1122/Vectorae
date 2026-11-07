@@ -4207,6 +4207,10 @@ class BillingSubscription(TimestampMixin, Base):
     # Something a person must resolve (e.g. a second subscription completed
     # while an annual year was paid: both are kept). Also a task_errors row.
     support_note: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    # Migration 0099: pay-per-meeting credit limit (in cents; $60 = 6000).
+    # NULL for monthly/annual plans. When a user's charged meetings this month
+    # reach this limit, further meetings are not charged until they purchase more.
+    ppm_credits_limit_cents: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class BillingRenewalNotice(TimestampMixin, Base):
@@ -4268,12 +4272,14 @@ class BillableMeeting(TimestampMixin, Base):
     rebooks is one charge, never two.
 
     LIFECYCLE
-      pending   inside the cancellation grace window (charge_after)
-      charged   invoiced through Stripe (is_stub: marked charged without Stripe)
-      waived    the meeting was cancelled before charge_after, or an admin
-                upheld a dispute
-      disputed  the customer disputed it inside the grace window; an admin decides
-      failed    Stripe refused the charge (failure_reason)
+      pending                     inside the cancellation grace window (charge_after)
+      charged                     invoiced through Stripe (is_stub: marked charged without Stripe)
+      waived                      the meeting was cancelled before charge_after, or an admin
+                                  upheld a dispute
+      disputed                    the customer disputed it inside the grace window; an admin decides
+      failed                      Stripe refused the charge (failure_reason)
+      blocked_by_credit_limit     user on pay-per-meeting hit their monthly credit limit;
+                                  they must purchase more credits to proceed
 
     `lead_id`/`strategy_id` are SET NULL on delete so the billing record
     outlives a GDPR erase of the prospect -- an invoice must stay explicable.
